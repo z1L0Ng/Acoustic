@@ -17,9 +17,16 @@ import warnings
 BASE_RELEASE_COMMIT = "4172524a0e5d7b792de248820439f30874e2ae6d"
 PIP_VERSION = "24.1.2"
 SETUPTOOLS_VERSION = "80.9.0"
+RUNTIME_HOTFIX_VERSIONS = {
+    "nlpaug": "1.1.11",
+    "gdown": "6.1.0",
+    "beautifulsoup4": "4.15.0",
+    "soupsieve": "2.9.1",
+}
 COMMON_IMPORTS = [
     "numpy", "torch", "torchaudio", "torchvision", "timm", "librosa",
-    "scipy", "sklearn", "pkg_resources", "triton",
+    "scipy", "sklearn", "pkg_resources", "triton", "nlpaug",
+    "nlpaug.augmenter.audio",
 ]
 METHODS = {
     "patch_mix_cl": {
@@ -31,6 +38,7 @@ METHODS = {
             "triton": "2.0.0", "cmake": "3.26.4", "lit": "16.0.6",
             "pip": PIP_VERSION, "setuptools": SETUPTOOLS_VERSION,
             "librosa": "0.9.2",
+            **RUNTIME_HOTFIX_VERSIONS,
         },
         "imports": ["transformers", "safetensors", "cmake", "lit"],
     },
@@ -43,6 +51,7 @@ METHODS = {
             "triton": "2.0.0", "cmake": "3.26.4", "lit": "16.0.6",
             "pip": PIP_VERSION, "setuptools": SETUPTOOLS_VERSION,
             "librosa": "0.9.2", "transformers": "4.38.2",
+            **RUNTIME_HOTFIX_VERSIONS,
         },
         "imports": ["transformers", "einops", "cmake", "lit"],
     },
@@ -55,6 +64,7 @@ METHODS = {
             "triton": "2.0.0", "cmake": "3.26.4", "lit": "16.0.6",
             "pip": PIP_VERSION, "setuptools": SETUPTOOLS_VERSION,
             "librosa": "0.9.2",
+            **RUNTIME_HOTFIX_VERSIONS,
         },
         "imports": ["cmake", "lit"],
     },
@@ -69,6 +79,7 @@ METHODS = {
             "librosa": "0.9.2",
             "opencv-python-headless": "4.11.0.86",
             "opencv-python": "4.11.0.86", "cmapy": "0.6.6",
+            **RUNTIME_HOTFIX_VERSIONS,
         },
         "imports": ["cv2", "cmapy", "cmake", "lit"],
     },
@@ -81,8 +92,11 @@ METHODS = {
             "triton": "2.3.1", "pip": PIP_VERSION,
             "setuptools": SETUPTOOLS_VERSION,
             "librosa": "0.9.2",
+            "opencv-python-headless": "4.11.0.86",
+            "opencv-python": "4.11.0.86", "cmapy": "0.6.6",
+            **RUNTIME_HOTFIX_VERSIONS,
         },
-        "imports": [],
+        "imports": ["cv2", "cmapy"],
     },
 }
 
@@ -113,11 +127,21 @@ def verify(method: str, project_root: Path, output: Path, cuda_mode: str) -> dic
         f"name: {spec['environment']}",
         "- pip=24.1.2",
         "- setuptools==80.9.0",
+        "- nlpaug==1.1.11",
+        "- gdown==6.1.0",
+        "- beautifulsoup4==4.15.0",
+        "- soupsieve==2.9.1",
     ]
     if method != "add_rsc":
         required_yaml_tokens.extend(["- cmake==3.26.4", "- lit==16.0.6"])
     if method == "pafa":
         required_yaml_tokens.append("- transformers==4.38.2")
+    if method == "add_rsc":
+        required_yaml_tokens.extend([
+            "- opencv-python-headless==4.11.0.86",
+            "- opencv-python==4.11.0.86",
+            "- cmapy==0.6.6",
+        ])
     missing_tokens = [token for token in required_yaml_tokens if token not in yaml_text]
     if missing_tokens:
         errors.append(f"environment declaration missing: {missing_tokens}")

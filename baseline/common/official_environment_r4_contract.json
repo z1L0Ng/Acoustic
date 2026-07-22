@@ -17,6 +17,13 @@
     "verified_matrix": "pip 25.3 fails identically; pip 24.1.2 passes strict pip check while preserving CMake 3.26.4",
     "resolution": "pin conda pip=24.1.2 in all five Linux environment declarations"
   },
+  "runtime_dependency_hotfix": {
+    "branch": "codex/l40-runtime-hotfix",
+    "base_commit": "b118dc486a36ebbd75246c9b7d405b61d9b1624f",
+    "evidence_root": "result/runtime_hotfix_20260722_141512",
+    "cause": "author runtime imports were not covered by the Release 4 environment gate",
+    "scope": "dependency declarations and strict environment verification only; no model, training, data, protocol, checkpoint, metric, or selection change"
+  },
   "triton_2_0_0_audit": {
     "conda_artifact": {
       "url": "https://conda.anaconda.org/pytorch/linux-64/torchtriton-2.0.0-py310.tar.bz2",
@@ -58,19 +65,39 @@
       "artifact": "setuptools-80.9.0-py3-none-any.whl",
       "sha256": "062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922"
     },
+    "nlpaug": {
+      "version": "1.1.11",
+      "applies_to": ["patch_mix_cl", "pafa", "sg_scl", "mvst", "add_rsc"],
+      "wheel_sha256": "01d3befce09e46cb7d990839e0b7dd80ba3e991485f772e678d329ffeb97fd80"
+    },
+    "gdown": {
+      "version": "6.1.0",
+      "applies_to": ["patch_mix_cl", "pafa", "sg_scl", "mvst", "add_rsc"],
+      "wheel_sha256": "38a36a94275b8272f684db469bbd73b4d1f64cbbc1751bcb993a1b2be8f013c8"
+    },
+    "beautifulsoup4": {
+      "version": "4.15.0",
+      "applies_to": ["patch_mix_cl", "pafa", "sg_scl", "mvst", "add_rsc"],
+      "wheel_sha256": "d6f88de62e1d4e38ecb1077eb9724cd0eff29d2a08ca16a401e9b9e93f117cf9"
+    },
+    "soupsieve": {
+      "version": "2.9.1",
+      "applies_to": ["patch_mix_cl", "pafa", "sg_scl", "mvst", "add_rsc"],
+      "wheel_sha256": "4f4477399246b7a0c720a88ca2454b11cd6bb9ae4c9d170140786e916776c14c"
+    },
     "opencv-python-headless": {
       "version": "4.11.0.86",
-      "applies_to": ["mvst"],
+      "applies_to": ["mvst", "add_rsc"],
       "linux_x86_64_wheel_sha256": "0e0a27c19dd1f40ddff94976cfe43066fbbe9dfbb2ec1907d66c19caef42a57b"
     },
     "opencv-python": {
       "version": "4.11.0.86",
-      "applies_to": ["mvst"],
+      "applies_to": ["mvst", "add_rsc"],
       "linux_x86_64_wheel_sha256": "6b02611523803495003bd87362db3e1d2a0454a6a63025dc6658a9830570aa0d"
     },
     "cmapy": {
       "version": "0.6.6",
-      "applies_to": ["mvst"],
+      "applies_to": ["mvst", "add_rsc"],
       "sdist_sha256": "cb52a6b3057c49a146fb0964b8302f2fb7d61dfe6ae6de1a98b636aace805255"
     }
   },
