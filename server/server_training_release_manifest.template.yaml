@@ -1,0 +1,388 @@
+schema_version: "1.0"
+manifest_kind: acoustic_server_training_release
+
+release:
+  release_id: "<RELEASE_ID>"
+  release_branch: "codex/l40-training-release"
+  commit_sha: "<40_HEX_RELEASE_COMMIT_SHA>"
+  remote_url: "<ACOUSTIC_GIT_REMOTE_URL>"
+  created_at_utc: "<ISO8601_UTC>"
+  created_by_role: "project_management_thread"
+  release_status: "not_ready"  # not_ready | ready | retired
+  parent_release_id: null
+  notes: "Release 1 remains not ready until fresh-checkout rebuildability passes."
+  prohibited_git_blob:
+    path: "results/model_design_2026-07-08/icbhi_sequence_pooling/features/beats_sequence_full.npz"  # legacy Git path before output-root migration
+    blob_id: "51131f763da6d7de7b3b2780c8db61f92250348a"
+    introduced_by_commit: "8c630c8"
+    size_bytes: 1307407924
+    must_be_absent_from_release_history: true
+  release_object_audit:
+    comparison_range: "origin/main..<RELEASE_COMMIT_SHA>"
+    max_unapproved_blob_bytes: 90000000
+    report_path: "<LIGHTWEIGHT_OBJECT_AUDIT_REPORT_PATH>"
+    report_sha256: "<SHA256>"
+    passed: false
+
+policy:
+  server_code_edits_allowed: false
+  pull_while_running_allowed: false
+  heavy_results_in_git_allowed: false
+  raw_data_mutation_allowed: false
+  unmanifested_checkpoint_allowed: false
+  result_transfer: "rsync_or_scp_or_user_approved_storage"
+  result_git_root: "result/"
+  claim_goal: "reasonable_range_under_author_repo_protocol_not_exact_aggregate_mean"
+  method_priority_one_gpu:
+    - patch_mix_cl
+    - pafa
+    - sg_scl
+    - mvst
+    - add_rsc
+  method_priority_two_gpu:
+    gpu0_first: patch_mix_cl
+    gpu1_first: pafa
+    next_free_gpu: sg_scl
+    later_when_ready:
+      - mvst
+      - add_rsc
+
+dataset:
+  dataset_id: icbhi_2017
+  script_path: dataset/script/phase1_dataset_workflow.py
+  script_sha256: "<SHA256>"
+  launch_command: "conda run -n <BOOTSTRAP_ENV> python dataset/script/phase1_dataset_workflow.py icbhi_2017"
+  raw_root: "<DATA_ROOT>/icbhi_2017"
+  processed_root: "<PROCESSED_DATA_ROOT>/icbhi_2017"
+  download_security_note: "Existing route checks expected sizes and uses an unverified TLS context; approved manifest hashes are mandatory."
+  expected_artifacts:
+    - path: ICBHI_final_database.zip
+      size_bytes: 1978998275
+      sha256: "<APPROVED_SHA256>"
+      hash_authority: "<LOCAL_VERIFIED_OBSERVATION_OR_PUBLISHER>"
+    - path: events.zip
+      size_bytes: 479920
+      sha256: "<APPROVED_SHA256>"
+      hash_authority: "<LOCAL_VERIFIED_OBSERVATION_OR_PUBLISHER>"
+    - path: ICBHI_Challenge_demographic_information.txt
+      size_bytes: 2586
+      sha256: "<APPROVED_SHA256>"
+      hash_authority: "<LOCAL_VERIFIED_OBSERVATION_OR_PUBLISHER>"
+    - path: ICBHI_Challenge_diagnosis.txt
+      size_bytes: 1368
+      sha256: "<APPROVED_SHA256>"
+      hash_authority: "<LOCAL_VERIFIED_OBSERVATION_OR_PUBLISHER>"
+    - path: ICBHI_challenge_train_test.txt
+      size_bytes: 27219
+      sha256: "<APPROVED_SHA256>"
+      hash_authority: "<LOCAL_VERIFIED_OBSERVATION_OR_PUBLISHER>"
+  cycle_manifest:
+    path: result/baseline_overnight_2026-07-07/icbhi_2017/icbhi_2017_cycle_manifest.csv
+    sha256: "<SHA256>"
+    rows: 6898
+    unique_cycle_ids: 6898
+    recordings: 920
+    official_train_cycles: 4142
+    official_test_cycles: 2756
+    label_order:
+      - normal
+      - crackle
+      - wheeze
+      - both
+    split_alias_receipt_required: true
+
+methods:
+  patch_mix_cl:
+    status: blocked  # ready | blocked | not_packaged | retired
+    blocker: "fresh-checkout rebuildability is being repaired; Release 1 is not ready"
+    baseline_path: baseline/patch_mix_cl
+    baseline_tree_sha256: "<DETERMINISTIC_TREE_HASH>"
+    paper_contract_path: codex/2026-07-21/paper_contracts/patch_mix_cl.json
+    paper_contract_sha256: "<SHA256>"
+    environment:
+      name: acoustic-patchmix
+      path: baseline/patch_mix_cl/environment.yml
+      sha256: "<SHA256>"
+    upstream_source:
+      repo_url: https://github.com/raymin0223/patch-mix_contrastive_learning
+      commit_sha: 836b09fea1b70eb29fe0b25afa481286b56f5104
+      license: MIT
+    checkpoint:
+      required: true
+      provenance_class: "current_author_hosted"
+      source_url_or_storage_ref: "<APPROVED_NON_SECRET_REFERENCE>"
+      filename: audioset_10_10_0.4593.pth
+      size_bytes: "<INTEGER>"
+      sha256: "<SHA256>"
+      canonical_state_dict_sha256: "<SHA256>"
+      identity_claim: "current author-hosted state-dict; historical 2023 byte identity not established"
+    rebuild:
+      command: "<FRESH_CHECKOUT_REBUILD_COMMAND>"
+      receipt_path: "<RUN_ROOT>/receipts/rebuild.json"
+    launch:
+      smoke_command: "<GPU_SMOKE_COMMAND>"
+      profile_100_command: "<GPU_100_STEP_PROFILE_COMMAND>"
+      full_command: "<FULL_COMMAND>"
+      evaluation_export_command: "<EVALUATION_EXPORT_COMMAND>"
+      expected_result_root: "result/patch_mix_cl_<YYYYMMDD_HHMMSS>/"
+    protocol:
+      name: faithful_test_selected
+      seed: 1
+      test_selection: "official test every epoch; best checkpoint by test Score"
+      claim_boundary: "single-seed test-selected run; not an aggregate-mean reproduction"
+    resume:
+      supported: false
+      integration_test_passed: false
+      command: null
+    paper_target:
+      sp_mean: 81.66
+      sp_sd: 3.83
+      se_mean: 43.07
+      se_sd: 2.80
+      score_mean: 62.37
+      score_sd: 0.61
+    acceptance_checks:
+      gpu_smoke_finite: true
+      profile_steps: 100
+      expected_test_cycle_ids: 2756
+      expected_confusion_total: 2756
+      unique_cycle_ids_required: true
+      metric_recompute_tolerance: 1.0e-10
+      internal_alignment_rule: mean_plus_or_minus_2sd
+
+  pafa:
+    status: blocked
+    blocker: "fresh-checkout rebuildability and approved BEATs checkpoint provenance are unresolved"
+    baseline_path: baseline/pafa
+    baseline_tree_sha256: "<DETERMINISTIC_TREE_HASH>"
+    paper_contract_path: codex/2026-07-21/paper_contracts/pafa.json
+    paper_contract_sha256: "<SHA256>"
+    environment:
+      name: acoustic-pafa
+      path: baseline/pafa/environment.yml
+      sha256: "<SHA256>"
+    upstream_source:
+      repo_url: https://github.com/wa976/PAFA
+      commit_sha: e49e294d0db0d6af10ac46290512b9c85d3f71e1
+      license: "none_found"
+    checkpoint:
+      required: true
+      provenance_class: "<OFFICIAL_OR_COMPATIBILITY_MIRROR>"
+      source_url_or_storage_ref: "<APPROVED_NON_SECRET_REFERENCE>"
+      filename: BEATs_iter3_plus_AS2M.pt
+      size_bytes: "<INTEGER>"
+      sha256: "<SHA256>"
+      canonical_state_dict_sha256: "<SHA256>"
+      identity_claim: "<EXACT_ACCURATE_CLAIM>"
+    rebuild:
+      command: "<FRESH_CHECKOUT_REBUILD_COMMAND>"
+      receipt_path: "<RUN_ROOT>/receipts/rebuild.json"
+    launch:
+      smoke_command: "<GPU_SMOKE_COMMAND>"
+      profile_100_command: "<GPU_100_STEP_PROFILE_COMMAND>"
+      full_command: "<FULL_COMMAND>"
+      evaluation_export_command: "<EVALUATION_EXPORT_COMMAND>"
+      expected_result_root: "result/pafa_<YYYYMMDD_HHMMSS>/"
+    protocol:
+      name: faithful_test_selected
+      seed: 1
+      test_selection: "official test every epoch; best checkpoint by test Score"
+      claim_boundary: "official-like when compatibility checkpoint is used; single-seed test-selected"
+    resume:
+      supported: false
+      integration_test_passed: false
+      command: null
+    paper_target:
+      sp_mean: 82.05
+      sp_sd: 1.95
+      se_mean: 47.63
+      se_sd: 2.23
+      score_mean: 64.84
+      score_sd: 0.60
+    acceptance_checks:
+      gpu_smoke_finite: true
+      profile_steps: 100
+      expected_test_cycle_ids: 2756
+      expected_confusion_total: 2756
+      unique_cycle_ids_required: true
+      metric_recompute_tolerance: 1.0e-10
+      internal_alignment_rule: mean_plus_or_minus_2sd
+
+  sg_scl:
+    status: blocked
+    blocker: "fresh-checkout rebuildability is being repaired; GPU profile is pending"
+    baseline_path: baseline/sg_scl
+    baseline_tree_sha256: "<DETERMINISTIC_TREE_HASH>"
+    paper_contract_path: codex/2026-07-21/paper_contracts/sg_scl.json
+    paper_contract_sha256: "<SHA256>"
+    environment:
+      name: acoustic-sgscl
+      path: baseline/sg_scl/environment.linux-cu118.yml
+      sha256: "<SHA256>"
+    upstream_source:
+      repo_url: https://github.com/kaen2891/stethoscope-guided_supervised_contrastive_learning
+      commit_sha: 66564609595090b61540595d3d27764c00553086
+      license: "none_found"
+    checkpoint:
+      required: true
+      provenance_class: "current_author_hosted"
+      source_url_or_storage_ref: "<APPROVED_NON_SECRET_REFERENCE>"
+      filename: audioset_10_10_0.4593.pth
+      size_bytes: "<INTEGER>"
+      sha256: "<SHA256>"
+      canonical_state_dict_sha256: "<SHA256>"
+      identity_claim: "current author-hosted state-dict; historical byte identity not established"
+    rebuild:
+      command: "<FRESH_CHECKOUT_REBUILD_COMMAND>"
+      receipt_path: "<RUN_ROOT>/receipts/rebuild.json"
+    launch:
+      smoke_command: "<GPU_SMOKE_COMMAND>"
+      profile_100_command: "<GPU_100_STEP_PROFILE_COMMAND>"
+      full_command: "<FULL_COMMAND>"
+      evaluation_export_command: "<EVALUATION_EXPORT_COMMAND>"
+      expected_result_root: "result/sg_scl_<YYYYMMDD_HHMMSS>/"
+    protocol:
+      name: metadata_aware_official_like_test_selected
+      seed: 1
+      test_selection: "official test every epoch; best checkpoint by test Score"
+      claim_boundary: "metadata-aware, not audio-only; single-seed test-selected"
+    resume:
+      supported: false
+      integration_test_passed: false
+      command: null
+    paper_target:
+      sp_mean: 79.87
+      sp_sd: 8.89
+      se_mean: 43.55
+      se_sd: 5.93
+      score_mean: 61.71
+      score_sd: 1.61
+    acceptance_checks:
+      gpu_smoke_finite: true
+      metadata_domains_complete: true
+      profile_steps: 100
+      expected_test_cycle_ids: 2756
+      expected_confusion_total: 2756
+      unique_cycle_ids_required: true
+      metric_recompute_tolerance: 1.0e-10
+      internal_alignment_rule: mean_plus_or_minus_2sd
+
+  mvst:
+    status: blocked
+    blocker: "run only after local package is announced ready; fresh-checkout rebuildability and full GPU profile are pending"
+    baseline_path: baseline/mvst
+    baseline_tree_sha256: "<DETERMINISTIC_TREE_HASH>"
+    paper_contract_path: codex/2026-07-21/paper_contracts/mvst.json
+    paper_contract_sha256: "<SHA256>"
+    environment:
+      name: acoustic-mvst
+      path: baseline/mvst/environment.linux-cu118.yml
+      sha256: "<SHA256>"
+    upstream_source:
+      repo_url: https://github.com/wentaoheunnc/MVST
+      commit_sha: 51f93fa6ffa580d0819ccb59f861582927937264
+      license: "none_found"
+    checkpoint:
+      required: true
+      provenance_class: "current_author_hosted"
+      source_url_or_storage_ref: "<APPROVED_NON_SECRET_REFERENCE>"
+      filename: audioset_16_16_0.4422.pth
+      size_bytes: 350437422
+      sha256: dc71a6d4d07aeb7e746547f72a141f404e4c167d660bf003179f3865e06a970c
+      canonical_state_dict_sha256: e8284d4fb29332d92464b169f07c5a89532d87ac8c16404d32f405d998d8346c
+      identity_claim: "current author-hosted checkpoint"
+    rebuild:
+      command: "<FRESH_CHECKOUT_REBUILD_COMMAND>"
+      receipt_path: "<RUN_ROOT>/receipts/rebuild.json"
+    launch:
+      smoke_command: "<GPU_SMOKE_COMMAND>"
+      profile_100_command: "<GPU_100_STEP_PROFILE_COMMAND>"
+      full_command: "<FULL_COMMAND>"
+      evaluation_export_command: "<EVALUATION_EXPORT_COMMAND>"
+      expected_result_root: "result/mvst_<YYYYMMDD_HHMMSS>/"
+    protocol:
+      name: author_repo_random_file_split_official_like
+      seed: 1
+      test_selection: "author random-file test partition every epoch; best checkpoint by test Score"
+      claim_boundary: "not an official ICBHI-split reproduction"
+    resume:
+      supported: false
+      integration_test_passed: false
+      command: "fusion-only command may be added after approval; encoder resume is unsupported"
+    paper_target:
+      sp: 81.99
+      se: 51.10
+      score: 66.55
+      score_sd: null
+    acceptance_checks:
+      gpu_smoke_finite: true
+      five_view_ordered_ids_identical: true
+      profile_steps: 100
+      expected_test_cycle_ids: 2685
+      expected_confusion_total: 2685
+      unique_cycle_ids_required: true
+      metric_recompute_tolerance: 1.0e-10
+      internal_alignment_rule: absolute_score_gap_lte_3
+
+  add_rsc:
+    status: not_packaged
+    blocker: "no server full launcher/data adapter/evaluation export and no unique faithful protocol"
+    baseline_path: baseline/add_rsc
+    baseline_tree_sha256: "<DETERMINISTIC_TREE_HASH>"
+    paper_contract_path: codex/2026-07-21/paper_contracts/add_rsc.json
+    paper_contract_sha256: "<SHA256>"
+    environment:
+      name: acoustic-addrsc
+      path: baseline/add_rsc/environment.yml
+      sha256: "<SHA256>"
+    upstream_source:
+      repo_url: https://github.com/deegy666/ADD-RSC
+      commit_sha: e2b0f8213cb7ca451ef28757cb1329e17469fe72
+      license: "none_found"
+    checkpoint:
+      required: true
+      provenance_class: "unresolved"
+      source_url_or_storage_ref: null
+      filename: "<FILENAME_OR_NULL>"
+      size_bytes: null
+      sha256: null
+      canonical_state_dict_sha256: null
+      identity_claim: "unresolved"
+    rebuild:
+      command: null
+      receipt_path: "<RUN_ROOT>/receipts/rebuild.json"
+    launch:
+      smoke_command: null
+      profile_100_command: null
+      full_command: null
+      evaluation_export_command: null
+      expected_result_root: "result/add_rsc_<YYYYMMDD_HHMMSS>/"
+    protocol:
+      name: no_unique_faithful_protocol
+      seed: 1
+      test_selection: "held-out partition each epoch; best Score"
+      claim_boundary: "paper-declared reconstruction and author-repo default must remain separate; neither is official faithful"
+    resume:
+      supported: false
+      integration_test_passed: false
+      command: null
+    paper_target:
+      ast_sp: 85.13
+      ast_se: 45.94
+      ast_score: 65.53
+      score_sd: null
+    acceptance_checks:
+      gpu_smoke_finite: true
+      profile_steps: 100
+      expected_test_cycle_ids: "<DEPENDS_ON_APPROVED_PROTOCOL>"
+      expected_confusion_total: "<DEPENDS_ON_APPROVED_PROTOCOL>"
+      unique_cycle_ids_required: true
+      metric_recompute_tolerance: 1.0e-10
+      internal_alignment_rule: absolute_score_gap_lte_3
+
+approval:
+  local_baseline_thread_gate_report: "<PATH>"
+  management_reviewed: false
+  management_reviewer: "<NAME_OR_ROLE>"
+  approved_at_utc: null
+  server_execution_authorized: false

@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "status": "verified_before_release_commit",
+  "assembled_at_utc": "2026-07-22T01:43:32Z",
+  "release_branch": "codex/l40-training-release",
+  "release_parent": "b9180791c83e2633b6c4ea9d0cac5a0455ed553e",
+  "candidate_source_head": "6400127d65287dd0bd7150042892769e48881976",
+  "candidate_manifest": {
+    "path": "codex/2026-07-21/official_reproduction_release_1_candidate_sha256_2026-07-21.txt",
+    "sha256": "99d90d09abd65a134bb11f7262dbbc2254ac4fc44da3068abddd5ce75be79d1a",
+    "verified_files": 32
+  },
+  "management_additions": {
+    "canonical_gitignore": ".gitignore",
+    "dataset_download_entry": "dataset/script/phase1_dataset_workflow.py",
+    "dataset_download_entry_sha256": "f43d62872e2a4fa21c1c8befec1cf92b97327471999a6212df64b5c8b2113f9d",
+    "server_files": [
+      "server/server_training_deployment_runbook_zh.md",
+      "server/server_training_release_manifest.template.yaml",
+      "server/server_training_run_receipt.schema.json",
+      "server/server_training_vscode_codex_instructions_en.md"
+    ]
+  },
+  "output_contract": {
+    "canonical_root": "result/",
+    "legacy_root_absent": true,
+    "canonical_root_gitignored": true,
+    "legacy_root_gitignored_for_regression_prevention": true
+  },
+  "management_bootstrap_verification": {
+    "dataset_policy": "existing dataset/raw/icbhi_2017 mounted read-only for management verification",
+    "recordings": 920,
+    "cycles": 6898,
+    "unique_cycle_ids": 6898,
+    "author_train_cycles": 4142,
+    "author_test_cycles": 2756,
+    "patch_mix_cl": {
+      "source_commit": "836b09fea1b70eb29fe0b25afa481286b56f5104",
+      "checkpoint_sha256": "dfc313e5082dc37ece8bd3bd6e7ea8bfee6598179a14eedd15c1727ad0af788f",
+      "bootstrap_status": "verified"
+    },
+    "pafa": {
+      "source_commit": "e49e294d0db0d6af10ac46290512b9c85d3f71e1",
+      "checkpoint_sha256": "d43cbfad4d7b56381c061d7a24774f908d4d94c72961f6eb1d9090ff18cd8d34",
+      "checkpoint_boundary": "public compatibility mirror; Microsoft byte identity unverified",
+      "bootstrap_status": "verified"
+    }
+  },
+  "static_verification": {
+    "candidate_sha_manifest": "passed",
+    "python_compile": "passed",
+    "entrypoint_help": "passed",
+    "bash_syntax": "passed",
+    "json_parse": "passed",
+    "yaml_parse": "passed",
+    "notebook_cleanliness": "passed",
+    "workstation_absolute_runtime_paths": 0,
+    "generated_bytecode_files": 0
+  },
+  "cuda_full_run_executed": false,
+  "deployment_boundary": "Server must fetch and detach the pushed release commit SHA communicated by project management; never deploy from a working tree."
+}

@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "verification_kind": "candidate-clean-checkout reconstruction before management snapshot",
+  "candidate_base_head": "6400127d65287dd0bd7150042892769e48881976",
+  "candidate_checkout": "/private/tmp/acoustic-release1-candidate.j25dPZ",
+  "dataset_mount": {
+    "checkout_path": "dataset/raw/icbhi_2017",
+    "policy": "read-only test mount of the existing raw package; no result or results artifact mounted"
+  },
+  "canonical_output_contract": "result/<method>_YYYYMMDD_HHMMSS only",
+  "legacy_results_absent": true,
+  "patch_mix_cl": {
+    "result_root": "result/patch_mix_cl_20260721_194715",
+    "checkpoint_source_kind": "public_url_download",
+    "checkpoint_sha256": "dfc313e5082dc37ece8bd3bd6e7ea8bfee6598179a14eedd15c1727ad0af788f",
+    "source_commit": "836b09fea1b70eb29fe0b25afa481286b56f5104",
+    "compatibility_diff_sha256": "e7e72af43fbcacaac628afa18854a2cc054d4cfe16685409eb0db594a73ee9f3",
+    "resume_state_unit_check": true,
+    "bootstrap_verified": true,
+    "cycles": 6898,
+    "author_train_test_cycles": [4142, 2756],
+    "smoke_cycles": 8,
+    "loss_finite": true,
+    "gradients_finite": true,
+    "prediction_wiring_rows": 8,
+    "prediction_wiring_confusion_total": 8
+  },
+  "pafa": {
+    "result_root": "result/pafa_20260721_195158",
+    "checkpoint_source_kind": "public_url_download",
+    "checkpoint_sha256": "d43cbfad4d7b56381c061d7a24774f908d4d94c72961f6eb1d9090ff18cd8d34",
+    "checkpoint_boundary": "public compatibility mirror; Microsoft byte identity unverified",
+    "source_commit": "e49e294d0db0d6af10ac46290512b9c85d3f71e1",
+    "compatibility_diff_sha256": "4d2cb4305cfb391dab4e7e001088160a012dab26fc0bb3892b5ed031fdd9c843",
+    "resume_state_unit_check": true,
+    "bootstrap_verified": true,
+    "cycles": 6898,
+    "author_train_test_cycles": [4142, 2756],
+    "smoke_cycles": 8,
+    "patient_id_rule_verified": true,
+    "loss_finite": true,
+    "gradients_finite": true,
+    "prediction_wiring_rows": 8,
+    "prediction_wiring_confusion_total": 8
+  },
+  "full_cuda_run_executed": false,
+  "full_export_cycle_join_unit_check": {
+    "passed": true,
+    "rows": 2756,
+    "unique_cycle_ids": 2756,
+    "stable_key_alias_covered": true
+  },
+  "full_cuda_boundary": "server command package only; current Mac has no CUDA and no long CPU run was started",
+  "snapshot_boundary": "safe to snapshot only after the listed tracked files receive a commit SHA; server must detach that commit"
+}

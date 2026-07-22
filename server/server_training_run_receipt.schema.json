@@ -1,0 +1,366 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/acoustic/server_training_run_receipt.schema.json",
+  "title": "Acoustic server training run receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "release",
+    "git",
+    "host",
+    "environment",
+    "dataset",
+    "checkpoint",
+    "execution",
+    "stages",
+    "resume",
+    "paper_comparison",
+    "claim_boundary",
+    "artifacts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["release_id", "commit_sha", "manifest_path", "manifest_sha256"],
+      "properties": {
+        "release_id": {"type": "string", "minLength": 1},
+        "release_branch": {"type": ["string", "null"]},
+        "commit_sha": {"$ref": "#/$defs/gitSha"},
+        "manifest_path": {"type": "string", "minLength": 1},
+        "manifest_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "git": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["remote_url", "observed_head", "status_porcelain", "detached", "checked_at_utc"],
+      "properties": {
+        "remote_url": {"type": "string", "minLength": 1},
+        "observed_head": {"$ref": "#/$defs/gitSha"},
+        "status_porcelain": {"type": "string", "maxLength": 0},
+        "detached": {"const": true},
+        "checked_at_utc": {"$ref": "#/$defs/dateTime"}
+      }
+    },
+    "host": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hostname", "os", "timezone", "gpu", "driver_version"],
+      "properties": {
+        "hostname": {"type": "string", "minLength": 1},
+        "os": {"type": "string", "minLength": 1},
+        "timezone": {"type": "string", "minLength": 1},
+        "driver_version": {"type": "string", "minLength": 1},
+        "system_cuda_version": {"type": ["string", "null"]},
+        "gpu": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["index", "uuid", "name", "memory_total_bytes"],
+          "properties": {
+            "index": {"type": "integer", "minimum": 0},
+            "uuid": {"type": "string", "minLength": 1},
+            "name": {"type": "string", "pattern": "L40"},
+            "memory_total_bytes": {"type": "integer", "minimum": 1}
+          }
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "spec_path",
+        "spec_sha256",
+        "python_version",
+        "torch_version",
+        "torch_cuda_version",
+        "cuda_available",
+        "gpu_kernel_passed",
+        "conda_explicit_path",
+        "pip_freeze_path"
+      ],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "spec_path": {"type": "string", "minLength": 1},
+        "spec_sha256": {"$ref": "#/$defs/sha256"},
+        "python_version": {"type": "string", "minLength": 1},
+        "torch_version": {"type": "string", "minLength": 1},
+        "torch_cuda_version": {"type": "string", "minLength": 1},
+        "cuda_available": {"const": true},
+        "gpu_kernel_passed": {"const": true},
+        "conda_explicit_path": {"type": "string", "minLength": 1},
+        "pip_freeze_path": {"type": "string", "minLength": 1},
+        "pip_check_passed": {"type": "boolean"}
+      }
+    },
+    "dataset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dataset_id",
+        "script_path",
+        "script_sha256",
+        "inventory_path",
+        "inventory_sha256",
+        "cycle_manifest_path",
+        "cycle_manifest_sha256",
+        "artifact_hashes_match",
+        "unique_cycle_ids",
+        "recordings"
+      ],
+      "properties": {
+        "dataset_id": {"const": "icbhi_2017"},
+        "script_path": {"type": "string", "minLength": 1},
+        "script_sha256": {"$ref": "#/$defs/sha256"},
+        "inventory_path": {"type": "string", "minLength": 1},
+        "inventory_sha256": {"$ref": "#/$defs/sha256"},
+        "cycle_manifest_path": {"type": "string", "minLength": 1},
+        "cycle_manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "artifact_hashes_match": {"const": true},
+        "unique_cycle_ids": {"const": 6898},
+        "recordings": {"const": 920},
+        "official_train_cycles": {"const": 4142},
+        "official_test_cycles": {"const": 2756},
+        "split_alias_receipt_path": {"type": "string", "minLength": 1}
+      }
+    },
+    "checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "provenance_class", "identity_claim"],
+      "properties": {
+        "required": {"type": "boolean"},
+        "path": {"type": ["string", "null"]},
+        "size_bytes": {"type": ["integer", "null"], "minimum": 1},
+        "sha256": {
+          "oneOf": [
+            {"$ref": "#/$defs/sha256"},
+            {"type": "null"}
+          ]
+        },
+        "canonical_state_dict_sha256": {
+          "oneOf": [
+            {"$ref": "#/$defs/sha256"},
+            {"type": "null"}
+          ]
+        },
+        "provenance_class": {
+          "enum": ["official_publisher", "current_author_hosted", "compatibility_mirror", "not_required", "unresolved"]
+        },
+        "source_reference": {"type": ["string", "null"]},
+        "identity_claim": {"type": "string", "minLength": 1},
+        "receipt_path": {"type": ["string", "null"]}
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "protocol",
+        "seed",
+        "test_selection",
+        "scheduler",
+        "started_at_utc",
+        "status",
+        "exact_commands"
+      ],
+      "properties": {
+        "method": {
+          "enum": ["patch_mix_cl", "pafa", "sg_scl", "mvst", "add_rsc"]
+        },
+        "protocol": {"type": "string", "minLength": 1},
+        "seed": {"type": "integer", "minimum": 0},
+        "test_selection": {"type": "string", "minLength": 1},
+        "scheduler": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "job_id"],
+          "properties": {
+            "kind": {"enum": ["tmux", "slurm"]},
+            "job_id": {"type": "string", "minLength": 1}
+          }
+        },
+        "started_at_utc": {"$ref": "#/$defs/dateTime"},
+        "ended_at_utc": {
+          "oneOf": [
+            {"$ref": "#/$defs/dateTime"},
+            {"type": "null"}
+          ]
+        },
+        "status": {"$ref": "#/$defs/runStatus"},
+        "exact_commands": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["stage", "command", "secrets_redacted"],
+            "properties": {
+              "stage": {"$ref": "#/$defs/stageName"},
+              "command": {"type": "string", "minLength": 1},
+              "secrets_redacted": {"const": true}
+            }
+          }
+        }
+      }
+    },
+    "stages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "status", "started_at_utc", "exit_code", "receipt_path", "log_path"],
+        "properties": {
+          "name": {"$ref": "#/$defs/stageName"},
+          "status": {"$ref": "#/$defs/runStatus"},
+          "started_at_utc": {"$ref": "#/$defs/dateTime"},
+          "ended_at_utc": {
+            "oneOf": [
+              {"$ref": "#/$defs/dateTime"},
+              {"type": "null"}
+            ]
+          },
+          "exit_code": {"type": ["integer", "null"]},
+          "receipt_path": {"type": "string", "minLength": 1},
+          "log_path": {"type": "string", "minLength": 1},
+          "peak_gpu_memory_bytes": {"type": ["integer", "null"], "minimum": 0},
+          "summary": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "resume": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["used", "supported_by_manifest", "integration_test_passed"],
+      "properties": {
+        "used": {"type": "boolean"},
+        "supported_by_manifest": {"type": "boolean"},
+        "integration_test_passed": {"type": "boolean"},
+        "parent_run_id": {"type": ["string", "null"]},
+        "checkpoint_path": {"type": ["string", "null"]},
+        "checkpoint_sha256": {
+          "oneOf": [
+            {"$ref": "#/$defs/sha256"},
+            {"type": "null"}
+          ]
+        },
+        "resumed_epoch_or_step": {"type": ["string", "null"]}
+      }
+    },
+    "paper_comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["paper_target", "observed", "gap", "alignment_rule", "alignment_status"],
+      "properties": {
+        "paper_target": {"type": ["object", "null"]},
+        "observed": {"type": ["object", "null"]},
+        "gap": {"type": ["object", "null"]},
+        "alignment_rule": {
+          "enum": ["mean_plus_or_minus_2sd", "absolute_score_gap_lte_3", "not_applicable"]
+        },
+        "alignment_status": {
+          "enum": ["pass", "fail", "pending", "not_applicable"]
+        },
+        "repo_vs_prediction_metric_max_abs_diff": {"type": ["number", "null"], "minimum": 0},
+        "expected_test_cycle_ids": {"type": ["integer", "null"], "minimum": 1},
+        "observed_unique_test_cycle_ids": {"type": ["integer", "null"], "minimum": 0},
+        "confusion_total": {"type": ["integer", "null"], "minimum": 0}
+      }
+    },
+    "claim_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["result_classification", "aggregate_mean_reproduced", "limitations"],
+      "properties": {
+        "result_classification": {"type": "string", "minLength": 1},
+        "aggregate_mean_reproduced": {"const": false},
+        "test_selected": {"type": "boolean"},
+        "metadata_aware": {"type": "boolean"},
+        "official_split": {"type": "boolean"},
+        "compatibility_checkpoint": {"type": "boolean"},
+        "limitations": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["result_root", "inventory_path", "inventory_sha256", "result_in_git"],
+      "properties": {
+        "result_root": {
+          "type": "string",
+          "pattern": "^result/(patch_mix_cl|pafa|sg_scl|mvst|add_rsc)_[0-9]{8}_[0-9]{6}/?$"
+        },
+        "inventory_path": {"type": "string", "minLength": 1},
+        "inventory_sha256": {"$ref": "#/$defs/sha256"},
+        "result_in_git": {"const": false},
+        "result_back": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["method", "destination", "verified"],
+          "properties": {
+            "method": {"enum": ["rsync", "scp", "user_approved_storage"]},
+            "destination": {"type": "string", "minLength": 1},
+            "verified": {"type": "boolean"},
+            "completed_at_utc": {
+              "oneOf": [
+                {"$ref": "#/$defs/dateTime"},
+                {"type": "null"}
+              ]
+            }
+          }
+        }
+      }
+    },
+    "failure": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["category", "message", "safe_to_resume", "local_team_question"],
+      "properties": {
+        "category": {
+          "enum": ["infrastructure", "environment", "data_checksum", "checkpoint_identity", "oom", "numerical", "upstream_code", "adapter_export", "scheduler_preemption"]
+        },
+        "message": {"type": "string", "minLength": 1},
+        "traceback_path": {"type": ["string", "null"]},
+        "last_log_lines_path": {"type": ["string", "null"]},
+        "safe_to_resume": {"type": "boolean"},
+        "local_team_question": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "gitSha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "dateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "runStatus": {
+      "enum": ["pending", "running", "pass", "blocked", "failed", "aborted"]
+    },
+    "stageName": {
+      "enum": ["checkout", "preflight", "data", "environment", "rebuild", "smoke", "profile_100", "full", "evaluation_export", "result_back"]
+    }
+  }
+}
