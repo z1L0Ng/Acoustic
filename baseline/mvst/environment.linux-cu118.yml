@@ -25,6 +25,7 @@ dependencies:
       - opencv-python==4.11.0.86
       - cmapy==0.6.6
       - tqdm
+      - wget==3.2
       - matplotlib
       - cmake==3.26.4
       - lit==16.0.6

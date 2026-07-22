@@ -82,10 +82,10 @@ METHODS = {
             "pip": PIP_VERSION, "setuptools": SETUPTOOLS_VERSION,
             "librosa": "0.9.2",
             "opencv-python-headless": "4.11.0.86",
-            "opencv-python": "4.11.0.86", "cmapy": "0.6.6",
+            "opencv-python": "4.11.0.86", "cmapy": "0.6.6", "wget": "3.2",
             **RUNTIME_HOTFIX_VERSIONS,
         },
-        "imports": ["cv2", "cmapy", "cmake", "lit"],
+        "imports": ["cv2", "cmapy", "wget", "cmake", "lit"],
     },
     "add_rsc": {
         "environment": "acoustic-addrsc-r4",
@@ -137,7 +137,9 @@ def verify(method: str, project_root: Path, output: Path, cuda_mode: str) -> dic
         "- soupsieve==2.9.1",
     ]
     if method != "add_rsc":
-        required_yaml_tokens.extend(["- cmake==3.26.4", "- lit==16.0.6"])
+        required_yaml_tokens.extend([
+            "- cmake==3.26.4", "- lit==16.0.6", "- wget==3.2",
+        ])
     if method == "pafa":
         required_yaml_tokens.append("- transformers==4.38.2")
     if method in {"patch_mix_cl", "mvst", "add_rsc"}:

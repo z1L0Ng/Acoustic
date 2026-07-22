@@ -18,6 +18,12 @@ which directly imports both `cv2` and `cmapy`. Patch-Mix therefore receives the
 same already validated exact OpenCV/cmapy set. PAFA and SG-SCL do not import
 these modules and remain unchanged.
 
+The first post-hotfix MVST smoke then reached `models/ast.py`, which directly
+imports the author-declared `wget` package. MVST therefore receives the same
+`wget==3.2` exact pin already present in the other CUDA 11.8 AST environments;
+the source distribution SHA256 is
+`35e630eca2aa50ce998b9b1a127bb26b30dfee573702782aa982f875e3f16061`.
+
 Primary candidate artifact hashes:
 
 - `nlpaug-1.1.11-py3-none-any.whl`: `01d3befce09e46cb7d990839e0b7dd80ba3e991485f772e678d329ffeb97fd80`
@@ -46,3 +52,6 @@ Verified incremental-repair receipt hashes:
 
 Secondary Patch-Mix OpenCV/cmapy repair receipt:
 `47f1d2b14335ee33e23eb95625e9adfc907b986e44b9b837180be82fe28f9999`.
+
+Secondary MVST wget repair receipt:
+`8f68291047c3ea346d1ee35760ce50bd490d9285beb4050542f155d51c7b8d91`.

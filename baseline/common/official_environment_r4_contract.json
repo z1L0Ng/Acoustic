@@ -85,6 +85,11 @@
       "applies_to": ["patch_mix_cl", "pafa", "sg_scl", "mvst", "add_rsc"],
       "wheel_sha256": "4f4477399246b7a0c720a88ca2454b11cd6bb9ae4c9d170140786e916776c14c"
     },
+    "wget": {
+      "version": "3.2",
+      "applies_to": ["patch_mix_cl", "pafa", "sg_scl", "mvst"],
+      "sdist_sha256": "35e630eca2aa50ce998b9b1a127bb26b30dfee573702782aa982f875e3f16061"
+    },
     "opencv-python-headless": {
       "version": "4.11.0.86",
       "applies_to": ["patch_mix_cl", "mvst", "add_rsc"],
