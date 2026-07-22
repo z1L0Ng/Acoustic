@@ -1,0 +1,54 @@
+{
+  "base_release": {
+    "branch": "codex/l40-training-release",
+    "commit": "51626840f6ec325086f68bd88446ff956f7e0357"
+  },
+  "candidate": "official_reproduction_release_2",
+  "canonical_generated_root": "result/",
+  "created_at": "2026-07-21T22:03:43-05:00",
+  "fresh_checkout_tests": {
+    "add_rsc": {
+      "bootstrap_verification": "verified",
+      "checkpoint_source_kind": "public_url_download",
+      "checkpoint_sha256": "dfc313e5082dc37ece8bd3bd6e7ea8bfee6598179a14eedd15c1727ad0af788f",
+      "clean_root": "/private/tmp/acoustic-release2-addrsc.ye5MNF",
+      "prediction_wiring": "passed for both tracks",
+      "smokes": {
+        "author_repo_default_official_like": "passed finite loss and gradient",
+        "paper_declared_reconstruction": "passed finite loss and gradient"
+      },
+      "source_commit": "e2b0f8213cb7ca451ef28757cb1329e17469fe72"
+    },
+    "mvst": {
+      "bootstrap_verification": "verified",
+      "checkpoint_source_kind": "public_url_download",
+      "checkpoint_sha256": "dc71a6d4d07aeb7e746547f72a141f404e4c167d660bf003179f3865e06a970c",
+      "clean_root": "/private/tmp/acoustic-release2-mvst.9VEwx7",
+      "five_view_order_identity": "passed",
+      "fusion_prediction_wiring": "passed",
+      "smokes": "five encoder views and gated fusion passed finite loss and gradient",
+      "source_commit": "51f93fa6ffa580d0819ccb59f861582927937264"
+    },
+    "sg_scl": {
+      "bootstrap_verification": "verified",
+      "checkpoint_source_kind": "public_url_download",
+      "checkpoint_sha256": "dfc313e5082dc37ece8bd3bd6e7ea8bfee6598179a14eedd15c1727ad0af788f",
+      "clean_root": "/private/tmp/acoustic-release2-sg.Z7G8kD",
+      "device_label_audit": "6898 mapped and 0 unknown",
+      "prediction_wiring": "passed",
+      "smoke": "passed finite CE MetaCL total loss and gradient",
+      "source_commit": "66564609595090b61540595d3d27764c00553086"
+    }
+  },
+  "fresh_checkout_rebuildability": {
+    "checkpoint": "public URL download or explicit path with pinned SHA verification",
+    "data": "tracked bootstrap rebuilds manifest and read-only adapters from dataset/raw/icbhi_2017",
+    "paths": "dataset root result root cache and checkpoint are parameterized",
+    "source": "tracked bootstrap clones and checks out pinned author commit"
+  },
+  "legacy_results_root_created": false,
+  "local_full_training_started": false,
+  "result_artifacts_in_candidate": false,
+  "status": "SAFE_TO_SNAPSHOT",
+  "timezone": "America/Chicago"
+}

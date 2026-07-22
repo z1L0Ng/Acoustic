@@ -1,0 +1,74 @@
+{
+  "schema_version": "server-training-release-management-receipt-v1",
+  "release_name": "official-reproduction-release-2",
+  "release_base_commit": "51626840f6ec325086f68bd88446ff956f7e0357",
+  "release_commit_policy": "Use the immutable commit containing this receipt; management reports that SHA after commit and push.",
+  "remote_branch": "codex/l40-training-release",
+  "status": "safe_to_snapshot",
+  "methods": {
+    "sg_scl": {
+      "status": "server_runnable_full_deferred_to_l40",
+      "source_commit": "66564609595090b61540595d3d27764c00553086",
+      "checkpoint_sha256": "dfc313e5082dc37ece8bd3bd6e7ea8bfee6598179a14eedd15c1727ad0af788f",
+      "classification": "metadata_aware_official_like_test_selected_not_audio_only",
+      "expected_test_rows": 2756
+    },
+    "mvst": {
+      "status": "server_runnable_full_deferred_to_l40",
+      "source_commit": "51f93fa6ffa580d0819ccb59f861582927937264",
+      "checkpoint_sha256": "dc71a6d4d07aeb7e746547f72a141f404e4c167d660bf003179f3865e06a970c",
+      "classification": "author_code_fixed_random_file_split_test_selected_not_official_split",
+      "expected_test_rows": 2685
+    },
+    "add_rsc": {
+      "status": "server_runnable_full_deferred_to_l40",
+      "source_commit": "e2b0f8213cb7ca451ef28757cb1329e17469fe72",
+      "checkpoint_sha256": "dfc313e5082dc37ece8bd3bd6e7ea8bfee6598179a14eedd15c1727ad0af788f",
+      "classification": "dual_explicit_tracks_no_unique_official_faithful_claim",
+      "tracks": {
+        "paper_declared_reconstruction": {
+          "split": "official",
+          "train_rows": 4142,
+          "test_rows": 2756,
+          "n_mels": 64,
+          "weight_decay": 0.1
+        },
+        "author_repo_default_official_like": {
+          "split": "author_random_1",
+          "train_rows": 4213,
+          "test_rows": 2685,
+          "n_mels": 128,
+          "weight_decay": 0.000001
+        }
+      }
+    }
+  },
+  "candidate_manifest": {
+    "path": "codex/2026-07-21/official_reproduction_release_2_candidate_sha256_2026-07-21.txt",
+    "sha256": "4417924299301287485bd5015d468d91a3e2e121450cc8c528c08bf76c0afe9d",
+    "listed_file_count": 44
+  },
+  "verification": {
+    "fresh_checkout_bootstrap": "passed_all_three_methods",
+    "public_checkpoint_download_and_sha": "passed_all_three_methods",
+    "eight_cycle_smoke": "passed_all_methods_and_add_rsc_tracks",
+    "finite_loss_and_gradients": true,
+    "prediction_wiring": true,
+    "notebooks_clean": true,
+    "python_compile": true,
+    "shell_syntax": true,
+    "source_fixture_whitespace_encoding_normalized": true,
+    "runtime_compatibility_diff_sha256_unchanged": true,
+    "regression_verifier": "architecture=42 imbalance=36 predictions=78 identity=true combined=6",
+    "full_mac_training_started": false
+  },
+  "server_policy": {
+    "execution_order": ["sg_scl", "mvst", "add_rsc"],
+    "stages": ["bootstrap", "verify-bootstrap", "smoke", "100-step profile", "full", "export and verify"],
+    "code_edits_allowed": false,
+    "pull_during_active_run_allowed": false,
+    "generated_root": "result/",
+    "generated_results_in_git_allowed": false,
+    "failure_action": "Return minimal receipt and log; fix locally and publish a new immutable release commit."
+  }
+}

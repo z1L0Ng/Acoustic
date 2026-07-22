@@ -1,0 +1,17 @@
+name: acoustic-addrsc
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - numpy<2
+      - torch==2.3.1
+      - torchaudio==2.3.1
+      - torchvision==0.18.1
+      - timm==0.4.5
+      - librosa==0.9.2
+      - pandas
+      - scipy
+      - scikit-learn
+      - tqdm

@@ -1,0 +1,16 @@
+{
+  "method_id": "mvst",
+  "title": "Multi-View Spectrogram Transformer for Respiratory Sound Classification",
+  "venue_year": "ICASSP 2024",
+  "doi": "10.1109/ICASSP48485.2024.10445825",
+  "paper_url": "https://doi.org/10.1109/ICASSP48485.2024.10445825",
+  "repo_url": "https://github.com/wentaoheunnc/MVST",
+  "pinned_commit": "51f93fa6ffa580d0819ccb59f861582927937264",
+  "license": "none found",
+  "task_unit": "ICBHI cycle-level 4-class respiratory sound classification",
+  "label_order": ["normal", "crackle", "wheeze", "both"],
+  "split": "repo-generated fixed random file 60/40 split, not official_split.txt",
+  "target_result": {"sp": "81.99", "se": "51.10", "score": "66.55"},
+  "faithful_status": "not official faithful; author-code/random-split only",
+  "blocking_gaps": ["paper/repo split contradiction", "no license file", "no released checkpoints", "feature fusion assumes row-order alignment", "test set used for checkpoint selection"]
+}
