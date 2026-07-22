@@ -1,4 +1,4 @@
-name: acoustic-patchmix-r3
+name: acoustic-patchmix-r4
 channels:
   - conda-forge
 dependencies:

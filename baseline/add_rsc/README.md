@@ -3,12 +3,14 @@
 This directory is the tracked, fresh-checkout execution surface for ADD-RSC.
 Source clones, checkpoints, caches, logs, and predictions are generated under a
 new `result/add_rsc_YYYYMMDD_HHMMSS/` root. The minimum compatible snapshot is
-Release 3 based on `3f757adcc12fcc5b5e2f1058a593345f750de2a5`.
-Release 2 environments are immutable and must not be updated or reused.
+Release 4 based on `4172524a0e5d7b792de248820439f30874e2ae6d`.
+Release 3 environments are immutable and must not be updated or reused.
 The exact dependency rationale and artifact hashes are pinned in
-`baseline/common/official_environment_r3_contract.json`; the runtime verifier
+`baseline/common/official_environment_r4_contract.json`; the runtime verifier
 requires strict `pip check`, imports including `librosa`/`pkg_resources`, exact
 version pins, and an allocated CUDA kernel.
+The Linux declaration intentionally pins `pip=24.1.2`; Release 4 environments
+must not upgrade pip in place.
 
 ADD-RSC does not expose one unambiguous faithful executable protocol. The two
 supported tracks must remain separate:
@@ -28,11 +30,11 @@ Linux/CUDA server:
 
 ```bash
 conda env create -f baseline/add_rsc/environment.linux-cu121.yml
-conda activate acoustic-addrsc-r3
+conda activate acoustic-addrsc-r4
 ```
 
 The local compatibility declaration remains in `environment.yml`; each runtime
-writes the complete installed-package receipt to `environment_r3.json`. Full
+writes the complete installed-package receipt to `environment_r4.json`. Full
 training requires CUDA; the CPU path is only for bootstrap and bounded smoke
 verification.
 
@@ -45,9 +47,9 @@ pinned SHA256, not a verified byte-identical copy of the original 2023 artifact.
 ```bash
 RUN_ROOT="result/add_rsc_$(TZ=America/Chicago date +%Y%m%d_%H%M%S)"
 mkdir -p "$RUN_ROOT/receipts"
-python -m baseline.common.verify_official_environment_r3 \
+python -m baseline.common.verify_official_environment_r4 \
   --method add_rsc --cuda-mode runtime \
-  --output "$RUN_ROOT/receipts/environment_r3.json"
+  --output "$RUN_ROOT/receipts/environment_r4.json"
 python -m baseline.add_rsc.run_reproduction bootstrap \
   --project-root . \
   --dataset-root dataset/raw/icbhi_2017 \

@@ -1,4 +1,4 @@
-"""Strict Release 3 environment gate for the five official reproductions."""
+"""Strict Release 4 environment gate for the five official reproductions."""
 
 from __future__ import annotations
 
@@ -14,7 +14,8 @@ import sys
 import warnings
 
 
-BASE_RELEASE_COMMIT = "3f757adcc12fcc5b5e2f1058a593345f750de2a5"
+BASE_RELEASE_COMMIT = "4172524a0e5d7b792de248820439f30874e2ae6d"
+PIP_VERSION = "24.1.2"
 SETUPTOOLS_VERSION = "80.9.0"
 COMMON_IMPORTS = [
     "numpy", "torch", "torchaudio", "torchvision", "timm", "librosa",
@@ -22,58 +23,63 @@ COMMON_IMPORTS = [
 ]
 METHODS = {
     "patch_mix_cl": {
-        "environment": "acoustic-patchmix-r3",
+        "environment": "acoustic-patchmix-r4",
         "yaml": "baseline/patch_mix_cl/environment.linux-cu118.yml",
         "cuda": "11.8",
         "versions": {
             "torch": "2.0.1", "torchaudio": "2.0.2", "torchvision": "0.15.2",
             "triton": "2.0.0", "cmake": "3.26.4", "lit": "16.0.6",
-            "setuptools": SETUPTOOLS_VERSION, "librosa": "0.9.2",
+            "pip": PIP_VERSION, "setuptools": SETUPTOOLS_VERSION,
+            "librosa": "0.9.2",
         },
         "imports": ["transformers", "safetensors", "cmake", "lit"],
     },
     "pafa": {
-        "environment": "acoustic-pafa-r3",
+        "environment": "acoustic-pafa-r4",
         "yaml": "baseline/pafa/environment.linux-cu118.yml",
         "cuda": "11.8",
         "versions": {
             "torch": "2.0.1", "torchaudio": "2.0.2", "torchvision": "0.15.2",
             "triton": "2.0.0", "cmake": "3.26.4", "lit": "16.0.6",
-            "setuptools": SETUPTOOLS_VERSION, "librosa": "0.9.2",
+            "pip": PIP_VERSION, "setuptools": SETUPTOOLS_VERSION,
+            "librosa": "0.9.2", "transformers": "4.38.2",
         },
         "imports": ["transformers", "einops", "cmake", "lit"],
     },
     "sg_scl": {
-        "environment": "acoustic-sgscl-r3",
+        "environment": "acoustic-sgscl-r4",
         "yaml": "baseline/sg_scl/environment.linux-cu118.yml",
         "cuda": "11.8",
         "versions": {
             "torch": "2.0.1", "torchaudio": "2.0.2", "torchvision": "0.15.2",
             "triton": "2.0.0", "cmake": "3.26.4", "lit": "16.0.6",
-            "setuptools": SETUPTOOLS_VERSION, "librosa": "0.9.2",
+            "pip": PIP_VERSION, "setuptools": SETUPTOOLS_VERSION,
+            "librosa": "0.9.2",
         },
         "imports": ["cmake", "lit"],
     },
     "mvst": {
-        "environment": "acoustic-mvst-r3",
+        "environment": "acoustic-mvst-r4",
         "yaml": "baseline/mvst/environment.linux-cu118.yml",
         "cuda": "11.8",
         "versions": {
             "torch": "2.0.1", "torchaudio": "2.0.2", "torchvision": "0.15.2",
             "triton": "2.0.0", "cmake": "3.26.4", "lit": "16.0.6",
-            "setuptools": SETUPTOOLS_VERSION, "librosa": "0.9.2",
+            "pip": PIP_VERSION, "setuptools": SETUPTOOLS_VERSION,
+            "librosa": "0.9.2",
             "opencv-python-headless": "4.11.0.86",
             "opencv-python": "4.11.0.86", "cmapy": "0.6.6",
         },
         "imports": ["cv2", "cmapy", "cmake", "lit"],
     },
     "add_rsc": {
-        "environment": "acoustic-addrsc-r3",
+        "environment": "acoustic-addrsc-r4",
         "yaml": "baseline/add_rsc/environment.linux-cu121.yml",
         "cuda": "12.1",
         "versions": {
             "torch": "2.3.1", "torchaudio": "2.3.1", "torchvision": "0.18.1",
-            "triton": "2.3.1", "setuptools": SETUPTOOLS_VERSION,
+            "triton": "2.3.1", "pip": PIP_VERSION,
+            "setuptools": SETUPTOOLS_VERSION,
             "librosa": "0.9.2",
         },
         "imports": [],
@@ -105,10 +111,13 @@ def verify(method: str, project_root: Path, output: Path, cuda_mode: str) -> dic
     yaml_text = environment_path.read_text()
     required_yaml_tokens = [
         f"name: {spec['environment']}",
+        "- pip=24.1.2",
         "- setuptools==80.9.0",
     ]
     if method != "add_rsc":
         required_yaml_tokens.extend(["- cmake==3.26.4", "- lit==16.0.6"])
+    if method == "pafa":
+        required_yaml_tokens.append("- transformers==4.38.2")
     missing_tokens = [token for token in required_yaml_tokens if token not in yaml_text]
     if missing_tokens:
         errors.append(f"environment declaration missing: {missing_tokens}")
@@ -185,7 +194,7 @@ def verify(method: str, project_root: Path, output: Path, cuda_mode: str) -> dic
     }
     receipt = {
         "status": "verified" if not errors else "failed",
-        "release": "official-reproduction-release-3",
+        "release": "official-reproduction-release-4",
         "base_release_commit": BASE_RELEASE_COMMIT,
         "method": method,
         "environment": spec["environment"],
@@ -212,7 +221,7 @@ def verify(method: str, project_root: Path, output: Path, cuda_mode: str) -> dic
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
     if errors:
-        raise ValueError(f"Release 3 environment verification failed: {errors}")
+        raise ValueError(f"Release 4 environment verification failed: {errors}")
     return receipt
 
 

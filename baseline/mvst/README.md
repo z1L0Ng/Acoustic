@@ -11,24 +11,26 @@ as train. That gives 552/368 recordings and 4,213/2,685 cycles. The paper's
 66.55 target is only compared against this author-code split and its
 test-selected fusion result.
 
-Minimum compatible snapshot: Release 3 based on
-`3f757adcc12fcc5b5e2f1058a593345f750de2a5`. Release 2 environments are
+Minimum compatible snapshot: Release 4 based on
+`4172524a0e5d7b792de248820439f30874e2ae6d`. Release 3 environments are
 immutable and must not be updated or reused.
 The exact dependency rationale and artifact hashes are pinned in
-`baseline/common/official_environment_r3_contract.json`; the runtime verifier
+`baseline/common/official_environment_r4_contract.json`; the runtime verifier
 requires strict `pip check`, imports, version pins, and an allocated CUDA kernel.
+The Linux declaration intentionally pins `pip=24.1.2`; do not upgrade pip in
+place because later pip releases reject the retained CMake 3.26.4 wheel metadata.
 
 ## Environment and bootstrap
 
 ```bash
 conda env create -f baseline/mvst/environment.linux-cu118.yml
-conda activate acoustic-mvst-r3
+conda activate acoustic-mvst-r4
 
 RUN_ROOT="result/mvst_$(TZ=America/Chicago date +%Y%m%d_%H%M%S)"
 mkdir -p "$RUN_ROOT/receipts"
-python -m baseline.common.verify_official_environment_r3 \
+python -m baseline.common.verify_official_environment_r4 \
   --method mvst --cuda-mode runtime \
-  --output "$RUN_ROOT/receipts/environment_r3.json"
+  --output "$RUN_ROOT/receipts/environment_r4.json"
 python -m baseline.mvst.run_reproduction bootstrap \
   --project-root . \
   --dataset-root dataset/raw/icbhi_2017 \

@@ -1,0 +1,100 @@
+{
+  "status": "SAFE_TO_SNAPSHOT",
+  "created_at": "2026-07-22T13:40:55-05:00",
+  "timezone": "America/Chicago",
+  "release": "official-reproduction-release-4",
+  "base_release_commit": "4172524a0e5d7b792de248820439f30874e2ae6d",
+  "scope": "environment and command metadata only",
+  "authoritative_server_inputs": {
+    "patch": {
+      "path": "/files1/Zilong/Acoustic-4172524a0e5d/result/environment_resolution_20260722_130115/release4_environment_yamls.patch",
+      "expected_sha256": "d2f2077f3d65ca5104e8e2a6d8a202c2bc35c3db31370c76e84d2a45ea3845a5",
+      "retrieved_sha256": "d2f2077f3d65ca5104e8e2a6d8a202c2bc35c3db31370c76e84d2a45ea3845a5",
+      "retrieval": "read-only SSH",
+      "verified": true
+    },
+    "final_receipt": {
+      "path": "result/environment_resolution_20260722_130115/receipts/environment_resolution_final.json",
+      "expected_sha256": "9cfd849dd52868da444674aabd3f9b29205884fed1e01ae9c18dfc40e0a32be5",
+      "retrieved_sha256": "9cfd849dd52868da444674aabd3f9b29205884fed1e01ae9c18dfc40e0a32be5",
+      "retrieval": "read-only SSH",
+      "server_status": "SAFE_FOR_LOCAL_RELEASE_4",
+      "verified": true
+    }
+  },
+  "root_cause": {
+    "cmake_wheel": "CMake 3.26.4 WHEEL metadata contains a blank line before Tag headers",
+    "pip_behavior": "pip 24.2 and later parse an empty tag set and report cmake unsupported; pip 25.3 fails identically",
+    "verified_resolution": "pip 24.1.2 passes strict pip check while preserving CMake 3.26.4"
+  },
+  "recipe": {
+    "environment_suffix": "-r4",
+    "linux_pip": "24.1.2",
+    "pafa_transformers": "4.38.2",
+    "preserved_pins": {
+      "cmake": "3.26.4",
+      "lit": "16.0.6",
+      "setuptools": "80.9.0",
+      "numpy": "1.26.4",
+      "opencv-python": "4.11.0.86",
+      "opencv-python-headless": "4.11.0.86",
+      "cmapy": "0.6.6"
+    }
+  },
+  "server_scratch_validation": {
+    "methods": 5,
+    "pip_check_passed": 5,
+    "required_imports_passed": 5,
+    "cuda_metadata_passed": 5,
+    "finite_cuda_kernel_passed": 5,
+    "device": "NVIDIA L40",
+    "device_capability": [8, 9],
+    "training_started": false
+  },
+  "linux_yaml_identity": {
+    "patch_mix_cl": "489b4ace63b547a63c2dffc9f0a7c8d074f35acd1982964a429de3e85c4f83e2",
+    "pafa": "986d5ebf92d315858c7c561a7639a214c53f02608226eb5e9a323c3b8dd027b1",
+    "sg_scl": "a8dea5e0b069cbd2369b532b5fd9cecee08188d565b48af3a735096f652a27f5",
+    "mvst": "6ce315048b78fba12c8442a777645162e11868cdd7c849d9ea3286d40f6bdee6",
+    "add_rsc": "200ab7245b81df321ed243df1a3377cf0bef3cd0d920032e102972e2391238ae",
+    "all_match_server_candidate": true
+  },
+  "local_clean_checkout_verification": {
+    "construction": "git archive of base_release_commit plus Release 4 candidate overlay",
+    "candidate_executable_file_count": 30,
+    "linux_64_solver_dry_runs": 5,
+    "linux_64_solver_failures": 0,
+    "python_compile": "passed",
+    "shell_syntax": "passed",
+    "fresh_checkout_cli_help_entrypoints": "6/6 passed",
+    "notebooks_valid": 5,
+    "notebook_outputs": 0,
+    "notebook_executed_cells": 0,
+    "stale_r3_runtime_files": 0,
+    "stale_r3_active_runtime_references": 0
+  },
+  "compatibility_patch_regression": {
+    "sg_scl_diff_sha256": "db6829b0f66e6ba1d52e5f4c67ad1c4e79cc0972bbad0d7e6216cd616f3d8a2f",
+    "mvst_diff_sha256": "b927df3ec979608dd047d040b3fb81073ceb359bdb131bc7676320db8937dcd9",
+    "add_rsc_diff_sha256": "c7f2495ef1013d1ffcb5d098d9eea7be2727d77b516fef5d45956aafe2474663",
+    "status": "identical to Release 3"
+  },
+  "server_gate": {
+    "command": "bash baseline/common/official_environment_r4_server_gate.sh \"$PWD\"",
+    "rejects_existing_r4_environments": true,
+    "receipt_name": "environment_r4.json",
+    "requires_pip_version": "24.1.2",
+    "requires_pafa_transformers_version": "4.38.2",
+    "bootstrap_or_training_started": false
+  },
+  "immutability": {
+    "release_3_environment_names_reused": false,
+    "model_or_protocol_changed": false,
+    "data_or_checkpoint_changed": false,
+    "bootstrap_started": false,
+    "training_started": false,
+    "migration_started": false,
+    "git_staged_or_committed": false,
+    "notion_edited": false
+  }
+}

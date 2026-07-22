@@ -1,4 +1,4 @@
-name: acoustic-patchmix-r3
+name: acoustic-patchmix-r4
 channels:
   - pytorch
   - nvidia
@@ -9,7 +9,7 @@ dependencies:
   - torchvision=0.15.2
   - torchaudio=2.0.2
   - pytorch-cuda=11.8
-  - pip
+  - pip=24.1.2
   - pip:
       - numpy==1.26.4
       - timm==0.4.5

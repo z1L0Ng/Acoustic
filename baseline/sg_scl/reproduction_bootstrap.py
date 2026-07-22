@@ -22,8 +22,8 @@ from baseline.common.official_reproduction_bootstrap import (
 
 
 METHOD = "sg_scl"
-MINIMUM_COMMIT = "3f757adcc12fcc5b5e2f1058a593345f750de2a5"
-ENVIRONMENT_NAME = "acoustic-sgscl-r3"
+MINIMUM_COMMIT = "4172524a0e5d7b792de248820439f30874e2ae6d"
+ENVIRONMENT_NAME = "acoustic-sgscl-r4"
 SPEC = MethodSpec(
     method=METHOD,
     repo_url="https://github.com/kaen2891/stethoscope-guided_supervised_contrastive_learning.git",

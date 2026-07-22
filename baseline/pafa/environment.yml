@@ -1,4 +1,4 @@
-name: acoustic-pafa-r3
+name: acoustic-pafa-r4
 channels:
   - conda-forge
 dependencies:
@@ -14,7 +14,7 @@ dependencies:
       - pandas
       - scipy
       - scikit-learn
-      - transformers
+      - transformers==4.38.2
       - einops
       - setuptools==80.9.0
       - tqdm

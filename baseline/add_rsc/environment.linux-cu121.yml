@@ -1,4 +1,4 @@
-name: acoustic-addrsc-r3
+name: acoustic-addrsc-r4
 channels:
   - pytorch
   - nvidia
@@ -9,7 +9,7 @@ dependencies:
   - torchvision=0.18.1
   - torchaudio=2.3.1
   - pytorch-cuda=12.1
-  - pip
+  - pip=24.1.2
   - pip:
       - numpy==1.26.4
       - timm==0.4.5

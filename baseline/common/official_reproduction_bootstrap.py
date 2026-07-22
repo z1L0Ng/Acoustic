@@ -19,11 +19,11 @@ from .install_official_compatibility import install_compatibility_patch
 
 
 LABELS = ["normal", "crackle", "wheeze", "both"]
-RELEASE_NAME = "official-reproduction-release-3"
-BASE_RELEASE_COMMIT = "3f757adcc12fcc5b5e2f1058a593345f750de2a5"
+RELEASE_NAME = "official-reproduction-release-4"
+BASE_RELEASE_COMMIT = "4172524a0e5d7b792de248820439f30874e2ae6d"
 ENVIRONMENT_NAMES = {
-    "patch_mix_cl": "acoustic-patchmix-r3",
-    "pafa": "acoustic-pafa-r3",
+    "patch_mix_cl": "acoustic-patchmix-r4",
+    "pafa": "acoustic-pafa-r4",
 }
 
 
@@ -74,8 +74,8 @@ def sha256(path: Path) -> str:
 
 
 def prepare_result_root_for_bootstrap(result_root: Path, method: str) -> Path:
-    """Allow only the strict Release 3 environment receipt before bootstrap."""
-    environment_receipt = result_root / "receipts" / "environment_r3.json"
+    """Allow only the strict Release 4 environment receipt before bootstrap."""
+    environment_receipt = result_root / "receipts" / "environment_r4.json"
     if result_root.exists():
         unexpected = [
             path for path in result_root.rglob("*")
@@ -83,12 +83,12 @@ def prepare_result_root_for_bootstrap(result_root: Path, method: str) -> Path:
         ]
         if unexpected:
             raise FileExistsError(
-                f"result root contains files other than the Release 3 environment receipt: {unexpected}"
+                f"result root contains files other than the Release 4 environment receipt: {unexpected}"
             )
     result_root.mkdir(parents=True, exist_ok=True)
     if not environment_receipt.is_file():
         raise FileNotFoundError(
-            "run baseline.common.verify_official_environment_r3 before bootstrap: "
+            "run baseline.common.verify_official_environment_r4 before bootstrap: "
             f"{environment_receipt}"
         )
     receipt = json.loads(environment_receipt.read_text())
@@ -98,7 +98,7 @@ def prepare_result_root_for_bootstrap(result_root: Path, method: str) -> Path:
         or receipt.get("method") != method
         or receipt.get("base_release_commit") != BASE_RELEASE_COMMIT
     ):
-        raise ValueError(f"invalid Release 3 environment receipt: {environment_receipt}")
+        raise ValueError(f"invalid Release 4 environment receipt: {environment_receipt}")
     return environment_receipt
 
 

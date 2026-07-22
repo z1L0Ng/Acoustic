@@ -25,8 +25,8 @@ from baseline.common.official_reproduction_bootstrap import (
 
 
 METHOD = "mvst"
-MINIMUM_COMMIT = "3f757adcc12fcc5b5e2f1058a593345f750de2a5"
-ENVIRONMENT_NAME = "acoustic-mvst-r3"
+MINIMUM_COMMIT = "4172524a0e5d7b792de248820439f30874e2ae6d"
+ENVIRONMENT_NAME = "acoustic-mvst-r4"
 VIEWS = ["16", "32", "64", "128", "256"]
 SPEC = MethodSpec(
     method=METHOD,

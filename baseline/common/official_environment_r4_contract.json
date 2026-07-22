@@ -1,0 +1,98 @@
+{
+  "release": "official-reproduction-release-4",
+  "base_release_commit": "4172524a0e5d7b792de248820439f30874e2ae6d",
+  "change_scope": "environment and command metadata only",
+  "authoritative_server_receipt": {
+    "path": "result/environment_resolution_20260722_130115/receipts/environment_resolution_final.json",
+    "sha256": "9cfd849dd52868da444674aabd3f9b29205884fed1e01ae9c18dfc40e0a32be5",
+    "status": "SAFE_FOR_LOCAL_RELEASE_4",
+    "location": "server canonical result root; not copied into the release"
+  },
+  "authoritative_server_patch": {
+    "path": "/files1/Zilong/Acoustic-4172524a0e5d/result/environment_resolution_20260722_130115/release4_environment_yamls.patch",
+    "sha256": "d2f2077f3d65ca5104e8e2a6d8a202c2bc35c3db31370c76e84d2a45ea3845a5"
+  },
+  "root_cause": {
+    "cmake_wheel": "CMake 3.26.4 WHEEL metadata has a blank line before its Tag headers, so pip 24.2 and later parse an empty wheel-tag set and report an unsupported platform",
+    "verified_matrix": "pip 25.3 fails identically; pip 24.1.2 passes strict pip check while preserving CMake 3.26.4",
+    "resolution": "pin conda pip=24.1.2 in all five Linux environment declarations"
+  },
+  "triton_2_0_0_audit": {
+    "conda_artifact": {
+      "url": "https://conda.anaconda.org/pytorch/linux-64/torchtriton-2.0.0-py310.tar.bz2",
+      "size_bytes": 65684634,
+      "sha256": "8d90fcf8d4cf62a88397ae22e1c28b2182a98d34be828f16da7b7f9c61878ead"
+    },
+    "python_requires_txt": ["cmake", "filelock", "torch", "lit"],
+    "classification": "cmake and lit remain exact strict-metadata requirements for the Triton 2.0.0 environments"
+  },
+  "pins": {
+    "pip": {
+      "version": "24.1.2",
+      "applies_to": ["patch_mix_cl", "pafa", "sg_scl", "mvst", "add_rsc"],
+      "conda_artifact": "pip-24.1.2-pyhd8ed1ab_0.conda",
+      "conda_sha256": "e535c796dcb107038ec98578e4c70c875a2a6cc5419b48ac146aeeec7dce714f",
+      "wheel_sha256": "7cd207eed4c60b0f411b444cd1464198fe186671c323b6cd6d433ed80fc9d247"
+    },
+    "transformers": {
+      "version": "4.38.2",
+      "applies_to": ["pafa"],
+      "wheel_sha256": "c4029cb9f01b3dd335e52f364c52d2b37c65b4c78e02e6a08b1919c5c928573e",
+      "reason": "transformers 5.14.1 disables its PyTorch backend under Torch 2.0.1"
+    },
+    "cmake": {
+      "version": "3.26.4",
+      "applies_to": ["patch_mix_cl", "pafa", "sg_scl", "mvst"],
+      "artifact": "cmake-3.26.4-py2.py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "sha256": "93015da6f1c0e1e5f2debf752f1803ea52d742d915ad674043d36e471f937507"
+    },
+    "lit": {
+      "version": "16.0.6",
+      "applies_to": ["patch_mix_cl", "pafa", "sg_scl", "mvst"],
+      "artifact": "lit-16.0.6.tar.gz",
+      "sha256": "84623c9c23b6b14763d637f4e63e6b721b3446ada40bf7001d8fee70b8e77a9a"
+    },
+    "setuptools": {
+      "version": "80.9.0",
+      "applies_to": ["patch_mix_cl", "pafa", "sg_scl", "mvst", "add_rsc"],
+      "artifact": "setuptools-80.9.0-py3-none-any.whl",
+      "sha256": "062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922"
+    },
+    "opencv-python-headless": {
+      "version": "4.11.0.86",
+      "applies_to": ["mvst"],
+      "linux_x86_64_wheel_sha256": "0e0a27c19dd1f40ddff94976cfe43066fbbe9dfbb2ec1907d66c19caef42a57b"
+    },
+    "opencv-python": {
+      "version": "4.11.0.86",
+      "applies_to": ["mvst"],
+      "linux_x86_64_wheel_sha256": "6b02611523803495003bd87362db3e1d2a0454a6a63025dc6658a9830570aa0d"
+    },
+    "cmapy": {
+      "version": "0.6.6",
+      "applies_to": ["mvst"],
+      "sdist_sha256": "cb52a6b3057c49a146fb0964b8302f2fb7d61dfe6ae6de1a98b636aace805255"
+    }
+  },
+  "environment_names": {
+    "patch_mix_cl": "acoustic-patchmix-r4",
+    "pafa": "acoustic-pafa-r4",
+    "sg_scl": "acoustic-sgscl-r4",
+    "mvst": "acoustic-mvst-r4",
+    "add_rsc": "acoustic-addrsc-r4"
+  },
+  "server_validation": {
+    "methods_verified": 5,
+    "pip_check_failures": 0,
+    "import_failures": 0,
+    "cuda_device": "NVIDIA L40",
+    "cuda_capability": [8, 9],
+    "finite_cuda_kernel_failures": 0,
+    "training_started": false
+  },
+  "immutability": {
+    "release_3_environments_reused": false,
+    "model_or_protocol_change": false,
+    "full_training_started": false
+  }
+}

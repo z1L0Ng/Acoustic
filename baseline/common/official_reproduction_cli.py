@@ -1,4 +1,4 @@
-"""Shared fresh-checkout CLI for Patch-Mix CL and PAFA Release 3."""
+"""Shared fresh-checkout CLI for Patch-Mix CL and PAFA Release 4."""
 
 from __future__ import annotations
 
