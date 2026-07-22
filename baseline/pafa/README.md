@@ -4,20 +4,29 @@ This directory owns the maintainable PAFA execution surface. Every run creates a
 
 The planned track is `official_like_test_selected`. Author-equivalent patient ID extraction is verified. The server package may use the recorded public compatibility checkpoint, but it must retain the mirror provenance/SHA and may not claim Microsoft artifact identity. The repo has no license and no task checkpoint, so sharing constraints remain explicit.
 
-Minimum compatible snapshot: `official-reproduction-release-1`.
+Minimum compatible snapshot: Release 3 based on
+`3f757adcc12fcc5b5e2f1058a593345f750de2a5`. Release 2 environments are
+immutable and must not be updated or reused.
+The exact dependency rationale and artifact hashes are pinned in
+`baseline/common/official_environment_r3_contract.json`; the runtime verifier
+requires strict `pip check`, imports, version pins, and an allocated CUDA kernel.
 
 ```bash
 conda env create -f baseline/pafa/environment.linux-cu118.yml
 RUN_ROOT="result/pafa_$(TZ=America/Chicago date +%Y%m%d_%H%M%S)"
-conda run -n acoustic-pafa python -m baseline.pafa.run_reproduction bootstrap \
+mkdir -p "$RUN_ROOT/receipts"
+conda run -n acoustic-pafa-r3 python -m baseline.common.verify_official_environment_r3 \
+  --method pafa --cuda-mode runtime \
+  --output "$RUN_ROOT/receipts/environment_r3.json"
+conda run -n acoustic-pafa-r3 python -m baseline.pafa.run_reproduction bootstrap \
   --dataset-root dataset/raw/icbhi_2017 --result-root "$RUN_ROOT" --device cuda
-conda run -n acoustic-pafa python -m baseline.pafa.run_reproduction verify-bootstrap \
+conda run -n acoustic-pafa-r3 python -m baseline.pafa.run_reproduction verify-bootstrap \
   --result-root "$RUN_ROOT"
-conda run -n acoustic-pafa python -m baseline.pafa.run_reproduction smoke \
+conda run -n acoustic-pafa-r3 python -m baseline.pafa.run_reproduction smoke \
   --result-root "$RUN_ROOT" --device cuda --steps 1
-conda run -n acoustic-pafa python -m baseline.pafa.run_reproduction profile \
+conda run -n acoustic-pafa-r3 python -m baseline.pafa.run_reproduction profile \
   --result-root "$RUN_ROOT" --device cuda --steps 100
-conda run -n acoustic-pafa python -m baseline.pafa.run_reproduction full \
+conda run -n acoustic-pafa-r3 python -m baseline.pafa.run_reproduction full \
   --result-root "$RUN_ROOT" --device cuda
 ```
 
@@ -26,7 +35,7 @@ The independent contract is `codex/2026-07-21/paper_contracts/pafa.json`.
 `bootstrap` clones and pins the author repository, rebuilds the 6,898-cycle manifest from raw data, downloads and SHA-verifies the public BEATs compatibility mirror, builds read-only data adapters, and installs a receipted save/resume-only patch. It may instead receive `--checkpoint-path`; the same expected SHA is enforced. A resumable checkpoint must have been created by this release:
 
 ```bash
-conda run -n acoustic-pafa python -m baseline.pafa.run_reproduction full \
+conda run -n acoustic-pafa-r3 python -m baseline.pafa.run_reproduction full \
   --result-root "$RUN_ROOT" --device cuda \
   --resume "$RUN_ROOT/full/<experiment>/epoch_<N>.pth"
 ```

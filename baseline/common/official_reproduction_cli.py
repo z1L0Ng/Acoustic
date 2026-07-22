@@ -1,4 +1,4 @@
-"""Shared fresh-checkout CLI for Patch-Mix CL and PAFA Release 1."""
+"""Shared fresh-checkout CLI for Patch-Mix CL and PAFA Release 3."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from pathlib import Path
 import subprocess
 import sys
 
-from .official_reproduction_bootstrap import SPECS, bootstrap, verify_bootstrap
+from .official_reproduction_bootstrap import RELEASE_NAME, SPECS, bootstrap, verify_bootstrap
 
 
 SMOKE_MODULES = {
@@ -23,7 +23,7 @@ def read_bootstrap(method: str, result_root: Path) -> dict:
     receipt = json.loads(path.read_text())
     if receipt["method"] != method:
         raise ValueError(f"bootstrap method mismatch: {receipt['method']} != {method}")
-    if receipt["minimum_release"] != "official-reproduction-release-1":
+    if receipt["minimum_release"] != RELEASE_NAME:
         raise ValueError(f"unsupported bootstrap receipt: {receipt['minimum_release']}")
     return receipt
 

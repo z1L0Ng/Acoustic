@@ -1,0 +1,118 @@
+{
+  "status": "SAFE_TO_SNAPSHOT_SERVER_RUNTIME_GATE_PENDING",
+  "created_at": "2026-07-22T12:45:51-05:00",
+  "timezone": "America/Chicago",
+  "release": "official-reproduction-release-3",
+  "base_release_commit": "3f757adcc12fcc5b5e2f1058a593345f750de2a5",
+  "scope": "environment and command metadata only",
+  "server_failure_receipt": {
+    "path": "result/phase3_environment_gates_20260722_044726/receipts/phase3_environment_gates.json",
+    "sha256": "27b6ce4476c1e0c6b06c82d29f72eac73c0dd039c79830e950bc24d5cd5ba184",
+    "availability": "server-only; identity supplied by Server Training Coordinator"
+  },
+  "dependency_audit": {
+    "torchtriton_conda_artifact_sha256": "8d90fcf8d4cf62a88397ae22e1c28b2182a98d34be828f16da7b7f9c61878ead",
+    "torchtriton_conda_artifact_size_bytes": 65684634,
+    "triton_python_requires": ["cmake", "filelock", "torch", "lit"],
+    "classification": "cmake and lit are not needed by the prebuilt model runtime path, but they are unconditional Triton 2.0.0 Python distribution requirements and are therefore mandatory for strict pip check",
+    "setuptools_pin": "80.9.0",
+    "setuptools_reason": "librosa 0.9.2 imports pkg_resources; all five Release 3 environments pin a setuptools wheel that still provides it"
+  },
+  "environments": [
+    {
+      "method": "patch_mix_cl",
+      "name": "acoustic-patchmix-r3",
+      "linux_spec": "baseline/patch_mix_cl/environment.linux-cu118.yml",
+      "linux_solver_dry_run": "passed",
+      "local_clean_create": "passed",
+      "local_required_imports": "passed",
+      "local_pip_check": "platform-limited: torch 2.0.1 macOS wheel reports unsupported platform",
+      "server_runtime_gate": "pending"
+    },
+    {
+      "method": "pafa",
+      "name": "acoustic-pafa-r3",
+      "linux_spec": "baseline/pafa/environment.linux-cu118.yml",
+      "linux_solver_dry_run": "passed",
+      "local_clean_create": "passed",
+      "local_required_imports": "passed",
+      "local_pip_check": "platform-limited: torch 2.0.1 macOS wheel reports unsupported platform",
+      "server_runtime_gate": "pending"
+    },
+    {
+      "method": "sg_scl",
+      "name": "acoustic-sgscl-r3",
+      "linux_spec": "baseline/sg_scl/environment.linux-cu118.yml",
+      "linux_solver_dry_run": "passed",
+      "local_clean_create": "passed",
+      "local_required_imports": "passed",
+      "local_pip_check": "platform-limited: torch 2.0.1 macOS wheel reports unsupported platform",
+      "server_runtime_gate": "pending"
+    },
+    {
+      "method": "mvst",
+      "name": "acoustic-mvst-r3",
+      "linux_spec": "baseline/mvst/environment.linux-cu118.yml",
+      "linux_solver_dry_run": "passed",
+      "local_clean_create": "passed after final OpenCV/cmapy pins",
+      "local_required_imports": "passed",
+      "local_pip_check": "platform-limited: torch 2.0.1 macOS wheel reports unsupported platform",
+      "server_runtime_gate": "pending"
+    },
+    {
+      "method": "add_rsc",
+      "name": "acoustic-addrsc-r3",
+      "linux_spec": "baseline/add_rsc/environment.linux-cu121.yml",
+      "linux_solver_dry_run": "passed",
+      "local_clean_create": "passed",
+      "local_required_imports": "passed",
+      "local_pip_check": "passed: No broken requirements found",
+      "server_runtime_gate": "pending"
+    }
+  ],
+  "clean_checkout_verification": {
+    "construction": "git archive of base_release_commit plus candidate files",
+    "candidate_executable_file_count": 30,
+    "python_compile": "passed",
+    "fresh_checkout_cli_help_entrypoints": "6/6 passed",
+    "shell_syntax": "passed",
+    "linux_64_solver_dry_runs": 5,
+    "linux_64_solver_failures": 0,
+    "notebooks_valid": 5,
+    "notebook_outputs": 0,
+    "notebook_executed_cells": 0,
+    "old_environment_name_references": 0,
+    "legacy_results_root_references": 0,
+    "candidate_whitespace_errors": 0,
+    "workspace_git_diff_check": "blocked outside candidate scope: Git cannot generate a diff for removed legacy results/model_design_2026-07-08/icbhi_sequence_pooling/features/beats_sequence_full.npz",
+    "docker_linux_runtime": "unavailable locally because the Docker daemon is not running",
+    "cuda_runtime": "unavailable on the local Mac arm64 host"
+  },
+  "compatibility_patch_regression": {
+    "sg_scl_diff_sha256": "db6829b0f66e6ba1d52e5f4c67ad1c4e79cc0972bbad0d7e6216cd616f3d8a2f",
+    "mvst_diff_sha256": "b927df3ec979608dd047d040b3fb81073ceb359bdb131bc7676320db8937dcd9",
+    "add_rsc_diff_sha256": "c7f2495ef1013d1ffcb5d098d9eea7be2727d77b516fef5d45956aafe2474663",
+    "status": "identical to Release 2 verified compatibility diffs"
+  },
+  "server_gate": {
+    "command": "bash baseline/common/official_environment_r3_server_gate.sh \"$PWD\"",
+    "fail_closed": true,
+    "required_before_bootstrap": [
+      "active environment name matches the method-specific -r3 name",
+      "python -m pip check returns 0",
+      "all required imports succeed",
+      "exact package versions match the tracked contract",
+      "PyTorch CUDA metadata matches the YAML",
+      "at least one CUDA device is visible",
+      "a finite CUDA matrix multiply completes"
+    ],
+    "training_started_by_gate": false
+  },
+  "immutability": {
+    "release_2_environments_modified": false,
+    "model_or_protocol_changed": false,
+    "data_or_checkpoint_changed": false,
+    "training_started": false,
+    "git_staged_or_committed": false
+  }
+}

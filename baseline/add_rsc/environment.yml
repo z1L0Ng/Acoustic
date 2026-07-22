@@ -1,4 +1,4 @@
-name: acoustic-addrsc
+name: acoustic-addrsc-r3
 channels:
   - conda-forge
 dependencies:
@@ -15,3 +15,4 @@ dependencies:
       - scipy
       - scikit-learn
       - tqdm
+      - setuptools==80.9.0

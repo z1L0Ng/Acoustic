@@ -1,4 +1,4 @@
-name: acoustic-mvst
+name: acoustic-mvst-r3
 channels:
   - pytorch
   - nvidia
@@ -17,7 +17,11 @@ dependencies:
       - pandas
       - scipy
       - scikit-learn
-      - opencv-python-headless
-      - cmapy
+      - opencv-python-headless==4.11.0.86
+      - opencv-python==4.11.0.86
+      - cmapy==0.6.6
       - tqdm
       - matplotlib
+      - cmake==3.26.4
+      - lit==16.0.6
+      - setuptools==80.9.0

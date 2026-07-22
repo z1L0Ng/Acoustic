@@ -1,4 +1,4 @@
-name: acoustic-pafa
+name: acoustic-pafa-r3
 channels:
   - pytorch
   - nvidia
@@ -19,7 +19,9 @@ dependencies:
       - scikit-learn
       - transformers
       - einops
-      - setuptools<81
+      - cmake==3.26.4
+      - lit==16.0.6
+      - setuptools==80.9.0
       - tqdm
       - wget==3.2
       - matplotlib

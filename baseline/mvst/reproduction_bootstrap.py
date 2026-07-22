@@ -19,12 +19,14 @@ from baseline.common.official_reproduction_bootstrap import (
     discover_audio_dir,
     ensure_symlink,
     materialize_checkpoint,
+    prepare_result_root_for_bootstrap,
     sha256,
 )
 
 
 METHOD = "mvst"
-MINIMUM_COMMIT = "51626840f6ec325086f68bd88446ff956f7e0357"
+MINIMUM_COMMIT = "3f757adcc12fcc5b5e2f1058a593345f750de2a5"
+ENVIRONMENT_NAME = "acoustic-mvst-r3"
 VIEWS = ["16", "32", "64", "128", "256"]
 SPEC = MethodSpec(
     method=METHOD,
@@ -251,9 +253,7 @@ def bootstrap(
     project_root = project_root.resolve()
     dataset_root = dataset_root.resolve()
     result_root, cache_root = validate_roots(project_root, result_root, cache_root)
-    if result_root.exists() and any(result_root.iterdir()):
-        raise FileExistsError(f"result root must be new or empty: {result_root}")
-    result_root.mkdir(parents=True, exist_ok=True)
+    environment_gate = prepare_result_root_for_bootstrap(result_root, METHOD)
     cache_root.mkdir(parents=True, exist_ok=True)
     source = result_root / "source" / "repo"
     source_receipt = clone_source(SPEC, source)
@@ -285,8 +285,16 @@ def bootstrap(
         "data": data,
         "checkpoint": checkpoint_receipt,
         "adapter": adapter,
+        "environment_gate": {
+            "path": str(environment_gate), "sha256": sha256(environment_gate),
+        },
         "paper_contract": {"path": str(contract), "sha256": sha256(contract)},
-        "environment_spec": {"path": str(environment_spec), "sha256": sha256(environment_spec)},
+        "environment_spec": {
+            "name": ENVIRONMENT_NAME,
+            "path": str(environment_spec),
+            "project_relative_path": str(environment_spec.relative_to(project_root)),
+            "sha256": sha256(environment_spec),
+        },
         "environment": {
             "HF_HOME": str(cache_root / "huggingface"),
             "TORCH_HOME": str(cache_root / "torch"),
@@ -333,6 +341,16 @@ def verify_bootstrap(result_root: Path) -> dict:
         errors.append("manifest_rows_or_ids")
     if receipt["data"]["author_repo_split"]["cycle_counts"] != {"train": 4213, "test": 2685}:
         errors.append("author_split_counts")
+    environment_spec = Path(receipt["environment_spec"]["path"])
+    if receipt.get("minimum_compatible_commit") != MINIMUM_COMMIT:
+        errors.append("minimum_compatible_commit")
+    if receipt["environment_spec"].get("name") != ENVIRONMENT_NAME:
+        errors.append("environment_name")
+    if not environment_spec.is_file() or sha256(environment_spec) != receipt["environment_spec"]["sha256"]:
+        errors.append("environment_spec_sha256")
+    environment_gate = Path(receipt["environment_gate"]["path"])
+    if not environment_gate.is_file() or sha256(environment_gate) != receipt["environment_gate"]["sha256"]:
+        errors.append("environment_gate_sha256")
     portable = result_root / "portable_run"
     if not (portable / "data" / "icbhi_dataset").is_symlink():
         errors.append("data_adapter")
@@ -342,6 +360,7 @@ def verify_bootstrap(result_root: Path) -> dict:
         "status": "verified" if not errors else "failed",
         "method": METHOD,
         "minimum_compatible_commit": MINIMUM_COMMIT,
+        "environment_name": ENVIRONMENT_NAME,
         "result_root": str(result_root),
         "errors": errors,
         "cycles": len(rows),

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Minimum compatible snapshot: official-reproduction-release-1.
+# Minimum compatible snapshot: Release 3 based on 3f757adcc12f.
 # Run from result/pafa_<timestamp>/portable_run on a CUDA Linux host. The
 # current public compatibility checkpoint keeps this run official-like until
 # Microsoft-hosted byte identity can be independently confirmed.

@@ -19,6 +19,12 @@ from .install_official_compatibility import install_compatibility_patch
 
 
 LABELS = ["normal", "crackle", "wheeze", "both"]
+RELEASE_NAME = "official-reproduction-release-3"
+BASE_RELEASE_COMMIT = "3f757adcc12fcc5b5e2f1058a593345f750de2a5"
+ENVIRONMENT_NAMES = {
+    "patch_mix_cl": "acoustic-patchmix-r3",
+    "pafa": "acoustic-pafa-r3",
+}
 
 
 @dataclass(frozen=True)
@@ -65,6 +71,35 @@ def sha256(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def prepare_result_root_for_bootstrap(result_root: Path, method: str) -> Path:
+    """Allow only the strict Release 3 environment receipt before bootstrap."""
+    environment_receipt = result_root / "receipts" / "environment_r3.json"
+    if result_root.exists():
+        unexpected = [
+            path for path in result_root.rglob("*")
+            if path.is_file() and path != environment_receipt
+        ]
+        if unexpected:
+            raise FileExistsError(
+                f"result root contains files other than the Release 3 environment receipt: {unexpected}"
+            )
+    result_root.mkdir(parents=True, exist_ok=True)
+    if not environment_receipt.is_file():
+        raise FileNotFoundError(
+            "run baseline.common.verify_official_environment_r3 before bootstrap: "
+            f"{environment_receipt}"
+        )
+    receipt = json.loads(environment_receipt.read_text())
+    if (
+        receipt.get("status") != "verified"
+        or receipt.get("release") != RELEASE_NAME
+        or receipt.get("method") != method
+        or receipt.get("base_release_commit") != BASE_RELEASE_COMMIT
+    ):
+        raise ValueError(f"invalid Release 3 environment receipt: {environment_receipt}")
+    return environment_receipt
 
 
 def run(command: list[str], *, cwd: Path | None = None) -> str:
@@ -372,9 +407,7 @@ def bootstrap(
     result_root, cache_root = validate_output_roots(
         project_root, result_root, cache_root, method
     )
-    if result_root.exists() and any(result_root.iterdir()):
-        raise FileExistsError(f"result root must be new or empty: {result_root}")
-    result_root.mkdir(parents=True, exist_ok=True)
+    environment_gate = prepare_result_root_for_bootstrap(result_root, method)
     cache_root.mkdir(parents=True, exist_ok=True)
     source_root = result_root / "source" / "repo"
     source_receipt = clone_source(spec, source_root)
@@ -386,11 +419,13 @@ def bootstrap(
     adapter_receipt = build_adapter(
         spec, source_root, Path(data_receipt["audio_dir"]), checkpoint, result_root / "portable_run"
     )
+    environment_spec = project_root / "baseline" / method / "environment.linux-cu118.yml"
     receipt = {
         "status": "fresh_checkout_bootstrap_ready",
         "created_at": chicago_timestamp(),
         "timezone": "America/Chicago",
-        "minimum_release": "official-reproduction-release-1",
+        "minimum_release": RELEASE_NAME,
+        "base_release_commit": BASE_RELEASE_COMMIT,
         "method": method,
         "project_root": str(project_root),
         "dataset_root": str(dataset_root),
@@ -402,6 +437,15 @@ def bootstrap(
         "data": data_receipt,
         "checkpoint": checkpoint_receipt,
         "adapter": adapter_receipt,
+        "environment_gate": {
+            "path": str(environment_gate), "sha256": sha256(environment_gate),
+        },
+        "environment_spec": {
+            "name": ENVIRONMENT_NAMES[method],
+            "path": str(environment_spec),
+            "project_relative_path": str(environment_spec.relative_to(project_root)),
+            "sha256": sha256(environment_spec),
+        },
         "environment": {
             "HF_HOME": str(cache_root / "huggingface"),
             "TORCH_HOME": str(cache_root / "torch"),
@@ -460,10 +504,24 @@ def verify_bootstrap(method: str, result_root: Path) -> dict:
         errors.append("checkpoint_adapter")
     if receipt["adapter"].get("author_split_cycle_counts") != {"train": 4142, "test": 2756}:
         errors.append("author_split_cycle_counts")
+    environment_spec = Path(receipt["environment_spec"]["path"])
+    if receipt.get("minimum_release") != RELEASE_NAME:
+        errors.append("release_name")
+    if receipt.get("base_release_commit") != BASE_RELEASE_COMMIT:
+        errors.append("base_release_commit")
+    if receipt["environment_spec"].get("name") != ENVIRONMENT_NAMES[method]:
+        errors.append("environment_name")
+    if not environment_spec.is_file() or sha256(environment_spec) != receipt["environment_spec"]["sha256"]:
+        errors.append("environment_spec_sha256")
+    environment_gate = Path(receipt["environment_gate"]["path"])
+    if not environment_gate.is_file() or sha256(environment_gate) != receipt["environment_gate"]["sha256"]:
+        errors.append("environment_gate_sha256")
     result = {
         "status": "verified" if not errors else "failed",
         "method": method,
-        "minimum_release": "official-reproduction-release-1",
+        "minimum_release": RELEASE_NAME,
+        "base_release_commit": BASE_RELEASE_COMMIT,
+        "environment_name": ENVIRONMENT_NAMES[method],
         "result_root": str(result_root),
         "errors": errors,
         "cycles": len(rows),

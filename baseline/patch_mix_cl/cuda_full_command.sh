@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Minimum compatible snapshot: official-reproduction-release-1.
+# Minimum compatible snapshot: Release 3 based on 3f757adcc12f.
 # Run from the timestamped portable_run directory. The prepared symlink points
 # to the current author-hosted runtime AST artifact and its SHA is receipted.
 export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"

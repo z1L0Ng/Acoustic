@@ -2,9 +2,13 @@
 
 This directory is the tracked, fresh-checkout execution surface for ADD-RSC.
 Source clones, checkpoints, caches, logs, and predictions are generated under a
-new `result/add_rsc_YYYYMMDD_HHMMSS/` root. The minimum compatible project
-snapshot is Release 1 commit `51626840f6ec325086f68bd88446ff956f7e0357` plus
-this Release 2 directory.
+new `result/add_rsc_YYYYMMDD_HHMMSS/` root. The minimum compatible snapshot is
+Release 3 based on `3f757adcc12fcc5b5e2f1058a593345f750de2a5`.
+Release 2 environments are immutable and must not be updated or reused.
+The exact dependency rationale and artifact hashes are pinned in
+`baseline/common/official_environment_r3_contract.json`; the runtime verifier
+requires strict `pip check`, imports including `librosa`/`pkg_resources`, exact
+version pins, and an allocated CUDA kernel.
 
 ADD-RSC does not expose one unambiguous faithful executable protocol. The two
 supported tracks must remain separate:
@@ -24,12 +28,13 @@ Linux/CUDA server:
 
 ```bash
 conda env create -f baseline/add_rsc/environment.linux-cu121.yml
-conda activate acoustic-addrsc
+conda activate acoustic-addrsc-r3
 ```
 
-The local compatibility environment receipt remains in `environment.yml` and
-`environment-lock.txt`. Full training requires CUDA; the CPU path is only for
-bootstrap and bounded smoke verification.
+The local compatibility declaration remains in `environment.yml`; each runtime
+writes the complete installed-package receipt to `environment_r3.json`. Full
+training requires CUDA; the CPU path is only for bootstrap and bounded smoke
+verification.
 
 ## Fresh-checkout bootstrap
 
@@ -39,6 +44,10 @@ pinned SHA256, not a verified byte-identical copy of the original 2023 artifact.
 
 ```bash
 RUN_ROOT="result/add_rsc_$(TZ=America/Chicago date +%Y%m%d_%H%M%S)"
+mkdir -p "$RUN_ROOT/receipts"
+python -m baseline.common.verify_official_environment_r3 \
+  --method add_rsc --cuda-mode runtime \
+  --output "$RUN_ROOT/receipts/environment_r3.json"
 python -m baseline.add_rsc.run_reproduction bootstrap \
   --project-root . \
   --dataset-root dataset/raw/icbhi_2017 \

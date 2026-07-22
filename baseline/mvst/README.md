@@ -11,16 +11,24 @@ as train. That gives 552/368 recordings and 4,213/2,685 cycles. The paper's
 66.55 target is only compared against this author-code split and its
 test-selected fusion result.
 
-Minimum compatible release: Patch-Mix/PAFA Release 1 commit
-`51626840f6ec325086f68bd88446ff956f7e0357` plus this MVST package.
+Minimum compatible snapshot: Release 3 based on
+`3f757adcc12fcc5b5e2f1058a593345f750de2a5`. Release 2 environments are
+immutable and must not be updated or reused.
+The exact dependency rationale and artifact hashes are pinned in
+`baseline/common/official_environment_r3_contract.json`; the runtime verifier
+requires strict `pip check`, imports, version pins, and an allocated CUDA kernel.
 
 ## Environment and bootstrap
 
 ```bash
 conda env create -f baseline/mvst/environment.linux-cu118.yml
-conda activate acoustic-mvst
+conda activate acoustic-mvst-r3
 
 RUN_ROOT="result/mvst_$(TZ=America/Chicago date +%Y%m%d_%H%M%S)"
+mkdir -p "$RUN_ROOT/receipts"
+python -m baseline.common.verify_official_environment_r3 \
+  --method mvst --cuda-mode runtime \
+  --output "$RUN_ROOT/receipts/environment_r3.json"
 python -m baseline.mvst.run_reproduction bootstrap \
   --project-root . \
   --dataset-root dataset/raw/icbhi_2017 \

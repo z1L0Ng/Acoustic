@@ -1,4 +1,4 @@
-name: acoustic-addrsc
+name: acoustic-addrsc-r3
 channels:
   - pytorch
   - nvidia
@@ -19,3 +19,4 @@ dependencies:
       - scikit-learn
       - tqdm
       - matplotlib
+      - setuptools==80.9.0

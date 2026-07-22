@@ -1,4 +1,4 @@
-name: acoustic-patchmix
+name: acoustic-patchmix-r3
 channels:
   - conda-forge
 dependencies:
@@ -16,6 +16,6 @@ dependencies:
       - scikit-learn
       - safetensors==0.4.5
       - transformers==4.38.2
-      - setuptools<81
+      - setuptools==80.9.0
       - tqdm
       - wget

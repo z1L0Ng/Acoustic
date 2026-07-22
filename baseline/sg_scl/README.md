@@ -9,14 +9,18 @@ official recording split and device-domain objective are preserved. This is not
 an audio-only baseline, the repository has no license file, and the official
 test is evaluated every epoch to select the reported checkpoint.
 
-Minimum compatible release: Patch-Mix/PAFA Release 1 commit
-`51626840f6ec325086f68bd88446ff956f7e0357` plus this SG-SCL package.
+Minimum compatible snapshot: Release 3 based on
+`3f757adcc12fcc5b5e2f1058a593345f750de2a5`. Release 2 environments are
+immutable and must not be updated or reused.
+The exact dependency rationale and artifact hashes are pinned in
+`baseline/common/official_environment_r3_contract.json`; the runtime verifier
+requires strict `pip check`, imports, version pins, and an allocated CUDA kernel.
 
 ## Linux/CUDA environment
 
 ```bash
 conda env create -f baseline/sg_scl/environment.linux-cu118.yml
-conda activate acoustic-sgscl
+conda activate acoustic-sgscl-r3
 ```
 
 ## Fresh-checkout bootstrap
@@ -25,6 +29,10 @@ Use a new America/Chicago timestamp for every run:
 
 ```bash
 RUN_ROOT="result/sg_scl_$(TZ=America/Chicago date +%Y%m%d_%H%M%S)"
+mkdir -p "$RUN_ROOT/receipts"
+python -m baseline.common.verify_official_environment_r3 \
+  --method sg_scl --cuda-mode runtime \
+  --output "$RUN_ROOT/receipts/environment_r3.json"
 python -m baseline.sg_scl.run_reproduction bootstrap \
   --project-root . \
   --dataset-root dataset/raw/icbhi_2017 \
