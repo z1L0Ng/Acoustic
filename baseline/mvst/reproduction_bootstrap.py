@@ -32,6 +32,10 @@ METHOD = "mvst"
 MINIMUM_COMMIT = "4172524a0e5d7b792de248820439f30874e2ae6d"
 ENVIRONMENT_NAME = "acoustic-mvst-r4"
 VIEWS = ["16", "32", "64", "128", "256"]
+EXPECTED_RANDOM_ORDERED_IDS = {
+    "train": "bf85c6037a6c17c04aa411be99afa714ed0088cb1a145466e6e54b2d9cb398c4",
+    "test": "67cb21266df995b74ba6712c63ea91fd95082032577519b86e61314a1170c079",
+}
 SPEC = MethodSpec(
     method=METHOD,
     repo_url="https://github.com/wentaoheunnc/MVST.git",
@@ -57,6 +61,36 @@ def install_compatibility_patch(source: Path) -> dict:
     """Make all five author encoder checkpoints interruption-safe."""
     patched_files = []
     for view in VIEWS:
+        dataset_path = source / view / "util" / "icbhi_dataset.py"
+        dataset = dataset_path.read_text()
+        dataset = _replace_once(
+            dataset,
+            """        filenames = os.listdir(data_folder)
+        filenames =set([f.strip().split('.')[0] for f in filenames if '.wav' in f or '.txt' in f])
+        filenames = sorted(filenames)
+""",
+            """        # Compatibility adapter: WAV names are the authoritative recording list.
+        filenames = sorted(f.rsplit('.', 1)[0] for f in os.listdir(data_folder) if f.endswith('.wav'))
+        if len(filenames) != 920 or len(set(filenames)) != 920:
+            raise ValueError('MVST adapter must expose exactly 920 unique recordings')
+""",
+            f"{view} WAV-authoritative recording enumeration",
+        )
+        dataset_path.write_text(dataset)
+        patched_files.append(f"{view}/util/icbhi_dataset.py")
+
+        annotation_path = source / view / "util" / "icbhi_util.py"
+        annotation = annotation_path.read_text()
+        annotation_anchor = "filenames = [f.strip().split('.')[0] for f in os.listdir(data_folder) if '.txt' in f]"
+        if annotation.count(annotation_anchor) != 2:
+            raise ValueError(f"MVST {view} annotation enumeration count={annotation.count(annotation_anchor)}")
+        annotation = annotation.replace(
+            annotation_anchor,
+            "filenames = sorted(f.rsplit('.', 1)[0] for f in os.listdir(data_folder) if f.endswith('.txt') and len(f.rsplit('.', 1)[0].split('_')) >= 5)",
+        )
+        annotation_path.write_text(annotation)
+        patched_files.append(f"{view}/util/icbhi_util.py")
+
         misc_path = source / view / "util" / "misc.py"
         misc = misc_path.read_text()
         old_save = """def save_model(model, optimizer, args, epoch, save_file, classifier):
@@ -228,28 +262,41 @@ def author_split_receipt(manifest: Path) -> dict:
         raise ValueError(f"MVST author recording split mismatch: {result}")
     if result["cycle_counts"] != {"train": 4213, "test": 2685}:
         raise ValueError(f"MVST author cycle split mismatch: {result}")
+    if result["ordered_cycle_id_sha256"] != EXPECTED_RANDOM_ORDERED_IDS:
+        raise ValueError(f"MVST author ordered cycle IDs mismatch: {result}")
     return result
 
 
 def build_adapter(audio_dir: Path, checkpoint: Path, root: Path) -> dict:
-    data = root / "data"
-    data.mkdir(parents=True, exist_ok=True)
-    ensure_symlink(data / "icbhi_dataset", audio_dir)
+    target = root / "data" / "icbhi_dataset"
+    target.mkdir(parents=True, exist_ok=True)
+    wavs = sorted(audio_dir.glob("*.wav"))
+    if len(wavs) != 920 or len({path.stem for path in wavs}) != 920:
+        raise ValueError("MVST raw source must contain exactly 920 unique WAV recordings")
+    for wav in wavs:
+        annotation = wav.with_suffix(".txt")
+        if not annotation.is_file():
+            raise FileNotFoundError(annotation)
+        ensure_symlink(target / wav.name, wav)
+        ensure_symlink(target / annotation.name, annotation)
     pretrained = root / "pretrained_models"
     pretrained.mkdir(parents=True, exist_ok=True)
     ensure_symlink(pretrained / SPEC.checkpoint_filename, checkpoint)
-    wav_count = len(list(audio_dir.glob("*.wav")))
-    annotation_count = len([
-        path for path in audio_dir.glob("*.txt") if len(path.stem.split("_")) >= 5
-    ])
-    if wav_count != 920 or annotation_count != 920:
+    wav_count = len(list(target.glob("*.wav")))
+    annotation_count = len(list(target.glob("*.txt")))
+    recording_entries = {path.stem for path in target.iterdir() if path.suffix in {".wav", ".txt"}}
+    if wav_count != 920 or annotation_count != 920 or len(recording_entries) != 920:
         raise ValueError("MVST raw adapter must expose 920 WAV and annotation files")
     return {
         "portable_run": str(root.resolve()),
         "raw_audio_target": str(audio_dir.resolve()),
-        "raw_policy": "read-only directory symlink; author sorted/random(1) loader preserved",
+        "raw_policy": "read-only per-recording WAV/TXT symlinks; metadata excluded; author sorted/random(1) loader preserved",
         "wav_count": wav_count,
         "annotation_count": annotation_count,
+        "recording_entry_count": len(recording_entries),
+        "excluded_non_recording_files": sorted(
+            path.name for path in audio_dir.glob("*.txt") if path.stem not in recording_entries
+        ),
         "checkpoint_target": str(checkpoint.resolve()),
     }
 
@@ -354,6 +401,12 @@ def verify_bootstrap(result_root: Path) -> dict:
         errors.append("manifest_rows_or_ids")
     if receipt["data"]["author_repo_split"]["cycle_counts"] != {"train": 4213, "test": 2685}:
         errors.append("author_split_counts")
+    if receipt["data"]["author_repo_split"]["recording_counts"] != {"train": 552, "test": 368}:
+        errors.append("author_split_recording_counts")
+    if receipt["data"]["author_repo_split"]["ordered_cycle_id_sha256"] != EXPECTED_RANDOM_ORDERED_IDS:
+        errors.append("author_split_ordered_ids")
+    if receipt["data"]["split_cycle_counts"] != {"train": 4142, "test": 2756}:
+        errors.append("official_split_counts")
     environment_spec = Path(receipt["environment_spec"]["path"])
     if receipt.get("minimum_compatible_commit") != MINIMUM_COMMIT:
         errors.append("minimum_compatible_commit")
@@ -365,7 +418,10 @@ def verify_bootstrap(result_root: Path) -> dict:
     if not environment_gate.is_file() or sha256(environment_gate) != receipt["environment_gate"]["sha256"]:
         errors.append("environment_gate_sha256")
     portable = result_root / "portable_run"
-    if not (portable / "data" / "icbhi_dataset").is_symlink():
+    adapter = portable / "data" / "icbhi_dataset"
+    adapter_recordings = {path.stem for path in adapter.glob("*.wav")}
+    adapter_annotations = {path.stem for path in adapter.glob("*.txt")}
+    if len(adapter_recordings) != 920 or adapter_recordings != adapter_annotations:
         errors.append("data_adapter")
     if not (portable / "pretrained_models" / SPEC.checkpoint_filename).is_symlink():
         errors.append("checkpoint_adapter")

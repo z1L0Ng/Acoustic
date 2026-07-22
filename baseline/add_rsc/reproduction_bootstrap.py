@@ -31,6 +31,10 @@ METHOD = "add_rsc"
 MINIMUM_COMMIT = "4172524a0e5d7b792de248820439f30874e2ae6d"
 ENVIRONMENT_NAME = "acoustic-addrsc-r4"
 TRACKS = ["paper_declared_reconstruction", "author_repo_default_official_like"]
+EXPECTED_RANDOM_ORDERED_IDS = {
+    "train": "bf85c6037a6c17c04aa411be99afa714ed0088cb1a145466e6e54b2d9cb398c4",
+    "test": "67cb21266df995b74ba6712c63ea91fd95082032577519b86e61314a1170c079",
+}
 SPEC = MethodSpec(
     method=METHOD,
     repo_url="https://github.com/deegy666/ADD-RSC.git",
@@ -109,6 +113,17 @@ def install_compatibility_patch(source: Path) -> dict:
 """
     dataset = _replace_once(dataset, old_filenames, new_filenames, "explicit split protocols")
     dataset_path.write_text(dataset)
+
+    annotation_path = source / "util" / "icbhi_util.py"
+    annotation = annotation_path.read_text()
+    annotation_anchor = "filenames = [f.strip().split('.')[0] for f in os.listdir(data_folder) if '.txt' in f]"
+    if annotation.count(annotation_anchor) != 2:
+        raise ValueError(f"ADD-RSC annotation enumeration count={annotation.count(annotation_anchor)}")
+    annotation = annotation.replace(
+        annotation_anchor,
+        "filenames = sorted(f.rsplit('.', 1)[0] for f in os.listdir(data_folder) if f.endswith('.txt') and len(f.rsplit('.', 1)[0].split('_')) >= 5)",
+    )
+    annotation_path.write_text(annotation)
 
     misc_path = source / "util" / "misc.py"
     misc = misc_path.read_text()
@@ -215,7 +230,7 @@ def install_compatibility_patch(source: Path) -> dict:
         "save_model(model, bias_denoise_encoder, optimizer, args, epoch, os.path.join(args.save_folder, 'last.pth'), classifier, best_acc=best_acc, best_model=best_model)",
     )
 
-    files = ["main.py", "util/icbhi_dataset.py", "util/misc.py", "models/adapt_diff_denoise.py"]
+    files = ["main.py", "util/icbhi_dataset.py", "util/icbhi_util.py", "util/misc.py", "models/adapt_diff_denoise.py"]
     diff = subprocess.run(
         ["git", "diff", "--no-ext-diff", "--", *files], cwd=source,
         check=True, stdout=subprocess.PIPE,
@@ -273,6 +288,8 @@ def repo_random_split(manifest: Path) -> dict:
         ).hexdigest()
     if receipt["recording_counts"] != {"train": 552, "test": 368} or receipt["cycle_counts"] != {"train": 4213, "test": 2685}:
         raise ValueError(f"ADD-RSC repo split mismatch: {receipt}")
+    if receipt["ordered_cycle_id_sha256"] != EXPECTED_RANDOM_ORDERED_IDS:
+        raise ValueError(f"ADD-RSC repo ordered cycle IDs mismatch: {receipt}")
     receipt["algorithm"] = "sorted recording IDs; random.Random(1); first 60% train"
     return receipt
 
@@ -290,12 +307,23 @@ def build_adapter(dataset_root: Path, audio_dir: Path, checkpoint: Path, root: P
     pretrained = root / "pretrained_models"
     pretrained.mkdir(parents=True, exist_ok=True)
     ensure_symlink(pretrained / SPEC.checkpoint_filename, checkpoint)
+    recording_entries = {path.stem for path in target.glob("*.wav")}
+    annotation_entries = {
+        path.stem for path in target.glob("*.txt") if len(path.stem.split("_")) >= 5
+    }
+    if len(recording_entries) != 920 or recording_entries != annotation_entries:
+        raise ValueError("ADD-RSC adapter must expose exactly 920 recording/annotation entries")
+    excluded = sorted(path.name for path in target.glob("*.txt") if path.stem not in recording_entries)
+    if excluded != ["official_split.txt"]:
+        raise ValueError(f"unexpected ADD-RSC adapter metadata files: {excluded}")
     return {
         "portable_run": str(root.resolve()),
         "raw_audio_target": str(audio_dir.resolve()),
-        "raw_policy": "920 read-only WAV/TXT symlinks plus read-only official split symlink",
+        "raw_policy": "920 read-only WAV/TXT symlinks; annotation enumeration excludes the external official split contrast file",
         "wav_count": len(list(target.glob("*.wav"))),
-        "cycle_annotation_count": len([p for p in target.glob("*.txt") if len(p.stem.split("_")) >= 5]),
+        "cycle_annotation_count": len(annotation_entries),
+        "recording_entry_count": len(recording_entries),
+        "excluded_non_recording_files": excluded,
         "official_split": str((target / "official_split.txt").resolve()),
         "checkpoint_target": str(checkpoint.resolve()),
     }
@@ -404,6 +432,12 @@ def verify_bootstrap(result_root: Path) -> dict:
         errors.append("manifest_rows_or_ids")
     if receipt["data"]["repo_random_split"]["cycle_counts"] != {"train": 4213, "test": 2685}:
         errors.append("repo_random_split")
+    if receipt["data"]["repo_random_split"]["recording_counts"] != {"train": 552, "test": 368}:
+        errors.append("repo_random_recording_counts")
+    if receipt["data"]["repo_random_split"]["ordered_cycle_id_sha256"] != EXPECTED_RANDOM_ORDERED_IDS:
+        errors.append("repo_random_ordered_ids")
+    if receipt["data"]["split_cycle_counts"] != {"train": 4142, "test": 2756}:
+        errors.append("official_split_counts")
     environment_spec = Path(receipt["environment_spec"]["path"])
     if receipt.get("minimum_compatible_commit") != MINIMUM_COMMIT:
         errors.append("minimum_compatible_commit")
@@ -415,7 +449,11 @@ def verify_bootstrap(result_root: Path) -> dict:
     if not environment_gate.is_file() or sha256(environment_gate) != receipt["environment_gate"]["sha256"]:
         errors.append("environment_gate_sha256")
     adapter = result_root / "portable_run" / "data" / "icbhi_dataset"
-    if len(list(adapter.glob("*.wav"))) != 920 or not (adapter / "official_split.txt").is_symlink():
+    adapter_recordings = {path.stem for path in adapter.glob("*.wav")}
+    adapter_annotations = {
+        path.stem for path in adapter.glob("*.txt") if len(path.stem.split("_")) >= 5
+    }
+    if len(adapter_recordings) != 920 or adapter_recordings != adapter_annotations or not (adapter / "official_split.txt").is_symlink():
         errors.append("data_adapter")
     result = {
         "status": "verified" if not errors else "failed", "method": METHOD,
