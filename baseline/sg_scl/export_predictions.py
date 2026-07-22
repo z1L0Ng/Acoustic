@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from copy import deepcopy
+import csv
 import json
 import os
 from pathlib import Path
@@ -28,6 +29,34 @@ def find_checkpoint(result_root: Path, explicit: Path | None) -> Path:
     if len(paths) != 1:
         raise ValueError(f"expected one SG-SCL best.pth, found {paths}")
     return paths[0].resolve()
+
+
+def attach_recording_labels(dataset, manifest: Path) -> None:
+    """Adapt SG-SCL's flat cycle list to the shared fail-closed ID contract."""
+    with manifest.open(newline="") as handle:
+        rows = [row for row in csv.DictReader(handle) if row["official_split"] == "test"]
+    by_recording: dict[str, list[dict[str, str]]] = {}
+    for row in rows:
+        stable_key = "_".join(row["split_recording_id"].split("_")[:4])
+        by_recording.setdefault(stable_key, []).append(row)
+
+    flat_labels = [int(sample[1]) for sample in dataset.audio_data]
+    filename_to_label: dict[str, list[int]] = {}
+    offset = 0
+    for recording_id in dataset.filenames:
+        stable_key = "_".join(recording_id.split("_")[:4])
+        expected_rows = by_recording.get(stable_key)
+        if expected_rows is None:
+            raise ValueError(f"SG-SCL test recording absent from manifest: {recording_id}")
+        next_offset = offset + len(expected_rows)
+        filename_to_label[recording_id] = flat_labels[offset:next_offset]
+        offset = next_offset
+    if len(dataset.filenames) != 381 or offset != len(flat_labels) or offset != 2756:
+        raise ValueError(
+            "SG-SCL recording/cycle adapter mismatch: "
+            f"recordings={len(dataset.filenames)} consumed={offset} labels={len(flat_labels)}"
+        )
+    dataset.filename_to_label = filename_to_label
 
 
 def main() -> None:
@@ -81,9 +110,9 @@ def main() -> None:
         raise RuntimeError("CUDA export requested but CUDA is unavailable")
     model.to(device).eval()
     classifier.to(device).eval()
-    cycle_ids, expected_labels = ordered_cycle_contract(
-        dataset, result_root / "manifest" / "icbhi_2017_cycle_manifest.csv"
-    )
+    manifest = result_root / "manifest" / "icbhi_2017_cycle_manifest.csv"
+    attach_recording_labels(dataset, manifest)
+    cycle_ids, expected_labels = ordered_cycle_contract(dataset, manifest)
     loader = DataLoader(
         dataset, batch_size=args.batch_size, shuffle=False, num_workers=0,
         pin_memory=device.type == "cuda",
