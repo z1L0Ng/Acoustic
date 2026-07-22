@@ -40,7 +40,7 @@ The independent contract is `codex/2026-07-21/paper_contracts/pafa.json`.
 ```bash
 conda run -n acoustic-pafa-r4 python -m baseline.pafa.run_reproduction full \
   --result-root "$RUN_ROOT" --device cuda \
-  --resume "$RUN_ROOT/full/<experiment>/epoch_<N>.pth"
+  --resume "$RUN_ROOT/full/<experiment>/last.pth"
 ```
 
 The full entry automatically exports and verifies all 2,756 official-test cycle IDs, logits, predictions, confusion matrix, Sp, Se, and Score. `cuda_full_command.sh` preserves the author seed-1 test-selected protocol. With the current public mirror checkpoint the result remains official-like until Microsoft identity is proven.

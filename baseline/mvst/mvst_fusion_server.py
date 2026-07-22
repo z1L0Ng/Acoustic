@@ -11,6 +11,8 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
+from baseline.common.storage_safe_retention import atomic_torch_save
+
 
 VIEWS = ["16", "32", "64", "128", "256"]
 
@@ -109,11 +111,11 @@ def main() -> None:
             "scheduler": scheduler.state_dict(), "best_score": max(best_score, current_score),
             "protocol": "author_repo_random_file_split_official_like_test_selected",
         }
-        torch.save(state, args.output_dir / "last.pth")
+        atomic_torch_save(state, args.output_dir / "last.pth", epoch, "fusion_last")
         if current_score > best_score and se > 0.05:
             best_score = current_score
             state["best_score"] = best_score
-            torch.save(state, args.output_dir / "best.pth")
+            atomic_torch_save(state, args.output_dir / "best.pth", epoch, "fusion_best")
         print(f"epoch={epoch} sp={sp:.6f} se={se:.6f} score={current_score:.6f} best={best_score:.6f}")
 
     best = torch.load(args.output_dir / "best.pth", map_location=device)

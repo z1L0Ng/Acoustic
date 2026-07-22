@@ -37,7 +37,7 @@ conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.run_reproducti
 ```bash
 conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.run_reproduction full \
   --result-root "$RUN_ROOT" --device cuda \
-  --resume "$RUN_ROOT/full/<experiment>/epoch_<N>.pth"
+  --resume "$RUN_ROOT/full/<experiment>/last.pth"
 ```
 
 The full entry automatically exports and verifies all 2,756 official-test cycle IDs, logits, predictions, confusion matrix, Sp, Se, and Score. The independent paper contract is `codex/2026-07-21/paper_contracts/patch_mix_cl.json`.

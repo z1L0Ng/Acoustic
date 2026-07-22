@@ -22,6 +22,10 @@ from baseline.common.official_reproduction_bootstrap import (
     prepare_result_root_for_bootstrap,
     sha256,
 )
+from baseline.common.storage_safe_retention import (
+    install_author_checkpoint_writer,
+    install_author_training_retention,
+)
 
 
 METHOD = "mvst"
@@ -69,7 +73,7 @@ def install_compatibility_patch(source: Path) -> dict:
     del state
 """
         new_save = """def save_model(model, optimizer, args, epoch, save_file, classifier,
-               scaler=None, best_acc=None):
+               scaler=None, best_acc=None, best_model=None):
     print('==> Saving...')
     state = {
         'args': args,
@@ -78,6 +82,7 @@ def install_compatibility_patch(source: Path) -> dict:
         'epoch': epoch,
         'classifier': classifier.state_dict(),
         'best_acc': best_acc,
+        'best_model': best_model,
     }
     if scaler is not None:
         state['scaler'] = scaler.state_dict()
@@ -121,7 +126,9 @@ def install_compatibility_patch(source: Path) -> dict:
             if checkpoint.get('scaler') is not None:
                 scaler.load_state_dict(checkpoint['scaler'])
             best_acc = checkpoint.get('best_acc') or best_acc
-            best_model = [deepcopy(model.state_dict()), deepcopy(classifier.state_dict())]
+            if checkpoint.get('best_model') is None:
+                raise ValueError('resume checkpoint lacks historical best_model')
+            best_model = checkpoint['best_model']
             print(\"=> loaded checkpoint '{}' (epoch {})\".format(args.resume, checkpoint['epoch']))
         else:
             raise FileNotFoundError(\"no checkpoint found at '{}'\".format(args.resume))
@@ -130,7 +137,7 @@ def install_compatibility_patch(source: Path) -> dict:
 """
         main = _replace_once(main, old_resume, new_resume, f"{view} safe resume")
         old_call = "save_model(model, optimizer, args, epoch, save_file, classifier)"
-        new_call = "save_model(model, optimizer, args, epoch, save_file, classifier, scaler=scaler, best_acc=best_acc)"
+        new_call = "save_model(model, optimizer, args, epoch, save_file, classifier, scaler=scaler, best_acc=best_acc, best_model=best_model)"
         if main.count(old_call) != 3:
             raise ValueError(f"MVST {view} save call count={main.count(old_call)}")
         main = main.replace(old_call, new_call)
@@ -141,7 +148,7 @@ def install_compatibility_patch(source: Path) -> dict:
         validation_replacement = """            best_acc, best_model, save_bool = validate(val_loader, model, classifier, criterion, args, best_acc, best_model)
 
             # Compatibility patch: one rolling complete checkpoint avoids 50 large epoch files.
-            save_model(model, optimizer, args, epoch, os.path.join(args.save_folder, 'last.pth'), classifier, scaler=scaler, best_acc=best_acc)
+            save_model(model, optimizer, args, epoch, os.path.join(args.save_folder, 'last.pth'), classifier, scaler=scaler, best_acc=best_acc, best_model=best_model)
 <SOURCE_INDENTED_BLANK>
             # save a checkpoint of model and classifier when the best score is updated
 """.replace("<SOURCE_INDENTED_BLANK>", " " * 12)
@@ -149,6 +156,11 @@ def install_compatibility_patch(source: Path) -> dict:
             main, validation_anchor, validation_replacement, f"{view} rolling resume checkpoint"
         )
         main_path.write_text(main)
+        install_author_checkpoint_writer(misc_path)
+        install_author_training_retention(
+            main_path,
+            "save_model(model, optimizer, args, epoch, os.path.join(args.save_folder, 'last.pth'), classifier, scaler=scaler, best_acc=best_acc, best_model=best_model)",
+        )
         patched_files.append(f"{view}/main.py")
 
     command = ["git", "diff", "--no-ext-diff", "--", *patched_files]
@@ -156,13 +168,14 @@ def install_compatibility_patch(source: Path) -> dict:
     if not diff:
         raise ValueError("MVST compatibility patch produced an empty diff")
     return {
-        "scope": "complete interruption-safe state and one rolling resume checkpoint for each author encoder",
+        "scope": "complete interruption-safe state and bounded best-plus-last retention for each author encoder",
         "files": patched_files,
         "diff_sha256": hashlib.sha256(diff).hexdigest(),
         "diff_size_bytes": len(diff),
         "semantic_invariants": [
             "author random file split, model, preprocessing, loss, optimizer, test selection, and metric unchanged",
-            "resume restores model, classifier, optimizer, scaler, epoch, and best score from one rolling last.pth",
+            "resume restores model, classifier, optimizer, scaler, epoch, best score, and historical best-model buffer from one rolling last.pth",
+            "each encoder retains its independently author-selected best.pth and atomically replaced last.pth with SHA256 receipts",
             "cycle IDs are added only by the maintained extraction path before fusion",
         ],
     }

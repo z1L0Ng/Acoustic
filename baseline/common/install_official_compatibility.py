@@ -6,6 +6,11 @@ import hashlib
 from pathlib import Path
 import subprocess
 
+from baseline.common.storage_safe_retention import (
+    install_author_checkpoint_writer,
+    install_author_training_retention,
+)
+
 
 def replace_exact(path: Path, old: str, new: str, expected_count: int = 1) -> None:
     text = path.read_text()
@@ -60,6 +65,11 @@ def install_patch_mix(source: Path) -> None:
         "                raise ValueError('resume checkpoint lacks historical best_model')\n"
         "            best_model = checkpoint['best_model']\n"
         "            args.start_epoch += 1",
+    )
+    install_author_checkpoint_writer(misc)
+    install_author_training_retention(
+        main,
+        "save_model(model, optimizer, args, epoch, os.path.join(args.save_folder, 'last.pth'), classifier, projector, best_acc, best_model)",
     )
 
 
@@ -119,6 +129,11 @@ def install_pafa(source: Path) -> None:
         "            best_model = checkpoint['best_model']\n"
         "            args.start_epoch += 1",
     )
+    install_author_checkpoint_writer(misc)
+    install_author_training_retention(
+        main,
+        "save_model(model, optimizer, args, epoch, os.path.join(args.save_folder, 'last.pth'), classifier, projector, best_acc, best_model)",
+    )
 
 
 def install_compatibility_patch(method: str, source: Path) -> dict:
@@ -139,9 +154,10 @@ def install_compatibility_patch(method: str, source: Path) -> dict:
         raise ValueError("compatibility patch produced no diff")
     return {
         "status": "installed",
-        "scope": "checkpoint save/resume state only; uninterrupted training semantics unchanged",
+        "scope": "checkpoint save/resume state and bounded best-plus-last retention only; uninterrupted training semantics unchanged",
         "files": ["main.py", "util/misc.py"],
         "diff_sha256": hashlib.sha256(diff).hexdigest(),
         "diff_bytes": len(diff),
         "resume_boundary": "only checkpoints created by this compatibility patch are resumable",
+        "retention_policy": "author-selected best.pth plus atomic complete rolling last.pth with SHA256 JSONL receipts",
     }

@@ -19,6 +19,10 @@ from baseline.common.official_reproduction_bootstrap import (
     prepare_result_root_for_bootstrap,
     sha256,
 )
+from baseline.common.storage_safe_retention import (
+    install_author_checkpoint_writer,
+    install_author_training_retention,
+)
 
 
 METHOD = "sg_scl"
@@ -86,7 +90,7 @@ def install_compatibility_patch(source: Path) -> dict:
     del state
 """
     new_save = """def save_model(model, optimizer, args, epoch, save_file, classifier,
-               projector=None, scaler=None, best_acc=None):
+               projector=None, scaler=None, best_acc=None, best_model=None):
     print('==> Saving...')
     class_classifier = classifier[0] if isinstance(classifier, (list, tuple)) else classifier
     state = {
@@ -96,6 +100,7 @@ def install_compatibility_patch(source: Path) -> dict:
         'epoch': epoch,
         'classifier': class_classifier.state_dict(),
         'best_acc': best_acc,
+        'best_model': best_model,
     }
     if isinstance(classifier, (list, tuple)) and len(classifier) > 1:
         state['domain_classifier'] = classifier[1].state_dict()
@@ -145,7 +150,9 @@ def install_compatibility_patch(source: Path) -> dict:
             if checkpoint.get('scaler') is not None:
                 scaler.load_state_dict(checkpoint['scaler'])
             best_acc = checkpoint.get('best_acc') or best_acc
-            best_model = [deepcopy(model.state_dict()), deepcopy(classifier[0].state_dict() if args.domain_adaptation or args.domain_adaptation2 else classifier.state_dict())]
+            if checkpoint.get('best_model') is None:
+                raise ValueError('resume checkpoint lacks historical best_model')
+            best_model = checkpoint['best_model']
             print(\"=> loaded checkpoint '{}' (epoch {})\".format(args.resume, checkpoint['epoch']))
         else:
             raise FileNotFoundError(\"no checkpoint found at '{}'\".format(args.resume))
@@ -154,11 +161,16 @@ def install_compatibility_patch(source: Path) -> dict:
 """
     main = _replace_once(main, old_resume, new_resume, "safe resume block")
     old_call = "save_model(model, optimizer, args, epoch, save_file, classifier[0] if args.domain_adaptation or args.domain_adaptation2 else classifier)"
-    new_call = "save_model(model, optimizer, args, epoch, save_file, classifier, projector=projector, scaler=scaler, best_acc=best_acc)"
+    new_call = "save_model(model, optimizer, args, epoch, save_file, classifier, projector=projector, scaler=scaler, best_acc=best_acc, best_model=best_model)"
     if main.count(old_call) != 3:
         raise ValueError(f"SG-SCL save call count={main.count(old_call)}")
     main = main.replace(old_call, new_call)
     main_path.write_text(main)
+    install_author_checkpoint_writer(misc_path)
+    install_author_training_retention(
+        main_path,
+        "save_model(model, optimizer, args, epoch, os.path.join(args.save_folder, 'last.pth'), classifier, projector=projector, scaler=scaler, best_acc=best_acc, best_model=best_model)",
+    )
 
     diff = subprocess.run(
         ["git", "diff", "--no-ext-diff", "--", "main.py", "method/mcl.py", "util/misc.py"],
@@ -169,14 +181,15 @@ def install_compatibility_patch(source: Path) -> dict:
     if not diff:
         raise ValueError("SG-SCL compatibility patch produced an empty diff")
     return {
-        "scope": "non-semantic device allocation, complete checkpoint state, and safe resume",
+        "scope": "non-semantic device allocation, complete checkpoint state, safe resume, and bounded best-plus-last retention",
         "files": ["main.py", "method/mcl.py", "util/misc.py"],
         "diff_sha256": hashlib.sha256(diff).hexdigest(),
         "diff_size_bytes": len(diff),
         "semantic_invariants": [
             "model, loss algebra, preprocessing, split, hyperparameters, test selection, and metric unchanged",
             "MetaCL tensors are allocated on the input tensor device instead of hard-coded CUDA",
-            "resume restores model, both classifiers, projector, optimizer, scaler, epoch, and best score",
+            "resume restores model, both classifiers, projector, optimizer, scaler, epoch, best score, and historical best-model buffer",
+            "the original save_bool condition selects best.pth; last.pth is atomically replaced each epoch with a SHA256 receipt",
         ],
     }
 

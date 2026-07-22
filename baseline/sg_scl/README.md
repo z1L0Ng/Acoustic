@@ -62,7 +62,7 @@ python -m baseline.sg_scl.run_reproduction full \
 # Resume only from a checkpoint inside the same timestamped run root.
 python -m baseline.sg_scl.run_reproduction full \
   --project-root . --result-root "$RUN_ROOT" --device cuda:0 \
-  --resume "$RUN_ROOT/full/da2/<run-name>/epoch_<N>.pth"
+  --resume "$RUN_ROOT/full/da2/<run-name>/last.pth"
 ```
 
 The full entry preserves seed 1, 50 epochs, test-per-epoch selection, and the

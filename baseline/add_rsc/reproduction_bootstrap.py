@@ -21,6 +21,10 @@ from baseline.common.official_reproduction_bootstrap import (
     prepare_result_root_for_bootstrap,
     sha256,
 )
+from baseline.common.storage_safe_retention import (
+    install_author_checkpoint_writer,
+    install_author_training_retention,
+)
 
 
 METHOD = "add_rsc"
@@ -123,7 +127,7 @@ def install_compatibility_patch(source: Path) -> dict:
     del state
 """
     new_save = """def save_model(model, bias_denoise_encoder, optimizer, args, epoch, save_file,
-               classifier, best_acc=None):
+               classifier, best_acc=None, best_model=None):
     print('==> Saving...')
     state = {
         'args': args,
@@ -133,6 +137,7 @@ def install_compatibility_patch(source: Path) -> dict:
         'epoch': epoch,
         'classifier': classifier.state_dict(),
         'best_acc': best_acc,
+        'best_model': best_model,
     }
 
     torch.save(state, save_file)
@@ -176,7 +181,9 @@ def install_compatibility_patch(source: Path) -> dict:
             classifier.load_state_dict(checkpoint['classifier'])
             optimizer.load_state_dict(checkpoint['optimizer'])
             best_acc = checkpoint.get('best_acc') or best_acc
-            best_model = [deepcopy(model.state_dict()), deepcopy(bias_denoise_encoder.state_dict()), deepcopy(classifier.state_dict())]
+            if checkpoint.get('best_model') is None:
+                raise ValueError('resume checkpoint lacks historical best_model')
+            best_model = checkpoint['best_model']
             print(\"=> loaded checkpoint '{}' (epoch {})\".format(args.resume, checkpoint['epoch']))
         else:
             raise FileNotFoundError(\"no checkpoint found at '{}'\".format(args.resume))
@@ -185,7 +192,7 @@ def install_compatibility_patch(source: Path) -> dict:
 """
     main = _replace_once(main, old_resume, new_resume, "safe resume block")
     old_call = "save_model(model, bias_denoise_encoder, optimizer, args, epoch, save_file, classifier)"
-    new_call = "save_model(model, bias_denoise_encoder, optimizer, args, epoch, save_file, classifier, best_acc=best_acc)"
+    new_call = "save_model(model, bias_denoise_encoder, optimizer, args, epoch, save_file, classifier, best_acc=best_acc, best_model=best_model)"
     if main.count(old_call) != 3:
         raise ValueError(f"ADD-RSC save call count={main.count(old_call)}")
     main = main.replace(old_call, new_call)
@@ -196,12 +203,17 @@ def install_compatibility_patch(source: Path) -> dict:
     validation_replacement = """            best_acc, best_model, save_bool = validate(val_loader, model, bias_denoise_encoder, classifier, criterion, args, best_acc, best_model)
 
             # Compatibility patch: one rolling complete resume checkpoint.
-            save_model(model, bias_denoise_encoder, optimizer, args, epoch, os.path.join(args.save_folder, 'last.pth'), classifier, best_acc=best_acc)
+            save_model(model, bias_denoise_encoder, optimizer, args, epoch, os.path.join(args.save_folder, 'last.pth'), classifier, best_acc=best_acc, best_model=best_model)
 <SOURCE_INDENTED_BLANK>
             # save a checkpoint of model and classifier when the best score is updated
 """.replace("<SOURCE_INDENTED_BLANK>", " " * 12)
     main = _replace_once(main, validation_anchor, validation_replacement, "rolling resume checkpoint")
     main_path.write_text(main)
+    install_author_checkpoint_writer(misc_path)
+    install_author_training_retention(
+        main_path,
+        "save_model(model, bias_denoise_encoder, optimizer, args, epoch, os.path.join(args.save_folder, 'last.pth'), classifier, best_acc=best_acc, best_model=best_model)",
+    )
 
     files = ["main.py", "util/icbhi_dataset.py", "util/misc.py", "models/adapt_diff_denoise.py"]
     diff = subprocess.run(
@@ -211,7 +223,7 @@ def install_compatibility_patch(source: Path) -> dict:
     if not diff:
         raise ValueError("ADD-RSC compatibility patch produced an empty diff")
     return {
-        "scope": "explicit dual split tracks, device portability, complete rolling resume",
+        "scope": "explicit dual split tracks, device portability, complete rolling resume, and bounded best-plus-last retention",
         "files": files,
         "diff_sha256": hashlib.sha256(diff).hexdigest(),
         "diff_size_bytes": len(diff),
@@ -219,6 +231,7 @@ def install_compatibility_patch(source: Path) -> dict:
             "author_repo_default_official_like preserves the sorted random.Random(1) split",
             "paper_declared_reconstruction intentionally changes split, n_mels, and weight decay per paper and is not author-repo faithful",
             "model, ADD loss algebra, alpha=0.02 scale, epsilon=0.2 smoothing, and test-selected metric remain unchanged",
+            "the original save_bool condition selects best.pth; last.pth is atomically replaced each epoch with a SHA256 receipt",
         ],
     }
 
