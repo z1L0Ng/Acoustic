@@ -38,9 +38,13 @@ METHODS = {
             "triton": "2.0.0", "cmake": "3.26.4", "lit": "16.0.6",
             "pip": PIP_VERSION, "setuptools": SETUPTOOLS_VERSION,
             "librosa": "0.9.2",
+            "opencv-python-headless": "4.11.0.86",
+            "opencv-python": "4.11.0.86", "cmapy": "0.6.6",
             **RUNTIME_HOTFIX_VERSIONS,
         },
-        "imports": ["transformers", "safetensors", "cmake", "lit"],
+        "imports": [
+            "transformers", "safetensors", "cv2", "cmapy", "cmake", "lit",
+        ],
     },
     "pafa": {
         "environment": "acoustic-pafa-r4",
@@ -136,7 +140,7 @@ def verify(method: str, project_root: Path, output: Path, cuda_mode: str) -> dic
         required_yaml_tokens.extend(["- cmake==3.26.4", "- lit==16.0.6"])
     if method == "pafa":
         required_yaml_tokens.append("- transformers==4.38.2")
-    if method == "add_rsc":
+    if method in {"patch_mix_cl", "mvst", "add_rsc"}:
         required_yaml_tokens.extend([
             "- opencv-python-headless==4.11.0.86",
             "- opencv-python==4.11.0.86",

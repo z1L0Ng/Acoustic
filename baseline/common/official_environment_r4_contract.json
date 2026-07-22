@@ -87,17 +87,17 @@
     },
     "opencv-python-headless": {
       "version": "4.11.0.86",
-      "applies_to": ["mvst", "add_rsc"],
+      "applies_to": ["patch_mix_cl", "mvst", "add_rsc"],
       "linux_x86_64_wheel_sha256": "0e0a27c19dd1f40ddff94976cfe43066fbbe9dfbb2ec1907d66c19caef42a57b"
     },
     "opencv-python": {
       "version": "4.11.0.86",
-      "applies_to": ["mvst", "add_rsc"],
+      "applies_to": ["patch_mix_cl", "mvst", "add_rsc"],
       "linux_x86_64_wheel_sha256": "6b02611523803495003bd87362db3e1d2a0454a6a63025dc6658a9830570aa0d"
     },
     "cmapy": {
       "version": "0.6.6",
-      "applies_to": ["mvst", "add_rsc"],
+      "applies_to": ["patch_mix_cl", "mvst", "add_rsc"],
       "sdist_sha256": "cb52a6b3057c49a146fb0964b8302f2fb7d61dfe6ae6de1a98b636aace805255"
     }
   },

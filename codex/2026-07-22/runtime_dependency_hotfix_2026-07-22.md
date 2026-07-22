@@ -13,6 +13,11 @@ Linux environments. ADD-RSC also receives the OpenCV/cmapy combination already
 validated by Release 4 for MVST: `opencv-python-headless==4.11.0.86`,
 `opencv-python==4.11.0.86`, and `cmapy==0.6.6`.
 
+The first post-hotfix Patch-Mix smoke then reached its author data utility,
+which directly imports both `cv2` and `cmapy`. Patch-Mix therefore receives the
+same already validated exact OpenCV/cmapy set. PAFA and SG-SCL do not import
+these modules and remain unchanged.
+
 Primary candidate artifact hashes:
 
 - `nlpaug-1.1.11-py3-none-any.whl`: `01d3befce09e46cb7d990839e0b7dd80ba3e991485f772e678d329ffeb97fd80`
@@ -38,3 +43,6 @@ Verified incremental-repair receipt hashes:
 - SG-SCL: `5f8c738f8e6cf5206972a7120e685fe58b9888ca5b8aa25ada2fed49fc44e1f8`
 - MVST: `12467a02d92d9216473aabfe29f708d3739000a4f511b41501735f55ae7e9dd3`
 - ADD-RSC: `107cd5ba5ec53c0de67e1661ac875e493cb0129588a4db97d1b3229ac89e4015`
+
+Secondary Patch-Mix OpenCV/cmapy repair receipt:
+`47f1d2b14335ee33e23eb95625e9adfc907b986e44b9b837180be82fe28f9999`.

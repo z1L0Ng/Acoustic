@@ -18,6 +18,9 @@ dependencies:
       - gdown==6.1.0
       - beautifulsoup4==4.15.0
       - soupsieve==2.9.1
+      - opencv-python-headless==4.11.0.86
+      - opencv-python==4.11.0.86
+      - cmapy==0.6.6
       - pandas
       - scipy
       - scikit-learn
