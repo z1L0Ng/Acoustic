@@ -14,7 +14,9 @@ development workspace.
 6. Start long runs inside durable `tmux`; logs and exit status must survive SSH loss.
 7. Write generated files under `result/<experiment_id>/` and caches under `.cache/`.
 8. Return compact metrics, predictions, hashes, and any narrow runtime patch to
-   local management. Do not commit generated outputs.
+   local management. Do not commit generated outputs directly from the server.
+   After local verification, management may publish one eligible best checkpoint
+   under `checkpoints/<experiment_id>/best.*`.
 
 ## Git rule
 

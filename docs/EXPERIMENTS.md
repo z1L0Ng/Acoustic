@@ -27,7 +27,6 @@ run.json
 metrics.json
 predictions.csv.gz
 confusion.csv                 # or clearly named task-specific confusion files
-best.pt                       # optional
 train.log                     # optional
 ```
 
@@ -36,6 +35,22 @@ and temporary checkpoints go under `.cache/`. Result fragments from smoke,
 profile, receipt, and full phases should be merged into `run.json` after a run is
 accepted. Superseded runs are deleted after the replacement is independently
 verified; Git history and run hashes provide provenance.
+
+## Checkpoint publication
+
+An experiment may publish one checkpoint at
+`checkpoints/<experiment_id>/best.<supported-extension>` when all of the
+following hold:
+
+- `<experiment_id>` exists in `experiments/index.csv`;
+- the directory contains exactly one checkpoint file and it is named `best.*`;
+- the file is no larger than `104,857,600` bytes (100 MiB);
+- it is the accepted best model, not a rolling, resume, optimizer, scaler, or RNG snapshot.
+
+Supported extensions are `.pt`, `.pth`, `.ckpt`, `.safetensors`, and `.bin`.
+Larger checkpoints remain in `.cache/`, `result/`, or server storage and are
+represented by a checksum and retrieval location. No global experiment field is
+required for this optional publication decision.
 
 ## Interpretation rule
 

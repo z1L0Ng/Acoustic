@@ -236,6 +236,20 @@ dataset/processed/intermediate/**
 # checkpoints, caches, external repositories, and logs under result/ out of git.
 result/
 
+# Checkpoint binaries are local by default. The only Git-tracked exception is
+# one explicitly published best checkpoint per registered experiment. Size and
+# naming are enforced by tests/test_project_structure.py.
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+!checkpoints/*/best.pt
+!checkpoints/*/best.pth
+!checkpoints/*/best.ckpt
+!checkpoints/*/best.safetensors
+!checkpoints/*/best.bin
+
 # Legacy output root. Keep ignored so old scripts cannot accidentally re-create
 # a second result tree; all active code must write to result/.
 results/

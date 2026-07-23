@@ -28,7 +28,9 @@ Their maintained results and interpretation are in `docs/BASELINES.md`.
 Each method owns its environment, bootstrap, smoke, full-run, and prediction
 verification entry points. Paper facts are stored in `paper_contract.json` inside
 the corresponding method directory. Generated source clones, weights, and runs
-must not be added here; use `.cache/` and `result/`.
+must not be added here; use `.cache/` and `result/`. If an accepted experiment's
+best checkpoint fits the repository policy, publish only that file under
+`checkpoints/<experiment_id>/best.*`, never inside a baseline package.
 
 Cross-dataset transfer evaluators are shared through `acoustic/evaluation/`.
 Their scientific status is tracked by `experiments/index.csv`, not by directory

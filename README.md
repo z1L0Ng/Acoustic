@@ -13,6 +13,7 @@ local Mac and a training server can share one Git history without sharing caches
 | `baseline/` | Existing methods, paper reproductions, and controlled baseline comparisons. |
 | `model/` | Project-authored model implementations only. |
 | `experiments/` | Small, extensible experiment definitions and the project experiment index. |
+| `checkpoints/` | At most one publishable best checkpoint per registered experiment. |
 | `dataset/` | Read-only raw data, lightweight processed metadata, and acquisition/audit scripts. |
 | `tests/` | Project-structure and reproducibility checks. |
 | `server/` | The single local-to-server operating contract. |
@@ -23,6 +24,10 @@ local Mac and a training server can share one Git history without sharing caches
 `results/`, `codex/`, and tracked `tmp/` are retired. Active outputs must use
 `result/<experiment_id>/`; historical decisions are condensed into `docs/` and
 Git history remains the audit trail.
+
+A registered experiment may publish one `checkpoints/<experiment_id>/best.*`
+file when it is no larger than GitHub's 100 MiB regular-file limit. All rolling,
+resume, optimizer, and oversized checkpoints remain outside Git.
 
 ## Current evidence
 

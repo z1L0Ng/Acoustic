@@ -8,6 +8,7 @@ The repository uses ownership by scientific role, not by date or task thread.
 - `baseline/` owns prior methods and their faithful or explicitly bounded reproductions.
 - `model/` owns only methods proposed by this project.
 - `experiments/` describes questions and runs without prescribing a global schema.
+- `checkpoints/` owns the optional single best checkpoint published for a registered experiment.
 - `dataset/` owns source acquisition, immutable raw packages, and lightweight metadata.
 - `result/` owns generated evidence. It is local/server state, never Git source.
 - `.cache/` owns all rebuildable large artifacts.
@@ -22,15 +23,18 @@ checked-out Git commit; it does not become a second development workspace.
 |---|---|---:|---|
 | Source code and notebooks | `acoustic/`, `baseline/`, `model/`, `dataset/script/` | yes | maintained |
 | Experiment definitions | `experiments/` | yes | maintained |
+| One publishable best checkpoint | `checkpoints/<experiment_id>/best.*` | conditional | maintained while useful |
 | Small schemas and tables | `dataset/processed/`, `docs/tables/` | yes | maintained |
 | Raw source packages | `dataset/raw/` | no | immutable locally/server |
-| Checkpoints and feature caches | `.cache/` | no | rebuildable or source-hash pinned |
+| Rolling, resume, optimizer, oversized checkpoints and feature caches | `.cache/` | no | rebuildable or source-hash pinned |
 | Metrics and predictions | `result/` | no | compact canonical runs only |
 | Scratch files | `tmp/` | no | disposable |
 
 Generated result directories use one level: `result/<experiment_id>/`. A final
 run should normally contain `run.json`, `metrics.json`, compressed predictions,
-confusion tables, and at most one best checkpoint or log when they are needed.
+confusion tables, and an optional compact log. A best checkpoint selected for
+Git publication is copied to `checkpoints/<experiment_id>/best.*`; it is not
+duplicated in the canonical result directory.
 Source repositories, environments, preprocessing caches, profiler traces, and
 receipt fragments do not belong in a final result directory.
 
