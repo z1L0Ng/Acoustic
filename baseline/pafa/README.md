@@ -18,18 +18,18 @@ upgrade either package in place.
 conda env create -f baseline/pafa/environment.linux-cu118.yml
 RUN_ROOT="result/pafa_$(TZ=America/Chicago date +%Y%m%d_%H%M%S)"
 mkdir -p "$RUN_ROOT/receipts"
-conda run -n acoustic-pafa-r4 python -m baseline.common.verify_official_environment_r4 \
+conda run -n acoustic-pafa python -m baseline.common.verify_official_environment_r4 \
   --method pafa --cuda-mode runtime \
   --output "$RUN_ROOT/receipts/environment_r4.json"
-conda run -n acoustic-pafa-r4 python -m baseline.pafa.run_reproduction bootstrap \
+conda run -n acoustic-pafa python -m baseline.pafa.run_reproduction bootstrap \
   --dataset-root dataset/raw/icbhi_2017 --result-root "$RUN_ROOT" --device cuda
-conda run -n acoustic-pafa-r4 python -m baseline.pafa.run_reproduction verify-bootstrap \
+conda run -n acoustic-pafa python -m baseline.pafa.run_reproduction verify-bootstrap \
   --result-root "$RUN_ROOT"
-conda run -n acoustic-pafa-r4 python -m baseline.pafa.run_reproduction smoke \
+conda run -n acoustic-pafa python -m baseline.pafa.run_reproduction smoke \
   --result-root "$RUN_ROOT" --device cuda --steps 1
-conda run -n acoustic-pafa-r4 python -m baseline.pafa.run_reproduction profile \
+conda run -n acoustic-pafa python -m baseline.pafa.run_reproduction profile \
   --result-root "$RUN_ROOT" --device cuda --steps 100
-conda run -n acoustic-pafa-r4 python -m baseline.pafa.run_reproduction full \
+conda run -n acoustic-pafa python -m baseline.pafa.run_reproduction full \
   --result-root "$RUN_ROOT" --device cuda
 ```
 
@@ -38,7 +38,7 @@ The independent contract is `baseline/pafa/paper_contract.json`.
 `bootstrap` clones and pins the author repository, rebuilds the 6,898-cycle manifest from raw data, downloads and SHA-verifies the public BEATs compatibility mirror, builds read-only data adapters, and installs a receipted save/resume-only patch. It may instead receive `--checkpoint-path`; the same expected SHA is enforced. A resumable checkpoint must have been created by this release:
 
 ```bash
-conda run -n acoustic-pafa-r4 python -m baseline.pafa.run_reproduction full \
+conda run -n acoustic-pafa python -m baseline.pafa.run_reproduction full \
   --result-root "$RUN_ROOT" --device cuda \
   --resume "$RUN_ROOT/full/<experiment>/last.pth"
 ```

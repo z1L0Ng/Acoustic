@@ -22,7 +22,7 @@ place because later pip releases reject the retained CMake 3.26.4 wheel metadata
 
 ```bash
 conda env create -f baseline/sg_scl/environment.linux-cu118.yml
-conda activate acoustic-sgscl-r4
+conda activate acoustic-sgscl
 ```
 
 ## Fresh-checkout bootstrap

@@ -14,7 +14,7 @@
     "server_audit_final_last_checkpoint_differs": true
   },
   "claim": "published-model / verified-server-checkpoint / ICBHI-test-selected / zero-target-tuning exploratory transfer",
-  "environment": "acoustic-pafa-r4",
+  "environment": "acoustic-pafa",
   "method_id": "pafa",
   "preprocessing": "author PAFA 16 kHz mono, full-recording fade, event crop, 5 s repeat/truncate, raw waveform, nospec",
   "source": {

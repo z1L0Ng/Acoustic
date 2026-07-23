@@ -30,7 +30,7 @@ from baseline.common.storage_safe_retention import (
 
 METHOD = "mvst"
 MINIMUM_COMMIT = "4172524a0e5d7b792de248820439f30874e2ae6d"
-ENVIRONMENT_NAME = "acoustic-mvst-r4"
+ENVIRONMENT_NAME = "acoustic-mvst"
 VIEWS = ["16", "32", "64", "128", "256"]
 EXPECTED_RANDOM_ORDERED_IDS = {
     "train": "bf85c6037a6c17c04aa411be99afa714ed0088cb1a145466e6e54b2d9cb398c4",

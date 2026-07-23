@@ -24,7 +24,7 @@ place because later pip releases reject the retained CMake 3.26.4 wheel metadata
 
 ```bash
 conda env create -f baseline/mvst/environment.linux-cu118.yml
-conda activate acoustic-mvst-r4
+conda activate acoustic-mvst
 
 RUN_ROOT="result/mvst_$(TZ=America/Chicago date +%Y%m%d_%H%M%S)"
 mkdir -p "$RUN_ROOT/receipts"

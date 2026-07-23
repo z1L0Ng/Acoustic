@@ -3,7 +3,7 @@
 METHODS = {
     "patch_mix_cl": {
         "display_name": "Patch-Mix Contrastive Learning",
-        "env": "acoustic-patchmix-r3",
+        "env": "acoustic-patchmix",
         "repo_url": "https://github.com/raymin0223/patch-mix_contrastive_learning",
         "commit": "836b09fea1b70eb29fe0b25afa481286b56f5104",
         "license_expected": "MIT",
@@ -20,7 +20,7 @@ METHODS = {
     },
     "pafa": {
         "display_name": "Patient-Aware Feature Alignment",
-        "env": "acoustic-pafa-r3",
+        "env": "acoustic-pafa",
         "repo_url": "https://github.com/wa976/PAFA",
         "commit": "e49e294d0db0d6af10ac46290512b9c85d3f71e1",
         "license_expected": None,
@@ -37,7 +37,7 @@ METHODS = {
     },
     "mvst": {
         "display_name": "Multi-View Spectrogram Transformer",
-        "env": "acoustic-mvst-r3",
+        "env": "acoustic-mvst",
         "repo_url": "https://github.com/wentaoheunnc/MVST",
         "commit": "51f93fa6ffa580d0819ccb59f861582927937264",
         "license_expected": None,
@@ -54,7 +54,7 @@ METHODS = {
     },
     "add_rsc": {
         "display_name": "Adaptive Differential Denoising for Respiratory Sounds Classification",
-        "env": "acoustic-addrsc-r3",
+        "env": "acoustic-addrsc",
         "repo_url": "https://github.com/deegy666/ADD-RSC",
         "commit": "e2b0f8213cb7ca451ef28757cb1329e17469fe72",
         "license_expected": None,
@@ -72,7 +72,7 @@ METHODS = {
     },
     "sg_scl": {
         "display_name": "Stethoscope-Guided Supervised Contrastive Learning",
-        "env": "acoustic-sgscl-r3",
+        "env": "acoustic-sgscl",
         "repo_url": "https://github.com/kaen2891/stethoscope-guided_supervised_contrastive_learning",
         "commit": "66564609595090b61540595d3d27764c00553086",
         "license_expected": None,

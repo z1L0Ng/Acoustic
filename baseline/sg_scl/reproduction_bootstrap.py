@@ -27,7 +27,7 @@ from baseline.common.storage_safe_retention import (
 
 METHOD = "sg_scl"
 MINIMUM_COMMIT = "4172524a0e5d7b792de248820439f30874e2ae6d"
-ENVIRONMENT_NAME = "acoustic-sgscl-r4"
+ENVIRONMENT_NAME = "acoustic-sgscl"
 SPEC = MethodSpec(
     method=METHOD,
     repo_url="https://github.com/kaen2891/stethoscope-guided_supervised_contrastive_learning.git",

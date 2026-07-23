@@ -24,7 +24,7 @@ target-trained reference.
 ## Prerequisites
 
 - Checkout containing this tracked package.
-- Frozen environment `acoustic-pafa-r4` from
+- Frozen environment `acoustic-pafa` from
   `baseline/pafa/environment.linux-cu118.yml`.
 - Accepted PAFA task-checkpoint container: size `1,464,382,039` bytes, SHA256
   `94afaed43a1546af26f9d8d99d2d27329cb8d348fd57cbe142d24310c68ca2b6`.
@@ -48,24 +48,24 @@ export PAFA_BEATS_CHECKPOINT=/absolute/server/path/to/BEATs_iter3_plus_AS2M.pt
 export DATASET_ROOT=dataset/raw/sprsound
 export RUN_ROOT="result/pafa_sprsound_transfer_$(TZ=America/Chicago date +%Y%m%d_%H%M%S)"
 
-conda run -n acoustic-pafa-r4 python -m acoustic.evaluation.verify_sprsound_inter_contract \
+conda run -n acoustic-pafa python -m acoustic.evaluation.verify_sprsound_inter_contract \
   --dataset-root "$DATASET_ROOT"
 
-conda run -n acoustic-pafa-r4 python -m baseline.pafa.checkpoint_eval.bootstrap \
+conda run -n acoustic-pafa python -m baseline.pafa.checkpoint_eval.bootstrap \
   --result-root "$RUN_ROOT" \
   --checkpoint "$PAFA_TASK_CHECKPOINT" \
   --checkpoint-sha256 "$PAFA_TASK_SHA256" \
   --backbone-checkpoint "$PAFA_BEATS_CHECKPOINT" \
   --backbone-sha256 d43cbfad4d7b56381c061d7a24774f908d4d94c72961f6eb1d9090ff18cd8d34
 
-conda run -n acoustic-pafa-r4 python -m baseline.pafa.checkpoint_eval.run_sprsound_transfer \
+conda run -n acoustic-pafa python -m baseline.pafa.checkpoint_eval.run_sprsound_transfer \
   --mode smoke --dataset-root "$DATASET_ROOT" --result-root "$RUN_ROOT" \
   --checkpoint "$PAFA_TASK_CHECKPOINT" --checkpoint-sha256 "$PAFA_TASK_SHA256" \
   --backbone-checkpoint "$PAFA_BEATS_CHECKPOINT" \
   --backbone-sha256 d43cbfad4d7b56381c061d7a24774f908d4d94c72961f6eb1d9090ff18cd8d34 \
   --device cuda --batch-size 8 --max-events 8
 
-conda run -n acoustic-pafa-r4 python -m baseline.pafa.checkpoint_eval.verify_sprsound_transfer \
+conda run -n acoustic-pafa python -m baseline.pafa.checkpoint_eval.verify_sprsound_transfer \
   --mode smoke --dataset-root "$DATASET_ROOT" --result-root "$RUN_ROOT"
 ```
 
@@ -73,14 +73,14 @@ After a human or coordinator accepts the label-free smoke receipt, run the
 separate full command and verifier:
 
 ```bash
-conda run -n acoustic-pafa-r4 python -m baseline.pafa.checkpoint_eval.run_sprsound_transfer \
+conda run -n acoustic-pafa python -m baseline.pafa.checkpoint_eval.run_sprsound_transfer \
   --mode full --dataset-root "$DATASET_ROOT" --result-root "$RUN_ROOT" \
   --checkpoint "$PAFA_TASK_CHECKPOINT" --checkpoint-sha256 "$PAFA_TASK_SHA256" \
   --backbone-checkpoint "$PAFA_BEATS_CHECKPOINT" \
   --backbone-sha256 d43cbfad4d7b56381c061d7a24774f908d4d94c72961f6eb1d9090ff18cd8d34 \
   --device cuda --batch-size 32
 
-conda run -n acoustic-pafa-r4 python -m baseline.pafa.checkpoint_eval.verify_sprsound_transfer \
+conda run -n acoustic-pafa python -m baseline.pafa.checkpoint_eval.verify_sprsound_transfer \
   --mode full --dataset-root "$DATASET_ROOT" --result-root "$RUN_ROOT"
 ```
 

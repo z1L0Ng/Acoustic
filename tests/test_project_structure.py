@@ -7,6 +7,21 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CHECKPOINT_SUFFIXES = {".pt", ".pth", ".ckpt", ".safetensors", ".bin"}
 GITHUB_REGULAR_FILE_LIMIT_BYTES = 100 * 1024 * 1024
+SHARED_DOWNSTREAM_BASELINES = (
+    "ast",
+    "beats",
+    "clap",
+    "hear",
+    "opera",
+    "simple_acoustic",
+)
+STRONG_BASELINE_ENVIRONMENTS = {
+    "patch_mix_cl": ("acoustic-patchmix", "environment.linux-cu118.yml"),
+    "pafa": ("acoustic-pafa", "environment.linux-cu118.yml"),
+    "sg_scl": ("acoustic-sgscl", "environment.linux-cu118.yml"),
+    "mvst": ("acoustic-mvst", "environment.linux-cu118.yml"),
+    "add_rsc": ("acoustic-addrsc", "environment.linux-cu121.yml"),
+}
 
 
 class ProjectStructureTest(unittest.TestCase):
@@ -98,6 +113,24 @@ class ProjectStructureTest(unittest.TestCase):
         text = (ROOT / ".gitignore").read_text(encoding="utf-8")
         for entry in ("result/", "results/", ".cache/", "tmp/", "codex/"):
             self.assertIn(entry, text)
+
+    def test_baseline_environment_contract(self):
+        shared = (ROOT / "baseline" / "environment.yml").read_text(encoding="utf-8")
+        self.assertTrue(shared.startswith("name: acoustic-baseline-downstream\n"))
+        for baseline in SHARED_DOWNSTREAM_BASELINES:
+            path = ROOT / "baseline" / baseline / "environment.yml"
+            self.assertEqual(path.read_text(encoding="utf-8"), shared, path)
+
+        for baseline, (environment, cuda_file) in STRONG_BASELINE_ENVIRONMENTS.items():
+            directory = ROOT / "baseline" / baseline
+            for filename in ("environment.yml", cuda_file):
+                path = directory / filename
+                text = path.read_text(encoding="utf-8")
+                self.assertTrue(text.startswith(f"name: {environment}\n"), path)
+
+        for path in (ROOT / "baseline").rglob("environment*.yml"):
+            first_line = path.read_text(encoding="utf-8").splitlines()[0]
+            self.assertNotRegex(first_line, r"-r\d+$", path)
 
 
 if __name__ == "__main__":

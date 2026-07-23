@@ -1,4 +1,4 @@
-name: acoustic-mvst-r4
+name: acoustic-mvst
 channels:
   - conda-forge
 dependencies:

@@ -14,7 +14,7 @@
     "server_audit_final_last_checkpoint_differs": true
   },
   "claim": "published-model / verified-server-checkpoint / ICBHI-test-selected / zero-target-tuning exploratory transfer",
-  "environment": "acoustic-sgscl-r4",
+  "environment": "acoustic-sgscl",
   "method_id": "sg_scl",
   "preprocessing": "author SG-SCL 16 kHz mono, full-recording fade, event crop, 8 s repeat/truncate, 128-bin fbank, resize 798x128",
   "source": {

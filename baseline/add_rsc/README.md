@@ -30,7 +30,7 @@ Linux/CUDA server:
 
 ```bash
 conda env create -f baseline/add_rsc/environment.linux-cu121.yml
-conda activate acoustic-addrsc-r4
+conda activate acoustic-addrsc
 ```
 
 The local compatibility declaration remains in `environment.yml`; each runtime

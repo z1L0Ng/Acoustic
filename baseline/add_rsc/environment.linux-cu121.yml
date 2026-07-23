@@ -1,4 +1,4 @@
-name: acoustic-addrsc-r4
+name: acoustic-addrsc
 channels:
   - pytorch
   - nvidia

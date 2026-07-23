@@ -28,7 +28,7 @@ target-trained reference.
 ## Prerequisites
 
 - Checkout containing this tracked package.
-- Frozen environment `acoustic-sgscl-r4` from
+- Frozen environment `acoustic-sgscl` from
   `baseline/sg_scl/environment.linux-cu118.yml`.
 - Accepted SG-SCL task-checkpoint container: size `1,413,896,983` bytes, SHA256
   `8b3652d0dc82b9033251e3aab50ec1b51d328b6d3c836807b7c8de571581c256`.
@@ -51,20 +51,20 @@ export SGSCL_TASK_SHA256=8b3652d0dc82b9033251e3aab50ec1b51d328b6d3c836807b7c8de5
 export DATASET_ROOT=dataset/raw/sprsound
 export RUN_ROOT="result/sg_scl_sprsound_transfer_$(TZ=America/Chicago date +%Y%m%d_%H%M%S)"
 
-conda run -n acoustic-sgscl-r4 python -m acoustic.evaluation.verify_sprsound_inter_contract \
+conda run -n acoustic-sgscl python -m acoustic.evaluation.verify_sprsound_inter_contract \
   --dataset-root "$DATASET_ROOT"
 
-conda run -n acoustic-sgscl-r4 python -m baseline.sg_scl.checkpoint_eval.bootstrap \
+conda run -n acoustic-sgscl python -m baseline.sg_scl.checkpoint_eval.bootstrap \
   --result-root "$RUN_ROOT" \
   --checkpoint "$SGSCL_TASK_CHECKPOINT" \
   --checkpoint-sha256 "$SGSCL_TASK_SHA256"
 
-conda run -n acoustic-sgscl-r4 python -m baseline.sg_scl.checkpoint_eval.run_sprsound_transfer \
+conda run -n acoustic-sgscl python -m baseline.sg_scl.checkpoint_eval.run_sprsound_transfer \
   --mode smoke --dataset-root "$DATASET_ROOT" --result-root "$RUN_ROOT" \
   --checkpoint "$SGSCL_TASK_CHECKPOINT" --checkpoint-sha256 "$SGSCL_TASK_SHA256" \
   --device cuda --batch-size 8 --max-events 8
 
-conda run -n acoustic-sgscl-r4 python -m baseline.sg_scl.checkpoint_eval.verify_sprsound_transfer \
+conda run -n acoustic-sgscl python -m baseline.sg_scl.checkpoint_eval.verify_sprsound_transfer \
   --mode smoke --dataset-root "$DATASET_ROOT" --result-root "$RUN_ROOT"
 ```
 
@@ -72,12 +72,12 @@ After a human or coordinator accepts the label-free smoke receipt, run the
 separate full command and verifier:
 
 ```bash
-conda run -n acoustic-sgscl-r4 python -m baseline.sg_scl.checkpoint_eval.run_sprsound_transfer \
+conda run -n acoustic-sgscl python -m baseline.sg_scl.checkpoint_eval.run_sprsound_transfer \
   --mode full --dataset-root "$DATASET_ROOT" --result-root "$RUN_ROOT" \
   --checkpoint "$SGSCL_TASK_CHECKPOINT" --checkpoint-sha256 "$SGSCL_TASK_SHA256" \
   --device cuda --batch-size 8
 
-conda run -n acoustic-sgscl-r4 python -m baseline.sg_scl.checkpoint_eval.verify_sprsound_transfer \
+conda run -n acoustic-sgscl python -m baseline.sg_scl.checkpoint_eval.verify_sprsound_transfer \
   --mode full --dataset-root "$DATASET_ROOT" --result-root "$RUN_ROOT"
 ```
 

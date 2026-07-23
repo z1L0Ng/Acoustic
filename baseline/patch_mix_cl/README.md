@@ -17,25 +17,25 @@ place because later pip releases reject the retained CMake 3.26.4 wheel metadata
 conda env create -f baseline/patch_mix_cl/environment.linux-cu118.yml
 RUN_ROOT="result/patch_mix_cl_$(TZ=America/Chicago date +%Y%m%d_%H%M%S)"
 mkdir -p "$RUN_ROOT/receipts"
-conda run -n acoustic-patchmix-r4 python -m baseline.common.verify_official_environment_r4 \
+conda run -n acoustic-patchmix python -m baseline.common.verify_official_environment_r4 \
   --method patch_mix_cl --cuda-mode runtime \
   --output "$RUN_ROOT/receipts/environment_r4.json"
-conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.run_reproduction bootstrap \
+conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.run_reproduction bootstrap \
   --dataset-root dataset/raw/icbhi_2017 --result-root "$RUN_ROOT" --device cuda
-conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.run_reproduction verify-bootstrap \
+conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.run_reproduction verify-bootstrap \
   --result-root "$RUN_ROOT"
-conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.run_reproduction smoke \
+conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.run_reproduction smoke \
   --result-root "$RUN_ROOT" --device cuda --steps 1
-conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.run_reproduction profile \
+conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.run_reproduction profile \
   --result-root "$RUN_ROOT" --device cuda --steps 100
-conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.run_reproduction full \
+conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.run_reproduction full \
   --result-root "$RUN_ROOT" --device cuda
 ```
 
 `bootstrap` clones and pins the author repository, rebuilds the 6,898-cycle manifest from raw data, downloads and verifies the current author-hosted AST artifact, builds read-only data adapters, and installs a receipted save/resume-only patch. A resumable checkpoint must have been created by this release:
 
 ```bash
-conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.run_reproduction full \
+conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.run_reproduction full \
   --result-root "$RUN_ROOT" --device cuda \
   --resume "$RUN_ROOT/full/<experiment>/last.pth"
 ```

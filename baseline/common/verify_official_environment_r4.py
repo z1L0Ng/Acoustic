@@ -30,7 +30,7 @@ COMMON_IMPORTS = [
 ]
 METHODS = {
     "patch_mix_cl": {
-        "environment": "acoustic-patchmix-r4",
+        "environment": "acoustic-patchmix",
         "yaml": "baseline/patch_mix_cl/environment.linux-cu118.yml",
         "cuda": "11.8",
         "versions": {
@@ -47,7 +47,7 @@ METHODS = {
         ],
     },
     "pafa": {
-        "environment": "acoustic-pafa-r4",
+        "environment": "acoustic-pafa",
         "yaml": "baseline/pafa/environment.linux-cu118.yml",
         "cuda": "11.8",
         "versions": {
@@ -60,7 +60,7 @@ METHODS = {
         "imports": ["transformers", "einops", "cmake", "lit"],
     },
     "sg_scl": {
-        "environment": "acoustic-sgscl-r4",
+        "environment": "acoustic-sgscl",
         "yaml": "baseline/sg_scl/environment.linux-cu118.yml",
         "cuda": "11.8",
         "versions": {
@@ -73,7 +73,7 @@ METHODS = {
         "imports": ["cmake", "lit"],
     },
     "mvst": {
-        "environment": "acoustic-mvst-r4",
+        "environment": "acoustic-mvst",
         "yaml": "baseline/mvst/environment.linux-cu118.yml",
         "cuda": "11.8",
         "versions": {
@@ -88,7 +88,7 @@ METHODS = {
         "imports": ["cv2", "cmapy", "wget", "cmake", "lit"],
     },
     "add_rsc": {
-        "environment": "acoustic-addrsc-r4",
+        "environment": "acoustic-addrsc",
         "yaml": "baseline/add_rsc/environment.linux-cu121.yml",
         "cuda": "12.1",
         "versions": {

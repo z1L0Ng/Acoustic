@@ -107,11 +107,11 @@
     }
   },
   "environment_names": {
-    "patch_mix_cl": "acoustic-patchmix-r4",
-    "pafa": "acoustic-pafa-r4",
-    "sg_scl": "acoustic-sgscl-r4",
-    "mvst": "acoustic-mvst-r4",
-    "add_rsc": "acoustic-addrsc-r4"
+    "patch_mix_cl": "acoustic-patchmix",
+    "pafa": "acoustic-pafa",
+    "sg_scl": "acoustic-sgscl",
+    "mvst": "acoustic-mvst",
+    "add_rsc": "acoustic-addrsc"
   },
   "server_validation": {
     "methods_verified": 5,

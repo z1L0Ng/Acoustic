@@ -42,11 +42,11 @@ RUN_ROOT="result/sprsound_patchmix_target_training"
 CACHE_ROOT=".cache/sprsound_patchmix_target_training"
 DATASET_ROOT="dataset/raw/sprsound"
 
-conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.verify \
+conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.c0_sprsound.verify \
   --mode package
-conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.bootstrap \
+conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.c0_sprsound.bootstrap \
   --result-root "$RUN_ROOT" --cache-root "$CACHE_ROOT"
-conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.prepare_data \
+conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.c0_sprsound.prepare_data \
   --dataset-root "$DATASET_ROOT" --result-root "$RUN_ROOT"
 ```
 
@@ -54,16 +54,16 @@ Build and verify the bounded smoke cache. Inter rows are selected by sorted ID;
 no inter labels are opened by cache construction or smoke inference.
 
 ```bash
-conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.build_cache \
+conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.c0_sprsound.build_cache \
   --result-root "$RUN_ROOT" --cache-root "$CACHE_ROOT" --cache-name smoke \
   --max-train-events 32 --max-inter-events 8
 for TASK in binary_broad narrow_four; do
-  conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.train \
+  conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.c0_sprsound.train \
     --mode smoke --task "$TASK" --result-root "$RUN_ROOT" \
     --cache-root "$CACHE_ROOT" --cache-name smoke --device cuda \
     --num-workers 0 --max-steps 1
 done
-conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.verify \
+conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.c0_sprsound.verify \
   --mode smoke --result-root "$RUN_ROOT" --cache-root "$CACHE_ROOT" --cache-name smoke
 ```
 
@@ -72,21 +72,21 @@ build the full cache and run the two tasks sequentially. Do not run both AST
 jobs on the same device.
 
 ```bash
-conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.build_cache \
+conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.c0_sprsound.build_cache \
   --result-root "$RUN_ROOT" --cache-root "$CACHE_ROOT" --cache-name full
 for TASK in binary_broad narrow_four; do
-  conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.train \
+  conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.c0_sprsound.train \
     --mode full --task "$TASK" --result-root "$RUN_ROOT" \
     --cache-root "$CACHE_ROOT" --cache-name full --device cuda --num-workers 4
 done
-conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.verify \
+conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.c0_sprsound.verify \
   --mode full --result-root "$RUN_ROOT" --cache-root "$CACHE_ROOT" --cache-name full
 ```
 
 Resume only from the matching task's receipted `last.pth`:
 
 ```bash
-conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.train \
+conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.c0_sprsound.train \
   --mode full --task binary_broad --result-root "$RUN_ROOT" \
   --cache-root "$CACHE_ROOT" --cache-name full --device cuda --num-workers 4 \
   --resume "$RUN_ROOT/full/binary_broad/checkpoints/last.pth"
@@ -107,7 +107,7 @@ the first filename field as patient number. Run it once, only after both full
 C0 tasks and the frozen B0 evidence exist:
 
 ```bash
-conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.statistical_comparison \
+conda run -n acoustic-patchmix python -m baseline.patch_mix_cl.c0_sprsound.statistical_comparison \
   --b0-result-root result/sprsound_patchmix_frozen_transfer \
   --c0-result-root "$RUN_ROOT" \
   --output-dir "$RUN_ROOT/comparison"

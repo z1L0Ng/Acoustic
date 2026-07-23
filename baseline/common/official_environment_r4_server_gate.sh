@@ -6,17 +6,17 @@ PROJECT_ROOT="${1:-$(pwd)}"
 cd "$PROJECT_ROOT"
 
 entries=(
-  "patch_mix_cl|acoustic-patchmix-r4|baseline/patch_mix_cl/environment.linux-cu118.yml"
-  "pafa|acoustic-pafa-r4|baseline/pafa/environment.linux-cu118.yml"
-  "sg_scl|acoustic-sgscl-r4|baseline/sg_scl/environment.linux-cu118.yml"
-  "mvst|acoustic-mvst-r4|baseline/mvst/environment.linux-cu118.yml"
-  "add_rsc|acoustic-addrsc-r4|baseline/add_rsc/environment.linux-cu121.yml"
+  "patch_mix_cl|acoustic-patchmix|baseline/patch_mix_cl/environment.linux-cu118.yml"
+  "pafa|acoustic-pafa|baseline/pafa/environment.linux-cu118.yml"
+  "sg_scl|acoustic-sgscl|baseline/sg_scl/environment.linux-cu118.yml"
+  "mvst|acoustic-mvst|baseline/mvst/environment.linux-cu118.yml"
+  "add_rsc|acoustic-addrsc|baseline/add_rsc/environment.linux-cu121.yml"
 )
 
 for entry in "${entries[@]}"; do
   IFS='|' read -r method environment spec <<< "$entry"
   if conda env list | awk '{print $1}' | grep -Fxq "$environment"; then
-    echo "Refusing to mutate or reuse existing Release 4 environment: $environment" >&2
+    echo "Refusing to mutate or reuse existing baseline environment: $environment" >&2
     exit 1
   fi
 

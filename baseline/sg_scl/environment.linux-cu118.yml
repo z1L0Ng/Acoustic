@@ -1,4 +1,4 @@
-name: acoustic-sgscl-r4
+name: acoustic-sgscl
 channels:
   - pytorch
   - nvidia

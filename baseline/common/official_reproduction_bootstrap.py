@@ -22,8 +22,8 @@ LABELS = ["normal", "crackle", "wheeze", "both"]
 RELEASE_NAME = "official-reproduction-release-4"
 BASE_RELEASE_COMMIT = "4172524a0e5d7b792de248820439f30874e2ae6d"
 ENVIRONMENT_NAMES = {
-    "patch_mix_cl": "acoustic-patchmix-r4",
-    "pafa": "acoustic-pafa-r4",
+    "patch_mix_cl": "acoustic-patchmix",
+    "pafa": "acoustic-pafa",
 }
 
 

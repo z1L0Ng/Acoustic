@@ -29,7 +29,7 @@ from baseline.common.storage_safe_retention import (
 
 METHOD = "add_rsc"
 MINIMUM_COMMIT = "4172524a0e5d7b792de248820439f30874e2ae6d"
-ENVIRONMENT_NAME = "acoustic-addrsc-r4"
+ENVIRONMENT_NAME = "acoustic-addrsc"
 TRACKS = ["paper_declared_reconstruction", "author_repo_default_official_like"]
 EXPECTED_RANDOM_ORDERED_IDS = {
     "train": "bf85c6037a6c17c04aa411be99afa714ed0088cb1a145466e6e54b2d9cb398c4",

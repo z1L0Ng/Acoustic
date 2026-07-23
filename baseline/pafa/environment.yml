@@ -1,4 +1,4 @@
-name: acoustic-pafa-r4
+name: acoustic-pafa
 channels:
   - conda-forge
 dependencies:
