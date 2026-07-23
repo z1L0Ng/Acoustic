@@ -9,7 +9,14 @@ from pathlib import Path
 
 import numpy as np
 
-from .common import TASK_LABELS, classification_metrics, read_csv, write_csv, write_json
+from .common import (
+    TASK_LABELS,
+    classification_metrics,
+    read_csv,
+    validate_result_root,
+    write_csv,
+    write_json,
+)
 
 
 BOOTSTRAP_SEED = 20260722
@@ -165,11 +172,15 @@ def paired_c0_minus_b0(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--b0-result-root", type=Path, required=True)
-    parser.add_argument("--output-dir", type=Path)
-    parser.add_argument("--c0-result-root", type=Path)
+    parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--c0-result-root", type=Path, required=True)
     args = parser.parse_args()
     b0_root = args.b0_result_root.resolve()
-    output = (args.output_dir or b0_root / "statistical_supplement").resolve()
+    output = args.output_dir.resolve()
+    if output.name != "comparison" or validate_result_root(output.parent) != output.parent:
+        raise ValueError("statistical output must be result/sprsound_patchmix_target_training/comparison")
+    if output.exists():
+        raise FileExistsError(f"comparison output is immutable once written: {output}")
     output.mkdir(parents=True, exist_ok=True)
     b0_rows = read_csv(b0_root / "b0_predictions.csv")
     floor_rows = read_csv(b0_root / "b0_floor_predictions.csv")
@@ -226,13 +237,10 @@ def main() -> None:
             ),
             "target_prevalence_use": "descriptive floor only; computed after labels and forbidden for selection",
         }
-        if args.c0_result_root:
-            c0_path = args.c0_result_root.resolve() / "full" / task / "inter_predictions.csv"
-            task_payload["paired_c0_minus_b0"] = paired_c0_minus_b0(
-                b0_rows, read_csv(c0_path), task
-            )
-        else:
-            task_payload["paired_c0_minus_b0"] = "preregistered_pending_c0"
+        c0_path = validate_result_root(args.c0_result_root) / "full" / task / "inter_predictions.csv"
+        task_payload["paired_c0_minus_b0"] = paired_c0_minus_b0(
+            b0_rows, read_csv(c0_path), task
+        )
         payload["tasks"][task] = task_payload
         for source in ("b0_grouped_bootstrap", "all_normal_grouped_bootstrap"):
             for metric, values in task_payload[source].items():

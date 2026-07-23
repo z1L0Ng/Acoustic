@@ -33,13 +33,17 @@ runtime loader. Its SHA256 is verified, but this does not establish historical
 ## Fresh-checkout server commands
 
 Run from the repository root at the immutable snapshot selected by management.
-All generated data stays under `result/` or the parameterized cache root.
+The experiment index fixes the only output root to
+`result/sprsound_patchmix_target_training`; reusable source, initialization,
+and fbank caches stay under `.cache/sprsound_patchmix_target_training`.
 
 ```bash
-RUN_ROOT="result/c0_patch_mix_sprsound_$(TZ=America/Chicago date +%Y%m%d_%H%M%S)"
-CACHE_ROOT="$RUN_ROOT/cache"
+RUN_ROOT="result/sprsound_patchmix_target_training"
+CACHE_ROOT=".cache/sprsound_patchmix_target_training"
 DATASET_ROOT="dataset/raw/sprsound"
 
+conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.verify \
+  --mode package
 conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.bootstrap \
   --result-root "$RUN_ROOT" --cache-root "$CACHE_ROOT"
 conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.prepare_data \
@@ -63,8 +67,9 @@ conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.ve
   --mode smoke --result-root "$RUN_ROOT" --cache-root "$CACHE_ROOT" --cache-name smoke
 ```
 
-After management accepts the smoke receipt, build the full cache and run the
-two tasks sequentially. Do not run both AST jobs on the same device.
+After management accepts the smoke verification in the consolidated manifest,
+build the full cache and run the two tasks sequentially. Do not run both AST
+jobs on the same device.
 
 ```bash
 conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.build_cache \
@@ -89,22 +94,27 @@ conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.tr
 
 The smoke command exports label-free inter logits only. It must not produce an
 inter metric file. Full mode opens inter labels only after the best validation
-checkpoint is fixed and all inter logits have been written.
+checkpoint is fixed and all inter logits have been written. Outputs are compact:
+one consolidated `run_manifest.json`, one training-history table per task, only
+the current best validation prediction/confusion pair, best+last checkpoints,
+and terminal inter artifacts. Per-epoch prediction files are forbidden.
 
 ## Evaluation-only uncertainty supplement
 
 The statistical layer is descriptive and cannot select any model or decision.
 It uses patient-grouped bootstrap because the official SPRSound README defines
-the first filename field as patient number. B0/floor intervals and chance floors
-can be generated without rerunning B0 inference:
+the first filename field as patient number. Run it once, only after both full
+C0 tasks and the frozen B0 evidence exist:
 
 ```bash
 conda run -n acoustic-patchmix-r4 python -m baseline.patch_mix_cl.c0_sprsound.statistical_comparison \
-  --b0-result-root result/patch_mix_cl_author_checkpoint_transfer_20260722_175414
+  --b0-result-root result/sprsound_patchmix_frozen_transfer \
+  --c0-result-root "$RUN_ROOT" \
+  --output-dir "$RUN_ROOT/comparison"
 ```
 
-After C0 exists, add `--c0-result-root "$RUN_ROOT"` to compute the preregistered
-same-ID paired patient-grouped C0-minus-B0 intervals. A five percentage-point
+This computes the preregistered same-ID paired patient-grouped C0-minus-B0
+intervals together with the descriptive floors. A five percentage-point
 absolute gap is a project practical-materiality reference, not a community
 standard or a significance threshold. Binary and narrow-four are judged
 separately; inter Both support is one and cannot support a minority claim.

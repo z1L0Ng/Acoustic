@@ -1,5 +1,8 @@
 {
+  "experiment_id": "sprsound_patchmix_target_training",
   "protocol_name": "c0_patch_mix_sprsound_target_native_v1",
+  "result_root": "result/sprsound_patchmix_target_training",
+  "cache_root": ".cache/sprsound_patchmix_target_training",
   "claim": "target-native reference; not zero-shot, pooled training, adaptation, or paper reproduction",
   "dataset": "SPRSound BioCAS2022",
   "prediction_unit": "event",
@@ -62,6 +65,13 @@
     "target_type": "grad_block",
     "class_weighting": "none",
     "checkpoint_selection": "maximum inner-validation ICBHI Score subject to the author sensitivity >5 eligibility gate; all 50 epochs run; no early stopping"
+  },
+  "artifact_policy": {
+    "generated_outputs": "result/sprsound_patchmix_target_training",
+    "reusable_source_checkpoint_features": ".cache/sprsound_patchmix_target_training",
+    "validation_exports": "best checkpoint predictions/confusion only; no per-epoch prediction files",
+    "resume": "task-matched last.pth with protocol/task/seed/mode/cache/batch/label/RNG/optimizer/scaler checks",
+    "receipts": "single consolidated run_manifest.json"
   },
   "known_task_differences": [
     "ICBHI respiratory cycles are replaced by SPRSound official event segments",

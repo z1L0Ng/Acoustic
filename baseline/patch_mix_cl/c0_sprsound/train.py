@@ -17,6 +17,8 @@ import numpy as np
 import torch
 
 from .common import (
+    PROTOCOL_NAME,
+    RAW_LABELS,
     TASK_LABELS,
     CachedEventDataset,
     build_model,
@@ -24,10 +26,14 @@ from .common import (
     contrastive_loss,
     ema_update,
     load_cache,
+    load_run_manifest,
     protocol_args,
     read_csv,
     set_seed,
     task_label,
+    update_run_manifest,
+    validate_cache_root,
+    validate_result_root,
     write_confusion,
     write_csv,
     write_json,
@@ -123,6 +129,8 @@ def load_inter_scoring_labels(inter_manifest: Path, task: str) -> dict[str, dict
     for row in read_csv(inter_manifest):
         payload = json.loads(Path(row["annotation_path"]).read_text())
         raw = str(payload["event_annotation"][int(row["event_index"])]["type"])
+        if raw not in RAW_LABELS:
+            raise RuntimeError(f"unsupported/fail-closed SPRSound event label: {raw}")
         mapped = task_label(raw, task)
         labels[row["event_id"]] = {
             "raw_label": raw,
@@ -156,19 +164,24 @@ def main() -> None:
     parser.add_argument("--resume", type=Path)
     args = parser.parse_args()
 
-    result_root = args.result_root.resolve()
-    cache_root = args.cache_root.resolve()
-    author_repo = (args.author_repo or result_root / "source" / "repo").resolve()
-    bootstrap = json.loads((result_root / "receipts" / "bootstrap.json").read_text())
+    result_root = validate_result_root(args.result_root)
+    cache_root = validate_cache_root(args.cache_root)
+    author_repo = (args.author_repo or cache_root / "source" / "repo").resolve()
+    run_manifest = load_run_manifest(result_root)
+    bootstrap = run_manifest["bootstrap"]
     checkpoint = (args.checkpoint_path or Path(bootstrap["checkpoint_path"])).resolve()
     task_dir = result_root / args.mode / args.task
+    if task_dir.exists() and not args.resume:
+        raise FileExistsError(f"refusing to overwrite an existing task run: {task_dir}")
     task_dir.mkdir(parents=True, exist_ok=True)
     device = resolve_device(args.device)
     labels = TASK_LABELS[args.task]
     set_seed(args.seed)
     torch.set_num_threads(max(1, min(8, os.cpu_count() or 1)))
 
-    cache_dir = cache_root / "c0_sprsound" / args.cache_name
+    if args.mode != args.cache_name:
+        raise ValueError("--mode and --cache-name must match")
+    cache_dir = cache_root / args.cache_name
     train_cache, _, train_index = load_cache(cache_dir / "train")
     inter_cache, _, inter_index = load_cache(cache_dir / "inter")
     all_task_rows = read_csv(result_root / "data" / f"train_{args.task}.csv")
@@ -233,9 +246,24 @@ def main() -> None:
     start_epoch = 1
     best_score = -math.inf
     best_epoch = None
+    history_path = task_dir / "training_history.csv"
+    history: list[dict[str, object]] = []
     if args.resume:
+        if args.mode != "full":
+            raise ValueError("resume is supported only for the full run")
+        expected_resume = task_dir / "checkpoints" / "last.pth"
+        if args.resume.resolve() != expected_resume.resolve():
+            raise ValueError(f"resume must use this task's canonical last checkpoint: {expected_resume}")
         state = torch.load(args.resume.resolve(), map_location=device)
-        if state["task"] != args.task or state["seed"] != args.seed:
+        if (
+            state["protocol"] != PROTOCOL_NAME
+            or state["task"] != args.task
+            or state["seed"] != args.seed
+            or state["mode"] != args.mode
+            or state["cache_name"] != args.cache_name
+            or state["batch_size"] != args.batch_size
+            or state["labels"] != labels
+        ):
             raise RuntimeError("resume protocol mismatch")
         model.load_state_dict(state["model"])
         classifier.load_state_dict(state["classifier"])
@@ -251,9 +279,13 @@ def main() -> None:
         if device.type == "cuda":
             torch.cuda.set_rng_state_all(state["cuda_random_states"])
         generator.set_state(state["data_generator_state"])
+        if not history_path.is_file():
+            raise FileNotFoundError("resume requires the existing compact training history")
+        history = read_csv(history_path)
+        if not history or int(history[-1]["epoch"]) != int(state["epoch"]):
+            raise RuntimeError("resume checkpoint/history mismatch")
 
     started = time.perf_counter()
-    history: list[dict[str, object]] = []
     finite_gradient = True
     for epoch in range(start_epoch, epochs + 1):
         lr = learning_rate(epoch, 50)
@@ -304,9 +336,13 @@ def main() -> None:
             save_checkpoint(
                 task_dir / "checkpoints" / "best_validation.pth",
                 {
-                    "protocol": "c0_patch_mix_sprsound_target_native_v1",
+                    "protocol": PROTOCOL_NAME,
                     "task": args.task,
                     "seed": args.seed,
+                    "mode": args.mode,
+                    "cache_name": args.cache_name,
+                    "batch_size": args.batch_size,
+                    "labels": labels,
                     "epoch": epoch,
                     "model": model.state_dict(),
                     "classifier": classifier.state_dict(),
@@ -314,10 +350,16 @@ def main() -> None:
                     "validation_metrics": validation_metrics,
                 },
             )
+            write_csv(task_dir / "validation_predictions_best.csv", validation_predictions)
+            write_confusion(task_dir / "validation_confusion_best.csv", labels, validation_matrix)
         state = {
-            "protocol": "c0_patch_mix_sprsound_target_native_v1",
+            "protocol": PROTOCOL_NAME,
             "task": args.task,
             "seed": args.seed,
+            "mode": args.mode,
+            "cache_name": args.cache_name,
+            "batch_size": args.batch_size,
+            "labels": labels,
             "epoch": epoch,
             "model": model.state_dict(),
             "classifier": classifier.state_dict(),
@@ -333,8 +375,6 @@ def main() -> None:
             "data_generator_state": generator.get_state(),
         }
         save_checkpoint(task_dir / "checkpoints" / "last.pth", state)
-        write_csv(task_dir / f"validation_predictions_epoch_{epoch:03d}.csv", validation_predictions)
-        write_confusion(task_dir / f"validation_confusion_epoch_{epoch:03d}.csv", labels, validation_matrix)
         history.append(
             {
                 "epoch": epoch,
@@ -342,9 +382,11 @@ def main() -> None:
                 "train_loss": float(np.mean(losses)),
                 "validation_score": score,
                 "validation_macro_f1": validation_metrics["macro_f1"],
+                "validation_sensitivity": validation_metrics["sensitivity"],
+                "selection_eligible": selection_eligible,
             }
         )
-        write_csv(task_dir / "training_history.csv", history)
+        write_csv(history_path, history)
 
     best_path = task_dir / "checkpoints" / "best_validation.pth"
     if not best_path.is_file():
@@ -363,7 +405,7 @@ def main() -> None:
         "mode": args.mode,
         "seed": args.seed,
         "device": str(device),
-        "epochs_completed": epochs,
+        "epochs_completed": int(history[-1]["epoch"]),
         "best_epoch": best_epoch,
         "best_inner_validation_score": best_score,
         "subtrain_rows": len(subtrain),
@@ -402,7 +444,7 @@ def main() -> None:
         receipt["inter_excluded_rows"] = len(scored) - len(included)
         receipt["inter_metrics"] = metrics
         receipt["inter_label_access"] = "after label-free logits and best checkpoint were fixed"
-    write_json(task_dir / "run_receipt.json", receipt)
+    update_run_manifest(result_root, f"{args.mode}_{args.task}", receipt)
     print(
         f"c0_{args.mode}_ok task={args.task} train={len(subtrain)} val={len(validation)} "
         f"inter_forward={len(label_free_predictions)} best_epoch={best_epoch}"

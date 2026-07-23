@@ -9,7 +9,15 @@ from pathlib import Path
 
 import numpy as np
 
-from .common import preprocess_event_rows, read_csv, write_csv, write_json
+from .common import (
+    preprocess_event_rows,
+    read_csv,
+    update_run_manifest,
+    validate_cache_root,
+    validate_result_root,
+    write_csv,
+    write_json,
+)
 
 
 def stratified_smoke_rows(rows: list[dict[str, str]], limit: int) -> list[dict[str, str]]:
@@ -61,19 +69,23 @@ def main() -> None:
     parser.add_argument("--author-repo", type=Path)
     parser.add_argument("--max-train-events", type=int, default=0)
     parser.add_argument("--max-inter-events", type=int, default=0)
-    parser.add_argument("--cache-name", default="full")
+    parser.add_argument("--cache-name", choices=["smoke", "full"], default="full")
     args = parser.parse_args()
 
-    result_root = args.result_root.resolve()
-    cache_root = args.cache_root.resolve()
-    author_repo = (args.author_repo or result_root / "source" / "repo").resolve()
+    result_root = validate_result_root(args.result_root)
+    cache_root = validate_cache_root(args.cache_root)
+    if args.cache_name == "smoke" and (args.max_train_events, args.max_inter_events) != (32, 8):
+        raise ValueError("smoke cache is fixed to 32 train and 8 label-free inter events")
+    if args.cache_name == "full" and (args.max_train_events or args.max_inter_events):
+        raise ValueError("full cache must include every train and inter event")
+    author_repo = (args.author_repo or cache_root / "source" / "repo").resolve()
     train = read_csv(result_root / "data" / "train_events.csv")
     inter = read_csv(result_root / "data" / "inter_events_label_free.csv")
     train = stratified_smoke_rows(train, args.max_train_events)
     inter = sorted(inter, key=lambda row: row["event_id"])
     if args.max_inter_events > 0:
         inter = inter[: args.max_inter_events]
-    base = cache_root / "c0_sprsound" / args.cache_name
+    base = cache_root / args.cache_name
     if base.exists():
         raise FileExistsError(f"cache is immutable; choose a new --cache-name: {base}")
     receipt = {
@@ -86,7 +98,7 @@ def main() -> None:
         "inter_selection": "all rows" if args.max_inter_events <= 0 else "first event IDs only; no target labels read",
     }
     write_json(base / "cache_receipt.json", receipt)
-    write_json(result_root / "receipts" / f"cache_{args.cache_name}.json", receipt)
+    update_run_manifest(result_root, f"cache_{args.cache_name}", receipt)
     print(f"c0_cache_ok name={args.cache_name} train={len(train)} inter={len(inter)}")
 
 

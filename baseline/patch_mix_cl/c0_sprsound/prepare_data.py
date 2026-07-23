@@ -10,7 +10,18 @@ from pathlib import Path
 import numpy as np
 from sklearn.model_selection import StratifiedGroupKFold
 
-from .common import RAW_LABELS, class_counts, resolve_biocas_root, task_label, write_csv, write_json
+from .common import (
+    EXPECTED_INTER_EVENTS,
+    EXPECTED_INTER_ID_SHA256,
+    RAW_LABELS,
+    class_counts,
+    id_sha256,
+    resolve_biocas_root,
+    task_label,
+    update_run_manifest,
+    validate_result_root,
+    write_csv,
+)
 
 
 EXPECTED_TRAIN_EVENTS = 6656
@@ -18,7 +29,6 @@ EXPECTED_TRAIN_ANNOTATION_FILES = 1949
 EXPECTED_TRAIN_ARCHIVE_PATIENTS = 251
 EXPECTED_TRAIN_EVENT_RECORDINGS = 1772
 EXPECTED_TRAIN_EVENT_PATIENTS = 243
-EXPECTED_INTER_EVENTS = 1429
 EXPECTED_TRAIN_RAW = {
     "Coarse Crackle": 49,
     "Fine Crackle": 912,
@@ -27,6 +37,27 @@ EXPECTED_TRAIN_RAW = {
     "Stridor": 15,
     "Wheeze": 452,
     "Wheeze+Crackle": 30,
+}
+EXPECTED_SUBTRAIN_EVENTS = 5219
+EXPECTED_VALIDATION_EVENTS = 1437
+EXPECTED_SUBTRAIN_PATIENTS = 194
+EXPECTED_VALIDATION_PATIENTS = 49
+EXPECTED_SUBTRAIN_RAW = {
+    "Coarse Crackle": 46,
+    "Fine Crackle": 593,
+    "Normal": 4114,
+    "Rhonchi": 34,
+    "Stridor": 15,
+    "Wheeze": 396,
+    "Wheeze+Crackle": 21,
+}
+EXPECTED_VALIDATION_RAW = {
+    "Coarse Crackle": 3,
+    "Fine Crackle": 319,
+    "Normal": 1045,
+    "Rhonchi": 5,
+    "Wheeze": 56,
+    "Wheeze+Crackle": 9,
 }
 
 
@@ -71,7 +102,10 @@ def main() -> None:
     parser.add_argument("--result-root", type=Path, required=True)
     args = parser.parse_args()
     root = resolve_biocas_root(args.dataset_root)
-    output = args.result_root.resolve() / "data"
+    result_root = validate_result_root(args.result_root)
+    output = result_root / "data"
+    if output.exists():
+        raise FileExistsError(f"data contract is immutable once written: {output}")
     output.mkdir(parents=True, exist_ok=True)
 
     train = event_rows(root / "train2022_json", root / "train2022_wav", "train", True)
@@ -104,9 +138,23 @@ def main() -> None:
     validation_patients = {str(train[index]["patient_id"]) for index in validation_indices}
     if subtrain_patients & validation_patients:
         raise RuntimeError("patient leakage across inner split")
+    subtrain_raw = dict(sorted(Counter(y[train_indices]).items()))
+    validation_raw = dict(sorted(Counter(y[validation_indices]).items()))
+    if (
+        len(train_indices) != EXPECTED_SUBTRAIN_EVENTS
+        or len(validation_indices) != EXPECTED_VALIDATION_EVENTS
+        or len(subtrain_patients) != EXPECTED_SUBTRAIN_PATIENTS
+        or len(validation_patients) != EXPECTED_VALIDATION_PATIENTS
+        or subtrain_raw != EXPECTED_SUBTRAIN_RAW
+        or validation_raw != EXPECTED_VALIDATION_RAW
+    ):
+        raise RuntimeError("patient-grouped validation assignment drift")
 
     train.sort(key=lambda row: str(row["event_id"]))
     inter.sort(key=lambda row: str(row["event_id"]))
+    inter_ids = [str(row["event_id"]) for row in inter]
+    if id_sha256(inter_ids) != EXPECTED_INTER_ID_SHA256:
+        raise RuntimeError("inter event IDs differ from the frozen B0 target")
     write_csv(output / "train_events.csv", train)
     write_csv(output / "inter_events_label_free.csv", inter)
     assignments = [
@@ -167,18 +215,19 @@ def main() -> None:
             "subtrain_patients": len(subtrain_patients),
             "validation_patients": len(validation_patients),
             "patient_overlap": 0,
-            "subtrain_raw_counts": dict(sorted(Counter(y[train_indices]).items())),
-            "validation_raw_counts": dict(sorted(Counter(y[validation_indices]).items())),
+            "subtrain_raw_counts": subtrain_raw,
+            "validation_raw_counts": validation_raw,
         },
         "inter": {
             "events": len(inter),
+            "ordered_event_id_sha256": id_sha256(inter_ids),
             "manifest_is_label_free": True,
             "selection_use": "forbidden",
             "evaluation_use": "single final evaluation after best inner-validation checkpoint is fixed",
         },
         "tasks": task_receipt,
     }
-    write_json(args.result_root.resolve() / "receipts" / "data_protocol.json", receipt)
+    update_run_manifest(result_root, "data_protocol", receipt)
     print(
         "c0_data_ok train=6656 subtrain={} validation={} inter=1429 overlap=0".format(
             len(train_indices), len(validation_indices)

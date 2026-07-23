@@ -17,7 +17,9 @@ from .common import (
     AUTHOR_REPO_COMMIT,
     AUTHOR_REPO_URL,
     sha256_file,
-    write_json,
+    update_run_manifest,
+    validate_cache_root,
+    validate_result_root,
 )
 
 
@@ -33,11 +35,11 @@ def main() -> None:
     parser.add_argument("--checkpoint-path", type=Path)
     args = parser.parse_args()
 
-    result_root = args.result_root.resolve()
-    cache_root = args.cache_root.resolve()
+    result_root = validate_result_root(args.result_root)
+    cache_root = validate_cache_root(args.cache_root)
     result_root.mkdir(parents=True, exist_ok=True)
     cache_root.mkdir(parents=True, exist_ok=True)
-    repo = result_root / "source" / "repo"
+    repo = cache_root / "source" / "repo"
     if args.author_repo:
         source = args.author_repo.resolve()
         if repo.exists():
@@ -50,15 +52,26 @@ def main() -> None:
     commit = run(["git", "rev-parse", "HEAD"], cwd=repo)
     if commit != AUTHOR_REPO_COMMIT:
         raise RuntimeError(f"author commit mismatch: {commit}")
+    source_status = run(["git", "status", "--porcelain", "--untracked-files=no"], cwd=repo)
+    if source_status:
+        raise RuntimeError("author source contains tracked modifications")
 
     checkpoint = cache_root / "checkpoints" / "audioset_0.4593_runtime_cv4.pth"
     checkpoint.parent.mkdir(parents=True, exist_ok=True)
     if args.checkpoint_path:
         source_checkpoint = args.checkpoint_path.resolve()
+        if source_checkpoint.stat().st_size != AST_SIZE or sha256_file(source_checkpoint) != AST_SHA256:
+            raise RuntimeError("explicit AST initialization checkpoint failed identity check")
         if not checkpoint.exists():
-            shutil.copy2(source_checkpoint, checkpoint)
+            temporary = checkpoint.with_suffix(".pth.tmp")
+            shutil.copy2(source_checkpoint, temporary)
+            temporary.replace(checkpoint)
     elif not checkpoint.exists():
-        urllib.request.urlretrieve(AST_URL, checkpoint)
+        temporary = checkpoint.with_suffix(".pth.tmp")
+        urllib.request.urlretrieve(AST_URL, temporary)
+        if temporary.stat().st_size != AST_SIZE or sha256_file(temporary) != AST_SHA256:
+            raise RuntimeError("downloaded AST initialization checkpoint failed identity check")
+        temporary.replace(checkpoint)
     checkpoint_sha = sha256_file(checkpoint)
     if checkpoint.stat().st_size != AST_SIZE or checkpoint_sha != AST_SHA256:
         raise RuntimeError("current author-hosted AST runtime artifact failed identity check")
@@ -77,7 +90,7 @@ def main() -> None:
         "checkpoint_sha256": checkpoint_sha,
         "checkpoint_boundary": "current author runtime branch; not historical-byte identity",
     }
-    write_json(result_root / "receipts" / "bootstrap.json", receipt)
+    update_run_manifest(result_root, "bootstrap", receipt)
     print(f"c0_bootstrap_ok repo={commit} checkpoint={checkpoint_sha}")
 
 

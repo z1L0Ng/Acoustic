@@ -1,6 +1,8 @@
 id: sprsound_patchmix_target_training
 question: How learnable is the SPRSound inter target with the same Patch-Mix architecture and source preprocessing family?
 implementation: baseline/patch_mix_cl/c0_sprsound
+result_root: result/sprsound_patchmix_target_training
+cache_root: .cache/sprsound_patchmix_target_training
 data:
   training: SPRSound BioCAS2022 train events
   validation: fixed patient-grouped fold inside train

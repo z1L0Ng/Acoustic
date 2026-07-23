@@ -22,6 +22,13 @@ from sklearn.metrics import confusion_matrix, f1_score, precision_recall_fscore_
 from torchaudio import transforms as audio_transforms
 from torchvision import transforms
 
+from acoustic.evaluation.sprsound_inter import (
+    EXPECTED_EVENTS as EXPECTED_INTER_EVENTS,
+    EXPECTED_ID_SHA256 as EXPECTED_INTER_ID_SHA256,
+    id_sha256,
+    resolve_biocas_root,
+)
+
 
 RAW_LABELS = [
     "Normal",
@@ -48,6 +55,8 @@ AUTHOR_REPO_COMMIT = "836b09fea1b70eb29fe0b25afa481286b56f5104"
 AST_URL = "https://www.dropbox.com/s/cv4knew8mvbrnvq/audioset_0.4593.pth?dl=1"
 AST_SHA256 = "dfc313e5082dc37ece8bd3bd6e7ea8bfee6598179a14eedd15c1727ad0af788f"
 AST_SIZE = 352_587_836
+EXPERIMENT_ID = "sprsound_patchmix_target_training"
+PROTOCOL_NAME = "c0_patch_mix_sprsound_target_native_v1"
 
 
 def sha256_file(path: Path) -> str:
@@ -72,20 +81,48 @@ def write_csv(path: Path, rows: list[dict[str, object]], fields: list[str] | Non
     if not rows:
         raise ValueError(f"refusing to write empty CSV: {path}")
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", newline="") as handle:
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    with temporary.open("w", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fields or list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
+    temporary.replace(path)
 
 
-def resolve_biocas_root(dataset_root: Path) -> Path:
-    root = dataset_root.resolve()
-    if (root / "train2022_json").is_dir():
-        return root
-    matches = list(root.glob("source_original/*/BioCAS2022"))
-    if len(matches) != 1:
-        raise FileNotFoundError(f"could not resolve one BioCAS2022 root below {root}: {matches}")
-    return matches[0].resolve()
+def validate_result_root(path: Path) -> Path:
+    root = path.resolve()
+    if root.name != EXPERIMENT_ID or root.parent.name != "result":
+        raise ValueError(f"result root must be result/{EXPERIMENT_ID}, got {root}")
+    return root
+
+
+def validate_cache_root(path: Path) -> Path:
+    root = path.resolve()
+    if root.name != EXPERIMENT_ID or root.parent.name != ".cache":
+        raise ValueError(f"cache root must be .cache/{EXPERIMENT_ID}, got {root}")
+    return root
+
+
+def load_run_manifest(result_root: Path) -> dict[str, object]:
+    path = validate_result_root(result_root) / "run_manifest.json"
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    return json.loads(path.read_text())
+
+
+def update_run_manifest(result_root: Path, section: str, payload: object) -> None:
+    root = validate_result_root(result_root)
+    path = root / "run_manifest.json"
+    manifest = json.loads(path.read_text()) if path.is_file() else {
+        "experiment_id": EXPERIMENT_ID,
+        "protocol": PROTOCOL_NAME,
+    }
+    if manifest.get("experiment_id") != EXPERIMENT_ID or manifest.get("protocol") != PROTOCOL_NAME:
+        raise RuntimeError("run manifest identity mismatch")
+    manifest[section] = payload
+    temporary = path.with_suffix(".json.tmp")
+    write_json(temporary, manifest)
+    temporary.replace(path)
 
 
 def task_label(raw_label: str, task: str) -> str | None:
@@ -106,7 +143,7 @@ def set_seed(seed: int) -> None:
         torch.cuda.manual_seed_all(seed)
     if hasattr(torch.backends, "cudnn"):
         torch.backends.cudnn.deterministic = True
-        torch.backends.cudnn.benchmark = True
+        torch.backends.cudnn.benchmark = False
 
 
 def protocol_args() -> SimpleNamespace:
