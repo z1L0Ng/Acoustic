@@ -1,0 +1,14 @@
+id: icbhi_frozen_downstream
+question: How much do frozen representation and downstream head capacity explain local ICBHI performance?
+implementation: baseline/common
+data:
+  dataset: ICBHI 2017
+  unit: respiratory cycle
+  representations: [AST CLS, CLAP, BEATs, HeAR, OPERA-CT official-like, simple acoustic]
+comparisons:
+  heads: [logistic regression, one-layer MLP, two-layer MLP]
+  losses: [unweighted CE, class-weighted CE, focal loss, class-balanced CE]
+evaluation:
+  tasks: [normal-crackle-wheeze-both, normal-abnormal]
+  selection: patient-grouped validation inside official train
+claim_limit: Controlled local benchmark; not an encoder-paper reproduction.

@@ -1,0 +1,11 @@
+id: sprsound_sgscl_frozen_transfer
+question: Does a metadata-aware SG-SCL source model transfer when target device-domain metadata are unavailable?
+implementation: baseline/sg_scl/checkpoint_eval
+target_contract: acoustic/evaluation/sprsound_inter.py
+requirements:
+  - accepted full predictive checkpoint state and SHA256
+  - fixed 1429 event ID set
+  - no synthetic SPRSound device/domain label
+  - label-free forward before scoring
+comparators: [Patch-Mix frozen transfer, PAFA frozen transfer, all-normal floor, matched target reference]
+claim_limit: Metadata-aware source model evaluated through its author validation path; not an audio-only baseline.

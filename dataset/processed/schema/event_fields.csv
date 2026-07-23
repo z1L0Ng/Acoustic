@@ -1,0 +1,31 @@
+column_name,data_type,nullable,allowed_values_or_format,key_role,description,evidence_requirement
+event_id,string,no,"<recording_id>:<unit_type>:<source_event_index>",PK,Stable annotation-unit identifier,adapter deterministic-ID test
+recording_id,string,no,recording manifest ID,FK,Parent recording,recording manifest
+dataset_id,string,no,catalog dataset_id,FK,Denormalized dataset key for efficient filtering,catalog
+release_id,string,no,catalog release_id,FK,Release scope,catalog
+source_event_index,string,no,source row/index or deterministic order,none,Source-native annotation index,raw annotation
+unit_type,string,no,"respiratory_cycle|respiratory_event|label_interval|derived_window",none,Annotation/prediction unit; derived_window prohibited until preprocessing gate,source/task receipt
+start_s,float64,yes,non-negative seconds,none,Start relative to parent recording,raw boundary
+end_s,float64,yes,non-negative seconds,none,End relative to parent recording,raw boundary
+boundary_status,string,no,"observed|not_provided|not_applicable|parse_failed|derived",none,Why boundaries exist or are absent,evidence
+duration_s,float64,yes,non-negative seconds,none,end_s-start_s when boundaries observed/derived,validation
+raw_task,string,no,source task name,none,Source task such as cycle classification or event detection,source documentation
+raw_label,string,no,verbatim source label/token,none,Single raw label or stable serialization key,raw annotation
+raw_label_components_json,json,yes,JSON object/array,none,Multi-label components such as crackle/wheeze flags or I/E overlap,raw annotation
+label_overlap_group,string,yes,dataset-scoped group ID,none,Groups simultaneous/overlapping HF labels without forcing exclusivity,raw interval analysis
+source_annotation_relpath,string,no,project-relative POSIX path,none,Annotation file containing source row,raw inventory
+source_annotation_row,string,no,row number or JSON pointer,none,Exact row/key lineage,raw annotation
+shared_binary_target,string,yes,"normal|abnormal",none,Policy-derived shared target; null when ineligible or unresolved,mapping receipt
+shared_binary_mask,boolean,no,true|false,none,Whether row participates in shared binary loss/evaluation,policy receipt
+shared_binary_mapping_status,string,no,"exact|lossy|unresolved|not_applicable|blocked",none,Mapping quality and gate state,label ontology
+four_class_target,string,yes,"normal|crackle|wheeze|both|other_abnormal",none,Optional overlay target,label ontology
+four_class_mask,boolean,no,true|false,none,Whether row participates in four-class/overlay loss,label ontology
+four_class_mapping_status,string,no,"exact|lossy|unresolved|not_applicable|blocked",none,Mapping quality,label ontology
+dataset_specific_targets_json,json,no,JSON object of head name to target,none,Source-faithful targets for dataset-specific heads,adapter spec
+dataset_specific_masks_json,json,no,JSON object of head name to boolean mask,none,Missing-label masking per head,adapter spec
+quality_mask,boolean,no,true|false,none,False excludes corrupt/Poor Quality according to versioned QC policy,QC receipt
+mapping_policy_version,string,no,semantic policy version,FK,Exact label mapping contract,label ontology receipt
+split_eligible,boolean,no,true|false,none,False for failed/blocked rows before assignment,QC receipt
+row_confidence,string,no,"high|medium|low",none,Confidence in parsed boundaries/labels,evidence
+evidence_refs_json,json,no,JSON array,none,Project-relative and official evidence,evidence ledger
+manifest_build_id,string,no,build receipt ID,FK,Lineage to reproducible build,build receipt

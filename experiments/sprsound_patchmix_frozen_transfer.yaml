@@ -1,0 +1,19 @@
+id: sprsound_patchmix_frozen_transfer
+question: How does the published Patch-Mix source model behave on unseen SPRSound inter events without target tuning?
+implementation: baseline/patch_mix_cl/checkpoint_eval
+source: icbhi_patchmix_author_eval
+target:
+  dataset: SPRSound BioCAS2022
+  subset: inter-subject
+  unit: annotated event
+  rows: 1429
+  label_coverage: 100 percent for binary broad and narrow four on this subset
+constraints:
+  - no target-label model selection
+  - no threshold search or calibration
+  - labels joined only after logits exist
+comparators: [all-normal floor, future matched target-trained reference]
+outcome:
+  binary_score_percent: 59.38
+  narrow_four_score_percent: 51.15
+claim_limit: Published-model exploratory transfer; no degradation claim before the matched target reference.

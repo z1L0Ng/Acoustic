@@ -1,0 +1,33 @@
+check_id,stage,scope,severity,check,expected_result,failure_action,evidence_output
+QC-001,inventory,all,blocker,Raw path boundary,Every discovered file is under dataset/raw/<dataset_id>,Abort build and report path,raw_inventory_receipt.json
+QC-002,inventory,all,blocker,Absolute path rejection,No stored path is absolute,Abort schema validation,path_policy_report.json
+QC-003,inventory,all,blocker,Raw immutability,Input checksums match approved checksum receipt,Abort and quarantine release,checksum_diff.csv
+QC-004,inventory,all,blocker,Release scope pin,Dataset release/version/commit matches catalog,Abort and require new release_id,release_scope_receipt.json
+QC-005,inventory,sprsound,blocker,BioCAS2022 scope,No files from later years or task-copy directories enter adapter inventory,Abort and list out-of-scope paths,scope_exclusion_report.csv
+QC-006,audio,all,blocker,Readable audio header,All manifest recordings have readable headers,Mark corrupt and exclude; never repair raw,audio_header_errors.csv
+QC-007,audio,all,error,Duration consistency,frame_count/sample_rate equals duration_s within tolerance,Fail affected rows,audio_duration_errors.csv
+QC-008,audio,all,error,Checksum uniqueness,Exact duplicate hashes are identified,Keep one source row per recording but flag duplicate groups,duplicate_audio_groups.csv
+QC-009,join,all,blocker,Annotation join cardinality,Every required annotation joins to expected recording/entity cardinality,Abort affected dataset,join_cardinality_report.csv
+QC-010,join,icbhi_2017,blocker,Cycle boundary validity,0 <= start < end <= recording duration plus tolerance,Fail invalid cycle rows,boundary_errors.csv
+QC-011,join,hf_lung_v1,blocker,Interval boundary validity,0 <= start < end <= 15 seconds plus tolerance,Fail invalid interval rows,boundary_errors.csv
+QC-012,join,sprsound,blocker,JSON boundary validity,Event millisecond bounds lie within recording duration plus tolerance,Fail invalid events,boundary_errors.csv
+QC-013,join,kauh_fraiwan,blocker,Patient join cardinality,112 P-numbers each join exactly three B/D/E recordings,Abort adapter output,kauh_join_receipt.json
+QC-014,identity,all,blocker,Patient/proxy separation,No proxy value is written to patient_id,Abort affected rows,identity_semantics_report.csv
+QC-015,identity,hf_lung_v1,blocker,HF proxy semantics,date/session keys are marked inferred proxy and deidentified,Abort affected rows,hf_proxy_receipt.json
+QC-016,label,all,blocker,Raw label preservation,Raw labels round-trip byte/semantic equivalently from source,Abort mapping output,label_roundtrip_report.csv
+QC-017,label,hf_lung_v1,blocker,No silent normal background,Unlabeled background has shared_binary_mask=false until policy approval,Abort build,hf_negative_gate_report.json
+QC-018,label,sprsound,blocker,Poor Quality gate,Poor Quality never maps silently to normal/abnormal,Abort build,poor_quality_gate_report.json
+QC-019,label,all,blocker,Disease/event separation,Disease labels appear only in patient/record disease fields and never event target columns,Abort build,label_domain_report.csv
+QC-020,label,all,error,Mapping version,Every derived target cites an approved mapping_policy_version,Exclude unmapped rows,mapping_version_report.csv
+QC-021,split,icbhi_2017,blocker,Official overlap receipt,Official protocol reports patients 156 and 218 in both train/test,Abort if receipt drifts,icbhi_overlap_receipt.json
+QC-022,split,sprsound,blocker,Inter/intra separation,No metric/export merges inter_test and intra_test partitions,Abort export,sprsound_partition_report.json
+QC-023,split,kauh_fraiwan,blocker,P-number grouping,All three recordings for each P-number share proposed fold/partition,Abort split,kauh_group_overlap_report.csv
+QC-024,split,all,blocker,Group overlap,Protocol overlap contract is satisfied at patient/session/proxy/device/site levels,Abort split,leakage_overlap_matrix.csv
+QC-025,split,all,error,Seed/version receipt,Proposed assignment has seed version group list and assignment hash,Do not release split,split_build_receipt.json
+QC-026,counts,all,blocker,Audited recording counts,"ICBHI=920 HF=9765 SPR=2683 KAUH=336",Abort on drift,count_reconciliation.csv
+QC-027,counts,all,blocker,Audited annotation counts,"ICBHI cycles=6898 HF intervals=81933 SPR events=9089",Abort on drift,count_reconciliation.csv
+QC-028,counts,all,error,Class count receipt,Per task/unit class counts reconcile with approved curation,Do not train,class_count_receipt.csv
+QC-029,lineage,all,blocker,Source-to-derived lineage,Every derived row has recording/event source references and manifest_build_id,Abort export,lineage_completeness.csv
+QC-030,portability,all,blocker,Cross-device rebuild,Fresh checkout plus raw package/checksums reproduces primary keys and assignment hashes,Block migration release,migration_rebuild_receipt.json
+QC-031,policy,all,blocker,Management gates,No blocked policy is enabled in build config,Abort build,policy_gate_receipt.json
+QC-032,git,all,blocker,Large-file exclusion,No raw audio embeddings or large derived arrays are tracked,Unstage/remove generated large files,git_large_file_report.txt

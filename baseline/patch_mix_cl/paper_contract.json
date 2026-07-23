@@ -1,0 +1,16 @@
+{
+  "method_id": "patch_mix_cl",
+  "title": "Patch-Mix Contrastive Learning with Audio Spectrogram Transformer on Respiratory Sound Classification",
+  "venue_year": "Interspeech 2023",
+  "doi": "10.21437/Interspeech.2023-1426",
+  "paper_url": "https://www.isca-archive.org/interspeech_2023/bae23b_interspeech.html",
+  "repo_url": "https://github.com/raymin0223/patch-mix_contrastive_learning",
+  "pinned_commit": "836b09fea1b70eb29fe0b25afa481286b56f5104",
+  "license": "MIT",
+  "task_unit": "ICBHI cycle-level lung-sound classification",
+  "label_order": ["normal", "crackle", "wheeze", "both"],
+  "split": "author official_split.txt recording split",
+  "target_result": {"sp": "81.66 +/- 3.83", "se": "43.07 +/- 2.80", "score": "62.37 +/- 0.61", "two_class_score": "68.71 +/- 0.59"},
+  "faithful_status": "official-like faithful but test-selected",
+  "blocking_gaps": ["official test used for checkpoint selection", "single script seed does not reproduce paper mean+/-SD", "external AudioSet AST checkpoint identity must match"]
+}

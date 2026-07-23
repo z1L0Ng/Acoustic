@@ -1,0 +1,27 @@
+column_name,data_type,nullable,allowed_values_or_format,key_role,description,evidence_requirement
+dataset_id,string,no,"icbhi_2017|hf_lung_v1|sprsound|kauh_fraiwan",PK_part,"Stable project dataset identifier; never derived from local path",verified source identity
+release_id,string,no,source-specific stable release/version,PK_part,"Release scope identifier; changing source scope creates a new catalog row",version pin or release receipt
+display_name,string,no,UTF-8 text,none,Publication-facing dataset name,official title or approved project alias
+source_family,string,yes,UTF-8 text,none,"Source family or challenge lineage; use status column when unresolved",primary source plus management decision
+source_family_status,string,no,"observed|unknown|not_provided|not_applicable|withheld|parse_failed|proposed",none,Semantic status for source_family,evidence or explicit policy
+source_url,string,no,HTTPS URL,none,Primary official source URL,primary source
+source_type,string,no,"challenge_page|git_repository|data_repository|institutional_page",none,Official source route category,primary source
+source_version,string,yes,UTF-8 text,none,Human-readable release/version,primary source
+source_commit,string,yes,40-character git SHA or null,none,Commit pin for repository-backed source,git receipt
+license_name,string,yes,SPDX-like text or source wording,none,License/access statement without interpretation,license file or official page
+license_status,string,no,"observed|unknown|not_provided|not_applicable|withheld|parse_failed",none,Semantic status for license_name,primary evidence
+raw_root_relpath,string,no,project-relative POSIX path,none,Immutable source root under dataset/raw,filesystem receipt
+processed_root_relpath,string,no,project-relative POSIX path,none,Derived output root under dataset/processed,project contract
+download_notebook_relpath,string,no,project-relative POSIX path,none,Notebook responsible for source acquisition/checksum/audit,repository file
+adapter_id,string,no,registered adapter identifier,FK,Adapter registry key,adapter spec
+adapter_version,string,no,semantic version,none,Parser contract version,adapter receipt
+source_archive_sha256_json,json,yes,JSON object of relpath to SHA256,none,Checksums for downloaded archives or source bundles,checksum receipt
+expected_recording_count,integer,yes,non-negative integer,none,Audited recording count for release-scope drift detection,raw-package audit
+expected_annotation_unit_count,integer,yes,non-negative integer,none,Audited cycle/interval/event count when meaningful,raw-package audit
+expected_duration_hours,float64,yes,non-negative hours,none,Audited WAV-header duration,raw-package audit
+primary_prediction_units_json,json,no,JSON array,none,Prediction/annotation units supported by this release,task-unit receipt
+official_split_available,boolean,no,true|false,none,Whether source provides a split; says nothing about leakage quality,source receipt
+identity_key_quality,string,no,"direct_patient|subject_proxy|none",none,Best available grouping identity quality,evidence receipt
+evidence_refs_json,json,no,JSON array of project-relative paths or official URLs,none,Source-grounded evidence links,evidence ledger
+confidence,string,no,"high|medium|low",none,Confidence in catalog row,evidence review
+checked_date,date,no,YYYY-MM-DD,none,Last source/package verification date,audit receipt

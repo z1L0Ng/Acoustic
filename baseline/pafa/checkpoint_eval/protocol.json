@@ -1,0 +1,32 @@
+{
+  "augmentation": "off",
+  "binary_decision": "normal iff four-class argmax is normal; otherwise abnormal",
+  "checkpoint": {
+    "expected_epoch": 27,
+    "required_keys": ["epoch", "model", "classifier"],
+    "selection": "ICBHI official-test-selected",
+    "sha256_required_at_runtime": true
+  },
+  "claim": "published-model / verified-server-checkpoint / ICBHI-test-selected / zero-target-tuning exploratory transfer",
+  "environment": "acoustic-pafa-r4",
+  "method_id": "pafa",
+  "preprocessing": "author PAFA 16 kHz mono, full-recording fade, event crop, 5 s repeat/truncate, raw waveform, nospec",
+  "source": {
+    "commit": "e49e294d0db0d6af10ac46290512b9c85d3f71e1",
+    "license": "no LICENSE in author repository; redistribution requires review",
+    "repo": "https://github.com/wa976/PAFA"
+  },
+  "target": {
+    "dataset": "SPRSound BioCAS2022",
+    "event_id_sha256": "81a6b15783a01eb86abe218928884b41e7f975f64eedaefd546e2dbf3deba44b",
+    "events": 1429,
+    "partition": "official inter-subject",
+    "unit": "event"
+  },
+  "target_constraints": {
+    "device_metadata": "not used",
+    "intra_subject": "not run",
+    "target_labels": "joined only after all logits for final scoring",
+    "target_selection_or_tuning": "forbidden"
+  }
+}

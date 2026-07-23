@@ -42,7 +42,7 @@ htmlcov/
 .nox/
 .coverage
 .coverage.*
-.cache
+.cache/
 nosetests.xml
 coverage.xml
 *.cover
@@ -216,3 +216,31 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# macOS
+.DS_Store
+
+# Dataset workspace: keep scripts and lightweight processed metadata in git,
+# while keeping raw downloads and heavy derived artifacts local.
+dataset/raw/**
+!dataset/raw/
+!dataset/raw/.gitkeep
+dataset/processed/features/**
+dataset/processed/audio/**
+dataset/processed/cache/**
+dataset/processed/tmp/**
+dataset/processed/intermediate/**
+
+# Generated experiment outputs are local and reproducible. Version notebooks
+# and runners in their source directories, but keep metrics, predictions,
+# checkpoints, caches, external repositories, and logs under result/ out of git.
+result/
+
+# Legacy output root. Keep ignored so old scripts cannot accidentally re-create
+# a second result tree; all active code must write to result/.
+results/
+
+# Retired task-thread documents and disposable workspace files. Maintained
+# project documentation belongs in docs/; temporary execution files belong here.
+codex/
+tmp/

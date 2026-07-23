@@ -1,0 +1,21 @@
+name: acoustic-mvst-r4
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - numpy==1.26.4
+      - torch==2.0.1
+      - torchaudio==2.0.2
+      - torchvision==0.15.2
+      - timm==0.4.5
+      - librosa==0.9.2
+      - pandas
+      - scipy
+      - scikit-learn
+      - opencv-python-headless==4.11.0.86
+      - opencv-python==4.11.0.86
+      - cmapy==0.6.6
+      - tqdm
+      - setuptools==80.9.0

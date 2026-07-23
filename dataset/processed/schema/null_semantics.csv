@@ -1,0 +1,9 @@
+status_code,meaning,allowed_usage,forbidden_interpretation
+observed,Value directly exists in source or raw package,Populate value and cite evidence,Do not treat as inferred
+inferred,Value derived by an explicit versioned rule,Populate value with medium/low confidence and rule reference,Do not call official or observed
+unknown,Source scope was checked but truth cannot be determined,Leave value null,Do not equate with not_provided
+not_provided,Source does not release the field,Leave value null,Do not infer a negative value
+not_applicable,Field has no semantic meaning for this unit/table,Leave value null,Do not count as missing data
+withheld,Source states field exists but is withheld/deidentified,Leave value null,Do not call absent
+parse_failed,Field should be parseable but parser failed,Leave value null and fail/warn QC,Do not silently coerce to unknown
+proposed,Value/name is a management or benchmark recommendation,Keep outside source-truth columns until approved,Do not present as source fact

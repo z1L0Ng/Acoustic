@@ -1,0 +1,11 @@
+id: sprsound_pafa_frozen_transfer
+question: Does a verified server-trained PAFA ICBHI checkpoint retain performance on the same SPRSound inter events?
+implementation: baseline/pafa/checkpoint_eval
+target_contract: acoustic/evaluation/sprsound_inter.py
+requirements:
+  - accepted PAFA task checkpoint path and SHA256
+  - audited BEATs initialization SHA256
+  - fixed 1429 event ID set
+  - label-free forward before scoring
+comparators: [Patch-Mix frozen transfer, all-normal floor, matched target reference]
+claim_limit: Zero-target-tuning exploratory transfer from an ICBHI-test-selected checkpoint.

@@ -1,0 +1,14 @@
+id: icbhi_exploratory_ablations
+question: Do temporal state modeling, co-occurrence heads, or validation-only fusion solve the minority failure left by frozen baselines?
+historical_implementations:
+  - BEATs frame mean/max/CNN/GRU and selective-state pooling
+  - soft hierarchy and multi-label reranking on cached representations
+  - strict-patient joint flat-four/binary/event heads
+  - validation-selected event fusion
+evaluation: Matched local controls with classwise recall, UAR, specificity, sensitivity, Score, and calibration.
+outcome:
+  - simple frame max pooling was stronger and more stable than the selective-state fallback
+  - joint heads and fusion mainly shifted performance toward specificity and calibration
+  - no tested method produced a stable minority-both improvement without another cost
+status_note: Historical exploratory code was removed from model/ after results were condensed; model/ is reserved for approved project-authored methods.
+claim_limit: Negative and tradeoff evidence only; no Mamba, imbalance-solved, or Pareto-dominance claim.

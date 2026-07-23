@@ -1,0 +1,22 @@
+column_name,data_type,nullable,allowed_values_or_format,key_role,description,evidence_requirement
+split_assignment_id,string,no,"<protocol_id>:<recording_id>",PK,One assignment per recording per protocol,split builder
+protocol_id,string,no,registered split protocol ID,FK,Names official/source/proposed protocol without ambiguity,split contract
+protocol_version,string,no,semantic version,none,Immutable assignment contract version,split receipt
+dataset_id,string,no,catalog dataset_id,FK,Dataset identity,catalog
+release_id,string,no,catalog release_id,FK,Release scope,catalog
+recording_id,string,no,recording manifest ID,FK,Assigned recording,recording manifest
+partition,string,no,"train|validation|test|inter_test|intra_test|excluded",none,Partition label; inter/intra remain separate,split contract
+assignment_origin,string,no,"official_source|source_folder|proposed_deterministic|manual_exclusion",none,Distinguishes source fact from benchmark policy,evidence
+group_key_type,string,no,"patient_id|session_id|date_session_proxy|recording_id|none",none,Leakage grouping key semantics,split contract
+group_key_value,string,yes,dataset-scoped entity/proxy ID,none,Group value used by assignment,entity table
+group_key_confidence,string,no,"direct|proxy|none",none,Whether identity is direct or proxy,evidence
+seed,integer,yes,non-negative integer,none,Required for proposed stochastic/deterministic grouped split,split receipt
+stratification_fields_json,json,yes,JSON array,none,Fields used to balance groups,split receipt
+source_split_raw,string,yes,verbatim source split,none,Preserves source assignment even under proposed protocol,source package
+overlap_policy,string,no,"forbid_patient|allow_intra_subject_only|proxy_group_forbid|not_applicable",none,Expected overlap behavior,split contract
+assignment_reason,string,no,UTF-8 text,none,Human-readable origin/exclusion rationale,split builder
+assignment_hash,string,no,64 lowercase hex,none,SHA256 of sorted recording_id/partition/group rows,split receipt
+policy_gate_status,string,no,"approved|blocked_pending_decision|source_only",none,Prevents unapproved proposed split from training,management decision
+evidence_refs_json,json,no,JSON array,none,Source split and policy evidence,evidence ledger
+manifest_build_id,string,no,build receipt ID,FK,Input manifest lineage,build receipt
+created_by_version,string,no,script commit/version,none,Reproducible split implementation,split receipt

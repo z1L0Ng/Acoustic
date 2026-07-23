@@ -1,0 +1,13 @@
+id: sprsound_patchmix_target_training
+question: How learnable is the SPRSound inter target with the same Patch-Mix architecture and source preprocessing family?
+implementation: baseline/patch_mix_cl/c0_sprsound
+data:
+  training: SPRSound BioCAS2022 train events
+  validation: fixed patient-grouped fold inside train
+  test: SPRSound BioCAS2022 inter events, evaluated once
+  tasks: [binary broad, narrow four]
+selection: Validation Score only; no inter threshold, calibration, or model selection.
+comparison:
+  primary: paired same-event target-reference gap versus frozen Patch-Mix transfer
+  uncertainty: patient-grouped paired bootstrap
+claim_limit: Target-native reference, not zero-shot, pooled training, or domain adaptation.

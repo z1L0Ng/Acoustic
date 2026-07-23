@@ -1,0 +1,16 @@
+{
+  "method_id": "add_rsc",
+  "title": "Adaptive Differential Denoising for Respiratory Sounds Classification",
+  "venue_year": "Interspeech 2025",
+  "doi": "10.21437/Interspeech.2025-1190",
+  "paper_url": "https://www.isca-archive.org/interspeech_2025/dong25_interspeech.html",
+  "repo_url": "https://github.com/deegy666/ADD-RSC",
+  "pinned_commit": "e2b0f8213cb7ca451ef28757cb1329e17469fe72",
+  "license": "none found",
+  "task_unit": "ICBHI cycle-level 4-class respiratory sound classification",
+  "label_order": ["normal", "crackle", "wheeze", "both"],
+  "split": "repo-generated fixed random file 60/40 split, not official_split.txt",
+  "target_result": {"ast_sp": "85.13", "ast_se": "45.94", "ast_score": "65.53", "resnet50_score": "58.97"},
+  "faithful_status": "not official faithful; author clarification needed",
+  "blocking_gaps": ["no license file", "no scripts/config/checkpoints", "paper/code split contradiction", "paper n_mels 64 vs repo 128", "paper weight_decay 0.1 vs repo 1e-6", "patient-overlap claim conflicts with common ICBHI official split semantics"]
+}

@@ -1,0 +1,17 @@
+{
+  "method_id": "sg_scl",
+  "title": "Stethoscope-Guided Supervised Contrastive Learning for Cross-Domain Adaptation on Respiratory Sound Classification",
+  "venue_year": "ICASSP 2024",
+  "doi": "10.1109/ICASSP48485.2024.10447734",
+  "paper_url": "https://doi.org/10.1109/ICASSP48485.2024.10447734",
+  "repo_url": "https://github.com/kaen2891/stethoscope-guided_supervised_contrastive_learning",
+  "pinned_commit": "66564609595090b61540595d3d27764c00553086",
+  "license": "none found",
+  "task_unit": "ICBHI cycle-level classification with stethoscope/device metadata",
+  "label_order": ["normal", "crackle", "wheeze", "both"],
+  "device_label_order": ["Meditron", "LittC2SE", "Litt3200", "AKGC417L"],
+  "split": "author official_split.txt recording split",
+  "target_result": {"sp": "79.87 +/- 8.89", "se": "43.55 +/- 5.93", "score": "61.71 +/- 1.61", "two_class_score": "68.93 +/- 1.47"},
+  "faithful_status": "official-like faithful for metadata-aided method but test-selected",
+  "blocking_gaps": ["no license file", "no released checkpoints", "not audio-only because device labels are used", "official test used for checkpoint selection"]
+}

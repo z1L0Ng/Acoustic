@@ -1,0 +1,10 @@
+id: icbhi_strong_method_reproduction
+question: Can five recent strong ICBHI methods be run from their author repositories within a reasonable error of the reported results?
+methods:
+  patch_mix_cl: official-like official split; author checkpoint independently aligned
+  pafa: official-like official split; server result pending local import
+  sg_scl: metadata-aware official split; server result pending local import
+  mvst: author fixed random file split; not official-split comparable
+  add_rsc: bounded paper-declared and repository-default tracks because settings conflict
+execution: CUDA server with one durable run root per method and sample-level export verification.
+claim_limit: Method-specific alignment only; paper mean, source split, and test-selection boundaries remain explicit.

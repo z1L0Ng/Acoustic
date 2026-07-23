@@ -1,0 +1,15 @@
+id: icbhi_patchmix_author_eval
+question: Can the public author task checkpoint reproduce the author-posted ICBHI result?
+implementation: baseline/patch_mix_cl/checkpoint_eval
+checkpoint:
+  sha256: 0cdeeec3b834ad18a5a945ea935ef8656922b0e444ed80e050206304de597949
+  selection: official-test-selected by the author workflow
+data:
+  dataset: ICBHI 2017
+  unit: respiratory cycle
+  test_rows: 2756
+result:
+  specificity_percent: 86.1938
+  sensitivity_percent: 38.1478
+  score_percent: 62.1708
+claim_limit: Exact author-checkpoint alignment, not a clean source-validation anchor.

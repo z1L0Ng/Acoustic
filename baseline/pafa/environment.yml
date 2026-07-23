@@ -1,0 +1,22 @@
+name: acoustic-pafa-r4
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - numpy<2
+      - torch==2.0.1
+      - torchaudio==2.0.2
+      - torchvision==0.15.2
+      - timm==0.4.5
+      - librosa==0.9.2
+      - pandas
+      - scipy
+      - scikit-learn
+      - transformers==4.38.2
+      - einops
+      - setuptools==80.9.0
+      - tqdm
+      - wget==3.2
+      - matplotlib

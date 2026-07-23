@@ -1,0 +1,139 @@
+{
+  "spec_version": "0.1.0",
+  "status": "design_only_blocked_from_manifest_generation",
+  "path_policy": {
+    "stored_paths": "project_relative_posix_only",
+    "project_root_resolution": "repository marker or explicit ACOUSTIC_PROJECT_ROOT",
+    "absolute_paths_forbidden": true,
+    "raw_writes_forbidden": true
+  },
+  "adapter_interface": {
+    "required_methods": [
+      "catalog_entry() -> DatasetCatalogRow",
+      "discover_raw_files() -> RawInventory",
+      "validate_release_scope(inventory) -> ValidationReport",
+      "iter_entities(inventory) -> Iterator[EntityRow]",
+      "iter_recordings(inventory) -> Iterator[RecordingRow]",
+      "iter_events(recording_row) -> Iterator[EventRow]",
+      "source_split_rows(recording_rows) -> Iterator[SplitAssignmentRow]",
+      "audit_receipt(outputs) -> BuildReceipt"
+    ],
+    "required_properties": [
+      "dataset_id",
+      "release_id",
+      "adapter_id",
+      "adapter_version",
+      "raw_root_relpath",
+      "processed_root_relpath",
+      "supported_units",
+      "policy_gates"
+    ],
+    "determinism": {
+      "file_order": "sort by project-relative POSIX path",
+      "recording_id": "dataset_id:release_id:source_recording_id:sha256(raw_audio_relpath)[0:12]",
+      "event_id": "recording_id:unit_type:source_event_index",
+      "output_order": "stable sort by primary key",
+      "receipt_hash": "sha256 of canonical JSON build config plus sorted input checksums"
+    }
+  },
+  "datasets": [
+    {
+      "dataset_id": "icbhi_2017",
+      "release_id": "official_2017",
+      "adapter_id": "ICBHI2017Adapter",
+      "raw_root_relpath": "dataset/raw/icbhi_2017",
+      "audio_glob": "source_original/ICBHI_final_database/ICBHI_final_database/*.wav",
+      "annotation_glob": "source_original/ICBHI_final_database/ICBHI_final_database/*.txt",
+      "metadata_sources": [
+        "ICBHI_Challenge_demographic_information.txt",
+        "ICBHI_Challenge_diagnosis.txt",
+        "ICBHI_challenge_train_test.txt"
+      ],
+      "supported_units": ["recording", "respiratory_cycle", "patient"],
+      "identity": {
+        "patient": "filename field 1; direct",
+        "session": "recording index is retained but session semantics remain unknown",
+        "device": "filename equipment code",
+        "site": "filename chest-location code"
+      },
+      "label_parser": "cycle TXT rows: start_s end_s crackle_flag wheeze_flag; diagnosis side file remains patient-level",
+      "source_split": "ICBHI_challenge_train_test.txt; official challenge recording split; patient overlap 156 and 218",
+      "policy_gates": ["icbhi_strict_patient_split_approval"]
+    },
+    {
+      "dataset_id": "hf_lung_v1",
+      "release_id": "gitlab_release_2022_01_18",
+      "adapter_id": "HFLungV1Adapter",
+      "raw_root_relpath": "dataset/raw/hf_lung_v1",
+      "audio_glob": "source_original/{train,test}/{train,test}/*.wav",
+      "annotation_glob": "source_original/{train,test}/{train,test}/*_label.txt",
+      "metadata_sources": ["README.md"],
+      "supported_units": ["recording", "label_interval"],
+      "identity": {
+        "patient": "not_provided; never populate patient_id from date",
+        "session": "deidentified date plus recording-session stem; inferred proxy",
+        "device": "steth_ -> Littmann 3200; trunc_ -> HF-Type-1",
+        "site": "L1-L8 only for trunc_ files; steth_ location not inferable"
+      },
+      "label_parser": "label TXT rows: token start_hms end_hms; preserve overlapping I/E/D/Wheeze/Rhonchi/Stridor intervals",
+      "source_split": "source train/test folder; not proof of patient independence",
+      "policy_gates": ["hf_negative_interval_policy", "hf_proxy_identity_acceptance", "other_abnormal_policy"]
+    },
+    {
+      "dataset_id": "sprsound",
+      "release_id": "biocas2022_commit_874eeb8736ddb78937c2fb5332fc7e7293d0f0ca",
+      "adapter_id": "SPRSoundBioCAS2022Adapter",
+      "raw_root_relpath": "dataset/raw/sprsound/source_original/SPRSound-874eeb8736ddb78937c2fb5332fc7e7293d0f0ca/BioCAS2022",
+      "audio_glob": "{train2022_wav,test2022_wav}/*.wav",
+      "annotation_glob": "{train2022_json,test2022_json/inter_test_json,test2022_json/intra_test_json}/*.json",
+      "metadata_sources": ["README.md", "../README.md"],
+      "supported_units": ["recording", "respiratory_event", "patient"],
+      "identity": {
+        "patient": "filename patient number; direct",
+        "session": "recording number retained; session semantics not assumed",
+        "device": "Yunting model II stethoscope from README",
+        "site": "filename p1-p4"
+      },
+      "label_parser": "JSON record_annotation plus event_annotation start/end milliseconds/type",
+      "source_split": "train2022 plus inter_test2022 plus intra_test2022; partitions remain separate",
+      "scope_exclusions": ["BioCAS2023", "BioCAS2024", "BioCAS2025", "Classification", "Detection", "Compression"],
+      "policy_gates": ["other_abnormal_policy", "poor_quality_policy", "sprsound_reporting_contract"]
+    },
+    {
+      "dataset_id": "kauh_fraiwan",
+      "release_id": "mendeley_v3",
+      "adapter_id": "KAUHFraiwanV3Adapter",
+      "raw_root_relpath": "dataset/raw/kauh_fraiwan",
+      "audio_glob": "source_original/audio_files/*.wav",
+      "annotation_glob": "Data annotation.xlsx",
+      "metadata_sources": ["Data annotation.xlsx", "source_original/stethoscope_files/Readme.txt", "processed/kauh_fraiwan/mendeley_file_metadata.json"],
+      "supported_units": ["recording", "patient"],
+      "identity": {
+        "patient": "P-number parsed from B/D/E-prefixed filename; direct",
+        "session": "not_provided",
+        "device": "3M Littmann Electronic Stethoscope model 3200",
+        "site": "workbook Location field"
+      },
+      "label_parser": "join three B/D/E WAVs to one workbook patient row; preserve Sound type and Diagnosis as separate raw fields",
+      "source_split": "none",
+      "unrecoverable_or_unresolved": ["B/D/E prefix semantics", "I C B token B semantics", "Crep versus C normalization", "session identity"],
+      "policy_gates": ["kauh_source_family_name", "kauh_abbreviation_confirmation", "kauh_grouped_split_approval", "disease_head_scope"]
+    }
+  ],
+  "aggregate_contract": {
+    "notebook": "dataset/script/aggregate_datasets.ipynb",
+    "allowed_actions": [
+      "load adapter registry",
+      "run schema-only dry validation",
+      "concatenate schema-compatible lightweight tables",
+      "emit count/QC/build receipts"
+    ],
+    "forbidden_actions_before_gate": [
+      "write final model-ready manifest",
+      "resample or copy audio",
+      "infer unresolved labels",
+      "create unapproved proposed splits",
+      "extract embeddings or train models"
+    ]
+  }
+}

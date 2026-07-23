@@ -1,0 +1,11 @@
+id: icbhi_strict_patient_long_tail
+question: Do established long-tail policies improve minority performance under strict patient separation?
+implementation: baseline/common/strict_patient_v3.py
+data:
+  dataset: ICBHI 2017
+  unit: respiratory cycle
+  split: nested five-fold patient-grouped evaluation
+comparisons: [unweighted CE, class-weighted CE, focal loss, logit adjustment, LDAM-DRW, cRT]
+evaluation: [macro F1, UAR, both recall, normal specificity, abnormal sensitivity, ICBHI Score, calibration]
+outcome: No policy jointly improved minority recall, UAR, and specificity.
+claim_limit: Local controlled comparison; no significance or solved-imbalance claim.

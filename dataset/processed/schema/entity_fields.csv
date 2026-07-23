@@ -1,0 +1,37 @@
+table_name,column_name,data_type,nullable,allowed_values_or_format,key_role,description,evidence_requirement
+patient,patient_id,string,no,"<dataset_id>:patient:<source_or_hash>",PK,Dataset-scoped direct patient identity; never created from HF date proxy,source patient identifier
+patient,dataset_id,string,no,catalog dataset_id,FK,Dataset identity,catalog
+patient,source_patient_id,string,yes,verbatim source identifier,none,Original patient ID when released,source metadata
+patient,identity_status,string,no,"observed|withheld|not_provided|parse_failed",none,Identity availability state,evidence
+patient,age_years,float64,yes,non-negative,none,Age normalized to years while preserving raw value,source metadata
+patient,age_raw,string,yes,verbatim text,none,Unmodified source age representation,source metadata
+patient,sex_raw,string,yes,verbatim text,none,Unmodified source sex/gender value,source metadata
+patient,disease_labels_raw_json,json,yes,JSON array/object,none,Patient disease labels kept separate from sound labels,source metadata
+patient,field_status_json,json,no,"JSON map field->observed|unknown|not_provided|not_applicable|withheld|parse_failed",none,Per-field null semantics,adapter evidence
+patient,evidence_refs_json,json,no,JSON array,none,Source rows/files,evidence ledger
+patient,row_confidence,string,no,"high|medium|low",none,Entity confidence,adapter validation
+session,session_id,string,no,"<dataset_id>:session:<source_or_proxy>",PK,Dataset-scoped recording session or explicitly marked proxy,source/proxy rule
+session,dataset_id,string,no,catalog dataset_id,FK,Dataset identity,catalog
+session,patient_id,string,yes,patient ID,FK,Direct patient link only when known,source metadata
+session,session_key_raw,string,yes,verbatim date/session stem,none,Source session/date representation,source filename
+session,identity_semantics,string,no,"direct_session|date_session_proxy|recording_index|unknown",none,Prevents proxy from being read as patient identity,evidence
+session,deidentified,boolean,no,true|false,none,Whether date/time is shifted or deidentified,source documentation
+session,field_status_json,json,no,JSON map,none,Per-field null semantics,adapter evidence
+session,evidence_refs_json,json,no,JSON array,none,Source rows/files,evidence ledger
+session,row_confidence,string,no,"high|medium|low",none,Entity confidence,adapter validation
+device,device_id,string,no,"<dataset_id>:device:<controlled_name>",PK,Dataset-scoped device identity/type,source metadata
+device,dataset_id,string,no,catalog dataset_id,FK,Dataset identity,catalog
+device,manufacturer,string,yes,UTF-8 text,none,Device manufacturer,source documentation
+device,model,string,yes,UTF-8 text,none,Device model,source documentation
+device,device_type,string,yes,"stethoscope|microphone|multichannel_recorder|unknown",none,Controlled hardware type,source documentation
+device,source_device_code,string,yes,verbatim filename/source code,none,Raw code before normalization,source metadata
+device,field_status_json,json,no,JSON map,none,Per-field null semantics,adapter evidence
+device,evidence_refs_json,json,no,JSON array,none,Source evidence,evidence ledger
+site,site_id,string,no,"<dataset_id>:site:<controlled_code>",PK,Auscultation/anatomical recording location,source metadata
+site,dataset_id,string,no,catalog dataset_id,FK,Dataset identity,catalog
+site,source_site_code,string,yes,verbatim source code,none,Raw site code,source metadata
+site,anatomical_name,string,yes,controlled UTF-8 text,none,Normalized anatomical location,source documentation
+site,laterality,string,yes,"left|right|midline|not_applicable|unknown",none,Anatomical laterality,source documentation
+site,position_group,string,yes,"anterior|posterior|lateral|trachea|other|unknown",none,Coarse site family,source documentation
+site,field_status_json,json,no,JSON map,none,Per-field null semantics,adapter evidence
+site,evidence_refs_json,json,no,JSON array,none,Source evidence,evidence ledger

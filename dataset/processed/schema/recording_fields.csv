@@ -1,0 +1,43 @@
+column_name,data_type,nullable,allowed_values_or_format,key_role,description,evidence_requirement
+recording_id,string,no,"<dataset_id>:<release_id>:<source_recording_id>:<raw_relpath_sha12>",PK,"Deterministic cross-device identifier; independent of absolute filesystem path",adapter deterministic-ID test
+dataset_id,string,no,catalog dataset_id,FK,Dataset identity,catalog
+release_id,string,no,catalog release_id,FK,Release scope,catalog
+source_recording_id,string,no,verbatim source-native stem or identifier,none,"Preserved source identifier; not assumed globally unique",raw filename/source metadata
+raw_audio_relpath,string,no,project-relative POSIX path,unique_within_release,"Path under project root; absolute paths forbidden",filesystem inventory
+raw_annotation_relpaths_json,json,yes,JSON array of project-relative paths,none,Source annotations linked to recording,raw inventory
+audio_sha256,string,no,64 lowercase hex,none,Raw audio checksum,checksum pass
+file_size_bytes,integer,no,non-negative integer,none,Raw file size,filesystem
+audio_format,string,no,"wav|flac|other",none,Source container/codec without normalization,file header
+sample_rate_hz,integer,no,positive integer,none,Source sample rate,file header
+channel_count,integer,no,positive integer,none,Source channel count,file header
+bit_depth,integer,yes,positive integer,none,Source bit depth when representable,file header
+frame_count,integer,no,non-negative integer,none,Source frame count,file header
+duration_s,float64,no,non-negative seconds,none,Source recording duration from frame_count/sample_rate,file header
+patient_id,string,yes,dataset-scoped canonical ID,FK,Direct source patient ID only; proxy IDs are forbidden here,source metadata
+patient_id_status,string,no,"observed|unknown|not_provided|withheld|parse_failed",none,Reason patient_id is or is not populated,evidence
+patient_id_confidence,string,no,"high|medium|low|not_applicable",none,Confidence in identity extraction,evidence
+session_id,string,yes,dataset-scoped canonical ID,FK,Recording session identity when source semantics support it,source metadata
+session_id_status,string,no,"observed|inferred|unknown|not_provided|withheld|parse_failed",none,Semantic status; inferred includes HF date/session proxy,evidence
+session_id_confidence,string,no,"high|medium|low|not_applicable",none,Confidence in session/proxy grouping,evidence
+device_id,string,yes,dataset-scoped canonical ID,FK,Recording hardware identifier or controlled device type,source metadata
+device_id_status,string,no,"observed|inferred|unknown|not_provided|withheld|parse_failed",none,Semantic status for device_id,evidence
+site_id,string,yes,dataset-scoped canonical ID,FK,Auscultation/anatomical location identifier; not institution site,source metadata
+site_id_status,string,no,"observed|inferred|unknown|not_provided|withheld|parse_failed|not_applicable",none,Semantic status for site_id,evidence
+acquisition_site_id,string,yes,dataset-scoped institution/cohort site,FK,Institution or acquisition cohort when available,source metadata
+acquisition_site_status,string,no,"observed|inferred|unknown|not_provided|withheld|parse_failed",none,Semantic status for acquisition_site_id,evidence
+source_split,string,yes,verbatim source split label,none,Source-provided folder/list designation,source package
+source_split_kind,string,no,"official_challenge|source_study_folder|none",none,Distinguishes official challenge split from source folder and no split,evidence
+record_annotation_raw_json,json,yes,verbatim JSON-safe label payload,none,Whole-record raw labels without harmonization,raw annotation
+disease_labels_raw_json,json,yes,JSON array/object,none,Disease labels only; never combined with sound events,raw annotation
+disease_label_status,string,no,"observed|unknown|not_provided|not_applicable|withheld|parse_failed",none,Semantic status for disease labels,evidence
+quality_label_raw,string,yes,verbatim source quality label,none,Source quality annotation such as Poor Quality,raw annotation
+quality_status,string,no,"pass|poor_quality|corrupt|duplicate|missing_annotation|unknown",none,Canonical QC state; does not overwrite raw quality label,QC receipt
+prediction_units_available_json,json,no,JSON array,none,"recording|respiratory_cycle|label_interval|respiratory_event availability",adapter output
+source_row_ref,string,yes,"project-relative file#row-or-key",none,Exact source metadata row/key for lineage,raw source
+adapter_id,string,no,adapter registry key,FK,Parser implementation,adapter spec
+adapter_version,string,no,semantic version,none,Parser version used for row,build receipt
+parse_status,string,no,"ok|warning|failed",none,Row parse status,adapter validation
+parse_warnings_json,json,yes,JSON array,none,Non-fatal parse ambiguity,adapter validation
+evidence_refs_json,json,no,JSON array,none,Project-relative/official evidence references,evidence ledger
+row_confidence,string,no,"high|medium|low",none,Overall row confidence,adapter validation
+manifest_build_id,string,no,build receipt ID,FK,Rebuild/provenance receipt,build receipt

@@ -1,0 +1,16 @@
+{
+  "method_id": "pafa",
+  "title": "Patient-Aware Feature Alignment for Robust Lung Sound Classification: Cohesion-Separation and Global Alignment Losses",
+  "venue_year": "Interspeech 2025",
+  "doi": "10.21437/Interspeech.2025-1477",
+  "paper_url": "https://www.isca-archive.org/interspeech_2025/jeong25_interspeech.html",
+  "repo_url": "https://github.com/wa976/PAFA",
+  "pinned_commit": "e49e294d0db0d6af10ac46290512b9c85d3f71e1",
+  "license": "none found",
+  "task_unit": "ICBHI cycle-level lung-sound classification",
+  "label_order": ["normal", "crackle", "wheeze", "both"],
+  "split": "author official_split.txt recording split",
+  "target_result": {"sp": "82.05 +/- 1.95", "se": "47.63 +/- 2.23", "score": "64.84 +/- 0.60", "two_class_score": "72.08"},
+  "faithful_status": "official-like faithful if BEATs checkpoint and five seeds are matched",
+  "blocking_gaps": ["no license file", "no released checkpoints", "official test used for checkpoint selection", "external BEATs_iter3+ AS2M checkpoint must be pinned"]
+}
