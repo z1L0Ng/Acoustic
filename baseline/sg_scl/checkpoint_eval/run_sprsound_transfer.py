@@ -20,9 +20,16 @@ from acoustic.evaluation.sprsound_inter import (
     build_label_free_inter_manifest,
     finalize_full_result,
     group_by_recording,
-    sha256_file,
     write_csv,
     write_json,
+)
+from baseline.sg_scl.checkpoint_eval.bootstrap import (
+    CONTAINER_SAVED_AT_EPOCH,
+    SELECTED_BEST_EPOCH,
+    SOURCE_CONFUSION,
+    SOURCE_PREDICTION_CSV_SHA256,
+    verify_checkpoint_identity,
+    verify_checkpoint_state,
 )
 
 
@@ -87,8 +94,7 @@ def main() -> None:
         raise ValueError("the immutable label-free smoke contract requires exactly 8 events")
     source_repo = (args.source_repo or root / "source" / "repo").resolve()
     checkpoint = args.checkpoint.resolve()
-    if sha256_file(checkpoint) != args.checkpoint_sha256.lower():
-        raise RuntimeError("SG-SCL task checkpoint SHA gate failed")
+    task_sha = verify_checkpoint_identity(checkpoint, args.checkpoint_sha256)
     device = torch.device(args.device)
     if device.type == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA requested but unavailable")
@@ -100,8 +106,7 @@ def main() -> None:
     from models.ast import ASTModel
 
     state = torch.load(checkpoint, map_location="cpu")
-    if int(state.get("epoch", -1)) != 27 or not {"model", "classifier"} <= set(state):
-        raise RuntimeError("expected verified SG-SCL epoch-27 checkpoint")
+    verify_checkpoint_state(state)
     # False/False prevents any initialization download. The full predictive
     # state is loaded strictly from the task checkpoint immediately below.
     model = ASTModel(
@@ -173,8 +178,14 @@ def main() -> None:
         "method_id": "sg_scl",
         "claim": "verified one-seed ICBHI-test-selected SG-SCL checkpoint; exploratory zero-target-tuning transfer",
         "mode": args.mode,
-        "checkpoint_sha256": args.checkpoint_sha256.lower(),
-        "checkpoint_epoch": 27,
+        "checkpoint_sha256": task_sha,
+        "checkpoint_size_bytes": checkpoint.stat().st_size,
+        "container_saved_at_epoch": CONTAINER_SAVED_AT_EPOCH,
+        "selected_best_epoch": SELECTED_BEST_EPOCH,
+        "top_level_predictive_states_equal_embedded_best_model": {
+            "model": True,
+            "classifier": True,
+        },
         "source_preprocessing": "16 kHz mono; event crop; 8 s repeat/truncate+fade; 128-bin fbank; resize 798x128",
         "augmentation": "off",
         "events": len(prediction_rows),
@@ -182,7 +193,14 @@ def main() -> None:
         "target_device_metadata": "not used or invented; author validation audio-classifier path",
         "source_training_boundary": "metadata/device-aware SG-SCL source training",
         "binary_probability_rule": "P(normal)=P(class0); P(abnormal)=sum(P(class1:4))",
-        "source_numerical_status": "Sp74.984 Se46.984 Score60.984; all within about 0.6 SD for one seed",
+        "source_numerical_provenance": {
+            "evidence_origin": "accepted_server_audit_not_recomputed_by_transfer_runner",
+            "specificity": 74.9842,
+            "sensitivity": 46.9839,
+            "score": 60.9840,
+            "confusion": SOURCE_CONFUSION,
+            "prediction_csv_sha256": SOURCE_PREDICTION_CSV_SHA256,
+        },
     }
     if args.mode == "smoke":
         write_json(root / "smoke_receipt.json", run_receipt)

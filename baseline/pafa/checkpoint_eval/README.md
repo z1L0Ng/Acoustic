@@ -1,9 +1,11 @@
 # PAFA B1: Frozen Checkpoint to SPRSound Inter
 
-This package runs a verified server PAFA epoch-27 checkpoint on the exact
-SPRSound BioCAS2022 inter-subject event set used by Patch-Mix B0. It is a
-published-model, ICBHI-test-selected, zero-target-tuning exploratory transfer,
-not a clean source anchor or a target-trained reference.
+This package runs the accepted PAFA server checkpoint whose container was saved
+at epoch 100 and whose embedded/top-level predictive state was selected at best
+epoch 27. It uses the exact SPRSound BioCAS2022 inter-subject event set from
+Patch-Mix B0. It is a published-model, ICBHI-test-selected,
+zero-target-tuning exploratory transfer, not a clean source anchor or a
+target-trained reference.
 
 ## Frozen Contract
 
@@ -24,8 +26,11 @@ not a clean source anchor or a target-trained reference.
 - Checkout containing this tracked package.
 - Frozen environment `acoustic-pafa-r4` from
   `baseline/pafa/environment.linux-cu118.yml`.
-- Verified server PAFA task checkpoint at epoch 27 and its SHA256. The binary is
-  not stored in Git.
+- Accepted PAFA task-checkpoint container: size `1,464,382,039` bytes, SHA256
+  `94afaed43a1546af26f9d8d99d2d27329cb8d348fd57cbe142d24310c68ca2b6`.
+  Its container epoch is 100; selected best epoch is 27. Bootstrap requires
+  top-level `model`, `classifier`, and `projector` to be exactly tensor-equal
+  to embedded `best_model[0:3]`. The binary is not stored in Git.
 - Audited BEATs_iter3+ AS2M backbone and SHA256
   `d43cbfad4d7b56381c061d7a24774f908d4d94c72961f6eb1d9090ff18cd8d34`.
 - SPRSound package at `dataset/raw/sprsound` or a path with the same official
@@ -33,12 +38,12 @@ not a clean source anchor or a target-trained reference.
 
 ## Server Commands
 
-Set the two server-owned checkpoint paths and the task-checkpoint digest from
-the accepted source-run receipt. Do not infer or substitute either value.
+Set the two server-owned checkpoint paths. The task digest below is immutable;
+the CLI requires the caller value, file size, and file digest all to match.
 
 ```bash
-export PAFA_TASK_CHECKPOINT=/absolute/server/path/to/pafa_epoch27_best.pth
-export PAFA_TASK_SHA256=<sha256-from-accepted-server-receipt>
+export PAFA_TASK_CHECKPOINT=/absolute/server/path/to/pafa_accepted_container_epoch100.pth
+export PAFA_TASK_SHA256=94afaed43a1546af26f9d8d99d2d27329cb8d348fd57cbe142d24310c68ca2b6
 export PAFA_BEATS_CHECKPOINT=/absolute/server/path/to/BEATs_iter3_plus_AS2M.pt
 export DATASET_ROOT=dataset/raw/sprsound
 export RUN_ROOT="result/pafa_sprsound_transfer_$(TZ=America/Chicago date +%Y%m%d_%H%M%S)"
@@ -79,7 +84,13 @@ conda run -n acoustic-pafa-r4 python -m baseline.pafa.checkpoint_eval.verify_spr
   --mode full --dataset-root "$DATASET_ROOT" --result-root "$RUN_ROOT"
 ```
 
-The source run was numerically aligned at Score level for one seed
-(Sp 76.884, Se 51.402, Score 64.143 versus paper five-seed
-82.05+/-1.95, 47.63+/-2.23, 64.84+/-0.60), but it is not an exact
-componentwise or five-seed aggregate reproduction.
+The accepted server audit reports source Sp 76.8841, Se 51.4019, and Score
+64.1430, with confusion
+`[[1214,251,87,27],[232,401,6,10],[127,31,159,68],[34,18,46,45]]`.
+Its source prediction CSV SHA256 is
+`b4102a572c5ba3a755958c238734837b182d65cb0e50981c5ffa6fafc00c6d4a`.
+These values are provenance copied from the accepted server audit; the transfer
+bootstrap does not recompute them. The source run was numerically aligned at
+Score level for one seed versus the paper five-seed values
+(82.05+/-1.95, 47.63+/-2.23, 64.84+/-0.60), but it is not an exact
+component-wise or five-seed aggregate reproduction.

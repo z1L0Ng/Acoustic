@@ -2,10 +2,16 @@
   "augmentation": "off",
   "binary_decision": "normal iff four-class argmax is normal; otherwise abnormal",
   "checkpoint": {
-    "expected_epoch": 27,
-    "required_keys": ["epoch", "model", "classifier"],
+    "accepted_sha256": "8b3652d0dc82b9033251e3aab50ec1b51d328b6d3c836807b7c8de571581c256",
+    "accepted_size_bytes": 1413896983,
+    "container_saved_at_epoch": 50,
+    "selected_best_epoch": 27,
+    "required_keys": ["epoch", "model", "classifier", "best_model"],
+    "required_best_model_order": ["model", "classifier"],
+    "required_state_relation": "top-level model/classifier must be exactly tensor-equal to embedded best_model[0:2]",
     "selection": "ICBHI official-test-selected",
-    "sha256_required_at_runtime": true
+    "caller_sha_agreement_required_at_runtime": true,
+    "server_audit_final_last_checkpoint_differs": true
   },
   "claim": "published-model / verified-server-checkpoint / ICBHI-test-selected / zero-target-tuning exploratory transfer",
   "environment": "acoustic-sgscl-r4",
@@ -15,6 +21,14 @@
     "commit": "66564609595090b61540595d3d27764c00553086",
     "license": "no LICENSE in author repository; redistribution requires review",
     "repo": "https://github.com/kaen2891/stethoscope-guided_supervised_contrastive_learning"
+  },
+  "source_numerical_provenance": {
+    "confusion": [[1184, 274, 86, 35], [217, 400, 11, 21], [164, 38, 105, 78], [46, 22, 27, 48]],
+    "evidence_origin": "accepted server audit; not recomputed by transfer bootstrap",
+    "prediction_csv_sha256": "2ed6abb6fb0a05f97c2325881c2372b6d803bd5290bc2d3f212a0b44b0867b90",
+    "score": 60.9840,
+    "sensitivity": 46.9839,
+    "specificity": 74.9842
   },
   "source_training": "metadata/device-aware SG-SCL",
   "target": {

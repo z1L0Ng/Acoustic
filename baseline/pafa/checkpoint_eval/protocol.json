@@ -2,10 +2,16 @@
   "augmentation": "off",
   "binary_decision": "normal iff four-class argmax is normal; otherwise abnormal",
   "checkpoint": {
-    "expected_epoch": 27,
-    "required_keys": ["epoch", "model", "classifier"],
+    "accepted_sha256": "94afaed43a1546af26f9d8d99d2d27329cb8d348fd57cbe142d24310c68ca2b6",
+    "accepted_size_bytes": 1464382039,
+    "container_saved_at_epoch": 100,
+    "selected_best_epoch": 27,
+    "required_keys": ["epoch", "model", "classifier", "projector", "best_model"],
+    "required_best_model_order": ["model", "classifier", "projector"],
+    "required_state_relation": "top-level model/classifier/projector must be exactly tensor-equal to embedded best_model[0:3]",
     "selection": "ICBHI official-test-selected",
-    "sha256_required_at_runtime": true
+    "caller_sha_agreement_required_at_runtime": true,
+    "server_audit_final_last_checkpoint_differs": true
   },
   "claim": "published-model / verified-server-checkpoint / ICBHI-test-selected / zero-target-tuning exploratory transfer",
   "environment": "acoustic-pafa-r4",
@@ -15,6 +21,14 @@
     "commit": "e49e294d0db0d6af10ac46290512b9c85d3f71e1",
     "license": "no LICENSE in author repository; redistribution requires review",
     "repo": "https://github.com/wa976/PAFA"
+  },
+  "source_numerical_provenance": {
+    "confusion": [[1214, 251, 87, 27], [232, 401, 6, 10], [127, 31, 159, 68], [34, 18, 46, 45]],
+    "evidence_origin": "accepted server audit; not recomputed by transfer bootstrap",
+    "prediction_csv_sha256": "b4102a572c5ba3a755958c238734837b182d65cb0e50981c5ffa6fafc00c6d4a",
+    "score": 64.1430,
+    "sensitivity": 51.4019,
+    "specificity": 76.8841
   },
   "target": {
     "dataset": "SPRSound BioCAS2022",

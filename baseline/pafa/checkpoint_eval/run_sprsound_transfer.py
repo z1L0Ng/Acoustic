@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import json
 import math
 import sys
 from pathlib import Path
@@ -22,6 +21,14 @@ from acoustic.evaluation.sprsound_inter import (
     sha256_file,
     write_csv,
     write_json,
+)
+from baseline.pafa.checkpoint_eval.bootstrap import (
+    CONTAINER_SAVED_AT_EPOCH,
+    SELECTED_BEST_EPOCH,
+    SOURCE_CONFUSION,
+    SOURCE_PREDICTION_CSV_SHA256,
+    verify_checkpoint_identity,
+    verify_checkpoint_state,
 )
 
 
@@ -81,8 +88,9 @@ def main() -> None:
     source_repo = (args.source_repo or root / "source" / "repo").resolve()
     checkpoint = args.checkpoint.resolve()
     backbone = args.backbone_checkpoint.resolve()
-    if sha256_file(checkpoint) != args.checkpoint_sha256.lower() or sha256_file(backbone) != args.backbone_sha256.lower():
-        raise RuntimeError("checkpoint SHA gate failed")
+    task_sha = verify_checkpoint_identity(checkpoint, args.checkpoint_sha256)
+    if sha256_file(backbone) != args.backbone_sha256.lower():
+        raise RuntimeError("PAFA backbone checkpoint SHA gate failed")
     device = torch.device(args.device)
     if device.type == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA requested but unavailable")
@@ -94,8 +102,7 @@ def main() -> None:
     from models.beats import BEATsTransferLearningModel
 
     state = torch.load(checkpoint, map_location="cpu")
-    if int(state.get("epoch", -1)) != 27 or not {"model", "classifier"} <= set(state):
-        raise RuntimeError("expected verified PAFA epoch-27 checkpoint")
+    verify_checkpoint_state(state)
     model = BEATsTransferLearningModel(
         num_target_classes=4, model_path=str(backbone), ft_entire_network=True, spec_transform=None
     )
@@ -155,15 +162,29 @@ def main() -> None:
         "method_id": "pafa",
         "claim": "verified one-seed ICBHI-test-selected PAFA checkpoint; exploratory zero-target-tuning transfer",
         "mode": args.mode,
-        "checkpoint_sha256": args.checkpoint_sha256.lower(),
-        "checkpoint_epoch": 27,
+        "checkpoint_sha256": task_sha,
+        "checkpoint_size_bytes": checkpoint.stat().st_size,
+        "container_saved_at_epoch": CONTAINER_SAVED_AT_EPOCH,
+        "selected_best_epoch": SELECTED_BEST_EPOCH,
+        "top_level_predictive_states_equal_embedded_best_model": {
+            "model": True,
+            "classifier": True,
+            "projector": True,
+        },
         "source_preprocessing": "16 kHz mono; event crop; 5 s repeat/truncate+fade; raw waveform; --nospec",
         "augmentation": "off",
         "events": len(prediction_rows),
         "target_label_access": "none" if args.mode == "smoke" else "after all logits",
         "target_device_metadata": "not used",
         "binary_probability_rule": "P(normal)=P(class0); P(abnormal)=sum(P(class1:4))",
-        "source_numerical_status": "Sp76.884 Se51.402 Score64.143; Score reasonably aligned one seed, componentwise different",
+        "source_numerical_provenance": {
+            "evidence_origin": "accepted_server_audit_not_recomputed_by_transfer_runner",
+            "specificity": 76.8841,
+            "sensitivity": 51.4019,
+            "score": 64.1430,
+            "confusion": SOURCE_CONFUSION,
+            "prediction_csv_sha256": SOURCE_PREDICTION_CSV_SHA256,
+        },
     }
     if args.mode == "smoke":
         write_json(root / "smoke_receipt.json", run_receipt)

@@ -1,9 +1,11 @@
 # SG-SCL B2: Frozen Checkpoint to SPRSound Inter
 
-This package runs a verified server SG-SCL epoch-27 checkpoint on the exact
-SPRSound BioCAS2022 inter-subject event set used by Patch-Mix B0. It is a
-published-model, ICBHI-test-selected, zero-target-tuning exploratory transfer,
-not a clean source anchor or a target-trained reference.
+This package runs the accepted SG-SCL server checkpoint whose container was
+saved at epoch 50 and whose embedded/top-level predictive state was selected at
+best epoch 27. It uses the exact SPRSound BioCAS2022 inter-subject event set
+from Patch-Mix B0. It is a published-model, ICBHI-test-selected,
+zero-target-tuning exploratory transfer, not a clean source anchor or a
+target-trained reference.
 
 ## Frozen Contract
 
@@ -28,19 +30,24 @@ not a clean source anchor or a target-trained reference.
 - Checkout containing this tracked package.
 - Frozen environment `acoustic-sgscl-r4` from
   `baseline/sg_scl/environment.linux-cu118.yml`.
-- Verified server SG-SCL task checkpoint at epoch 27 and its SHA256. The binary
-  is not stored in Git.
+- Accepted SG-SCL task-checkpoint container: size `1,413,896,983` bytes, SHA256
+  `8b3652d0dc82b9033251e3aab50ec1b51d328b6d3c836807b7c8de571581c256`.
+  Its container epoch is 50; selected best epoch is 27. Bootstrap requires
+  top-level `model` and `classifier` to be exactly tensor-equal to embedded
+  `best_model[0:2]`. The binary is not stored in Git.
 - SPRSound package at `dataset/raw/sprsound` or a path with the same official
   BioCAS2022 layout.
 
 ## Server Commands
 
-Set the server-owned checkpoint path and digest from the accepted source-run
-receipt. Do not infer or substitute either value.
+Set the server-owned checkpoint path. The digest below is immutable; the CLI
+requires the caller value, file size, and file digest all to match. Bootstrap
+adds the pinned author repository to `sys.path` before `torch.load`, solely to
+resolve classes referenced by the checkpoint container.
 
 ```bash
-export SGSCL_TASK_CHECKPOINT=/absolute/server/path/to/sg_scl_epoch27_best.pth
-export SGSCL_TASK_SHA256=<sha256-from-accepted-server-receipt>
+export SGSCL_TASK_CHECKPOINT=/absolute/server/path/to/sg_scl_accepted_container_epoch50.pth
+export SGSCL_TASK_SHA256=8b3652d0dc82b9033251e3aab50ec1b51d328b6d3c836807b7c8de571581c256
 export DATASET_ROOT=dataset/raw/sprsound
 export RUN_ROOT="result/sg_scl_sprsound_transfer_$(TZ=America/Chicago date +%Y%m%d_%H%M%S)"
 
@@ -74,7 +81,13 @@ conda run -n acoustic-sgscl-r4 python -m baseline.sg_scl.checkpoint_eval.verify_
   --mode full --dataset-root "$DATASET_ROOT" --result-root "$RUN_ROOT"
 ```
 
-The source run achieved successful one-seed numerical alignment
-(Sp 74.984, Se 46.984, Score 60.984; each within about 0.6 SD of the paper's
-five-seed 79.87+/-8.89, 43.55+/-5.93, 61.71+/-1.61). It does not reproduce the
-five-seed aggregate.
+The accepted server audit reports source Sp 74.9842, Se 46.9839, and Score
+60.9840, with confusion
+`[[1184,274,86,35],[217,400,11,21],[164,38,105,78],[46,22,27,48]]`.
+Its source prediction CSV SHA256 is
+`2ed6abb6fb0a05f97c2325881c2372b6d803bd5290bc2d3f212a0b44b0867b90`.
+These values are provenance copied from the accepted server audit; the transfer
+bootstrap does not recompute them. The source run achieved successful one-seed
+numerical alignment, each component within about 0.6 SD of the paper's
+five-seed values (79.87+/-8.89, 43.55+/-5.93, 61.71+/-1.61). It does not
+reproduce the five-seed aggregate.
