@@ -1,0 +1,40 @@
+{
+  "cache_root": ".cache/sprsound_patchmix_frozen_encoder_target_heads",
+  "checkpoint": {
+    "selection": "ICBHI official-test-selected author checkpoint",
+    "sha256": "0cdeeec3b834ad18a5a945ea935ef8656922b0e444ed80e050206304de597949",
+    "size_bytes": 1047665181
+  },
+  "encoder": {
+    "architecture": "Patch-Mix AST base384",
+    "frozen": true,
+    "source_classifier_reused": false
+  },
+  "experiment_id": "sprsound_patchmix_frozen_encoder_target_heads",
+  "head": {
+    "architecture": "LayerNorm(768)+Linear",
+    "epochs": 5,
+    "loss": "unweighted cross entropy",
+    "optimizer": "Adam",
+    "learning_rate": 0.001,
+    "selection": "maximum validation SPRSound Score; narrow-four uses validation ICBHI-AS diagnostic",
+    "source_classifier_initialization": false
+  },
+  "local_runtime_gate": {
+    "max_peak_rss_gib": 24,
+    "max_projected_total_minutes": 90,
+    "profile_events": 100
+  },
+  "preprocessing": "author 16 kHz, 8 s repeat/truncate+fade, 128-bin fbank, resize 798x128, no augmentation",
+  "result_root": "result/sprsound_patchmix_frozen_encoder_target_heads",
+  "split": {
+    "final_test": "official BioCAS2022 inter-subject, 1429 events, evaluated once",
+    "fit": "official BioCAS2022 train events only",
+    "validation": "StratifiedGroupKFold fold 0, seed 20260722, patient grouped, 5219/1437 events"
+  },
+  "tasks": {
+    "binary": ["normal", "adventitious"],
+    "narrow_four": ["normal", "crackle", "wheeze", "both"],
+    "seven_class": ["Normal", "Rhonchi", "Wheeze", "Stridor", "Coarse Crackle", "Fine Crackle", "Wheeze+Crackle"]
+  }
+}

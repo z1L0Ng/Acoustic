@@ -1,0 +1,17 @@
+id: sprsound_patchmix_frozen_encoder_target_heads
+question: How much zero-target-tuning performance is recovered by frozen Patch-Mix embeddings plus target-only linear heads?
+implementation: baseline/patch_mix_cl/frozen_encoder_target_heads
+result_root: result/sprsound_patchmix_frozen_encoder_target_heads
+cache_root: .cache/sprsound_patchmix_frozen_encoder_target_heads
+source:
+  checkpoint_sha256: 0cdeeec3b834ad18a5a945ea935ef8656922b0e444ed80e050206304de597949
+  encoder: frozen Patch-Mix AST
+target:
+  dataset: SPRSound BioCAS2022
+  fit: official train events
+  validation: fixed patient-grouped fold 0
+  test: official inter-subject events evaluated once
+tasks: [official Task 1-1 binary, official Task 1-2 seven-class, narrow-four shared diagnostic]
+head: LayerNorm plus linear, 5 epochs, unweighted cross entropy
+runtime_gate: 100-event CPU profile, projected total at most 90 minutes, peak RSS at most 24 GiB
+claim_limit: Local frozen-encoder target-head pilot; not SOTA, clean source transfer, or significance evidence.
