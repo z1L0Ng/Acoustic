@@ -1,0 +1,16 @@
+id: four_dataset_shortcut_diagnostic
+question: Do acquisition covariates add stable grouped information about corrected T0 errors after native label and support controls?
+implementation: baseline/four_dataset_shortcut_diagnostic
+result_root: result/four_dataset_shortcut_diagnostic
+depends_on:
+  - four_dataset_representation_attribution/hf_proxy_fixed_v2
+  - four_dataset_support_aware_crt
+frozen_inputs:
+  r0_cache_sha256: f40ae7fe581457bc86d76b93b1ee811e7ea01bc5e098a6daa73db451f96d1b31
+  r1_cache_sha256: 3b3798cc9d01dbdfa8168a1cd641d658eb2fd4553799e59b84b7aae7ad0f5a69
+  recording_features: result/acoustic_distribution/recording_features.csv
+probes:
+  - r0_r1_embedding_dataset_id
+  - within_dataset_native_task_error_e0_vs_e1
+  - deterministic_shuffled_covariate_negative_control
+scope: Post-hoc diagnostic only; no causal shortcut claim and no acoustic model training.

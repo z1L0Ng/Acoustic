@@ -1,0 +1,22 @@
+id: four_dataset_support_aware_crt
+question: Does support-aware classifier-only retraining improve eligible tail metrics without unacceptable native-task regression?
+implementation: baseline/four_dataset_support_aware_crt
+result_root: result/four_dataset_support_aware_crt
+depends_on:
+  - four_dataset_representation_attribution/hf_proxy_fixed_v2
+  - four_dataset_shared_compatible_head_harmonization/hf_proxy_fixed_v2
+representation:
+  name: r0_pafa_icbhi_task_encoder
+  cache_sha256: f40ae7fe581457bc86d76b93b1ee811e7ea01bc5e098a6daa73db451f96d1b31
+  caveat: ICBHI official-test-selected PAFA task encoder
+conditions:
+  - t0_corrected_r0_d2_reference
+  - t1_support_aware_classifier_retraining
+tasks:
+  - icbhi_flat4
+  - spr_binary
+  - spr_seven
+  - hf_phase_presence
+  - hf_adventitious_presence
+  - kauh_raw9
+scope: Single-seed target-supervised frozen-feature control; no pooled cross-dataset score.

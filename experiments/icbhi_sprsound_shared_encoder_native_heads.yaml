@@ -1,0 +1,27 @@
+id: icbhi_sprsound_shared_encoder_native_heads
+question: Can one neutral AudioSet AST encoder support ICBHI and SPRSound native event tasks?
+implementation: baseline/shared_encoder_native_heads
+result_root: result/icbhi_sprsound_shared_encoder_native_heads
+cache_root: .cache/icbhi_sprsound_shared_encoder_native_heads
+datasets:
+  icbhi_2017:
+    unit: annotated respiratory cycle
+    task: flat4 normal/crackle/wheeze/both
+    validation: patient-grouped fold inside official train
+    test: official recording split with patient 156/218 overlap disclosed
+  sprsound_biocas2022:
+    source_commit: 874eeb8736ddb78937c2fb5332fc7e7293d0f0ca
+    unit: annotated event
+    tasks: [official event binary, official event seven-class]
+    validation: patient-grouped fold inside official train
+    test: inter primary; intra separate repeated-subject diagnostic
+model:
+  encoder: Patch-Mix-compatible AST base384
+  initialization: pinned MIT/HF AudioSet compatibility conversion; no ICBHI task checkpoint
+  heads: [icbhi_flat4, spr_binary, spr_seven]
+training:
+  loss: unweighted cross entropy
+  sampling: naive source-proportional homogeneous batches
+  spr_batch_loss: mean of independent binary and seven-class CE
+  seed: 20260728
+scope: Protocol, implementation, bounded smoke and profile only; no formal full training.

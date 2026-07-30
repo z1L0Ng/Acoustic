@@ -1,0 +1,74 @@
+{
+  "experiment_id": "four_dataset_representation_attribution",
+  "protocol_version": "four_dataset_representation_attribution_v1",
+  "scientific_question": "Are four-dataset downstream results attributable to PAFA ICBHI task training or to generic AudioSet BEATs representations?",
+  "representations": {
+    "r0_pafa_icbhi_task_encoder": {
+      "initialization": "PAFA ICBHI task checkpoint accepted epoch 27",
+      "cache_sha256": "f40ae7fe581457bc86d76b93b1ee811e7ea01bc5e098a6daa73db451f96d1b31",
+      "selection_caveat": "ICBHI official-test-selected",
+      "extraction": "read-only reuse; no recomputation"
+    },
+    "r1_beats_as2m_audioset_only": {
+      "initialization": "BEATs_iter3+ AS2M AudioSet checkpoint only",
+      "checkpoint_sha256": "d43cbfad4d7b56381c061d7a24774f908d4d94c72961f6eb1d9090ff18cd8d34",
+      "loaded_pretrained_tensors": 250,
+      "forbidden_states": ["PAFA task model", "PAFA classifier", "PAFA projector"]
+    },
+    "r2_beats_random_init_sanity": {
+      "initialization": "same BEATs architecture/config as R1; random tensors",
+      "seed": 20260728,
+      "loaded_pretrained_tensors": 0,
+      "claim": "random-feature sanity floor; never selectable"
+    }
+  },
+  "fixed_downstream": {
+    "condition": "D2 shared 768->256 adapter plus six native heads",
+    "sampling": "dataset-balanced equal update counts",
+    "epochs": 5,
+    "batch_size": 128,
+    "optimizer": "Adam",
+    "learning_rate": 0.001,
+    "dropout": 0.2,
+    "seed": 20260728,
+    "selection": "unweighted mean validation macro-F1 across six native heads",
+    "folds": "five KAUH-fold-conditioned models; KAUH aggregate patient OOF",
+    "test_policy": "outer/test used only after validation selection; SPR inter prediction is label-free before terminal join"
+  },
+  "tasks": [
+    "icbhi_flat4",
+    "spr_binary",
+    "spr_seven",
+    "hf_phase_presence",
+    "hf_adventitious_presence",
+    "kauh_raw9"
+  ],
+  "preregistered_attribution_rule": {
+    "practical_band_absolute": 0.02,
+    "task_primary_metric": "macro_f1",
+    "task_secondary_metric": {
+      "multiclass": "uar",
+      "multilabel": "micro_f1"
+    },
+    "close": "absolute R1-R0 primary and secondary gaps are both <=0.02",
+    "material_task_win": "primary gap >=0.02 and secondary gap >=-0.02",
+    "stability_margin": "sample standard deviation difference <=0.01 is treated as practically similar",
+    "pafa_selection_gate": "select R0 only if R0 has a material task win on ICBHI and at least one additional native task, has no more material task losses than wins across six tasks, and is not less stable by >0.01 on more than one non-KAUH task",
+    "neutral_default": "otherwise select R1 AudioSet-only for Step 2",
+    "random_rule": "R2 is never eligible for encoder selection",
+    "forbidden": "no pooled raw Score, no pooled metric average, no test-side threshold/epoch/representation selection beyond this frozen task-wise rule"
+  },
+  "runtime_gate": {
+    "per_new_representation_projected_minutes_max": 150,
+    "peak_rss_gib_max": 24,
+    "disk_available_gib_min": 2
+  },
+  "claim_boundary": [
+    "local controlled frozen-feature attribution",
+    "single downstream seed",
+    "R0 remains ICBHI-test-selected",
+    "all heads are target-supervised",
+    "R2 is a random-feature floor, not a training baseline",
+    "no pooled cross-dataset Score"
+  ]
+}

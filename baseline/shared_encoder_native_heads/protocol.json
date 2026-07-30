@@ -1,0 +1,55 @@
+{
+  "experiment_id": "icbhi_sprsound_shared_encoder_native_heads",
+  "claim": "minimal local controlled multi-dataset reference; not a paper reproduction",
+  "datasets": {
+    "icbhi_2017": {
+      "prediction_unit": "annotated respiratory cycle",
+      "head": ["normal", "crackle", "wheeze", "both"],
+      "test": "official recording split; patients 156 and 218 overlap train/test",
+      "validation": "official train only; patient-grouped StratifiedGroupKFold fold 0; seed 20260712"
+    },
+    "sprsound": {
+      "source_commit": "874eeb8736ddb78937c2fb5332fc7e7293d0f0ca",
+      "prediction_unit": "BioCAS2022 event",
+      "heads": {
+        "official_binary": ["normal", "adventitious"],
+        "official_seven_class": ["Normal", "Rhonchi", "Wheeze", "Stridor", "Coarse Crackle", "Fine Crackle", "Wheeze+Crackle"]
+      },
+      "test": "inter primary; intra separate repeated-subject diagnostic; never pooled",
+      "validation": "official train only; patient-grouped StratifiedGroupKFold fold 0; seed 20260722"
+    }
+  },
+  "encoder": {
+    "architecture": "Patch-Mix-compatible AST base384",
+    "initialization": "pinned MIT/Hugging Face AudioSet checkpoint converted to Patch-Mix legacy keys",
+    "checkpoint_source": "MIT/ast-finetuned-audioset-10-10-0.4593",
+    "checkpoint_revision": "f826b80d28226b62986cc218e5cec390b1096902",
+    "checkpoint_source_sha256": "ae0c1e2ad4e1381d851fa9bf298ba13ebc9c5a914cdee2dbe427a6583869924d",
+    "checkpoint_source_size_bytes": 346404948,
+    "legacy_canonical_tensor_sha256": "7fdbccf6986cdc372fc0ed90b2d39584cdabb21ed69efe550d495fe2d3b0cf85",
+    "identity_boundary": "155 model-used tensors are format-compatible and were previously verified equivalent to then-served author state dicts; not original serialized-byte identity",
+    "forbidden_initialization": "ICBHI task-selected checkpoint"
+  },
+  "training": {
+    "loss": "unweighted cross entropy",
+    "sampling": "naive source-proportional homogeneous batches",
+    "spr_batch_loss": "mean of independent binary and seven-class CE",
+    "optimizer": "Adam",
+    "learning_rate": 0.00005,
+    "weight_decay": 0.000001,
+    "batch_size": 8,
+    "max_epochs": 50,
+    "schedule": "cosine",
+    "seed": 20260728,
+    "selection": "minimum source-proportional validation CE; official tests excluded"
+  },
+  "excluded": [
+    "class weighting",
+    "focal loss",
+    "partial-label loss",
+    "MoE or routing model",
+    "complex augmentation",
+    "target-specific tuning",
+    "cross-dataset raw Score aggregation"
+  ]
+}

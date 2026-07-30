@@ -1,0 +1,36 @@
+id: four_dataset_pafa_frozen_encoder
+question: Can the best official-split reusable ICBHI encoder support four dataset-native tasks, and what changes when dataset-level and within-task imbalance are controlled?
+implementation: baseline/four_dataset_frozen_encoder
+result_root: result/four_dataset_pafa_frozen_encoder
+cache_root: .cache/four_dataset_pafa_frozen_encoder
+encoder:
+  method: PAFA
+  task_checkpoint_sha256: 94afaed43a1546af26f9d8d99d2d27329cb8d348fd57cbe142d24310c68ca2b6
+  beats_checkpoint_sha256: d43cbfad4d7b56381c061d7a24774f908d4d94c72961f6eb1d9090ff18cd8d34
+  frozen: true
+  selection_caveat: ICBHI official-test-selected epoch 27
+datasets:
+  - icbhi_cycle_flat4
+  - sprsound_biocas2022_event_binary_and_seven
+  - hf_lung_recording_positive_presence
+  - kauh_raw_nine_way_recording_sound
+conditions:
+  - d0_independent_heads
+  - d1_shared_adapter_source_proportional
+  - d2_shared_adapter_dataset_balanced
+  - d3_shared_adapter_dataset_balanced_prior
+condition_receipts:
+  d3_multiclass: train-time +log(class prior) Logit Adjustment
+  d3_multilabel: BCE pos_weight=negative/positive
+reporting:
+  stratify_by_dataset_and_native_task: true
+  pooled_cross_dataset_score: forbidden
+  missing_label_as_negative: forbidden
+  kauh_evaluation: five_fold_patient_grouped_oof
+  non_kauh_evaluation: mean_and_sample_std_across_five_kauh_fold_conditioned_models
+  sprsound_inter: label_free_prediction_then_terminal_annotation_join
+runtime_gate:
+  projected_max_minutes: 120
+  peak_rss_max_gib: 24
+  approval_reason: Profile center estimate 54.14 min extraction plus 0.69 min heads; 2x safety 109.66 min is below the approved one-run 120 min hard bound.
+scope: Frozen-encoder exploratory target adaptation; no full encoder training.

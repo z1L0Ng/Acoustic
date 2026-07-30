@@ -1,0 +1,74 @@
+{
+  "experiment_id": "four_dataset_pafa_frozen_encoder",
+  "protocol_version": "four_dataset_pafa_frozen_encoder_v1",
+  "authorization": "user_approved_all_four_dataset_frozen_encoder_experiments_2026-07-28",
+  "encoder": {
+    "method": "PAFA",
+    "author_repo_commit": "e49e294d0db0d6af10ac46290512b9c85d3f71e1",
+    "reason": "highest project-reproduced ICBHI Score among official-split reusable single encoders",
+    "icbhi_score_percent": 64.14298651104153,
+    "task_checkpoint_sha256": "94afaed43a1546af26f9d8d99d2d27329cb8d348fd57cbe142d24310c68ca2b6",
+    "beats_checkpoint_sha256": "d43cbfad4d7b56381c061d7a24774f908d4d94c72961f6eb1d9090ff18cd8d34",
+    "selection_caveat": "official ICBHI test evaluated each epoch; accepted epoch 27 was test-selected",
+    "excluded_numeric_maximum": "MVST Score 68.026 used a non-official fixed random file split and its saved fusion checkpoint is not a reusable single audio encoder"
+  },
+  "datasets": {
+    "icbhi": {
+      "unit": "annotated respiratory cycle",
+      "task": "flat4",
+      "test": "official recording test split",
+      "caveat": "patients 156 and 218 overlap official train/test"
+    },
+    "sprsound": {
+      "unit": "BioCAS2022 respiratory event",
+      "tasks": ["official binary", "official seven class"],
+      "test": "inter-subject",
+      "source_commit": "874eeb8736ddb78937c2fb5332fc7e7293d0f0ca"
+    },
+    "hf_lung": {
+      "unit": "15 second recording represented by three non-overlapping 5 second windows mean-pooled after the frozen encoder",
+      "tasks": ["phase label presence I/E", "adventitious positive-pool label presence D/Wheeze/Rhonchi/Stridor"],
+      "test": "source test folder",
+      "negative_policy": "a recording is task-eligible only when at least one label in that source label pool is observed; peer-label absence is negative only inside the eligible pool; unannotated gaps and empty annotation files are never shared normal/negative",
+      "identity": "date is a grouping proxy, never patient_id",
+      "scope": "dataset-native presence diagnostic, not source temporal-detection reproduction"
+    },
+    "kauh": {
+      "unit": "recording",
+      "task": "raw nine-way sound string",
+      "split": "five-fold patient-grouped OOF with nested patient-grouped validation",
+      "label_policy": "N/E W/I E W/C/I C/I C E W/Crep/Bronchial/I C B remain distinct",
+      "replica_policy": "B/D/E filter siblings remain in one partition",
+      "stratification_caveat": "rare labels have fewer patients than folds, so fixed-label-space aggregate OOF is primary and no claim of successful per-fold stratification is made"
+    }
+  },
+  "conditions": {
+    "d0_independent_heads": "identity representation plus independent native heads",
+    "d1_shared_adapter_source_proportional": "shared 768-256 adapter plus native heads; source-proportional updates",
+    "d2_shared_adapter_dataset_balanced": "same adapter and heads; equal update count per dataset",
+    "d3_shared_adapter_dataset_balanced_prior": "D2 plus multiclass train-time +log(class prior) Logit Adjustment and multilabel BCE pos_weight=negative/positive; these are task-kind-specific policies, not one generic prior-balanced loss"
+  },
+  "training": {
+    "epochs": 5,
+    "batch_size": 128,
+    "optimizer": "Adam",
+    "learning_rate": 0.001,
+    "seed": 20260728,
+    "selection": "validation macro-F1; joint conditions use unweighted mean across native heads",
+    "test_policy": "test partitions are evaluated only after the validation-selected state is fixed; SPR inter predictions are durably written label-free before a terminal raw-annotation join",
+    "fold_reporting": "D1-D3 ICBHI/SPRSound/HF metrics are mean and sample standard deviation across five KAUH-fold-conditioned models; KAUH is aggregate five-fold OOF; no fold-0 primary result",
+    "local_runtime_gate": {
+      "hard_wall_clock_minutes": 120,
+      "peak_rss_gib": 24,
+      "approval_reason": "profile center estimate was 54.14 min extraction plus 0.69 min heads; the original HOLD was caused only by a conservative 2x projection of 109.66 min exceeding the former 90 min limit, while remaining below this one-run 120 min hard bound",
+      "scope": "artifact/runtime authorization only; no model, input, label, split, loss, metric, or scientific claim change"
+    }
+  },
+  "claim_boundary": [
+    "exploratory frozen-encoder target-supervised adaptation",
+    "not zero-shot",
+    "not clean source-only generalization because the PAFA encoder checkpoint is ICBHI-test-selected",
+    "not proof that dataset identity or device shortcuts are absent",
+    "metrics are reported by dataset and native task; raw challenge Scores are never pooled"
+  ]
+}

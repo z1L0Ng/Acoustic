@@ -1,0 +1,83 @@
+{
+  "experiment_id": "four_dataset_shared_compatible_head_harmonization",
+  "protocol_version": "shared_compatible_head_harmonization_v1",
+  "scientific_question": "Do ICBHI cycles and SPRSound events benefit from eligibility-masked compatible-label supervision while all four datasets retain native heads?",
+  "encoder_selection_dependency": {
+    "receipt": "result/four_dataset_representation_attribution/comparison/encoder_selection.json",
+    "required_status": "encoder_selection_complete",
+    "selected_representation": "r1_beats_as2m_audioset_only",
+    "cache_sha256": "3b3798cc9d01dbdfa8168a1cd641d658eb2fd4553799e59b84b7aae7ad0f5a69",
+    "claim": "neutral AudioSet-only BEATs frozen representation"
+  },
+  "fixed_native_surface": {
+    "condition": "D2 shared 768->256 adapter plus six dataset-native heads",
+    "sampling": "dataset-balanced equal update counts",
+    "epochs": 5,
+    "batch_size": 128,
+    "optimizer": "Adam",
+    "learning_rate": 0.001,
+    "dropout": 0.2,
+    "seed": 20260728,
+    "folds": "five KAUH-fold-conditioned models; KAUH patient OOF",
+    "test_policy": "outer/test used only after validation selection; SPR inter predictions are label-free before terminal annotation join"
+  },
+  "compatible_tasks": {
+    "binary": {
+      "icbhi": "normal vs crackle/wheeze/both",
+      "sprsound": "official Normal vs all Adventitious event binary",
+      "primary": true
+    },
+    "narrow4": {
+      "labels": ["normal", "crackle", "wheeze", "both"],
+      "icbhi": "all flat4 cycles eligible",
+      "sprsound": "Normal; Coarse/Fine Crackle->crackle; Wheeze; Wheeze+Crackle; Rhonchi/Stridor/Poor Quality ineligible",
+      "primary": false,
+      "claim": "shared-ontology diagnostic only"
+    },
+    "hf_lung": "never supplies compatible-head targets",
+    "kauh": "never supplies compatible-head targets",
+    "missing_label_policy": "ineligible or missing targets create no loss and are never negative"
+  },
+  "conditions": {
+    "h0_native_plus_independent_compatible": {
+      "compatible_heads": "full 256-d separate ICBHI and SPR heads",
+      "compatible_trainable_parameters": 3084,
+      "role": "conventional independent compatible-head control"
+    },
+    "h1_eligibility_masked_shared": {
+      "compatible_heads": "one shared binary and one shared narrow4 head with per-output trainable scales",
+      "compatible_trainable_parameters": 1548,
+      "role": "shared supervision condition"
+    },
+    "h2_parameter_matched_independent": {
+      "compatible_heads": "separate ICBHI and SPR heads after fixed seed-20260728 orthonormal 256->128 projections",
+      "compatible_trainable_parameters": 1548,
+      "role": "primary parameter-matched independent control",
+      "caveat": "fixed projection equalizes trainable parameters but reduces compatible-head input dimension"
+    }
+  },
+  "loss_and_selection": {
+    "batch_loss": "unweighted mean of active native and compatible CE/BCE losses; inactive routes are omitted",
+    "selection": "unweighted mean validation macro-F1 across six native tasks plus ICBHI/SPR binary and narrow4 compatible tasks",
+    "forbidden": "outer/test condition, epoch, threshold, mapping, or loss-weight selection"
+  },
+  "preregistered_go_rule": {
+    "practical_band_absolute": 0.02,
+    "specificity_guard_absolute": 0.05,
+    "comparison": "H1 shared minus H2 parameter-matched independent",
+    "primary_binary": "each dataset macro-F1 and UAR gap >=-0.02; worst-dataset macro-F1 and UAR gap >=-0.02; at least one of the four dataset-metric pairs improves >=0.02",
+    "collapse_guard": "each dataset normal specificity gap >=-0.05 and predicted abnormal prevalence remains in [0.02,0.98]",
+    "native_side_effect": "at most one of six native tasks may lose >0.02 macro-F1 and no native task may lose >0.05",
+    "decision": "support Representation Harmonization only if every primary, collapse, and native-side-effect gate passes",
+    "narrow4": "diagnostic only and never used for the go decision"
+  },
+  "claim_boundary": [
+    "cached-feature target-supervised local controlled evidence",
+    "single downstream seed",
+    "no pooled cross-dataset Score",
+    "SPRSound Both support remains sparse",
+    "HF tasks are positive-presence diagnostics with missing labels omitted",
+    "KAUH is sparse five-fold patient OOF",
+    "no full encoder, router, MoE, loss sweep, or threshold tuning"
+  ]
+}

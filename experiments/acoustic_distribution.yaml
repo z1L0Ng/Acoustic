@@ -1,0 +1,16 @@
+id: acoustic_distribution
+question: How large is the low-level acoustic domain shift across the four phase-1 datasets, and are the datasets separable (a shortcut risk) by trivial acoustic features?
+implementation: dataset/script/acoustic_distribution.py
+notebook: dataset/script/acoustic_distribution_analysis.ipynb
+result_root: result/acoustic_distribution
+data:
+  datasets: [ICBHI 2017, SPRSound BioCAS2022, HF_Lung_V1, KAUH/Fraiwan]
+  unit: recording (13,704 recordings, read-only over raw audio)
+  identity_parsing: reuses dataset/script/publication_curation_audit.py canonical logic
+descriptors:
+  amplitude: [dbfs, crest_db, snr_proxy_db, clip_frac]  # native sample rate
+  spectral: [centroid_hz, bandwidth_hz, rolloff85_hz, flatness, zcr, 5 PSD bands]  # common 4 kHz analysis rate
+diagnostics:
+  dataset_id_probe: multinomial logistic regression on 14 features, balanced 336/dataset, 5-fold CV
+outputs: [recording_features.csv, dataset_summary.csv, spectral_summary.csv, samplerate_composition.csv, device_composition.csv, dataset_id_probe_confusion.csv, figures/, analysis_manifest.json]
+claim_limit: Descriptive raw-acoustic distribution and dataset-separability diagnostic; SNR is an energy-percentile proxy; no band-pass to a shared diagnostic band yet (raw acquisition characteristics retained on purpose to quantify shortcut risk).

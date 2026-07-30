@@ -1,0 +1,21 @@
+id: four_dataset_shared_compatible_head_harmonization
+question: Do ICBHI cycles and SPRSound events benefit from eligibility-masked compatible-label supervision while retaining four-dataset native heads?
+implementation: baseline/shared_compatible_head_harmonization
+result_root: result/four_dataset_shared_compatible_head_harmonization
+cache_root: .cache/four_dataset_shared_compatible_head_harmonization
+depends_on: four_dataset_representation_attribution
+selected_encoder:
+  representation: r1_beats_as2m_audioset_only
+  cache_sha256: 3b3798cc9d01dbdfa8168a1cd641d658eb2fd4553799e59b84b7aae7ad0f5a69
+conditions:
+  - h0_native_plus_independent_compatible
+  - h1_eligibility_masked_shared
+  - h2_parameter_matched_independent
+compatible_tasks:
+  primary: binary_icbhi_and_spr_separately
+  secondary: eligibility_masked_narrow4_diagnostic
+reporting:
+  native_tasks_retained: true
+  pooled_cross_dataset_score: forbidden
+  spr_test: label_free_then_terminal_join
+scope: Cached-feature target-supervised local controlled harmonization; no full encoder or target threshold tuning.

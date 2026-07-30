@@ -258,3 +258,8 @@ results/
 # project documentation belongs in docs/; temporary execution files belong here.
 codex/
 tmp/
+
+# Presentation inspection traces and rendered QA images are reproducible local
+# artifacts. Keep editable presentation sources in version control.
+slides/*.inspect.ndjson
+slides/qa/

@@ -1,0 +1,25 @@
+id: four_dataset_representation_attribution
+question: Are four-dataset downstream results attributable to PAFA ICBHI task training or generic AudioSet BEATs representations?
+implementation: baseline/four_dataset_representation_attribution
+result_root: result/four_dataset_representation_attribution
+cache_root: .cache/four_dataset_representation_attribution
+representations:
+  - r0_pafa_icbhi_task_encoder
+  - r1_beats_as2m_audioset_only
+  - r2_beats_random_init_sanity
+fixed_condition: d2_shared_adapter_dataset_balanced
+tasks:
+  - icbhi_flat4
+  - spr_binary
+  - spr_seven
+  - hf_phase_presence
+  - hf_adventitious_presence
+  - kauh_raw9
+selection:
+  preregistered_before_r1_r2_outer_results: true
+  random_init_selectable: false
+  pooled_cross_dataset_score: forbidden
+runtime_gate:
+  per_new_representation_projected_minutes_max: 150
+  peak_rss_gib_max: 24
+scope: Single-seed local controlled frozen-feature attribution; all downstream heads are target-supervised.

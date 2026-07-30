@@ -1,0 +1,18 @@
+experiment_id: four_dataset_event_sensitive_pooling
+owner: baseline
+status: package_ready
+code_path: baseline/four_dataset_event_sensitive_pooling
+result_root: result/four_dataset_event_sensitive_pooling
+cache_root: .cache/four_dataset_event_sensitive_pooling
+dataset_root: dataset/raw
+encoder: r0_pafa_icbhi_task_encoder
+encoder_cache_sha256: f40ae7fe581457bc86d76b93b1ee811e7ea01bc5e098a6daa73db451f96d1b31
+hf_assignment_sha256: 33387aa62ebcb8adbc1fba626e6d27f27a3121d3a686cda6fc075a7da106943e
+conditions:
+  - p0_r0_d2_pooled_reference
+  - p1_event_sensitive_learned_pooling
+  - p2_parameter_matched_pooled_control
+command:
+  smoke_profile: conda run -n acoustic-patchmix python -m baseline.four_dataset_event_sensitive_pooling.run --phase smoke-profile --dataset-root dataset/raw --source-repo result/pafa_sprsound_transfer_20260722_235659/source/repo --checkpoint .cache/checkpoints/pafa/server_epoch27/best.pth --backbone-checkpoint .cache/checkpoints/pafa/server_epoch27/BEATs_iter3_plus_AS2M.pt --device cpu
+  full: conda run -n acoustic-patchmix python -m baseline.four_dataset_event_sensitive_pooling.run --phase all --dataset-root dataset/raw --source-repo result/pafa_sprsound_transfer_20260722_235659/source/repo --checkpoint .cache/checkpoints/pafa/server_epoch27/best.pth --backbone-checkpoint .cache/checkpoints/pafa/server_epoch27/BEATs_iter3_plus_AS2M.pt --device cpu
+  verify: conda run -n acoustic-patchmix python -m baseline.four_dataset_event_sensitive_pooling.verify --result-root result/four_dataset_event_sensitive_pooling --dataset-root dataset/raw

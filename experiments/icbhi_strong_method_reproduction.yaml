@@ -2,9 +2,26 @@ id: icbhi_strong_method_reproduction
 question: Can five recent strong ICBHI methods be run from their author repositories within a reasonable error of the reported results?
 methods:
   patch_mix_cl: official-like official split; author checkpoint independently aligned
-  pafa: official-like official split; server result pending local import
-  sg_scl: metadata-aware official split; server result pending local import
-  mvst: author fixed random file split; not official-split comparable
-  add_rsc: bounded paper-declared and repository-default tracks because settings conflict
+  pafa: official-like official split; verified server seed 1 Score 64.1430 versus paper 64.84+/-0.60
+  sg_scl: metadata-aware official split; verified server seed 1 Score 60.9840 versus paper 61.71+/-1.61
+  mvst: author fixed random file split; verified server Score 68.0260 versus paper 66.55; not official-split comparable
+  add_rsc: bounded paper-declared reconstruction; verified server Score 53.9439 versus paper 65.53; not numerically aligned
 execution: CUDA server with one durable run root per method and sample-level export verification.
-claim_limit: Method-specific alignment only; paper mean, source split, and test-selection boundaries remain explicit.
+evidence_state:
+  batch_status: completed
+  accepted_checkpoint_set: complete_for_five_methods
+  accepted_checkpoint_policy: Patch-Mix uses the verified public author checkpoint; PAFA, SG-SCL, MVST, and ADD-RSC use verified first-round server checkpoints.
+  canonical_result_root: result/icbhi_strong_method_reproduction
+  canonical_evidence_contract: split, checkpoint SHA, predictions, confusion, metrics, and selection caveat
+  import_roots:
+    - .cache/server_terminal_import_20260727
+    - .cache/server_terminal_import_20260728
+  import_manifest_sha256: 24d9144f1ec2aed7bb12df6a7cf3a2cb6031fe0419b10d892e80f25406c49cb4
+  server_checkpoint_manifest_sha256: 0917edb4d7f75343031a85f0fa1ab63b21f29114bebd062c721a44df14a812c5
+  patch_mix_cl_author_checkpoint: 2756 unique official-test IDs; predictions/confusion/metrics/checkpoint hash independently verified
+  pafa: 2756 unique official-test IDs; predictions/confusion/metrics/checkpoint hash independently verified
+  sg_scl: 2756 unique official-test IDs; predictions/confusion/metrics/checkpoint hash independently verified
+  add_rsc: 2756 unique official-test IDs; predictions/confusion/metrics verified; checkpoint binary saved locally with exact SHA
+  mvst: 2685 unique author-random-split IDs; predictions/confusion/metrics and imported checkpoint hash independently verified
+  patch_mix_cl: accepted public author checkpoint remains the reference; distinct server first-round checkpoint independently verified on 2756 official-test IDs with Score 60.5591
+claim_limit: The accepted five-checkpoint set and server five-method first-round export verification are complete. Method-specific single-run alignment only; paper mean, source split, test-selection, metadata, and reconstruction boundaries remain explicit.

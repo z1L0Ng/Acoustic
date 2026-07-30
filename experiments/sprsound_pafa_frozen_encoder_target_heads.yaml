@@ -1,0 +1,12 @@
+id: sprsound_pafa_frozen_encoder_target_heads
+method: pafa
+task: frozen_source_encoder_target_heads
+dataset_root: dataset/raw/sprsound
+source_repo: result/pafa_sprsound_transfer_20260722_235659/source/repo
+task_checkpoint: .cache/checkpoints/pafa/server_epoch27/best.pth
+backbone_checkpoint: .cache/checkpoints/pafa/server_epoch27/BEATs_iter3_plus_AS2M.pt
+result_root: result/sprsound_pafa_frozen_encoder_target_heads
+cache_root: .cache/sprsound_pafa_frozen_encoder_target_heads
+device: cpu
+threads: 8
+batch_size: 8

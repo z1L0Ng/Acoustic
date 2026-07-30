@@ -1,0 +1,70 @@
+{
+  "experiment_id": "four_dataset_event_sensitive_pooling",
+  "status": "preregistered_before_new_outer_test_outcome_read",
+  "scientific_question": "Does frozen PAFA 5-second window/token-level pooling recover dataset-native task performance that recording/event-level mean pooling may hide?",
+  "claim_boundary": "target-supervised frozen-feature diagnostic with ICBHI official-test-selected PAFA task encoder; no causal shortcut, clean source-generalization, full-encoder, or universal-improvement claim",
+  "frozen_dependencies": {
+    "hf_assignment_sha256": "33387aa62ebcb8adbc1fba626e6d27f27a3121d3a686cda6fc075a7da106943e",
+    "r0_pafa_cache_sha256": "f40ae7fe581457bc86d76b93b1ee811e7ea01bc5e098a6daa73db451f96d1b31",
+    "pafa_task_checkpoint_caveat": "ICBHI official-test-selected epoch 27; target-supervised source checkpoint",
+    "d2_schedule": "dataset-balanced five KAUH-fold-conditioned joint native-head schedule",
+    "tail_eligibility_contract_status": "tail_eligibility_management_accepted"
+  },
+  "unit_to_window_lineage": {
+    "icbhi": "cycle crop in memory, mono 16 kHz, author PAFA 5 s repeat/truncate+fade, normally one window",
+    "sprsound": "event crop in memory, label-free inter manifest, mono 16 kHz, author PAFA 5 s repeat/truncate+fade, normally one window",
+    "hf_lung": "full 15 s recording represented by exactly three non-overlapping 5 s PAFA windows; no center-crop; mean-pooled only in P0/P2",
+    "kauh": "full recording represented by contiguous non-overlapping 5 s PAFA windows plus one end-aligned tail when needed; no patient leakage across fixed OOF folds"
+  },
+  "conditions": {
+    "p0_r0_d2_pooled_reference": {
+      "source": "read-only corrected Gate B R0+D2 pooled reference",
+      "trainable": false,
+      "purpose": "accepted pooled baseline reference; not retrained"
+    },
+    "p1_event_sensitive_learned_pooling": {
+      "source": "new 5-second window embedding cache from the same frozen PAFA encoder",
+      "pooling": "masked softmax attention over windows using LayerNorm(768)+Linear(768,1)",
+      "head": "D2 SharedNativeModel native heads",
+      "trainable_scope": "pooling scorer plus shared adapter plus native heads"
+    },
+    "p2_parameter_matched_pooled_control": {
+      "source": "same new 5-second window cache, mean-pooled before model",
+      "pooling": "pooled-feature scalar gate using LayerNorm(768)+Linear(768,1), no window structure",
+      "head": "D2 SharedNativeModel native heads",
+      "parameter_matching": "same scorer/gate parameter count as P1"
+    }
+  },
+  "training": {
+    "encoder": "frozen PAFA BEATs encoder only; source classifier/projector discarded for downstream prediction",
+    "seed": 20260728,
+    "epochs": 5,
+    "batch_size": 128,
+    "optimizer": "Adam lr=1e-3",
+    "sampling": "dataset-balanced D2 source batches",
+    "selection": "validation mean macro-F1 across six native tasks only; outer/test and SPR inter labels never select checkpoint",
+    "loss": "unweighted CE/BCE per native task, missing labels omitted and never treated as negative"
+  },
+  "decision_rule": {
+    "primary_comparison": "P1 minus P2 by task; P0 is the accepted pooled reference anchor",
+    "material_band": 0.03,
+    "task_vote": "P1-P2 macro_f1_mean >= 0.03 and either UAR/native_score improves or is not worse than -0.03; weighted_or_micro_f1 and specificity/native guardrails must not regress by more than 0.03 where defined",
+    "success": "at least two primary-evaluable native tasks vote positive",
+    "sparse_label_policy": "diagnostic and not-evaluable labels cannot provide success votes; support=1 Both remains descriptive only",
+    "if_negative": "recommend window/token-level event-sensitive pooling not supported here; do not automatically implement another method"
+  },
+  "verification": {
+    "required": [
+      "corrected HF assignment SHA",
+      "R0 cache/source checkpoint SHA",
+      "window cache ordered IDs and finite masks",
+      "P1/P2 parameter count equality",
+      "encoder frozen and source heads absent",
+      "SPRSound label-free prediction before terminal join",
+      "KAUH five-fold patient OOF",
+      "independent metric/confusion recomputation",
+      "finite probabilities/losses/gradients",
+      "no dataset ID or device metadata as model input"
+    ]
+  }
+}

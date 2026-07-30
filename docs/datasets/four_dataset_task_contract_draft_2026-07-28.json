@@ -1,0 +1,2092 @@
+{
+  "contract_id": "four_dataset_task_contract_review_2026-07-28",
+  "contract_version": "0.2.0-phase1-approved",
+  "status": "approved_for_phase1_baseline_implementation",
+  "checked_date": "2026-07-28",
+  "approval_date": "2026-07-28",
+  "human_readable_contract": "docs/datasets/four_dataset_task_contract_review_2026-07-28.md",
+  "scope": [
+    "icbhi_2017",
+    "hf_lung_v1",
+    "sprsound_biocas2022",
+    "kauh_fraiwan_v3"
+  ],
+  "approval_gate": {
+    "owner": "user_and_project_management_with_jingping",
+    "approved_scope": {
+      "shared_encoder_datasets": [
+        "icbhi_2017",
+        "sprsound_biocas2022"
+      ],
+      "shared_prediction_units": {
+        "icbhi_2017": "respiratory_cycle",
+        "sprsound_biocas2022": "respiratory_event"
+      },
+      "dataset_native_heads": {
+        "icbhi_2017": [
+          "cycle_four_class"
+        ],
+        "sprsound_biocas2022": [
+          "event_seven_class"
+        ]
+      },
+      "shared_binary_acoustic_event": "primary",
+      "shared_narrow_four_acoustic_event": "secondary",
+      "reporting": "dataset_and_prediction_unit_stratified",
+      "hf_lung_v1": "dataset_native_safe_defaults_only",
+      "kauh_fraiwan_v3": "dataset_native_safe_defaults_only"
+    },
+    "permitted_actions": [
+      "canonical_schema_preparation",
+      "schema_only_validation",
+      "adapter_dry_run_preparation",
+      "baseline_implementation_preparation"
+    ],
+    "blocked_outputs": [
+      "real_split_assignment",
+      "real_canonical_manifest",
+      "hf_negative_sampling",
+      "kauh_unresolved_label_normalization",
+      "complex_mixture_of_experts",
+      "large_scale_training",
+      "training_execution",
+      "processed_audio",
+      "training_input"
+    ]
+  },
+  "null_semantics": {
+    "observed": "值直接存在于 raw package、一手 README/paper，或由 raw header/annotation 确定性测得。",
+    "inferred": "值由公开且可复核的规则推断；必须保留推断规则和 confidence，不得称为 official。",
+    "unknown": "已检查适用的一手来源，但真实含义仍无法确定；对应 value 使用 null。",
+    "not_provided": "当前 release 未提供该字段；对应 value 使用 null，不得推导成负值。",
+    "not_annotated": "该时间或单位没有 source annotation；不等于 negative 或 normal。",
+    "not_applicable": "字段对当前单位没有语义；对应 value 使用 null。",
+    "missing": "按 package contract 应存在但实际缺失的文件或值，是 QC 异常，不是标签语义。",
+    "parse_failed": "字段预期可解析但失败；对应 value 使用 null，并触发 QC。",
+    "blocked_pending_decision": "source facts 已记录，但 benchmark mapping/split/policy 尚未获批。",
+    "approved_benchmark_policy": "用户已批准的 benchmark policy；它仍不是 official source fact。",
+    "approved_policy_not_authorized_to_materialize": "政策已批准，但尚未授权生成真实 split、manifest 或 training input。",
+    "approved_blocked_from_shared_phase1": "已批准的 safe default 是该数据集/标签不进入 phase-1 shared surface。",
+    "null": "JSON null 必须由同层 status_code 解释；禁止无状态的裸 null。"
+  },
+  "proposed_shared_tasks": {
+    "shared_binary_acoustic_event": {
+      "prediction_unit": "source-defined respiratory cycle or respiratory event only",
+      "targets": [
+        "normal",
+        "abnormal"
+      ],
+      "policy_status": "approved_primary_for_phase1_baseline_implementation",
+      "unit_constraint": "不同 source unit 必须分别报告，不得把 cycle、interval、event、recording 指标直接合并。"
+    },
+    "shared_narrow_four_acoustic_event": {
+      "prediction_unit": "source-defined respiratory cycle or respiratory event only",
+      "targets": [
+        "normal",
+        "crackle",
+        "wheeze",
+        "both"
+      ],
+      "policy_status": "approved_secondary_for_phase1_baseline_implementation",
+      "unit_constraint": "仅允许 source semantics 足以支持的标签；Rhonchi、Stridor、Crep、Bronchial 和 unresolved composite 不得静默并入。"
+    },
+    "dataset_native_temporal_multilabel": {
+      "prediction_unit": "source recording with interval or frame sequence output",
+      "policy_status": "approved_dataset_native_only"
+    },
+    "dataset_native_recording_sound": {
+      "prediction_unit": "recording",
+      "policy_status": "approved_dataset_native_only"
+    },
+    "dataset_native_disease": {
+      "prediction_unit": "patient or source-defined disease unit",
+      "policy_status": "approved_dataset_specific_secondary_not_authorized_for_phase1_baseline"
+    }
+  },
+  "datasets": [
+    {
+      "dataset_id": "icbhi_2017",
+      "dataset": "ICBHI 2017",
+      "release": {
+        "release_id": "official_2017_challenge_package",
+        "version": "2017",
+        "status_code": "observed",
+        "local_root": "dataset/raw/icbhi_2017",
+        "official_url": "https://bhichallenge.med.auth.gr/ICBHI_2017_Challenge",
+        "confidence": "high"
+      },
+      "prediction_units": [
+        {
+          "task_id": "cycle_four_class",
+          "prediction_unit": "respiratory_cycle",
+          "annotation_unit": "respiratory_cycle_interval_with_two_flags",
+          "count": 6898,
+          "status_code": "observed"
+        },
+        {
+          "task_id": "patient_diagnosis",
+          "prediction_unit": "patient",
+          "annotation_unit": "patient",
+          "count": 126,
+          "status_code": "observed"
+        }
+      ],
+      "native_labels": [
+        {
+          "task_id": "cycle_four_class",
+          "raw_string": "0 0",
+          "source_semantics": "crackle_flag=0, wheeze_flag=0",
+          "source_label_name": "normal",
+          "status_code": "observed"
+        },
+        {
+          "task_id": "cycle_four_class",
+          "raw_string": "1 0",
+          "source_semantics": "crackle_flag=1, wheeze_flag=0",
+          "source_label_name": "crackle",
+          "status_code": "observed"
+        },
+        {
+          "task_id": "cycle_four_class",
+          "raw_string": "0 1",
+          "source_semantics": "crackle_flag=0, wheeze_flag=1",
+          "source_label_name": "wheeze",
+          "status_code": "observed"
+        },
+        {
+          "task_id": "cycle_four_class",
+          "raw_string": "1 1",
+          "source_semantics": "crackle_flag=1, wheeze_flag=1",
+          "source_label_name": "both",
+          "status_code": "observed"
+        },
+        {
+          "task_id": "patient_diagnosis",
+          "raw_strings": [
+            "Asthma",
+            "Bronchiectasis",
+            "Bronchiolitis",
+            "COPD",
+            "Healthy",
+            "LRTI",
+            "Pneumonia",
+            "URTI"
+          ],
+          "source_semantics": "patient-level diagnosis; separate from cycle event flags",
+          "status_code": "observed"
+        }
+      ],
+      "shared_acoustic_attributes": {
+        "audio_format": {
+          "value": "WAV mono; 16-bit at 4/10/44.1 kHz and 24-bit at 44.1 kHz",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "duration": {
+          "value": "920 recordings, 5.492508 h; recording min/median/mean/max 7.856/20.000/21.492/86.200 s; cycle min/median/mean/max 0.200/2.537/2.701/16.163 s",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "device": {
+          "value": "AKGC417L, LittC2SE, Litt3200, Meditron from filename code",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "site": {
+          "value": "chest location code from filename",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "session": {
+          "value": null,
+          "status_code": "unknown",
+          "confidence": "low"
+        }
+      },
+      "group_identity": {
+        "patient_id": {
+          "value_source": "filename first field and side files",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "grouping_key": "patient_id",
+        "grouping_key_status": "observed"
+      },
+      "source_split": {
+        "name": "official_challenge_recording_split",
+        "partitions": {
+          "train_recordings": 539,
+          "test_recordings": 381,
+          "train_cycles": 4142,
+          "test_cycles": 2756
+        },
+        "patient_overlap": [
+          "156",
+          "218"
+        ],
+        "status_code": "observed",
+        "constraint": "official recording split; not patient-independent"
+      },
+      "proposed_split": {
+        "name": "strict_patient_grouped_dual_protocol",
+        "proposal": "保留 official split 用于文献可比性，并另建 patient-grouped robustness protocol。",
+        "status_code": "approved_policy_not_authorized_to_materialize"
+      },
+      "metrics": {
+        "source_metrics": [
+          "abnormal sensitivity",
+          "normal specificity",
+          "ICBHI average score"
+        ],
+        "proposed_metrics": [
+          "macro F1",
+          "UAR",
+          "per-class recall",
+          "support"
+        ],
+        "proposed_status": "approved_reporting_contract"
+      },
+      "eligibility_mask": {
+        "shared_binary_acoustic_event": {
+          "eligibility": "approved_eligible_phase1_primary",
+          "mapping": "00->normal; 10|01|11->abnormal",
+          "mapping_quality": "exact_from_flags",
+          "status_code": "approved_benchmark_policy"
+        },
+        "shared_narrow_four_acoustic_event": {
+          "eligibility": "approved_eligible_phase1_secondary",
+          "mapping": "00->normal; 10->crackle; 01->wheeze; 11->both",
+          "mapping_quality": "exact_from_flags",
+          "status_code": "approved_benchmark_policy"
+        },
+        "dataset_native_temporal_multilabel": {
+          "eligibility": "not_applicable",
+          "status_code": "not_applicable"
+        },
+        "dataset_native_recording_sound": {
+          "eligibility": "not_eligible",
+          "status_code": "not_applicable"
+        },
+        "dataset_native_disease": {
+          "eligibility": "source_labels_available",
+          "status_code": "approved_dataset_specific_secondary_not_authorized_for_phase1_baseline"
+        }
+      },
+      "class_distribution": {
+        "unit": "respiratory_cycle",
+        "counts": {
+          "normal": 3642,
+          "crackle": 1864,
+          "wheeze": 886,
+          "both": 506
+        },
+        "status_code": "observed"
+      },
+      "source_official_facts": [
+        "Cycle TXT rows contain start_s, end_s, crackle flag, wheeze flag.",
+        "Patient diagnosis is a separate side file.",
+        "Official challenge split is recording-level and has patient overlap."
+      ],
+      "proposed_benchmark_policy": [
+        "Use cycle as the acoustic prediction unit.",
+        "Report official and strict patient-grouped protocols separately.",
+        "Never merge diagnosis labels into the cycle event target."
+      ],
+      "evidence": [
+        {
+          "path_or_url": "dataset/raw/icbhi_2017/source_original/ICBHI_final_database/ICBHI_final_database/filename_format.txt",
+          "evidence_type": "source_package",
+          "confidence": "high"
+        },
+        {
+          "path_or_url": "dataset/raw/icbhi_2017/ICBHI_challenge_train_test.txt",
+          "evidence_type": "source_split_file",
+          "confidence": "high"
+        },
+        {
+          "path_or_url": "dataset/processed/schema/evidence.csv",
+          "evidence_type": "read_only_measurement_receipt",
+          "confidence": "high"
+        }
+      ]
+    },
+    {
+      "dataset_id": "hf_lung_v1",
+      "dataset": "HF_Lung_V1",
+      "release": {
+        "release_id": "gitlab_release_readme_updated_2022_01_18",
+        "version": "V1, README update 2022-01-18",
+        "status_code": "observed",
+        "local_root": "dataset/raw/hf_lung_v1",
+        "official_url": "https://gitlab.com/techsupportHF/HF_Lung_V1",
+        "paper_url": "https://doi.org/10.1371/journal.pone.0254134",
+        "confidence": "high"
+      },
+      "prediction_units": [
+        {
+          "task_id": "source_15s_sequence_detection",
+          "prediction_unit": "15_second_recording_with_sequence_output",
+          "annotation_unit": "overlapping_time_interval",
+          "count": 9765,
+          "status_code": "observed"
+        },
+        {
+          "task_id": "positive_interval_labels",
+          "prediction_unit": "label_interval",
+          "annotation_unit": "label_interval",
+          "count": 81933,
+          "status_code": "observed"
+        },
+        {
+          "task_id": "fixed_frame_detection",
+          "prediction_unit": "STFT_time_frame",
+          "annotation_unit": "interval_rasterized_to_frame",
+          "count": null,
+          "status_code": "inferred",
+          "note": "Source paper used 938 frames per 15 s recording; frame labels are derived, not raw rows."
+        }
+      ],
+      "native_labels": [
+        {
+          "task_family": "respiratory_phase",
+          "raw_string": "I",
+          "source_semantics": "inhalation interval",
+          "count": 34095,
+          "status_code": "observed"
+        },
+        {
+          "task_family": "respiratory_phase",
+          "raw_string": "E",
+          "source_semantics": "exhalation interval",
+          "count": 18349,
+          "status_code": "observed"
+        },
+        {
+          "task_family": "adventitious_sound",
+          "raw_string": "D",
+          "source_semantics": "discontinuous adventitious sound; source paper states all D labels are crackles without coarse/fine distinction",
+          "count": 15606,
+          "status_code": "observed"
+        },
+        {
+          "task_family": "adventitious_sound",
+          "raw_string": "Wheeze",
+          "source_semantics": "wheeze interval; one subtype of continuous adventitious sound",
+          "count": 8457,
+          "status_code": "observed"
+        },
+        {
+          "task_family": "adventitious_sound",
+          "raw_string": "Rhonchi",
+          "source_semantics": "rhonchus/rhonchi interval; one subtype of continuous adventitious sound",
+          "count": 4740,
+          "status_code": "observed"
+        },
+        {
+          "task_family": "adventitious_sound",
+          "raw_string": "Stridor",
+          "source_semantics": "stridor interval; one subtype of continuous adventitious sound",
+          "count": 686,
+          "status_code": "observed"
+        },
+        {
+          "task_family": "annotation_state",
+          "raw_string": null,
+          "source_semantics": "No Normal or Negative token exists in raw label files.",
+          "count": 0,
+          "status_code": "not_provided"
+        }
+      ],
+      "interval_audit": {
+        "total_recording_duration_s": 146475.0,
+        "union_any_annotation_s": 52051.639,
+        "union_any_annotation_pct": 35.536,
+        "unannotated_gap_s": 94423.361,
+        "unannotated_gap_pct": 64.464,
+        "recordings_with_unannotated_gap": 9765,
+        "empty_label_files": 58,
+        "union_phase_annotation_s": 49182.331,
+        "union_adventitious_positive_s": 25185.405,
+        "recordings_with_adventitious_positive": 5956,
+        "explicit_negative_intervals": 0,
+        "status_code": "observed",
+        "gap_semantics": "not_annotated; never automatically normal or negative"
+      },
+      "interval_overlap_audit": {
+        "phase_and_sound_examples": {
+          "D|I_overlap_s": 8163.396,
+          "D|E_overlap_s": 5269.245,
+          "Wheeze|I_overlap_s": 3078.489,
+          "Wheeze|E_overlap_s": 2234.12
+        },
+        "sound_cooccurrence_examples": {
+          "D|Wheeze_overlap_s": 63.783,
+          "D|Rhonchi_overlap_s": 20.917,
+          "Wheeze|Rhonchi_overlap_s": 11.509,
+          "D|Stridor_overlap_s": 4.055
+        },
+        "status_code": "observed",
+        "interpretation": "Phase and adventitious labels are separate overlapping dimensions; sound labels can also co-occur."
+      },
+      "shared_acoustic_attributes": {
+        "audio_format": {
+          "value": "9,765 WAV; 4 kHz, mono, 16-bit",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "duration": {
+          "value": "Every released recording is 15.0 s; total 40.6875 h",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "device": {
+          "value": "steth_ = Littmann 3200; trunc_ = HF-Type-1",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "site": {
+          "value": "L1-L8 available only for trunc_ filenames; must not be inferred for steth_ files",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "disease": {
+          "value": null,
+          "status_code": "not_provided",
+          "confidence": "high"
+        }
+      },
+      "group_identity": {
+        "patient_id": {
+          "value_source": null,
+          "status_code": "not_provided",
+          "confidence": "high"
+        },
+        "date_proxy": {
+          "value_source": "randomly shifted date in filename",
+          "status_code": "inferred",
+          "confidence": "medium",
+          "constraint": "README says same-date files are very likely from the same subject; this is not a patient ID."
+        },
+        "session_proxy": {
+          "value_source": "filename timestamp and, for trunc_, location/truncation-order stem",
+          "status_code": "inferred",
+          "confidence": "medium_low"
+        },
+        "grouping_key": "deidentified_date_proxy",
+        "grouping_key_status": "inferred"
+      },
+      "source_split": {
+        "name": "source_train_test_folders",
+        "partitions": {
+          "train_recordings": 7809,
+          "test_recordings": 1956,
+          "train_date_proxy_count": 118,
+          "test_date_proxy_count": 39,
+          "date_proxy_overlap": 0
+        },
+        "status_code": "observed",
+        "constraint": "No date-proxy overlap does not prove patient independence."
+      },
+      "proposed_split": {
+        "name": "date_proxy_grouped_validation",
+        "proposal": "Keep every deidentified date proxy in one partition; use session/device/site audits as secondary checks.",
+        "status_code": "approved_policy_not_authorized_to_materialize"
+      },
+      "metrics": {
+        "source_metrics": [
+          "segment accuracy",
+          "segment PPV",
+          "segment sensitivity",
+          "segment specificity",
+          "segment F1",
+          "segment ROC-AUC",
+          "event F1 with Jaccard index > 0.5",
+          "event MAPE"
+        ],
+        "proposed_metrics": [
+          "per-label AUPRC",
+          "per-label AUROC",
+          "event F1",
+          "support and annotated-duration coverage"
+        ],
+        "proposed_status": "approved_dataset_native_reporting_only"
+      },
+      "eligibility_mask": {
+        "shared_binary_acoustic_event": {
+          "eligibility": "blocked",
+          "reason": "Observed adventitious positives exist, but no explicit normal/negative interval exists; unlabeled gaps and files without positive labels are not verified normal.",
+          "status_code": "approved_blocked_from_shared_phase1"
+        },
+        "shared_narrow_four_acoustic_event": {
+          "eligibility": "blocked",
+          "reason": "D and Wheeze provide positive semantics, but Normal is absent, labels overlap, both is derived rather than native, and Rhonchi/Stridor need a policy.",
+          "status_code": "approved_blocked_from_shared_phase1"
+        },
+        "dataset_native_temporal_multilabel": {
+          "eligibility": "eligible",
+          "targets": [
+            "I",
+            "E",
+            "CAS_from_Wheeze_Rhonchi_Stridor",
+            "DAS_from_D"
+          ],
+          "negative_policy": "Source-paper reproduction may rasterize outside each annotated target interval as zero for one-vs-rest detection; this is a task construction rule, not explicit normal evidence.",
+          "status_code": "observed"
+        },
+        "dataset_native_recording_sound": {
+          "eligibility": "eligible_as_15s_sequence_input_only",
+          "status_code": "observed"
+        },
+        "dataset_native_disease": {
+          "eligibility": "not_eligible",
+          "status_code": "not_provided"
+        }
+      },
+      "source_official_facts": [
+        "Raw interval tokens are I, E, D, Wheeze, Rhonchi, Stridor.",
+        "D comprises crackles; W/S/R form CAS in the source paper.",
+        "Each recording is 15 s and each raw label file was annotated by one annotator.",
+        "Labelers were instructed not to label unclear or incomplete events.",
+        "The source benchmark rasterized event intervals to one-vs-rest frame targets."
+      ],
+      "proposed_benchmark_policy": [
+        "Keep phase and adventitious heads separate.",
+        "Do not convert unannotated time into shared normal/negative before approval.",
+        "Never populate patient_id from date or timestamp.",
+        "Use date only as a conservative grouping proxy and disclose its limitation."
+      ],
+      "evidence": [
+        {
+          "path_or_url": "dataset/raw/hf_lung_v1/README.md",
+          "evidence_type": "official_repository_readme",
+          "confidence": "high"
+        },
+        {
+          "path_or_url": "dataset/raw/hf_lung_v1/source_original",
+          "evidence_type": "raw_package_measurement",
+          "confidence": "high"
+        },
+        {
+          "path_or_url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0254134",
+          "evidence_type": "primary_paper",
+          "confidence": "high"
+        }
+      ]
+    },
+    {
+      "dataset_id": "sprsound_biocas2022",
+      "dataset": "SPRSound",
+      "release": {
+        "release_id": "biocas2022_commit_874eeb8736ddb78937c2fb5332fc7e7293d0f0ca",
+        "version": "BioCAS 2022 classification release",
+        "status_code": "observed",
+        "local_root": "dataset/raw/sprsound/source_original/SPRSound-874eeb8736ddb78937c2fb5332fc7e7293d0f0ca/BioCAS2022",
+        "official_url": "https://github.com/SJTU-YONGFU-RESEARCH-GRP/SPRSound",
+        "confidence": "high"
+      },
+      "prediction_units": [
+        {
+          "task_id": "event_binary",
+          "prediction_unit": "respiratory_event",
+          "annotation_unit": "event_start_end_ms",
+          "count": 9089,
+          "status_code": "observed"
+        },
+        {
+          "task_id": "event_seven_class",
+          "prediction_unit": "respiratory_event",
+          "annotation_unit": "event_start_end_ms",
+          "count": 9089,
+          "status_code": "observed"
+        },
+        {
+          "task_id": "record_ternary_or_five_class",
+          "prediction_unit": "recording",
+          "annotation_unit": "recording",
+          "count": 2683,
+          "status_code": "observed"
+        }
+      ],
+      "native_labels": [
+        {
+          "task_family": "event",
+          "raw_strings": [
+            "Normal",
+            "Rhonchi",
+            "Wheeze",
+            "Stridor",
+            "Coarse Crackle",
+            "Fine Crackle",
+            "Wheeze+Crackle"
+          ],
+          "source_semantics": "official seven-class event ontology",
+          "status_code": "observed"
+        },
+        {
+          "task_family": "record",
+          "raw_strings": [
+            "Normal",
+            "CAS",
+            "DAS",
+            "CAS & DAS",
+            "Poor Quality"
+          ],
+          "source_semantics": "official five-class recording ontology; Poor Quality is a signal-quality class",
+          "status_code": "observed"
+        }
+      ],
+      "shared_acoustic_attributes": {
+        "audio_format": {
+          "value": "2,683 WAV; 8 kHz, mono, 16-bit",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "duration": {
+          "value": "8.162338 h; recording min/median/mean/max 0.304/9.216/10.952/15.360 s; event min/median/mean/max 0.126/1.220/1.302/7.152 s",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "device": {
+          "value": "Yunting model II stethoscope",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "site": {
+          "value": "p1 left posterior, p2 left lateral, p3 right posterior, p4 right lateral",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "disease": {
+          "value": null,
+          "status_code": "not_provided",
+          "confidence": "high"
+        }
+      },
+      "group_identity": {
+        "patient_id": {
+          "value_source": "filename patient number",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "grouping_key": "patient_id",
+        "grouping_key_status": "observed"
+      },
+      "source_split": {
+        "name": "biocas2022_train_inter_intra",
+        "partitions": {
+          "train_recordings": 1949,
+          "train_patients": 251,
+          "inter_test_recordings": 355,
+          "inter_test_patients": 41,
+          "inter_train_patient_overlap": 0,
+          "intra_test_recordings": 379,
+          "intra_test_patients": 162,
+          "intra_train_patient_overlap": 162
+        },
+        "status_code": "observed",
+        "constraint": "Inter and intra are distinct official designs and must not be pooled."
+      },
+      "proposed_split": {
+        "name": "patient_grouped_validation_within_train",
+        "proposal": "Create validation only inside official train by patient grouping; keep inter as primary generalization test and intra as repeated-subject diagnostic.",
+        "status_code": "approved_policy_not_authorized_to_materialize"
+      },
+      "metrics": {
+        "source_metrics": [
+          "sensitivity",
+          "specificity",
+          "average score",
+          "harmonic score"
+        ],
+        "proposed_metrics": [
+          "macro F1",
+          "UAR",
+          "per-class recall",
+          "support"
+        ],
+        "proposed_status": "approved_reporting_contract"
+      },
+      "eligibility_mask": {
+        "shared_binary_acoustic_event": {
+          "eligibility": "approved_eligible_phase1_primary",
+          "mapping": "Normal->normal; all six adventitious event classes->abnormal",
+          "mapping_quality": "official_binary_task",
+          "status_code": "approved_benchmark_policy"
+        },
+        "shared_narrow_four_acoustic_event": {
+          "eligibility": "approved_partial_subset_phase1_secondary",
+          "mapping": "Normal->normal; Fine/Coarse Crackle->crackle; Wheeze->wheeze; Wheeze+Crackle->both",
+          "excluded_labels": [
+            "Rhonchi",
+            "Stridor"
+          ],
+          "mapping_quality": "exact_for_included_subset_but_lossy_coverage",
+          "status_code": "approved_benchmark_policy"
+        },
+        "dataset_native_temporal_multilabel": {
+          "eligibility": "eligible_as_event_classification_not_overlapping_multilabel",
+          "status_code": "observed"
+        },
+        "dataset_native_recording_sound": {
+          "eligibility": "eligible",
+          "status_code": "observed",
+          "constraint": "Poor Quality remains a source class or QC mask, never an acoustic normal/abnormal label."
+        },
+        "dataset_native_disease": {
+          "eligibility": "not_eligible",
+          "status_code": "not_provided"
+        }
+      },
+      "class_distribution": {
+        "event_unit_counts": {
+          "Normal": 6887,
+          "Fine Crackle": 1167,
+          "Wheeze": 865,
+          "Coarse Crackle": 66,
+          "Rhonchi": 53,
+          "Wheeze+Crackle": 34,
+          "Stridor": 17
+        },
+        "recording_unit_counts": {
+          "Normal": 1785,
+          "DAS": 347,
+          "CAS": 233,
+          "CAS & DAS": 131,
+          "Poor Quality": 187
+        },
+        "status_code": "observed"
+      },
+      "source_official_facts": [
+        "BioCAS2022 defines event binary, event seven-class, record ternary, and record five-class tasks.",
+        "Inter-subject test has no patient overlap with train.",
+        "Intra-subject test intentionally uses patients seen in train.",
+        "Poor Quality is a recording quality class."
+      ],
+      "proposed_benchmark_policy": [
+        "Use inter test as primary cross-subject report and intra test as a separate repeated-subject diagnostic.",
+        "Use event-unit binary for the shared task.",
+        "Exclude Rhonchi and Stridor from a narrow-four overlay unless an explicit other_abnormal policy is approved.",
+        "Exclude Poor Quality from shared acoustic labels."
+      ],
+      "evidence": [
+        {
+          "path_or_url": "dataset/raw/sprsound/source_original/SPRSound-874eeb8736ddb78937c2fb5332fc7e7293d0f0ca/BioCAS2022/README.md",
+          "evidence_type": "official_repository_readme",
+          "confidence": "high"
+        },
+        {
+          "path_or_url": "dataset/raw/sprsound/source_original/SPRSound-874eeb8736ddb78937c2fb5332fc7e7293d0f0ca/BioCAS2022",
+          "evidence_type": "raw_package_measurement",
+          "confidence": "high"
+        },
+        {
+          "path_or_url": "dataset/processed/split_statistics.csv",
+          "evidence_type": "read_only_measurement_receipt",
+          "confidence": "high"
+        }
+      ]
+    },
+    {
+      "dataset_id": "kauh_fraiwan_v3",
+      "dataset": "KAUH / Fraiwan",
+      "release": {
+        "release_id": "mendeley_jwyy9np4gv_v3",
+        "version": "Mendeley Data v3",
+        "status_code": "observed",
+        "local_root": "dataset/raw/kauh_fraiwan",
+        "official_url": "https://data.mendeley.com/datasets/jwyy9np4gv/3",
+        "paper_url": "https://doi.org/10.1016/j.dib.2021.106913",
+        "confidence": "high"
+      },
+      "prediction_units": [
+        {
+          "task_id": "raw_sound_type",
+          "prediction_unit": "recording",
+          "annotation_unit": "patient_workbook_row_repeated_across_three_filter_recordings",
+          "count": 336,
+          "status_code": "observed"
+        },
+        {
+          "task_id": "raw_diagnosis",
+          "prediction_unit": "patient",
+          "annotation_unit": "patient_workbook_row",
+          "count": 112,
+          "status_code": "observed"
+        }
+      ],
+      "filename_contract": {
+        "pattern": "<filter>P<patient>_<diagnosis>,<sound_type>,<location>,<age>,<gender>.wav",
+        "filter_prefixes": {
+          "B": "Bell mode",
+          "D": "Diaphragm mode",
+          "E": "Extended mode"
+        },
+        "filter_prefix_status": "observed",
+        "count_per_filter": {
+          "B": 112,
+          "D": 112,
+          "E": 112
+        },
+        "per_patient_filter_set": "BDE",
+        "status_code": "observed"
+      },
+      "native_labels": [
+        {
+          "task_family": "sound_type",
+          "raw_string": "N",
+          "source_semantics": "Normal",
+          "patient_count": 35,
+          "recording_count": 105,
+          "status_code": "observed"
+        },
+        {
+          "task_family": "sound_type",
+          "raw_string": "E W",
+          "source_semantics": "E=Expiratory; W=Wheezes",
+          "patient_count": 39,
+          "recording_count": 117,
+          "status_code": "observed"
+        },
+        {
+          "task_family": "sound_type",
+          "raw_string": "I E W",
+          "source_semantics": "I=Inspiratory; E=Expiratory; W=Wheezes",
+          "patient_count": 2,
+          "recording_count": 6,
+          "status_code": "observed"
+        },
+        {
+          "task_family": "sound_type",
+          "raw_string": "C",
+          "source_semantics": "Crackles",
+          "patient_count": 7,
+          "recording_count": 21,
+          "status_code": "observed"
+        },
+        {
+          "task_family": "sound_type",
+          "raw_string": "I C",
+          "source_semantics": "I=Inspiratory; C=Crackles",
+          "patient_count": 1,
+          "recording_count": 3,
+          "status_code": "observed"
+        },
+        {
+          "task_family": "sound_type",
+          "raw_string": "I C E W",
+          "source_semantics": "I=Inspiratory; C=Crackles; E=Expiratory; W=Wheezes",
+          "patient_count": 2,
+          "recording_count": 6,
+          "status_code": "observed"
+        },
+        {
+          "task_family": "sound_type",
+          "raw_string": "Crep",
+          "source_semantics": "Crepitations; source presents this separately from C=Crackles",
+          "patient_count": 23,
+          "recording_count": 69,
+          "status_code": "observed"
+        },
+        {
+          "task_family": "sound_type",
+          "raw_string": "Bronchial",
+          "source_semantics": "Bronchial sound type; no accepted shared ontology mapping in this draft",
+          "patient_count": 1,
+          "recording_count": 3,
+          "status_code": "observed"
+        },
+        {
+          "task_family": "sound_type",
+          "raw_string": "I C B",
+          "source_semantics": null,
+          "patient_count": 2,
+          "recording_count": 6,
+          "status_code": "unknown",
+          "candidate_interpretation_not_accepted": "The source paper table reports exactly two Bronchial & Crackles subjects, matching two I C B workbook rows; B may denote Bronchial, but the source ontology does not define B inside sound_type."
+        },
+        {
+          "task_family": "diagnosis",
+          "raw_strings": [
+            "Asthma",
+            "Heart Failure + Lung Fibrosis",
+            "Heart Failure + COPD",
+            "Plueral Effusion",
+            "Heart Failure",
+            "heart failure",
+            "COPD",
+            "pneumonia",
+            "Asthma and lung fibrosis",
+            "BRON",
+            "Lung Fibrosis",
+            "copd",
+            "asthma",
+            "N"
+          ],
+          "source_semantics": "Raw workbook diagnosis strings after display-only trimming; capitalization, spelling and combinations remain unnormalized.",
+          "status_code": "observed"
+        }
+      ],
+      "shared_acoustic_attributes": {
+        "audio_format": {
+          "value": "336 WAV; 4 kHz, mono, 16-bit",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "duration": {
+          "value": "1.623918 h; recording min/median/mean/max 5.000/15.984/17.399/30.000 s",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "device": {
+          "value": "3M Littmann Electronic Stethoscope model 3200",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "site": {
+          "value": "workbook/location filename field with A/P, L/R, L/M/U codes",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "session": {
+          "value": null,
+          "status_code": "not_provided",
+          "confidence": "high"
+        }
+      },
+      "group_identity": {
+        "patient_id": {
+          "value_source": "P1-P112 from filename",
+          "status_code": "observed",
+          "confidence": "high"
+        },
+        "grouping_key": "patient_id",
+        "grouping_key_status": "observed",
+        "replicate_constraint": "All B/D/E filtered recordings for one P-number remain in one partition."
+      },
+      "source_split": {
+        "name": null,
+        "partitions": null,
+        "status_code": "not_provided",
+        "constraint": "No official split found in Mendeley v3 package or primary dataset paper."
+      },
+      "proposed_split": {
+        "name": "patient_grouped_cross_validation",
+        "proposal": "Five-fold patient-grouped stratified CV, or a fixed patient-grouped train/validation/test split; never split B/D/E replicas.",
+        "status_code": "approved_policy_not_authorized_to_materialize"
+      },
+      "metrics": {
+        "source_metrics": [],
+        "source_metric_status": "not_provided",
+        "proposed_metrics": [
+          "macro F1",
+          "UAR",
+          "balanced accuracy",
+          "per-class recall",
+          "patient-level support"
+        ],
+        "proposed_status": "approved_dataset_native_reporting_only"
+      },
+      "eligibility_mask": {
+        "shared_binary_acoustic_event": {
+          "eligibility": "partial_subset_only",
+          "proposed_included_raw_labels": [
+            "N",
+            "E W",
+            "I E W",
+            "C",
+            "I C",
+            "I C E W"
+          ],
+          "blocked_raw_labels": [
+            "Crep",
+            "Bronchial",
+            "I C B"
+          ],
+          "reason": "Known tokens can support a lossy recording-level overlay, but unresolved labels and the recording unit prevent a complete shared event task.",
+          "status_code": "approved_blocked_from_shared_phase1"
+        },
+        "shared_narrow_four_acoustic_event": {
+          "eligibility": "partial_subset_only",
+          "proposed_mapping": "N->normal; E W|I E W->wheeze; C|I C->crackle; I C E W->both",
+          "blocked_raw_labels": [
+            "Crep",
+            "Bronchial",
+            "I C B"
+          ],
+          "mapping_quality": "lossy_recording_level_phase_tokens_dropped",
+          "status_code": "approved_blocked_from_shared_phase1"
+        },
+        "dataset_native_temporal_multilabel": {
+          "eligibility": "not_eligible",
+          "reason": "No interval or cycle boundaries.",
+          "status_code": "not_provided"
+        },
+        "dataset_native_recording_sound": {
+          "eligibility": "eligible",
+          "targets": [
+            "I E W",
+            "E W",
+            "I C",
+            "I C E W",
+            "I C B",
+            "C",
+            "Crep",
+            "N",
+            "Bronchial"
+          ],
+          "status_code": "observed",
+          "constraint": "Use raw strings; patient-grouped evaluation is required."
+        },
+        "dataset_native_disease": {
+          "eligibility": "source_labels_available",
+          "status_code": "approved_dataset_specific_secondary_not_authorized_for_phase1_baseline",
+          "constraint": "Sound type and diagnosis remain separate; normalization and disease scope require approval."
+        }
+      },
+      "source_official_facts": [
+        "Mendeley v3 and the primary paper define B/D/E filename prefixes as Bell/Diaphragm/Extended filters.",
+        "The primary source defines I, E, W, C, N and Crep, and lists Bronchial as a sound type.",
+        "The source does not define B inside the raw sound label I C B.",
+        "Each patient has three raw WAV files with identical metadata and labels across B/D/E filters.",
+        "No official split is provided."
+      ],
+      "proposed_benchmark_policy": [
+        "Treat B/D/E files as filtered replicas grouped by P-number.",
+        "Retain Crep separately from C; do not normalize Crep to crackle before approval.",
+        "Keep I C B and Bronchial out of shared mappings until semantics/policy are approved.",
+        "Keep sound type and diagnosis in separate targets and masks."
+      ],
+      "evidence": [
+        {
+          "path_or_url": "dataset/raw/kauh_fraiwan/Data annotation.xlsx",
+          "evidence_type": "source_workbook",
+          "confidence": "high"
+        },
+        {
+          "path_or_url": "dataset/raw/kauh_fraiwan/source_original/audio_files",
+          "evidence_type": "raw_filename_measurement",
+          "confidence": "high"
+        },
+        {
+          "path_or_url": "https://data.mendeley.com/datasets/jwyy9np4gv/3",
+          "evidence_type": "official_dataset_page",
+          "confidence": "high"
+        },
+        {
+          "path_or_url": "https://doi.org/10.1016/j.dib.2021.106913",
+          "evidence_type": "primary_dataset_paper",
+          "confidence": "high"
+        }
+      ]
+    }
+  ],
+  "task_compatibility_matrix": [
+    {
+      "dataset_id": "icbhi_2017",
+      "native_cycle_or_event": "eligible",
+      "native_temporal_multilabel": "not_applicable",
+      "shared_binary": "approved_phase1_primary",
+      "shared_narrow_four": "approved_phase1_secondary",
+      "native_recording_sound": "not_applicable",
+      "native_disease": "approved_dataset_specific_secondary_not_authorized_for_phase1_baseline"
+    },
+    {
+      "dataset_id": "hf_lung_v1",
+      "native_cycle_or_event": "positive_intervals_only",
+      "native_temporal_multilabel": "approved_dataset_native_only",
+      "shared_binary": "approved_blocked_from_shared_phase1",
+      "shared_narrow_four": "approved_blocked_from_shared_phase1",
+      "native_recording_sound": "approved_dataset_native_15s_sequence_input",
+      "native_disease": "not_provided"
+    },
+    {
+      "dataset_id": "sprsound_biocas2022",
+      "native_cycle_or_event": "eligible",
+      "native_temporal_multilabel": "not_applicable",
+      "shared_binary": "approved_phase1_primary",
+      "shared_narrow_four": "approved_partial_subset_phase1_secondary",
+      "native_recording_sound": "eligible",
+      "native_disease": "not_provided"
+    },
+    {
+      "dataset_id": "kauh_fraiwan_v3",
+      "native_cycle_or_event": "not_provided",
+      "native_temporal_multilabel": "not_provided",
+      "shared_binary": "approved_blocked_from_shared_phase1",
+      "shared_narrow_four": "approved_blocked_from_shared_phase1",
+      "native_recording_sound": "approved_dataset_native_after_patient_grouped_dry_run",
+      "native_disease": "approved_dataset_specific_secondary_not_authorized_for_phase1_baseline"
+    }
+  ],
+  "user_decisions": [
+    {
+      "item": "HF negative interval policy",
+      "source_fact": "No explicit normal/negative token; all recordings contain unannotated gaps; source paper rasterized outside target intervals as zero for its one-vs-rest task.",
+      "safe_default": "Shared binary/four-class blocked; allow source-paper negative construction only in a separately named dataset-native reproduction.",
+      "alternatives": [
+        "Treat all outside-positive frames as negative",
+        "Use only confidently phase-annotated, non-adventitious spans after a new validation study"
+      ],
+      "tradeoff": "Safe default protects semantic validity but prevents immediate shared HF binary training.",
+      "recommendation": "Approved safe default.",
+      "user_decision_required": false,
+      "decision_status": "approved_safe_default_2026-07-28"
+    },
+    {
+      "item": "HF proxy grouping",
+      "source_fact": "patient_id is not provided; README says same-date files are very likely from one subject.",
+      "safe_default": "Use deidentified date as conservative group proxy; keep patient_id null; disclose that independence is unproven.",
+      "alternatives": [
+        "Use source folders without additional grouping",
+        "Exclude HF from any strict-patient claim"
+      ],
+      "tradeoff": "Date grouping reduces leakage risk but can merge multiple unknown subjects and cannot certify patient independence.",
+      "recommendation": "Use date proxy for development; exclude HF from strict-patient headline claims.",
+      "user_decision_required": false,
+      "decision_status": "approved_safe_default_2026-07-28"
+    },
+    {
+      "item": "HF phase versus adventitious labels",
+      "source_fact": "I/E are respiratory phases; D/Wheeze/Rhonchi/Stridor are adventitious sounds and overlap in time.",
+      "safe_default": "Separate phase and adventitious heads/masks.",
+      "alternatives": [
+        "One joint multilabel temporal head"
+      ],
+      "tradeoff": "Separate heads preserve semantics; joint multilabel may model co-occurrence but complicates cross-dataset comparability.",
+      "recommendation": "Separate task families, optionally share encoder.",
+      "user_decision_required": false,
+      "decision_status": "approved_safe_default_2026-07-28"
+    },
+    {
+      "item": "KAUH B/D/E",
+      "source_fact": "B/D/E are Bell/Diaphragm/Extended filter modes, with one file per mode per patient.",
+      "safe_default": "Treat as device-filter replicas and keep all three in one patient group.",
+      "alternatives": [
+        "Use only one filter mode",
+        "Report per-filter sensitivity analysis"
+      ],
+      "tradeoff": "All modes increase samples but not independent subjects; one mode reduces duplication; per-filter reporting tests device-filter robustness.",
+      "recommendation": "Group all replicas and add per-filter reporting; do not count 336 as independent patients.",
+      "user_decision_required": false,
+      "decision_status": "approved_safe_default_2026-07-28"
+    },
+    {
+      "item": "KAUH I C B",
+      "source_fact": "I and C are defined; B inside sound_type is not. Two I C B subjects match the paper table count for Bronchial & Crackles.",
+      "safe_default": "Keep raw I C B and block all shared mappings.",
+      "alternatives": [
+        "Provisionally infer B=Bronchial with an inference flag",
+        "Seek author clarification"
+      ],
+      "tradeoff": "Blocking loses six recordings from shared tasks; inference risks a false ontology claim.",
+      "recommendation": "Block and seek author clarification.",
+      "user_decision_required": false,
+      "decision_status": "approved_safe_default_2026-07-28"
+    },
+    {
+      "item": "KAUH Crep and C",
+      "source_fact": "Primary source separately defines C=Crackles and Crep=Crepitations.",
+      "safe_default": "Keep separate; only C-containing labels may enter a proposed crackle overlay.",
+      "alternatives": [
+        "Clinically normalize Crep to crackle after expert approval",
+        "Use both only in the raw nine-class head"
+      ],
+      "tradeoff": "Separation is source-faithful but fragments support; normalization increases data while introducing a clinical equivalence decision.",
+      "recommendation": "Keep separate until Jingping or source authors approve equivalence.",
+      "user_decision_required": false,
+      "decision_status": "approved_safe_default_2026-07-28"
+    },
+    {
+      "item": "Disease head scope",
+      "source_fact": "ICBHI and KAUH provide disease labels on patient-level units; HF and SPRSound BioCAS2022 do not provide matching disease targets.",
+      "safe_default": "Keep disease heads dataset-specific and secondary.",
+      "alternatives": [
+        "Exclude disease heads from phase 1",
+        "Create a later cross-dataset disease ontology"
+      ],
+      "tradeoff": "Dataset-specific heads retain evidence without implying a shared disease space; exclusion simplifies phase 1.",
+      "recommendation": "Dataset-specific secondary heads only, after label normalization approval.",
+      "user_decision_required": false,
+      "decision_status": "approved_safe_default_2026-07-28"
+    },
+    {
+      "item": "Shared binary and four-class eligibility",
+      "source_fact": "ICBHI and SPRSound events directly support binary; ICBHI directly supports narrow four and SPRSound supports a subset. HF lacks explicit normal; KAUH is recording-level with unresolved labels.",
+      "safe_default": "Primary shared binary uses ICBHI cycles and SPRSound events with unit-stratified reporting; narrow four is secondary. HF and KAUH stay dataset-native until separate gates pass.",
+      "alternatives": [
+        "Force all four datasets into shared binary",
+        "Make narrow four primary"
+      ],
+      "tradeoff": "Safe default is smaller but auditable; forced inclusion increases scale at the cost of label and unit validity.",
+      "recommendation": "Approved: two-dataset shared event surface first.",
+      "user_decision_required": false,
+      "decision_status": "approved_safe_default_2026-07-28"
+    }
+  ],
+  "tail_eligibility_contract": {
+    "contract_version": "tail-support-v1",
+    "checked_date": "2026-07-29",
+    "status": "tail_eligibility_management_accepted",
+    "management_acceptance": {
+      "accepted_date": "2026-07-29",
+      "accepted_thresholds": [
+        "fixed_outer_inter_v1",
+        "kauh_patient_oof_v1"
+      ],
+      "accepted_assignment_counts": {
+        "primary_evaluable": 16,
+        "diagnostic_only": 5,
+        "not_evaluable": 7
+      }
+    },
+    "baseline_t1_gate": {
+      "training_allowed": false,
+      "status": "blocked_pending_hf_proxy_fix_and_regression_verification",
+      "unblock_conditions": [
+        "HF loader normalizes steth YYYYMMDD and trunc YYYY-MM-DD to the same YYYYMMDD date proxy.",
+        "Baseline regression verifier reproduces all support counts and assignment hashes before any T1 training."
+      ]
+    },
+    "source_official_facts": [
+      "ICBHI labels are respiratory-cycle crackle/wheeze flag combinations; the official challenge test is a recording split and is not patient-independent.",
+      "SPRSound scope is the pinned BioCAS2022 release; inter is subject-disjoint primary evaluation and intra is an official repeated-subject design.",
+      "HF raw annotations provide positive intervals only; unannotated time is not normal or negative, and patient identity is not provided.",
+      "KAUH v3 raw sound strings are recording labels repeated across three B/D/E recordings per P-number; no official split is supplied."
+    ],
+    "approved_benchmark_policy": {
+      "icbhi_flat4": "official train/test with patient-grouped inner validation inside official train",
+      "sprsound_event_binary_and_seven": "official train with patient-grouped inner validation; inter primary; intra excluded from primary",
+      "hf_recording_presence": "phase and adventitious task pools remain separate; peer-label absence is observed negative only inside an eligible pool; canonical YYYYMMDD date proxy is grouping only, never patient_id",
+      "hf_input_aggregation": "Each 15 s recording may be encoded as three non-overlapping 5 s windows and pooled, but the prediction/support unit remains one recording.",
+      "kauh_raw9": "five-fold patient-grouped OOF; inner validation is patient-grouped; B/D/E siblings never separate; unresolved semantics remain raw dataset-native strings",
+      "reporting": "No pooled raw Score. Report by dataset, task, prediction unit and eligibility state."
+    },
+    "support_tuple_fields": [
+      "positive_samples",
+      "positive_groups",
+      "observed_negative_samples",
+      "observed_negative_groups",
+      "unknown_samples",
+      "not_annotated_samples",
+      "not_annotated_groups"
+    ],
+    "proposed_thresholds_frozen_before_assignment": {
+      "fixed_outer_inter_v1": {
+        "applies_to": [
+          "icbhi_flat4",
+          "spr_event_binary",
+          "spr_event_seven",
+          "hf_phase_presence",
+          "hf_adventitious_presence"
+        ],
+        "primary_evaluable": {
+          "subtrain_positive_min": [
+            20,
+            10
+          ],
+          "inner_validation_positive_min": [
+            5,
+            3
+          ],
+          "outer_or_inter_positive_min": [
+            20,
+            5
+          ],
+          "inner_validation_observed_negative_min": [
+            5,
+            3
+          ],
+          "outer_or_inter_observed_negative_min": [
+            20,
+            5
+          ]
+        },
+        "diagnostic_only": {
+          "subtrain_positive_min": [
+            5,
+            3
+          ],
+          "inner_validation_positive_min": [
+            1,
+            1
+          ],
+          "outer_or_inter_positive_min": [
+            1,
+            1
+          ],
+          "inner_validation_observed_negative_min": [
+            1,
+            1
+          ],
+          "outer_or_inter_observed_negative_min": [
+            1,
+            1
+          ]
+        },
+        "not_evaluable": "fails diagnostic_only or has no outer/inter positives",
+        "reason": "The rule requires enough independent groups for selection and test interpretation while preventing a large number of correlated samples from substituting for group support."
+      },
+      "kauh_patient_oof_v1": {
+        "applies_to": [
+          "kauh_raw9"
+        ],
+        "primary_evaluable": {
+          "aggregate_oof_positive_min": [
+            30,
+            10
+          ],
+          "subtrain_validation_test_fold_coverage": [
+            5,
+            5,
+            5
+          ],
+          "per_fold_subtrain_positive_min": [
+            15,
+            5
+          ],
+          "per_fold_validation_positive_min": [
+            3,
+            1
+          ],
+          "per_fold_test_positive_min": [
+            3,
+            1
+          ]
+        },
+        "diagnostic_only": {
+          "aggregate_oof_positive_min": [
+            9,
+            3
+          ],
+          "subtrain_validation_test_fold_coverage_min": [
+            5,
+            3,
+            3
+          ]
+        },
+        "not_evaluable": "fails diagnostic_only",
+        "reason": "KAUH contributes three correlated B/D/E recordings per patient, so patient count and fold coverage, not raw recording count alone, determine interpretability."
+      },
+      "semantic_gate": [
+        "Every label must be a source-observed native label in the frozen prediction unit.",
+        "Missing or not-annotated is never negative.",
+        "HF observed negatives exist only as peer-label absence inside a source-annotated task-family pool.",
+        "KAUH eligibility concerns raw strings only and does not authorize unresolved shared normalization."
+      ]
+    },
+    "label_assignments": [
+      {
+        "dataset_id": "icbhi_2017",
+        "task_id": "icbhi_flat4",
+        "label": "normal",
+        "eligibility": "primary_evaluable",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "support": {
+          "full_train": [2063, 77, 2079, 61, 0, 0, 0],
+          "subtrain": [1578, 61, 1477, 50, 0, 0, 0],
+          "inner_validation": [485, 16, 602, 11, 0, 0, 0],
+          "outer_test": [1579, 49, 1177, 33, 0, 0, 0]
+        }
+      },
+      {
+        "dataset_id": "icbhi_2017",
+        "task_id": "icbhi_flat4",
+        "label": "crackle",
+        "eligibility": "primary_evaluable",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "support": {
+          "full_train": [1215, 47, 2927, 78, 0, 0, 0],
+          "subtrain": [805, 37, 2250, 62, 0, 0, 0],
+          "inner_validation": [410, 10, 677, 16, 0, 0, 0],
+          "outer_test": [649, 29, 2107, 49, 0, 0, 0]
+        }
+      },
+      {
+        "dataset_id": "icbhi_2017",
+        "task_id": "icbhi_flat4",
+        "label": "wheeze",
+        "eligibility": "primary_evaluable",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "support": {
+          "full_train": [501, 39, 3641, 79, 0, 0, 0],
+          "subtrain": [408, 34, 2647, 63, 0, 0, 0],
+          "inner_validation": [93, 5, 994, 16, 0, 0, 0],
+          "outer_test": [385, 26, 2371, 49, 0, 0, 0]
+        }
+      },
+      {
+        "dataset_id": "icbhi_2017",
+        "task_id": "icbhi_flat4",
+        "label": "both",
+        "eligibility": "primary_evaluable",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "support": {
+          "full_train": [363, 21, 3779, 79, 0, 0, 0],
+          "subtrain": [264, 17, 2791, 63, 0, 0, 0],
+          "inner_validation": [99, 4, 988, 16, 0, 0, 0],
+          "outer_test": [143, 16, 2613, 49, 0, 0, 0]
+        }
+      },
+      {
+        "dataset_id": "sprsound_biocas2022",
+        "task_id": "spr_event_binary",
+        "label": "normal",
+        "eligibility": "primary_evaluable",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "support": {
+          "full_train": [5159, 235, 1497, 98, 0, 0, 0],
+          "subtrain": [4114, 188, 1105, 74, 0, 0, 0],
+          "inner_validation": [1045, 47, 392, 24, 0, 0, 0],
+          "inter_test": [1040, 39, 389, 20, 0, 0, 0]
+        }
+      },
+      {
+        "dataset_id": "sprsound_biocas2022",
+        "task_id": "spr_event_binary",
+        "label": "adventitious",
+        "eligibility": "primary_evaluable",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "support": {
+          "full_train": [1497, 98, 5159, 235, 0, 0, 0],
+          "subtrain": [1105, 74, 4114, 188, 0, 0, 0],
+          "inner_validation": [392, 24, 1045, 47, 0, 0, 0],
+          "inter_test": [389, 20, 1040, 39, 0, 0, 0]
+        }
+      },
+      {
+        "dataset_id": "sprsound_biocas2022",
+        "task_id": "spr_event_seven",
+        "label": "Normal",
+        "eligibility": "primary_evaluable",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "support": {
+          "full_train": [5159, 235, 1497, 98, 0, 0, 0],
+          "subtrain": [4114, 188, 1105, 74, 0, 0, 0],
+          "inner_validation": [1045, 47, 392, 24, 0, 0, 0],
+          "inter_test": [1040, 39, 389, 20, 0, 0, 0]
+        }
+      },
+      {
+        "dataset_id": "sprsound_biocas2022",
+        "task_id": "spr_event_seven",
+        "label": "Rhonchi",
+        "eligibility": "not_evaluable",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "cannot_cast_go_no_go_vote": true,
+        "reason": "inter test has zero positives",
+        "support": {
+          "full_train": [39, 11, 6617, 243, 0, 0, 0],
+          "subtrain": [34, 10, 5185, 194, 0, 0, 0],
+          "inner_validation": [5, 1, 1432, 49, 0, 0, 0],
+          "inter_test": [0, 0, 1429, 41, 0, 0, 0]
+        }
+      },
+      {
+        "dataset_id": "sprsound_biocas2022",
+        "task_id": "spr_event_seven",
+        "label": "Wheeze",
+        "eligibility": "primary_evaluable",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "support": {
+          "full_train": [452, 50, 6204, 243, 0, 0, 0],
+          "subtrain": [396, 40, 4823, 194, 0, 0, 0],
+          "inner_validation": [56, 10, 1381, 49, 0, 0, 0],
+          "inter_test": [305, 13, 1124, 41, 0, 0, 0]
+        }
+      },
+      {
+        "dataset_id": "sprsound_biocas2022",
+        "task_id": "spr_event_seven",
+        "label": "Stridor",
+        "eligibility": "not_evaluable",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "cannot_cast_go_no_go_vote": true,
+        "reason": "inner validation and inter test both have zero positives",
+        "support": {
+          "full_train": [15, 2, 6641, 243, 0, 0, 0],
+          "subtrain": [15, 2, 5204, 194, 0, 0, 0],
+          "inner_validation": [0, 0, 1437, 49, 0, 0, 0],
+          "inter_test": [0, 0, 1429, 41, 0, 0, 0]
+        }
+      },
+      {
+        "dataset_id": "sprsound_biocas2022",
+        "task_id": "spr_event_seven",
+        "label": "Coarse Crackle",
+        "eligibility": "diagnostic_only",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "cannot_cast_go_no_go_vote": true,
+        "reason": "inner validation has 3 positives/2 patients and inter has 3 positives/3 patients",
+        "support": {
+          "full_train": [49, 15, 6607, 243, 0, 0, 0],
+          "subtrain": [46, 13, 5173, 194, 0, 0, 0],
+          "inner_validation": [3, 2, 1434, 49, 0, 0, 0],
+          "inter_test": [3, 3, 1426, 41, 0, 0, 0]
+        }
+      },
+      {
+        "dataset_id": "sprsound_biocas2022",
+        "task_id": "spr_event_seven",
+        "label": "Fine Crackle",
+        "eligibility": "primary_evaluable",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "support": {
+          "full_train": [912, 72, 5744, 241, 0, 0, 0],
+          "subtrain": [593, 53, 4626, 193, 0, 0, 0],
+          "inner_validation": [319, 19, 1118, 48, 0, 0, 0],
+          "inter_test": [80, 12, 1349, 39, 0, 0, 0]
+        }
+      },
+      {
+        "dataset_id": "sprsound_biocas2022",
+        "task_id": "spr_event_seven",
+        "label": "Wheeze+Crackle",
+        "eligibility": "diagnostic_only",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "cannot_cast_go_no_go_vote": true,
+        "reason": "inter test has 1 positive from 1 patient",
+        "support": {
+          "full_train": [30, 9, 6626, 243, 0, 0, 0],
+          "subtrain": [21, 6, 5198, 194, 0, 0, 0],
+          "inner_validation": [9, 3, 1428, 49, 0, 0, 0],
+          "inter_test": [1, 1, 1428, 41, 0, 0, 0]
+        }
+      },
+      {
+        "dataset_id": "hf_lung_v1",
+        "task_id": "hf_phase_presence",
+        "label": "I",
+        "eligibility": "diagnostic_only",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "date_proxy_YYYYMMDD_not_patient",
+        "negative_semantics": "observed_peer_label_absence_inside_phase_eligible_pool",
+        "cannot_cast_go_no_go_vote": true,
+        "reason": "source test has only 5 observed negatives from 3 date proxies",
+        "support": {
+          "full_train": [7510, 116, 49, 13, 0, 250, 32],
+          "subtrain": [5132, 92, 30, 7, 0, 160, 24],
+          "inner_validation": [2378, 24, 19, 6, 0, 90, 8],
+          "outer_test": [1935, 39, 5, 3, 0, 16, 8]
+        }
+      },
+      {
+        "dataset_id": "hf_lung_v1",
+        "task_id": "hf_phase_presence",
+        "label": "E",
+        "eligibility": "primary_evaluable",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "date_proxy_YYYYMMDD_not_patient",
+        "negative_semantics": "observed_peer_label_absence_inside_phase_eligible_pool",
+        "support": {
+          "full_train": [4593, 102, 2966, 100, 0, 250, 32],
+          "subtrain": [2721, 79, 2441, 79, 0, 160, 24],
+          "inner_validation": [1872, 23, 525, 21, 0, 90, 8],
+          "outer_test": [950, 37, 990, 37, 0, 16, 8]
+        }
+      },
+      {
+        "dataset_id": "hf_lung_v1",
+        "task_id": "hf_adventitious_presence",
+        "label": "D",
+        "eligibility": "primary_evaluable",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "date_proxy_YYYYMMDD_not_patient",
+        "negative_semantics": "observed_peer_label_absence_inside_adventitious_eligible_pool",
+        "support": {
+          "full_train": [3076, 102, 1923, 92, 0, 2810, 101],
+          "subtrain": [1898, 79, 1246, 70, 0, 2178, 80],
+          "inner_validation": [1178, 23, 677, 22, 0, 632, 21],
+          "outer_test": [368, 32, 589, 23, 0, 999, 37]
+        }
+      },
+      {
+        "dataset_id": "hf_lung_v1",
+        "task_id": "hf_adventitious_presence",
+        "label": "Wheeze",
+        "eligibility": "primary_evaluable",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "date_proxy_YYYYMMDD_not_patient",
+        "negative_semantics": "observed_peer_label_absence_inside_adventitious_eligible_pool",
+        "support": {
+          "full_train": [2253, 88, 2746, 104, 0, 2810, 101],
+          "subtrain": [1265, 66, 1879, 82, 0, 2178, 80],
+          "inner_validation": [988, 22, 867, 22, 0, 632, 21],
+          "outer_test": [405, 20, 552, 33, 0, 999, 37]
+        }
+      },
+      {
+        "dataset_id": "hf_lung_v1",
+        "task_id": "hf_adventitious_presence",
+        "label": "Rhonchi",
+        "eligibility": "primary_evaluable",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "date_proxy_YYYYMMDD_not_patient",
+        "negative_semantics": "observed_peer_label_absence_inside_adventitious_eligible_pool",
+        "support": {
+          "full_train": [944, 83, 4055, 108, 0, 2810, 101],
+          "subtrain": [522, 62, 2622, 84, 0, 2178, 80],
+          "inner_validation": [422, 21, 1433, 24, 0, 632, 21],
+          "outer_test": [296, 22, 661, 34, 0, 999, 37]
+        }
+      },
+      {
+        "dataset_id": "hf_lung_v1",
+        "task_id": "hf_adventitious_presence",
+        "label": "Stridor",
+        "eligibility": "diagnostic_only",
+        "rule_id": "fixed_outer_inter_v1",
+        "group_identity": "date_proxy_YYYYMMDD_not_patient",
+        "negative_semantics": "observed_peer_label_absence_inside_adventitious_eligible_pool",
+        "cannot_cast_go_no_go_vote": true,
+        "reason": "source test has 12 positives from 7 date proxies",
+        "support": {
+          "full_train": [253, 30, 4746, 110, 0, 2810, 101],
+          "subtrain": [224, 22, 2920, 86, 0, 2178, 80],
+          "inner_validation": [29, 8, 1826, 24, 0, 632, 21],
+          "outer_test": [12, 7, 945, 35, 0, 999, 37]
+        }
+      },
+      {
+        "dataset_id": "kauh_fraiwan_v3",
+        "task_id": "kauh_raw9",
+        "label": "N",
+        "eligibility": "primary_evaluable",
+        "rule_id": "kauh_patient_oof_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "support": {
+          "full_release": [105, 35, 231, 77, 0, 0, 0],
+          "aggregate_oof": [105, 35, 231, 77, 0, 0, 0]
+        },
+        "fold_coverage": [5, 5, 5]
+      },
+      {
+        "dataset_id": "kauh_fraiwan_v3",
+        "task_id": "kauh_raw9",
+        "label": "E W",
+        "eligibility": "primary_evaluable",
+        "rule_id": "kauh_patient_oof_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "support": {
+          "full_release": [117, 39, 219, 73, 0, 0, 0],
+          "aggregate_oof": [117, 39, 219, 73, 0, 0, 0]
+        },
+        "fold_coverage": [5, 5, 5]
+      },
+      {
+        "dataset_id": "kauh_fraiwan_v3",
+        "task_id": "kauh_raw9",
+        "label": "I E W",
+        "eligibility": "not_evaluable",
+        "rule_id": "kauh_patient_oof_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "cannot_cast_go_no_go_vote": true,
+        "reason": "only 2 patients; subtrain/validation/test fold coverage is 4/3/2",
+        "support": {
+          "full_release": [6, 2, 330, 110, 0, 0, 0],
+          "aggregate_oof": [6, 2, 330, 110, 0, 0, 0]
+        },
+        "fold_coverage": [4, 3, 2]
+      },
+      {
+        "dataset_id": "kauh_fraiwan_v3",
+        "task_id": "kauh_raw9",
+        "label": "C",
+        "eligibility": "diagnostic_only",
+        "rule_id": "kauh_patient_oof_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "cannot_cast_go_no_go_vote": true,
+        "reason": "7 patients and aggregate 21 OOF recordings are below the primary 10-patient/30-recording threshold",
+        "support": {
+          "full_release": [21, 7, 315, 105, 0, 0, 0],
+          "aggregate_oof": [21, 7, 315, 105, 0, 0, 0]
+        },
+        "fold_coverage": [5, 5, 4]
+      },
+      {
+        "dataset_id": "kauh_fraiwan_v3",
+        "task_id": "kauh_raw9",
+        "label": "I C",
+        "eligibility": "not_evaluable",
+        "rule_id": "kauh_patient_oof_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "cannot_cast_go_no_go_vote": true,
+        "reason": "only 1 patient and no validation fold contains the label",
+        "support": {
+          "full_release": [3, 1, 333, 111, 0, 0, 0],
+          "aggregate_oof": [3, 1, 333, 111, 0, 0, 0]
+        },
+        "fold_coverage": [4, 0, 1]
+      },
+      {
+        "dataset_id": "kauh_fraiwan_v3",
+        "task_id": "kauh_raw9",
+        "label": "I C E W",
+        "eligibility": "not_evaluable",
+        "rule_id": "kauh_patient_oof_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "cannot_cast_go_no_go_vote": true,
+        "reason": "only 2 patients and no validation fold contains the label",
+        "support": {
+          "full_release": [6, 2, 330, 110, 0, 0, 0],
+          "aggregate_oof": [6, 2, 330, 110, 0, 0, 0]
+        },
+        "fold_coverage": [5, 0, 2]
+      },
+      {
+        "dataset_id": "kauh_fraiwan_v3",
+        "task_id": "kauh_raw9",
+        "label": "Crep",
+        "eligibility": "primary_evaluable",
+        "rule_id": "kauh_patient_oof_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "support": {
+          "full_release": [69, 23, 267, 89, 0, 0, 0],
+          "aggregate_oof": [69, 23, 267, 89, 0, 0, 0]
+        },
+        "fold_coverage": [5, 5, 5],
+        "constraint": "Primary eligibility applies only to the raw dataset-native Crep class and does not normalize Crep to crackle."
+      },
+      {
+        "dataset_id": "kauh_fraiwan_v3",
+        "task_id": "kauh_raw9",
+        "label": "Bronchial",
+        "eligibility": "not_evaluable",
+        "rule_id": "kauh_patient_oof_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "cannot_cast_go_no_go_vote": true,
+        "reason": "only 1 patient and no validation fold contains the label",
+        "support": {
+          "full_release": [3, 1, 333, 111, 0, 0, 0],
+          "aggregate_oof": [3, 1, 333, 111, 0, 0, 0]
+        },
+        "fold_coverage": [4, 0, 1]
+      },
+      {
+        "dataset_id": "kauh_fraiwan_v3",
+        "task_id": "kauh_raw9",
+        "label": "I C B",
+        "eligibility": "not_evaluable",
+        "rule_id": "kauh_patient_oof_v1",
+        "group_identity": "patient_id_direct",
+        "negative_semantics": "observed_peer_class",
+        "cannot_cast_go_no_go_vote": true,
+        "reason": "only 2 patients; validation/test fold coverage is 2/2; B semantics remain unresolved",
+        "support": {
+          "full_release": [6, 2, 330, 110, 0, 0, 0],
+          "aggregate_oof": [6, 2, 330, 110, 0, 0, 0]
+        },
+        "fold_coverage": [5, 2, 2]
+      }
+    ],
+    "kauh_fold_positive_support": [
+      {
+        "fold": 0,
+        "partition_totals_samples_groups": {
+          "subtrain": [198, 66],
+          "inner_validation": [69, 23],
+          "outer_test": [69, 23]
+        },
+        "outer_test_ordered_id_sha256": "9e8d37dc3066da6e3611266233d8e51ba4db0d26b7319cd7d2155002a802734a",
+        "labels": {
+          "N": [[51, 17], [27, 9], [27, 9]],
+          "E W": [[69, 23], [24, 8], [24, 8]],
+          "I E W": [[3, 1], [0, 0], [3, 1]],
+          "C": [[15, 5], [6, 2], [0, 0]],
+          "I C": [[3, 1], [0, 0], [0, 0]],
+          "I C E W": [[6, 2], [0, 0], [0, 0]],
+          "Crep": [[42, 14], [12, 4], [15, 5]],
+          "Bronchial": [[3, 1], [0, 0], [0, 0]],
+          "I C B": [[6, 2], [0, 0], [0, 0]]
+        }
+      },
+      {
+        "fold": 1,
+        "partition_totals_samples_groups": {
+          "subtrain": [198, 66],
+          "inner_validation": [69, 23],
+          "outer_test": [69, 23]
+        },
+        "outer_test_ordered_id_sha256": "4c8b4e64955e0198e55b34df84069d7aab941a7b9874e76ead7542c28e189b07",
+        "labels": {
+          "N": [[57, 19], [33, 11], [15, 5]],
+          "E W": [[69, 23], [12, 4], [36, 12]],
+          "I E W": [[0, 0], [6, 2], [0, 0]],
+          "C": [[15, 5], [3, 1], [3, 1]],
+          "I C": [[3, 1], [0, 0], [0, 0]],
+          "I C E W": [[3, 1], [0, 0], [3, 1]],
+          "Crep": [[45, 15], [15, 5], [9, 3]],
+          "Bronchial": [[3, 1], [0, 0], [0, 0]],
+          "I C B": [[3, 1], [0, 0], [3, 1]]
+        }
+      },
+      {
+        "fold": 2,
+        "partition_totals_samples_groups": {
+          "subtrain": [201, 67],
+          "inner_validation": [69, 23],
+          "outer_test": [66, 22]
+        },
+        "outer_test_ordered_id_sha256": "8101de671a95f23ff5b1e2e2e9b9f9e8bc4b4bbc6bd25d5bc5a24896ba2e1770",
+        "labels": {
+          "N": [[66, 22], [18, 6], [21, 7]],
+          "E W": [[81, 27], [27, 9], [9, 3]],
+          "I E W": [[3, 1], [3, 1], [0, 0]],
+          "C": [[9, 3], [6, 2], [6, 2]],
+          "I C": [[3, 1], [0, 0], [0, 0]],
+          "I C E W": [[6, 2], [0, 0], [0, 0]],
+          "Crep": [[27, 9], [12, 4], [30, 10]],
+          "Bronchial": [[3, 1], [0, 0], [0, 0]],
+          "I C B": [[3, 1], [3, 1], [0, 0]]
+        }
+      },
+      {
+        "fold": 3,
+        "partition_totals_samples_groups": {
+          "subtrain": [201, 67],
+          "inner_validation": [69, 23],
+          "outer_test": [66, 22]
+        },
+        "outer_test_ordered_id_sha256": "913a4bb397aa52869b07699297a9e15fe8b841df85ede0052a18d7210f47381f",
+        "labels": {
+          "N": [[60, 20], [27, 9], [18, 6]],
+          "E W": [[69, 23], [24, 8], [24, 8]],
+          "I E W": [[3, 1], [3, 1], [0, 0]],
+          "C": [[12, 4], [3, 1], [6, 2]],
+          "I C": [[3, 1], [0, 0], [0, 0]],
+          "I C E W": [[3, 1], [0, 0], [3, 1]],
+          "Crep": [[45, 15], [12, 4], [12, 4]],
+          "Bronchial": [[3, 1], [0, 0], [0, 0]],
+          "I C B": [[3, 1], [0, 0], [3, 1]]
+        }
+      },
+      {
+        "fold": 4,
+        "partition_totals_samples_groups": {
+          "subtrain": [201, 67],
+          "inner_validation": [69, 23],
+          "outer_test": [66, 22]
+        },
+        "outer_test_ordered_id_sha256": "d1fbdb38a0c159b4086a9d2e43c1dbe50865149b140119de6e1b685dcc4c56b8",
+        "labels": {
+          "N": [[54, 18], [27, 9], [24, 8]],
+          "E W": [[72, 24], [21, 7], [24, 8]],
+          "I E W": [[3, 1], [0, 0], [3, 1]],
+          "C": [[12, 4], [3, 1], [6, 2]],
+          "I C": [[0, 0], [0, 0], [3, 1]],
+          "I C E W": [[6, 2], [0, 0], [0, 0]],
+          "Crep": [[51, 17], [15, 5], [3, 1]],
+          "Bronchial": [[0, 0], [0, 0], [3, 1]],
+          "I C B": [[3, 1], [3, 1], [0, 0]]
+        }
+      }
+    ],
+    "kauh_fold_label_tuple_fields": [
+      "subtrain_positive_samples_groups",
+      "inner_validation_positive_samples_groups",
+      "outer_test_positive_samples_groups"
+    ],
+    "frozen_sets": {
+      "primary_gate_eligible": [
+        "icbhi_flat4:normal",
+        "icbhi_flat4:crackle",
+        "icbhi_flat4:wheeze",
+        "icbhi_flat4:both",
+        "spr_event_binary:normal",
+        "spr_event_binary:adventitious",
+        "spr_event_seven:Normal",
+        "spr_event_seven:Wheeze",
+        "spr_event_seven:Fine Crackle",
+        "hf_phase_presence:E",
+        "hf_adventitious_presence:D",
+        "hf_adventitious_presence:Wheeze",
+        "hf_adventitious_presence:Rhonchi",
+        "kauh_raw9:N",
+        "kauh_raw9:E W",
+        "kauh_raw9:Crep"
+      ],
+      "diagnostic_only": [
+        "spr_event_seven:Coarse Crackle",
+        "spr_event_seven:Wheeze+Crackle",
+        "hf_phase_presence:I",
+        "hf_adventitious_presence:Stridor",
+        "kauh_raw9:C"
+      ],
+      "not_evaluable": [
+        "spr_event_seven:Rhonchi",
+        "spr_event_seven:Stridor",
+        "kauh_raw9:I E W",
+        "kauh_raw9:I C",
+        "kauh_raw9:I C E W",
+        "kauh_raw9:Bronchial",
+        "kauh_raw9:I C B"
+      ],
+      "go_no_go_vote_policy": "Only primary_gate_eligible labels may cast success votes. Diagnostic-only and not-evaluable labels must be reported but cannot satisfy or veto the primary go/no-go gate."
+    },
+    "split_receipts": {
+      "icbhi": {
+        "method": "StratifiedGroupKFold(n_splits=5, shuffle=true, random_state=20260712), fold 0 inside official train",
+        "partition_samples": {
+          "subtrain": 3055,
+          "inner_validation": 1087,
+          "outer_test": 2756
+        },
+        "partition_groups": {
+          "subtrain": 63,
+          "inner_validation": 16,
+          "outer_test": 49
+        },
+        "official_train_test_patient_overlap": [
+          "156",
+          "218"
+        ]
+      },
+      "sprsound": {
+        "method": "StratifiedGroupKFold(n_splits=5, shuffle=true, random_state=20260722), fold 0 inside official BioCAS2022 train",
+        "partition_samples": {
+          "subtrain": 5219,
+          "inner_validation": 1437,
+          "inter_test": 1429
+        },
+        "partition_groups": {
+          "subtrain": 194,
+          "inner_validation": 49,
+          "inter_test": 41
+        },
+        "inter_ordered_event_id_sha256": "81a6b15783a01eb86abe218928884b41e7f975f64eedaefd546e2dbf3deba44b",
+        "intra_policy": "excluded_from_primary; never pooled with inter",
+        "intra_audit_only_positive_support_samples_groups": {
+          "Normal": [688, 137],
+          "Rhonchi": [14, 5],
+          "Wheeze": [108, 30],
+          "Stridor": [2, 1],
+          "Coarse Crackle": [14, 5],
+          "Fine Crackle": [175, 49],
+          "Wheeze+Crackle": [3, 3]
+        }
+      },
+      "hf_lung": {
+        "method": "GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=20260728) inside source train; canonical YYYYMMDD date proxy",
+        "source_partition_samples": {
+          "train": 7809,
+          "test": 1956
+        },
+        "source_partition_date_proxies": {
+          "train": 118,
+          "test": 39,
+          "overlap": 0
+        },
+        "partition_samples": {
+          "subtrain": 5322,
+          "inner_validation": 2487,
+          "outer_test": 1956
+        },
+        "partition_date_proxies": {
+          "subtrain": 94,
+          "inner_validation": 24,
+          "outer_test": 39
+        },
+        "assignment_sha256": "33387aa62ebcb8adbc1fba626e6d27f27a3121d3a686cda6fc075a7da106943e",
+        "patient_id": null,
+        "patient_id_status": "not_provided",
+        "current_loader_compatibility": "fail_due_to_mixed_hyphenated_and_unhyphenated_date_proxy",
+        "legacy_130_41_proxy_grouping": "rejected_not_accepted_split_evidence"
+      },
+      "kauh": {
+        "method": "outer StratifiedGroupKFold(n_splits=5, shuffle=true, random_state=20260728); inner StratifiedGroupKFold(n_splits=4, shuffle=true, random_state=20260728+outer_fold), fold 0",
+        "aggregate_oof_samples": 336,
+        "aggregate_oof_unique_samples": 336,
+        "patients": 112,
+        "patient_overlap": 0,
+        "sibling_policy": "all B/D/E recordings for one P-number remain in one partition"
+      }
+    },
+    "provenance": {
+      "icbhi_manifest": {
+        "path": "dataset/processed/manifests/icbhi_2017_cycles.csv",
+        "sha256": "d3e57e625a40579db5551dd34e07b85a2d4d3b273361499508aed1c579bee40c"
+      },
+      "icbhi_source_split": {
+        "path": "dataset/raw/icbhi_2017/ICBHI_challenge_train_test.txt",
+        "sha256": "5afa11096c3988d8aaefa5164c053c873f718e730fbb286d482f516b01f05c52"
+      },
+      "sprsound_release": {
+        "root": "dataset/raw/sprsound/source_original/SPRSound-874eeb8736ddb78937c2fb5332fc7e7293d0f0ca/BioCAS2022",
+        "commit": "874eeb8736ddb78937c2fb5332fc7e7293d0f0ca",
+        "annotation_tree_sha256": "431a8b68f476296d4da1e574b12f7b8f965be4676c0059b68bbafebb9b3f2db7"
+      },
+      "hf_lung_release": {
+        "root": "dataset/raw/hf_lung_v1/source_original",
+        "label_tree_sha256": "31997bf3d5b43f3c959e681b7bee5b3f5c0bd1f320cac2943c9f99ac26861c1b",
+        "readme_path": "dataset/raw/hf_lung_v1/README.md",
+        "readme_sha256": "330f15668edad3b0805a57a922cad9563db14224de2169d6c01c6868bc9cb1ce"
+      },
+      "kauh_release": {
+        "audio_root": "dataset/raw/kauh_fraiwan/source_original/audio_files",
+        "ordered_wav_name_sha256": "e846682237aa5969064f1a9ad85a561f2b1f303e04ef8ea3aad6f05e44c7ced8",
+        "workbook_path": "dataset/raw/kauh_fraiwan/Data annotation.xlsx",
+        "workbook_sha256": "a54f46a5fb6b2cf290ad7edc6c97ad1524be109dfe71054922c5693b918bf4cf"
+      },
+      "audited_split_implementations": [
+        {
+          "path": "baseline/shared_encoder_native_heads/protocol.py",
+          "sha256": "2a34601dca6d41e409cd467c2f83a16f47c1a1cb4c654b286e7f960b3ccb64f4",
+          "compatibility": "pass_for_icbhi_and_sprsound"
+        },
+        {
+          "path": "baseline/four_dataset_frozen_encoder/data.py",
+          "sha256": "94f062606e9bb8f9f8679b95f6485da541bc90165dea9a0a3478271d896a2870",
+          "compatibility": "pass_for_kauh; fail_for_hf_date_proxy_normalization"
+        }
+      ]
+    },
+    "verification_requirements": {
+      "label_assignment_count": 28,
+      "expected_state_counts": {
+        "primary_evaluable": 16,
+        "diagnostic_only": 5,
+        "not_evaluable": 7
+      },
+      "no_duplicate_dataset_task_label": true,
+      "missing_label_is_negative": false,
+      "hf_proxy_is_patient": false,
+      "kauh_siblings_grouped": true,
+      "spr_inter_intra_pooled": false,
+      "future_method_results_read": false,
+      "training_run": false
+    }
+  }
+}

@@ -1,0 +1,11 @@
+id: sprsound_sg_scl_frozen_encoder_target_heads
+method: sg_scl
+task: frozen_source_encoder_target_heads
+dataset_root: dataset/raw/sprsound
+source_repo: result/sg_scl_sprsound_transfer_20260722_235659/source/repo
+task_checkpoint: .cache/checkpoints/sg_scl/server_epoch27/best.pth
+result_root: result/sprsound_sg_scl_frozen_encoder_target_heads
+cache_root: .cache/sprsound_sg_scl_frozen_encoder_target_heads
+device: cpu
+threads: 8
+batch_size: 8

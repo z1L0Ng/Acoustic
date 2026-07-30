@@ -1,0 +1,147 @@
+{
+  "experiment_id": "four_dataset_shortcut_diagnostic",
+  "protocol_version": "four_dataset_shortcut_diagnostic_v1",
+  "status": "preregistered_before_probe_outcomes",
+  "scientific_question": "After controlling native true class or observed label, accepted support and prediction-unit structure, do recording-level acquisition covariates improve grouped out-of-fold prediction of corrected T0 errors or true-class margin?",
+  "claim_boundary": [
+    "bounded post-hoc diagnostic",
+    "acquisition-correlated error and accessible domain information only",
+    "no causal shortcut claim",
+    "no acoustic model training or modification",
+    "R0 remains ICBHI official-test-selected"
+  ],
+  "frozen_inputs": {
+    "r0_cache": {
+      "path": ".cache/four_dataset_pafa_frozen_encoder/embeddings.npz",
+      "sha256": "f40ae7fe581457bc86d76b93b1ee811e7ea01bc5e098a6daa73db451f96d1b31"
+    },
+    "r1_cache": {
+      "path": ".cache/four_dataset_representation_attribution/r1_beats_as2m_audioset_only/embeddings.npz",
+      "sha256": "3b3798cc9d01dbdfa8168a1cd641d658eb2fd4553799e59b84b7aae7ad0f5a69"
+    },
+    "corrected_t0_root": "result/four_dataset_representation_attribution/hf_proxy_fixed_v2/r0_pafa_icbhi_task_encoder",
+    "gate_d_verification": "result/four_dataset_support_aware_crt/verification.json",
+    "recording_features": {
+      "path": "result/acoustic_distribution/recording_features.csv",
+      "sha256": "1a25a6a9171b25a7cab2807b3119d105d553c138b858b251524287b860b11ebb",
+      "rows": 13704,
+      "unit": "recording",
+      "read_only": true
+    },
+    "tail_contract": {
+      "path": "docs/datasets/four_dataset_task_contract_draft_2026-07-28.json",
+      "sha256": "48ed66a28674b41354f259c13283054de59ca9c1f07e91ce5ed28a7d80f2bc09",
+      "status": "tail_eligibility_management_accepted",
+      "assignments": {
+        "primary_evaluable": 16,
+        "diagnostic_only": 5,
+        "not_evaluable": 7
+      }
+    },
+    "hf_assignment_sha256": "33387aa62ebcb8adbc1fba626e6d27f27a3121d3a686cda6fc075a7da106943e"
+  },
+  "lineage": {
+    "icbhi": "cycle -> source recording -> patient_id; official recording-test patient-overlap caveat retained",
+    "sprsound": "event -> source recording -> patient_id; inter only",
+    "hf_lung": "recording -> canonical YYYY-MM-DD date proxy; proxy is not patient identity",
+    "kauh": "recording -> patient_id; B/D/E siblings remain grouped",
+    "feature_join": "resolved audio path; exactly one recording-feature row per prediction unit"
+  },
+  "corrected_t0_prediction_instances": {
+    "non_kauh": "retain all five KAUH-fold-conditioned T0 model predictions as repeated prediction instances; never average them into a new ensemble; model_fold is an E0 control and patient or proxy grouping keeps repeated units together",
+    "kauh": "one patient-grouped OOF prediction per recording from its held-out outer fold",
+    "statistics": "unique prediction-unit support and prediction-instance counts are reported separately; grouped resampling uses lineage group"
+  },
+  "embedding_dataset_id_probe": {
+    "representations": [
+      "r0_pafa_icbhi_task_encoder",
+      "r1_beats_as2m_audioset_only"
+    ],
+    "model": "StandardScaler fit on probe train fold plus multinomial LogisticRegression(C=1, class_weight=balanced, lbfgs, max_iter=500)",
+    "folds": "five fixed StratifiedGroupKFold folds, seed 20260729; group is dataset-prefixed patient or HF date proxy",
+    "metrics": [
+      "balanced_accuracy",
+      "macro_f1",
+      "confusion"
+    ],
+    "interpretation": "dataset identity accessibility only; never sufficient for a shortcut conclusion"
+  },
+  "within_dataset_error_probe": {
+    "scope": "six native tasks analyzed separately; no pooled raw Score",
+    "primary_rows": "multiclass rows whose true class is primary_evaluable; multilabel observed rows for primary_evaluable output labels; unknown and not-annotated omitted",
+    "reported_only": "diagnostic_only and not_evaluable labels receive support, error-rate and margin summaries but no evidence vote",
+    "outcomes": {
+      "error": "incorrect=1 for fixed argmax or fixed 0.5 native decision",
+      "true_class_margin": "multiclass p_true minus max other; multilabel true-state probability minus alternate-state probability"
+    },
+    "e0": {
+      "categorical": [
+        "true_label",
+        "true_state",
+        "model_fold"
+      ],
+      "numeric": [
+        "log1p_accepted_support",
+        "unit_duration_s",
+        "units_per_recording"
+      ]
+    },
+    "e1_additional_recording_covariates": {
+      "categorical": [
+        "device",
+        "site",
+        "native_sr_category"
+      ],
+      "numeric": [
+        "recording_duration_s",
+        "dbfs",
+        "crest_db",
+        "clip_frac",
+        "snr_proxy_db",
+        "centroid_hz",
+        "bandwidth_hz",
+        "rolloff85_hz",
+        "flatness",
+        "zcr",
+        "band_0_100",
+        "band_100_250",
+        "band_250_500",
+        "band_500_1000",
+        "band_1000_2000"
+      ],
+      "excluded_as_label_adjacent": [
+        "recording_class",
+        "sound_type",
+        "diagnosis",
+        "filename",
+        "path"
+      ]
+    },
+    "models": {
+      "error": "fold-local preprocessing plus LogisticRegression(C=1, class_weight=balanced, lbfgs, max_iter=1000)",
+      "margin": "fold-local preprocessing plus Ridge(alpha=1)"
+    },
+    "folds": "five fixed StratifiedGroupKFold folds by lineage group, seed 20260729",
+    "negative_control": "within each probe fold, permute the complete covariate block among unique source recordings separately in train and test; seed 20260730 plus task/fold; repeated units retain one shuffled recording covariate vector",
+    "fit_boundary": "all one-hot category fitting, scaling and model fitting occur on probe train fold only"
+  },
+  "statistical_receipt": {
+    "grouped_bootstrap_repetitions": 1000,
+    "paired_group_permutation_repetitions": 2000,
+    "seed": 20260731,
+    "primary_delta": "E1 minus E0 OOF error AUROC",
+    "secondary_delta": "E1 minus E0 OOF balanced accuracy; margin R2 and MAE deltas are descriptive",
+    "practical_delta_absolute": 0.03,
+    "fold_consistency": "at least four of five error-AUROC fold deltas are positive",
+    "bootstrap_rule": "95% grouped-bootstrap CI lower bound for error-AUROC delta is greater than zero",
+    "permutation_rule": "one-sided paired group-swap permutation p <= 0.05",
+    "negative_control_rule": "shuffled-covariate condition must not independently satisfy the complete practical, fold, bootstrap and permutation rule",
+    "task_vote": "primary-evaluable rows only; all rule components must pass",
+    "decision": "acquisition_correlated_error_supported only when at least two native tasks vote; otherwise not_supported_or_inconclusive"
+  },
+  "routing": {
+    "acquisition_correlated_error_supported": "recommend a normalization or domain-residual frozen control",
+    "not_supported_or_inconclusive": "recommend window or token-level event-sensitive pooling",
+    "implementation": "recommendation only; do not implement either method in this experiment"
+  }
+}

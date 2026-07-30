@@ -1,0 +1,65 @@
+{
+  "experiment_id": "four_dataset_support_aware_crt",
+  "protocol_version": "four_dataset_support_aware_crt_v1",
+  "status": "preregistered_before_t1_outer_test_scoring",
+  "scientific_question": "Does classifier-only class-balanced retraining improve support-eligible tail metrics without unacceptable native-metric regression?",
+  "dependencies": {
+    "tail_contract": "docs/datasets/four_dataset_task_contract_draft_2026-07-28.json",
+    "tail_contract_status": "tail_eligibility_management_accepted",
+    "accepted_assignments": {
+      "primary_evaluable": 16,
+      "diagnostic_only": 5,
+      "not_evaluable": 7
+    },
+    "hf_assignment_sha256": "33387aa62ebcb8adbc1fba626e6d27f27a3121d3a686cda6fc075a7da106943e",
+    "gate_a": "result/four_dataset_pafa_frozen_encoder/hf_proxy_fixed_v2/impact_receipt.json",
+    "gate_b": "result/four_dataset_representation_attribution/hf_proxy_fixed_v2/verification.json",
+    "gate_c": "result/four_dataset_shared_compatible_head_harmonization/hf_proxy_fixed_v2/verification.json"
+  },
+  "representation": {
+    "name": "r0_pafa_icbhi_task_encoder",
+    "cache_sha256": "f40ae7fe581457bc86d76b93b1ee811e7ea01bc5e098a6daa73db451f96d1b31",
+    "selection_caveat": "ICBHI official-test-selected PAFA task encoder",
+    "claim_boundary": "target-supervised frozen-feature evidence; not clean source-only generalization"
+  },
+  "conditions": {
+    "t0_corrected_r0_d2_reference": "Corrected-HF R0 D2 shared-adapter native-head reference; read-only reuse.",
+    "t1_support_aware_classifier_retraining": "Freeze each corrected R0 D2 fold-specific adapter, discard and reinitialize every final native classifier, then retrain classifiers only."
+  },
+  "t1_training": {
+    "seed": 20260728,
+    "epochs": 5,
+    "batch_size": 128,
+    "optimizer": "Adam",
+    "learning_rate": 0.001,
+    "encoder_and_adapter": "frozen; adapter eval mode; dropout disabled during classifier retraining",
+    "multiclass_binary": "class-balanced replacement sampling over subtrain classes with positive support; epoch draw count equals eligible subtrain rows; unweighted cross entropy",
+    "multilabel": "each output row trained independently with 50/50 replacement from observed positives and observed negatives; epoch draw count equals task-eligible subtrain rows; unknown/not-annotated rows omitted; unweighted binary cross entropy",
+    "selection": "validation macro F1 only; multiclass per task and multilabel per output row",
+    "inference": "fixed argmax for multiclass and fixed 0.5 threshold for multilabel; no threshold search",
+    "test_policy": "outer/test predictions written label-free before terminal SPR annotation join; no test-side selection"
+  },
+  "tail_analysis": {
+    "eligibility": "Only labels marked primary_evaluable in the accepted contract may contribute a go vote. Diagnostic and not-evaluable labels remain reported.",
+    "eligible_macro_f1": "unweighted mean class F1 over primary_evaluable labels in each native task",
+    "tail_label_rule": "Within each task, primary-evaluable labels with accepted pre-test subtrain/full-release positive support below that task's maximum primary support are tail labels; if a task has one primary label, that label remains the tail diagnostic.",
+    "tail_recall": "unweighted mean recall over the preregistered tail labels",
+    "material_improvement_absolute": 0.03,
+    "regression_guardrail_absolute": 0.03,
+    "go_rule": "At least two primary-evaluable native tasks improve tail recall or eligible macro F1 by at least 0.03, while every task's weighted/micro F1, available native score, and available specificity regress by no more than 0.03."
+  },
+  "reporting": {
+    "folds": "five KAUH-fold-conditioned models for every condition; KAUH aggregate patient OOF",
+    "metrics": "all native metrics and classwise precision/recall/F1/support; no pooled cross-dataset Score",
+    "sprsound": "label-free inter prediction followed by terminal scoring join",
+    "hf_lung": "corrected date proxy is grouping only and never patient_id; missing/not-annotated is omitted, not negative"
+  },
+  "forbidden": [
+    "encoder or adapter updates",
+    "new representation, loss, seed, condition, threshold or hyperparameter sweep",
+    "full encoder training",
+    "server migration",
+    "MoE or router",
+    "pooled cross-dataset Score"
+  ]
+}
