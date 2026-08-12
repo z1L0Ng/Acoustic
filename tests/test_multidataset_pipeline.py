@@ -41,6 +41,33 @@ from baseline.multidataset_pipeline.joint_native import (
     assert_p1_p2_matched,
     build_source_proportional_receipt,
 )
+from baseline.multidataset_pipeline.preflight import (
+    CandidateDimensionAdapter,
+    HF_NATIVE_METRICS,
+    P1_P5_SELECTION_RULE,
+    P1_P5_UPDATE_BUDGET,
+    P1_P5_UPDATES_PER_REFERENCE_EPOCH,
+    P1_P5_VALIDATION_INTERVAL_UPDATES,
+    P6TokenTemporalHead,
+    PIPELINE_ENCODERS,
+    PRODUCTION_ADAPTER_STATUS,
+    SharedWindowCoreConfig,
+    SharedWindowEncoderOutput,
+    assert_p1_p5_matched,
+    freeze_receipt,
+    hf_masked_channel_balanced_bce,
+    select_validation_checkpoint,
+    source_proportional_validation_selection_loss,
+    validate_independent_verifier_receipt,
+)
+from baseline.multidataset_pipeline.sliding_window import (
+    WINDOW_SAMPLES,
+    WINDOW_STRIDE_SAMPLES,
+    collate_sliding_windows,
+    hf_window_supervision,
+    masked_mean_window_embeddings,
+    source_window_starts,
+)
 
 
 def sample(
@@ -460,19 +487,25 @@ class JointNativeContractTest(unittest.TestCase):
                 "binary": torch.tensor([0, 1]),
                 "raw7": torch.tensor([2, 3]),
             },
+            "HF": {"temporal4": torch.zeros(2, 3, 4)},
             "KAUH": {"raw9": torch.tensor([4, 5])},
         }.items():
-            outputs = model(torch.randn(2, 768), lane)
-            losses.extend(
-                F.cross_entropy(outputs[task], target)
-                for task, target in task_targets.items()
-            )
+            values = torch.randn(2, 3, 768) if lane == "HF" else torch.randn(2, 768)
+            outputs = model(values, lane)
+            for task, target in task_targets.items():
+                losses.append(
+                    F.binary_cross_entropy_with_logits(outputs[task], target)
+                    if lane == "HF"
+                    else F.cross_entropy(outputs[task], target)
+                )
         sum(losses).backward()
         self.assertGreater(model.projector.weight.grad.abs().sum().item(), 0)
         for head in model.heads.values():
             self.assertGreater(head.weight.grad.abs().sum().item(), 0)
-        with self.assertRaises(ValueError):
-            model(torch.randn(2, 768), "HF")
+        self.assertEqual(
+            tuple(model(torch.randn(2, 3, 768), "HF")["temporal4"].shape),
+            (2, 3, 4),
+        )
 
     def test_frozen_encoder_gate(self):
         encoder = nn.Linear(3, 3)
@@ -483,12 +516,12 @@ class JointNativeContractTest(unittest.TestCase):
         assert_frozen_encoder(encoder)
 
     def test_source_proportional_receipt_is_deterministic(self):
-        counts = {"ICBHI": 10, "SPRSound": 20, "KAUH": 30}
+        counts = {"ICBHI": 10, "SPRSound": 20, "HF": 30, "KAUH": 40}
         first = build_source_proportional_receipt(counts, draws=20)
         second = build_source_proportional_receipt(counts, draws=20)
         self.assertEqual(first, second)
         self.assertEqual(first["seed"], 20260728)
-        self.assertEqual(first["probabilities"]["KAUH"], 0.5)
+        self.assertEqual(first["probabilities"]["KAUH"], 0.4)
         self.assertEqual(first["projector_architecture"], "minimal_linear_projector")
         self.assertTrue(first["projector_bias"])
         with self.assertRaises(ValueError):
@@ -518,7 +551,282 @@ class JointNativeContractTest(unittest.TestCase):
         self.assertEqual(receipt["input_dim"], 768)
         self.assertEqual(receipt["output_dim"], 256)
         self.assertTrue(receipt["bias"])
+        self.assertTrue(receipt["hf_uses_projector"])
         self.assertIsNotNone(model.projector.bias)
+
+
+class SlidingWindowContractTest(unittest.TestCase):
+    def test_boundary_short_long_tail_and_batch_invariance(self):
+        self.assertEqual(source_window_starts(WINDOW_SAMPLES), (0,))
+        self.assertEqual(
+            source_window_starts(WINDOW_SAMPLES + WINDOW_STRIDE_SAMPLES),
+            (0, WINDOW_STRIDE_SAMPLES),
+        )
+        short = sample("ICBHI", "cycle", 800, "short", start_s=5.0)
+        long = sample("KAUH", "recording", 72_000, "long")
+        alone = collate_sliding_windows([short])
+        together = collate_sliding_windows([short, long])
+        self.assertEqual(alone.receipt()["window_counts"], [1])
+        receipt = together.receipt()
+        self.assertEqual(receipt["window_counts"], [1, 4])
+        self.assertFalse(receipt["repeat_pad"])
+        self.assertFalse(receipt["truncate"])
+        torch.testing.assert_close(
+            alone.waveform_windows[0, 0], together.waveform_windows[0, 0]
+        )
+        self.assertEqual(together.valid_samples[0, 0].item(), 800)
+        self.assertTrue(together.waveform_padding_mask[0, 0, 800:].all())
+        self.assertEqual(
+            torch.count_nonzero(together.waveform_windows[0, 0, 800:]).item(), 0
+        )
+        self.assertEqual(
+            together.time_map[1, :4, 0].tolist(), [0.0, 1.0, 2.0, 2.5]
+        )
+        self.assertEqual(
+            together.time_map[1, 0].tolist(), [0.0, 2.0]
+        )
+        self.assertEqual(
+            together.time_map[1, 1].tolist(), [1.0, 3.0]
+        )
+        self.assertEqual(together.time_map[1, 3, 1].item(), 4.5)
+        self.assertEqual(len(set(together.time_map[1, :4, 0].tolist())), 4)
+        self.assertAlmostEqual(together.time_map[0, 0, 0].item(), 5.0)
+        self.assertAlmostEqual(together.time_map[0, 0, 1].item(), 5.05)
+        moved = together.to("cpu")
+        self.assertEqual(moved.lineage, together.lineage)
+        self.assertTrue(torch.equal(moved.window_mask, together.window_mask))
+
+    def test_non_hf_masked_aggregation_ignores_invalid_slots(self):
+        embeddings = torch.tensor(
+            [
+                [[1.0, 3.0], [99.0, 99.0], [99.0, 99.0]],
+                [[2.0, 4.0], [4.0, 8.0], [6.0, 12.0]],
+            ]
+        )
+        mask = torch.tensor([[True, False, False], [True, True, True]])
+        pooled = masked_mean_window_embeddings(
+            embeddings, mask, expected_dim=2
+        )
+        torch.testing.assert_close(
+            pooled, torch.tensor([[1.0, 3.0], [4.0, 8.0]])
+        )
+
+    def test_hf_center_alignment_and_negative_semantics(self):
+        batch = collate_sliding_windows(
+            [sample("HF", "recording_15s_with_intervals", 240_000, "hf")]
+        )
+        rows = [
+            HFRawInterval("I", 0.9, 1.1, ObservationState.OBSERVED),
+            HFRawInterval("Wheeze", 1.9, 2.1, ObservationState.OBSERVED),
+            HFRawInterval("D", 2.9, 3.1, ObservationState.OBSERVED),
+        ]
+        paper = hf_window_supervision(
+            batch,
+            [rows],
+            [ObservationState.OBSERVED],
+            policy=HFTargetPolicy.PAPER_NATIVE_RASTERIZED_OVR,
+        )
+        self.assertEqual(batch.window_mask.sum().item(), 14)
+        self.assertEqual(paper.targets[0, 0, 0].item(), 1.0)
+        self.assertEqual(paper.targets[0, 1, 2].item(), 1.0)
+        self.assertEqual(paper.targets[0, 2, 3].item(), 1.0)
+        self.assertEqual(
+            paper.receipt["negative_semantics"],
+            "source_task_constructed_not_raw_normal",
+        )
+        self.assertFalse(paper.receipt["shared_label_eligible"])
+        conservative = hf_window_supervision(
+            batch,
+            [rows],
+            [ObservationState.OBSERVED],
+            policy=HFTargetPolicy.RAW_CONSERVATIVE_POSITIVE_ONLY,
+        )
+        self.assertEqual(conservative.receipt["constructed_negative_values"], 0)
+        self.assertEqual(conservative.valid_mask.sum().item(), 3)
+        self.assertFalse(conservative.valid_mask[0, 3:].any())
+
+    def test_hf_empty_and_missing_are_not_raw_normal(self):
+        batch = collate_sliding_windows(
+            [sample("HF", "recording_15s_with_intervals", 240_000, "hf")]
+        )
+        empty = hf_window_supervision(
+            batch,
+            [[]],
+            [ObservationState.EMPTY],
+            policy=HFTargetPolicy.PAPER_NATIVE_RASTERIZED_OVR,
+        )
+        self.assertEqual(empty.targets.sum().item(), 0)
+        self.assertGreater(empty.receipt["constructed_negative_values"], 0)
+        with self.assertRaises(RuntimeError):
+            hf_window_supervision(
+                batch,
+                [[]],
+                [ObservationState.MISSING],
+                policy=HFTargetPolicy.PAPER_NATIVE_RASTERIZED_OVR,
+            )
+        conservative = hf_window_supervision(
+            batch,
+            [[]],
+            [ObservationState.MISSING],
+            policy=HFTargetPolicy.RAW_CONSERVATIVE_POSITIVE_ONLY,
+        )
+        self.assertFalse(conservative.valid_mask.any())
+
+
+class FirstQueuePreflightTest(unittest.TestCase):
+    def test_budget_selection_and_p1_p5_match_are_frozen(self):
+        self.assertEqual(P1_P5_UPDATES_PER_REFERENCE_EPOCH, 1_725)
+        self.assertEqual(P1_P5_UPDATE_BUDGET, 86_250)
+        self.assertIn("outer_test_excluded", P1_P5_SELECTION_RULE)
+        chosen = select_validation_checkpoint(
+            [
+                (P1_P5_VALIDATION_INTERVAL_UPDATES, 0.8),
+                (2 * P1_P5_VALIDATION_INTERVAL_UPDATES, 0.7),
+                (3 * P1_P5_VALIDATION_INTERVAL_UPDATES, 0.7),
+            ]
+        )
+        self.assertEqual(chosen, (3_450, 0.7))
+        scalar, receipt = source_proportional_validation_selection_loss(
+            {
+                "ICBHI_flat4": 1.0,
+                "SPRSound_binary": 2.0,
+                "SPRSound_raw7": 4.0,
+                "HF_temporal4": 6.0,
+                "KAUH_raw9": 5.0,
+            }
+        )
+        expected = (
+            3_055 * 1.0 + 5_219 * 3.0 + 5_322 * 6.0 + 198 * 5.0
+        ) / 13_794
+        self.assertAlmostEqual(scalar, expected)
+        self.assertFalse(receipt["reported_as_cross_dataset_score"])
+        configs = [
+            SharedWindowCoreConfig(pid, encoder, "frozen-split")
+            for pid, encoder in PIPELINE_ENCODERS.items()
+        ]
+        assert_p1_p5_matched(configs)
+        with self.assertRaises(RuntimeError):
+            changed = list(configs)
+            changed[2] = replace(changed[2], sampler="dataset_balanced")
+            assert_p1_p5_matched(changed)
+
+    def test_shared_window_output_and_dimension_adapters(self):
+        batch = collate_sliding_windows(
+            [
+                sample("ICBHI", "cycle", 800, "i"),
+                sample("SPRSound", "event", 40_000, "s"),
+                sample("KAUH", "recording", 72_000, "k"),
+            ]
+        )
+        output = SharedWindowEncoderOutput(
+            embeddings=torch.zeros(*batch.window_mask.shape, 768),
+            window_mask=batch.window_mask,
+            time_map=batch.time_map,
+            encoder_identity="AST",
+            sample_ids=batch.sample_ids,
+            dataset_ids=batch.dataset_ids,
+            prediction_units=batch.prediction_units,
+        )
+        output.validate_against(batch)
+        invalid = output.embeddings.clone()
+        invalid[~batch.window_mask] = 1.0
+        with self.assertRaises(ValueError):
+            replace(output, embeddings=invalid).validate_against(batch)
+        self.assertEqual(
+            tuple(CandidateDimensionAdapter("PANNs_Cnn14")(torch.zeros(2, 3, 2048)).shape),
+            (2, 3, 768),
+        )
+        hear = CandidateDimensionAdapter("HeAR")
+        self.assertTrue(hear.receipt()["package_level_comparison"])
+        self.assertEqual(
+            CandidateDimensionAdapter("AST").receipt()["trainable_parameters"], 0
+        )
+
+    def test_hf_window_head_loss_and_shared_projector(self):
+        torch.manual_seed(20260728)
+        model = JointNativeProjector()
+        embeddings = torch.randn(2, 3, 768)
+        logits = model(embeddings, "HF")["temporal4"]
+        self.assertEqual(tuple(logits.shape), (2, 3, 4))
+        targets = torch.zeros_like(logits)
+        observation = torch.ones_like(logits, dtype=torch.bool)
+        valid = observation.clone()
+        valid[0, 0, 2] = False
+        logits.retain_grad()
+        loss, receipt = hf_masked_channel_balanced_bce(
+            logits, targets, observation, valid
+        )
+        loss.backward()
+        self.assertEqual(logits.grad[0, 0, 2].item(), 0.0)
+        self.assertGreater(model.projector.weight.grad.abs().sum().item(), 0.0)
+        self.assertEqual(receipt["denominators"]["CAS"], 5)
+        self.assertFalse(receipt["shared_label_eligible"])
+        self.assertIn("roc_auc", HF_NATIVE_METRICS["per_channel"])
+        with self.assertRaises(RuntimeError):
+            empty = torch.zeros_like(valid)
+            hf_masked_channel_balanced_bce(logits.detach(), targets, empty, empty)
+
+    @unittest.skipUnless(torch.cuda.is_available(), "CUDA is not available")
+    def test_p6_token_head_cuda_contract(self):
+        device = torch.device("cuda")
+        head = P6TokenTemporalHead().to(device)
+        tokens = torch.randn(2, 3, 256, device=device)
+        logits = head(tokens)
+        targets = torch.zeros_like(logits)
+        mask = torch.ones_like(logits, dtype=torch.bool)
+        loss, receipt = hf_masked_channel_balanced_bce(logits, targets, mask, mask)
+        loss.backward()
+        self.assertEqual(logits.device.type, "cuda")
+        self.assertEqual(set(receipt["denominators"]), {"I", "E", "CAS", "DAS"})
+
+    def test_preflight_marks_all_production_adapters_hold(self):
+        receipt = freeze_receipt()
+        self.assertFalse(receipt["experiment_result"])
+        self.assertEqual(receipt["p1_p5"]["update_budget"], 86_250)
+        self.assertEqual(receipt["window_policy"]["status"], "proposed_benchmark_policy")
+        self.assertTrue(
+            all(
+                entry["status"].startswith("HOLD")
+                for entry in PRODUCTION_ADAPTER_STATUS.values()
+            )
+        )
+        self.assertFalse(receipt["p6"]["first_round_required"])
+
+    def test_independent_verifier_schema_rejects_pooled_score_and_p6(self):
+        base = {
+            "schema_version": "shared_window_first_queue_verifier_v1",
+            "pipeline_id": "P1",
+            "verifier_identity": "new_independent_model_design_verifier",
+            "verifier_code_commit": "pending",
+            "subject_code_commit": "pending",
+            "config_sha256": "pending",
+            "approval_receipt_sha256": "pending",
+            "manifest_sha256_by_dataset": {},
+            "split_sha256_by_dataset": {},
+            "checkpoint_sha256_by_component": {},
+            "window_contract_receipt": {},
+            "encoder_adapter_receipt": {},
+            "seed": 20260728,
+            "update_budget": 86250,
+            "selection_receipt": {},
+            "trainable_scope_receipt": {},
+            "native_metrics_by_dataset_task": {"ICBHI": {}, "HF": {}},
+            "outer_test_access_receipt": {"accessed": False},
+            "artifact_sha256": {},
+            "gate_results": {},
+            "warnings": [],
+            "status": "preflight_only",
+        }
+        validate_independent_verifier_receipt(base)
+        with self.assertRaises(ValueError):
+            validate_independent_verifier_receipt({**base, "pipeline_id": "P6"})
+        with self.assertRaises(ValueError):
+            validate_independent_verifier_receipt(
+                {
+                    **base,
+                    "native_metrics_by_dataset_task": {"pooled_score": 0.5},
+                }
+            )
 
 
 class EligibilityObjectiveTest(unittest.TestCase):

@@ -1,4 +1,4 @@
-"""P1/P2 shared-projector, native-head, and matched-comparator contracts."""
+"""P1-P5 four-dataset shared-window projector and native-head contracts."""
 
 from __future__ import annotations
 
@@ -11,18 +11,19 @@ from torch import nn
 
 
 SEED = 20260728
-JOINT_LANES = ("ICBHI", "SPRSound", "KAUH")
+JOINT_LANES = ("ICBHI", "SPRSound", "HF", "KAUH")
 PROJECTOR_ARCHITECTURE = "minimal_linear_projector"
 PROJECTOR_BIAS = True
 NATIVE_HEAD_DIMS = {
     "ICBHI": {"flat4": 4},
     "SPRSound": {"binary": 2, "raw7": 7},
+    "HF": {"temporal4": 4},
     "KAUH": {"raw9": 9},
 }
 
 
 class JointNativeProjector(nn.Module):
-    """One minimal biased Linear 768→256 shared by the non-HF native lanes."""
+    """One biased Linear 768→256 shared by all four native audio lanes."""
 
     def __init__(self, input_dim: int = 768, projected_dim: int = 256) -> None:
         super().__init__()
@@ -48,16 +49,18 @@ class JointNativeProjector(nn.Module):
             "output_dim": self.projected_dim,
             "bias": self.projector_bias,
             "shared_lanes": list(JOINT_LANES),
-            "hf_uses_projector": False,
+            "hf_uses_projector": True,
+            "hf_route": "window_sequence_to_native_temporal4_head",
         }
 
     def project(self, frozen_encoder_output: torch.Tensor) -> torch.Tensor:
         if (
-            frozen_encoder_output.ndim != 2
-            or frozen_encoder_output.shape[1] != self.input_dim
+            frozen_encoder_output.ndim not in {2, 3}
+            or frozen_encoder_output.shape[-1] != self.input_dim
         ):
             raise ValueError(
-                f"expected frozen encoder output [B,{self.input_dim}], "
+                f"expected frozen encoder output [B,{self.input_dim}] or "
+                f"[B,K,{self.input_dim}], "
                 f"got {tuple(frozen_encoder_output.shape)}"
             )
         return self.projector(frozen_encoder_output)
@@ -66,10 +69,7 @@ class JointNativeProjector(nn.Module):
         self, frozen_encoder_output: torch.Tensor, lane: str
     ) -> dict[str, torch.Tensor]:
         if lane not in JOINT_LANES:
-            raise ValueError(
-                f"lane {lane!r} is not routed through the shared projector; "
-                "HF uses its fixed temporal reference"
-            )
+            raise ValueError(f"lane {lane!r} is not a shared-window native lane")
         projected = self.project(frozen_encoder_output)
         return {
             task: self.heads[f"{lane}:{task}"](projected)
@@ -124,7 +124,7 @@ def build_source_proportional_receipt(
 
 @dataclass(frozen=True)
 class CoreConfig:
-    """Matched P1/P2 contract; budget and selection intentionally fail closed."""
+    """Matched P1/P2 shared-window contract; execution remains approval-gated."""
 
     pipeline_id: str
     encoder_identity: str
@@ -143,7 +143,8 @@ class CoreConfig:
     sampler: str = "source_proportional"
     encoder_scope: str = "frozen_pretrained"
     trainable_scope: str = "shared_projector_plus_dataset_native_heads"
-    hf_reference: str = "fixed_native_temporal_independent"
+    window_policy: str = "source_time_2s_window_1s_stride"
+    hf_route: str = "shared_projected_window_sequence_to_temporal4_head"
 
     def validate_static_contract(self) -> None:
         if self.pipeline_id not in {"P1", "P2"}:
