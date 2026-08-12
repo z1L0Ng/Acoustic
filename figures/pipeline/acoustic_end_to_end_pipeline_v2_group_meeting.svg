@@ -1,0 +1,1757 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="3360"
+   height="1890"
+   viewBox="0 0 3360 1890"
+   version="1.1"
+   id="svg251"
+   sodipodi:docname="acoustic_end_to_end_pipeline_v2_group_meeting.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview251"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.62307405"
+     inkscape:cx="1594.5135"
+     inkscape:cy="-463.02683"
+     inkscape:window-width="2560"
+     inkscape:window-height="1412"
+     inkscape:window-x="0"
+     inkscape:window-y="28"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg251" />
+  <title
+     id="title1">Acoustic end-to-end pipeline v2 group meeting edition</title>
+  <desc
+     id="desc1">Four dataset-native inputs feed dataset-specific preprocessing, one of five fully expanded encoder alternatives, optional adapters or fusion, and dataset-native prediction heads.</desc>
+  <defs
+     id="defs2">
+    <marker
+       id="arrow"
+       viewBox="0 0 10 10"
+       refX="9"
+       refY="5"
+       markerWidth="8"
+       markerHeight="8"
+       orient="auto">
+      <path
+         d="M0 0 L10 5 L0 10 Z"
+         fill="#28445F"
+         id="path1" />
+    </marker>
+    <marker
+       id="warnArrow"
+       viewBox="0 0 10 10"
+       refX="9"
+       refY="5"
+       markerWidth="8"
+       markerHeight="8"
+       orient="auto">
+      <path
+         d="M0 0 L10 5 L0 10 Z"
+         fill="#C2410C"
+         id="path2" />
+    </marker>
+    <style
+       id="style2">
+      .bg{fill:#F5F7FA}.title{font:700 40px Arial,&quot;PingFang SC&quot;,sans-serif;fill:#142B45}.subtitle{font:20px Arial,&quot;PingFang SC&quot;,sans-serif;fill:#4B6177}.col{font:700 22px Arial,&quot;PingFang SC&quot;,sans-serif;fill:#142B45;letter-spacing:.6px}.h{font:700 22px Arial,&quot;PingFang SC&quot;,sans-serif;fill:#142B45}.sh{font:700 18px Arial,&quot;PingFang SC&quot;,sans-serif;fill:#1E3A5F}.t{font:17px Arial,&quot;PingFang SC&quot;,sans-serif;fill:#263B50}.small{font:15px Arial,&quot;PingFang SC&quot;,sans-serif;fill:#425A70}.tiny{font:14px Arial,&quot;PingFang SC&quot;,sans-serif;fill:#425A70}.dataset{stroke:#1E3A5F;stroke-width:2.4}.icbhi{fill:#E8F1FB}.spr{fill:#E8F7F3}.hf{fill:#FFF3E5}.kauh{fill:#F2ECFA}.prep{fill:#FFFFFF;stroke:#8FA2B5;stroke-width:2}.encoderPanel{fill:#EDF3FA;stroke:#1E3A5F;stroke-width:2.8}.candidate{fill:#FFFFFF;stroke:#2F6FED;stroke-width:2.3}.current{fill:#F2FBF7;stroke:#2A7F62;stroke-width:2.8}.stage{fill:#F5F8FC;stroke:#9AAFC2;stroke-width:1.7}.stageWarn{fill:#FFF4EC;stroke:#C2410C;stroke-width:2;stroke-dasharray:8 6}.optional{fill:#F7F2FF;stroke:#7C3AED;stroke-width:2.3}.optionalBox{fill:#FFFFFF;stroke:#9C78D6;stroke-width:1.7}.head{fill:#FFFFFF;stroke:#1E3A5F;stroke-width:2.4}.headWarn{fill:#FFF5ED;stroke:#C2410C;stroke-width:2.4;stroke-dasharray:8 6}.line{fill:none;stroke:#28445F;stroke-width:2.6;marker-end:url(#arrow)}.bus{fill:none;stroke:#28445F;stroke-width:2.6}.warn{fill:none;stroke:#C2410C;stroke-width:2.4;stroke-dasharray:8 6;marker-end:url(#warnArrow)}.divider{stroke:#CBD5E1;stroke-width:1.3}.green{fill:#2A7F62}.blue{fill:#2F6FED}.orange{fill:#C2410C}.purple{fill:#7C3AED}.tag{font:700 14px Arial,&quot;PingFang SC&quot;,sans-serif}
+    </style>
+  </defs>
+  <rect
+     class="bg"
+     width="3360"
+     height="1890"
+     id="rect2" />
+  <text
+     x="42"
+     y="58"
+     class="title"
+     id="text2">Acoustic End-to-End Pipeline</text>
+  <text
+     x="42"
+     y="148"
+     class="col"
+     id="text4">1  DATASET INPUT</text>
+  <text
+     x="500"
+     y="148"
+     class="col"
+     id="text5">2  PREPROCESSING</text>
+  <text
+     x="800"
+     y="148"
+     class="col"
+     id="text6">3  ENCODER ALTERNATIVES — CHOOSE ONE</text>
+  <text
+     x="2490"
+     y="148"
+     class="col"
+     id="text7">4  OPTIONAL</text>
+  <text
+     x="2840"
+     y="148"
+     class="col"
+     id="text8">5  DATASET-NATIVE HEAD</text>
+  <!-- Four dataset-native inputs -->
+  <rect
+     x="42"
+     y="180"
+     width="418"
+     height="270"
+     rx="18"
+     class="dataset icbhi"
+     id="rect8" />
+  <text
+     x="66"
+     y="216"
+     class="h"
+     id="text9">ICBHI 2017</text>
+  <text
+     x="66"
+     y="250"
+     class="t"
+     id="text14"><tspan
+       x="66"
+       id="tspan9">920 recordings · 6,898 cycles · 126 patients</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan10">mono WAV: 4 / 10 / 44.1 kHz</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan11">prediction unit: respiratory cycle</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan12">labels: normal / crackle / wheeze / both</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan13">official split is recording-level</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan14">output target: flat 4-class</tspan></text>
+  <rect
+     x="42"
+     y="480"
+     width="418"
+     height="270"
+     rx="18"
+     class="dataset spr"
+     id="rect14" />
+  <text
+     x="66"
+     y="516"
+     class="h"
+     id="text15">SPRSound BioCAS 2022</text>
+  <text
+     x="66"
+     y="550"
+     class="t"
+     id="text20"><tspan
+       x="66"
+       id="tspan15">2,683 recordings · 9,089 events · 8 kHz</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan16">unit A: event → binary + seven classes</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan17">unit B: recording → five classes</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan18">train / inter / intra remain separate</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan19">inter: unseen patients</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan20">intra: repeated-patient diagnostic</tspan></text>
+  <rect
+     x="42"
+     y="780"
+     width="418"
+     height="270"
+     rx="18"
+     class="dataset hf"
+     id="rect20" />
+  <text
+     x="66"
+     y="816"
+     class="h"
+     id="text21">HF_Lung_V1</text>
+  <text
+     x="66"
+     y="850"
+     class="t"
+     id="text26"><tspan
+       x="66"
+       id="tspan21">9,765 recordings × 15 s · 4 kHz</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan22">81,933 positive time intervals</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan23">I / E / D / Wheeze / Rhonchi / Stridor</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan24">paper tasks: I, E, CAS, DAS</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan25">prediction unit: temporal frame / interval</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan26">missing gap is not a negative label</tspan></text>
+  <rect
+     x="42"
+     y="1080"
+     width="418"
+     height="270"
+     rx="18"
+     class="dataset kauh"
+     id="rect26" />
+  <text
+     x="66"
+     y="1116"
+     class="h"
+     id="text27">KAUH / Fraiwan v3</text>
+  <text
+     x="66"
+     y="1150"
+     class="t"
+     id="text32"><tspan
+       x="66"
+       id="tspan27">336 recordings · 112 patients · 4 kHz</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan28">three B / D / E filter replicas per patient</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan29">prediction unit: complete recording</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan30">raw sound ontology: 9 classes</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan31">split/group key: P-number</tspan><tspan
+       x="66"
+       dy="27"
+       id="tspan32">shared sound mapping remains unresolved</tspan></text>
+  <!-- Dataset-native preprocessing -->
+  <rect
+     x="500"
+     y="180"
+     width="260"
+     height="270"
+     rx="18"
+     class="prep"
+     id="rect32" />
+  <text
+     x="522"
+     y="216"
+     class="sh"
+     id="text33">Cycle builder</text>
+  <text
+     x="522"
+     y="252"
+     class="t"
+     id="text38"><tspan
+       x="522"
+       id="tspan33">WAV + cycle boundary</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan34">crop [start_s, end_s]</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan35">→ waveform x_i [T_i]</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan36">→ label y_i [4]</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan37">retain patient + split</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan38">then resample/frontend</tspan></text>
+  <rect
+     x="500"
+     y="480"
+     width="260"
+     height="270"
+     rx="18"
+     class="prep"
+     id="rect38" />
+  <text
+     x="522"
+     y="516"
+     class="sh"
+     id="text39">Event / recording builder</text>
+  <text
+     x="522"
+     y="552"
+     class="t"
+     id="text44"><tspan
+       x="522"
+       id="tspan39">event crop [T_i]</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan40">or whole record [T_i]</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan41">event: y [2] + y [7]</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan42">recording: y [5]</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan43">retain patient/protocol</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan44">window only if declared</tspan></text>
+  <rect
+     x="500"
+     y="780"
+     width="260"
+     height="270"
+     rx="18"
+     class="prep"
+     id="rect44" />
+  <text
+     x="522"
+     y="816"
+     class="sh"
+     id="text45">15-s temporal builder</text>
+  <text
+     x="522"
+     y="852"
+     class="t"
+     id="text50"><tspan
+       x="522"
+       id="tspan45">waveform [60000]</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan46">+ interval annotations</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan47">paper: [938,193]</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan48">generic: tokens + mask</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan49">+ source time_map</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan50">valid annotation mask</tspan></text>
+  <rect
+     x="500"
+     y="1080"
+     width="260"
+     height="270"
+     rx="18"
+     class="prep"
+     id="rect50" />
+  <text
+     x="522"
+     y="1116"
+     class="sh"
+     id="text51">Recording builder</text>
+  <text
+     x="522"
+     y="1152"
+     class="t"
+     id="text56"><tspan
+       x="522"
+       id="tspan51">whole record [T_i]</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan52">or declared windows</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan53">waveform mask M_wav</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan54">aggregate → one record</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan55">B/D/E stay together</tspan><tspan
+       x="522"
+       dy="28"
+       id="tspan56">raw target y [9]</tspan></text>
+  <path
+     class="line"
+     d="M460 315 H500"
+     id="path56" />
+  <path
+     class="line"
+     d="M460 615 H500"
+     id="path57" />
+  <path
+     class="line"
+     d="M460 915 H500"
+     id="path58" />
+  <path
+     class="line"
+     d="M460 1215 H500"
+     id="path59" />
+  <path
+     class="bus"
+     d="M780 315 V1215"
+     id="path60" />
+  <path
+     class="line"
+     d="M760 315 H780"
+     id="path61" />
+  <path
+     class="line"
+     d="M760 615 H780"
+     id="path62" />
+  <path
+     class="line"
+     d="M760 915 H780"
+     id="path63" />
+  <path
+     class="line"
+     d="M760 1215 H780"
+     id="path64" />
+  <path
+     class="line"
+     d="M780 815 H800"
+     id="path65" />
+  <!-- Encoder alternatives panel -->
+  <rect
+     x="800"
+     y="160"
+     width="1660"
+     height="1300"
+     rx="22"
+     class="encoderPanel"
+     id="rect65" />
+  <text
+     x="830"
+     y="198"
+     class="sh"
+     id="text65">Common interface:</text>
+  <text
+     x="1000"
+     y="198"
+     class="small"
+     id="text66">waveform [B,T] / fbank [B,C,F,τ] → pooled [B,D]; temporal output additionally requires tokens [B,L,D] + token_mask [B,L] + time_map [B,L,2]</text>
+  <!-- AST -->
+  <rect
+     x="825"
+     y="220"
+     width="1610"
+     height="220"
+     rx="16"
+     class="current"
+     id="rect66" />
+  <text
+     x="848"
+     y="256"
+     class="h"
+     id="text67">AST</text>
+  <text
+     x="848"
+     y="282"
+     class="tag green"
+     id="text68">CURRENT REFERENCE</text>
+  <text
+     x="848"
+     y="317"
+     class="small"
+     id="text71"><tspan
+       x="848"
+       id="tspan68">D = 768</tspan><tspan
+       x="848"
+       dy="23"
+       id="tspan69">12 blocks</tspan><tspan
+       x="848"
+       dy="23"
+       id="tspan70">12 heads</tspan><tspan
+       x="848"
+       dy="23"
+       id="tspan71">pooled output</tspan></text>
+  <rect
+     x="1010"
+     y="246"
+     width="270"
+     height="166"
+     rx="12"
+     class="stage"
+     id="rect71" />
+  <text
+     x="1028"
+     y="276"
+     class="sh"
+     id="text72">Fbank input</text>
+  <text
+     x="1028"
+     y="306"
+     class="t"
+     id="text75"><tspan
+       x="1028"
+       id="tspan72">[B,1,798,128]</tspan><tspan
+       x="1028"
+       dy="25"
+       id="tspan73">transpose</tspan><tspan
+       x="1028"
+       dy="25"
+       id="tspan74">→ [B,1,128,798]</tspan><tspan
+       x="1028"
+       dy="25"
+       id="tspan75">8-s window; no mask</tspan></text>
+  <rect
+     x="1300"
+     y="246"
+     width="240"
+     height="166"
+     rx="12"
+     class="stage"
+     id="rect75" />
+  <text
+     x="1318"
+     y="276"
+     class="sh"
+     id="text76">Patch embedding</text>
+  <text
+     x="1318"
+     y="306"
+     class="t"
+     id="text79"><tspan
+       x="1318"
+       id="tspan76">Conv2d 16×16</tspan><tspan
+       x="1318"
+       dy="25"
+       id="tspan77">stride 10×10</tspan><tspan
+       x="1318"
+       dy="25"
+       id="tspan78">12×79 = 948 tokens</tspan><tspan
+       x="1318"
+       dy="25"
+       id="tspan79">→ [B,948,768]</tspan></text>
+  <rect
+     x="1560"
+     y="246"
+     width="300"
+     height="166"
+     rx="12"
+     class="stage"
+     id="rect79" />
+  <text
+     x="1578"
+     y="276"
+     class="sh"
+     id="text80">Position + special tokens</text>
+  <text
+     x="1578"
+     y="306"
+     class="t"
+     id="text83"><tspan
+       x="1578"
+       id="tspan80">source grid 12×101</tspan><tspan
+       x="1578"
+       dy="25"
+       id="tspan81">center-crop time 101→79</tspan><tspan
+       x="1578"
+       dy="25"
+       id="tspan82">+ CLS + DIST</tspan><tspan
+       x="1578"
+       dy="25"
+       id="tspan83">→ [B,950,768]</tspan></text>
+  <rect
+     x="1880"
+     y="246"
+     width="315"
+     height="166"
+     rx="12"
+     class="stage"
+     id="rect83" />
+  <text
+     x="1898"
+     y="276"
+     class="sh"
+     id="text84">Transformer block ×12</text>
+  <text
+     x="1898"
+     y="306"
+     class="t"
+     id="text87"><tspan
+       x="1898"
+       id="tspan84">LN → MHSA (12 heads) → residual</tspan><tspan
+       x="1898"
+       dy="25"
+       id="tspan85">LN → MLP 768→3072→768</tspan><tspan
+       x="1898"
+       dy="25"
+       id="tspan86">→ residual</tspan><tspan
+       x="1898"
+       dy="25"
+       id="tspan87">shape stays [B,950,768]</tspan></text>
+  <rect
+     x="2215"
+     y="246"
+     width="195"
+     height="166"
+     rx="12"
+     class="stageWarn"
+     id="rect87" />
+  <text
+     x="2233"
+     y="276"
+     class="sh"
+     id="text88">Output</text>
+  <text
+     x="2233"
+     y="306"
+     class="t"
+     id="text92"><tspan
+       x="2233"
+       id="tspan88">LayerNorm</tspan><tspan
+       x="2233"
+       dy="23"
+       id="tspan89">(CLS+DIST)/2</tspan><tspan
+       x="2233"
+       dy="23"
+       id="tspan90">→ [B,768]</tspan><tspan
+       x="2233"
+       dy="23"
+       id="tspan91">no tokens / mask</tspan><tspan
+       x="2233"
+       dy="23"
+       id="tspan92">no time_map</tspan></text>
+  <path
+     class="line"
+     d="M1280 329 H1300"
+     id="path92" />
+  <path
+     class="line"
+     d="M1540 329 H1560"
+     id="path93" />
+  <path
+     class="line"
+     d="M1860 329 H1880"
+     id="path94" />
+  <path
+     class="line"
+     d="M2195 329 H2215"
+     id="path95" />
+  <!-- BEATs -->
+  <rect
+     x="825"
+     y="455"
+     width="1610"
+     height="230"
+     rx="16"
+     class="candidate"
+     id="rect95" />
+  <text
+     x="848"
+     y="491"
+     class="h"
+     id="text95">BEATs</text>
+  <text
+     x="848"
+     y="517"
+     class="tag blue"
+     id="text96">iter3+ AS2M</text>
+  <text
+     x="848"
+     y="552"
+     class="small"
+     id="text99"><tspan
+       x="848"
+       id="tspan96">D = 768</tspan><tspan
+       x="848"
+       dy="23"
+       id="tspan97">12 blocks</tspan><tspan
+       x="848"
+       dy="23"
+       id="tspan98">12 heads</tspan><tspan
+       x="848"
+       dy="23"
+       id="tspan99">tokens + mask</tspan></text>
+  <rect
+     x="1010"
+     y="482"
+     width="250"
+     height="176"
+     rx="12"
+     class="stage"
+     id="rect99" />
+  <text
+     x="1028"
+     y="512"
+     class="sh"
+     id="text100">Waveform → fbank</text>
+  <text
+     x="1028"
+     y="542"
+     class="t"
+     id="text103"><tspan
+       x="1028"
+       id="tspan100">[B,T] @16 kHz + pad mask</tspan><tspan
+       x="1028"
+       dy="25"
+       id="tspan101">Kaldi fbank: 128 bins</tspan><tspan
+       x="1028"
+       dy="25"
+       id="tspan102">25 ms / 10 ms</tspan><tspan
+       x="1028"
+       dy="25"
+       id="tspan103">→ [B,τ,128]</tspan></text>
+  <rect
+     x="1280"
+     y="482"
+     width="270"
+     height="176"
+     rx="12"
+     class="stageWarn"
+     id="rect103" />
+  <text
+     x="1298"
+     y="512"
+     class="sh"
+     id="text104">Patch embed + projection</text>
+  <text
+     x="1298"
+     y="542"
+     class="t"
+     id="text107"><tspan
+       x="1298"
+       id="tspan104">Conv2d kernel=stride=p</tspan><tspan
+       x="1298"
+       dy="25"
+       id="tspan105">[B,1,τ,128] → [B,L₀,E]</tspan><tspan
+       x="1298"
+       dy="25"
+       id="tspan106">LN; optional Linear E→768</tspan><tspan
+       x="1298"
+       dy="25"
+       id="tspan107">p: checkpoint value not persisted</tspan></text>
+  <rect
+     x="1570"
+     y="482"
+     width="235"
+     height="176"
+     rx="12"
+     class="stage"
+     id="rect107" />
+  <text
+     x="1588"
+     y="512"
+     class="sh"
+     id="text108">Position encoder</text>
+  <text
+     x="1588"
+     y="542"
+     class="t"
+     id="text111"><tspan
+       x="1588"
+       id="tspan108">grouped Conv1d</tspan><tspan
+       x="1588"
+       dy="25"
+       id="tspan109">kernel 128 · groups 16</tspan><tspan
+       x="1588"
+       dy="25"
+       id="tspan110">→ [B,L₀,768]</tspan><tspan
+       x="1588"
+       dy="25"
+       id="tspan111">mask is downsampled</tspan></text>
+  <rect
+     x="1825"
+     y="482"
+     width="315"
+     height="176"
+     rx="12"
+     class="stage"
+     id="rect111" />
+  <text
+     x="1843"
+     y="512"
+     class="sh"
+     id="text112">Transformer block ×12</text>
+  <text
+     x="1843"
+     y="542"
+     class="t"
+     id="text115"><tspan
+       x="1843"
+       id="tspan112">LN → MHSA (12 heads) → residual</tspan><tspan
+       x="1843"
+       dy="25"
+       id="tspan113">LN → FFN 768→3072→768</tspan><tspan
+       x="1843"
+       dy="25"
+       id="tspan114">→ tokens [B,L₀,768]</tspan><tspan
+       x="1843"
+       dy="25"
+       id="tspan115">+ token mask [B,L₀]</tspan></text>
+  <rect
+     x="2160"
+     y="482"
+     width="250"
+     height="176"
+     rx="12"
+     class="stageWarn"
+     id="rect115" />
+  <text
+     x="2178"
+     y="512"
+     class="sh"
+     id="text116">Output / temporal gate</text>
+  <text
+     x="2178"
+     y="542"
+     class="t"
+     id="text119"><tspan
+       x="2178"
+       id="tspan116">masked pooling → [B,768]</tspan><tspan
+       x="2178"
+       dy="25"
+       id="tspan117">tokens + mask available</tspan><tspan
+       x="2178"
+       dy="25"
+       id="tspan118">source time_map absent</tspan><tspan
+       x="2178"
+       dy="25"
+       id="tspan119">HF temporal path not closed</tspan></text>
+  <path
+     class="line"
+     d="M1260 570 H1280"
+     id="path119" />
+  <path
+     class="line"
+     d="M1550 570 H1570"
+     id="path120" />
+  <path
+     class="line"
+     d="M1805 570 H1825"
+     id="path121" />
+  <path
+     class="line"
+     d="M2140 570 H2160"
+     id="path122" />
+  <!-- OPERA -->
+  <rect
+     x="825"
+     y="700"
+     width="1610"
+     height="245"
+     rx="16"
+     class="candidate"
+     id="rect122" />
+  <text
+     x="848"
+     y="736"
+     class="h"
+     id="text122">OPERA-CT</text>
+  <text
+     x="848"
+     y="762"
+     class="tag purple"
+     id="text123">RESPIRATORY FOUNDATION</text>
+  <text
+     x="848"
+     y="797"
+     class="small"
+     id="text126"><tspan
+       x="848"
+       id="tspan123">Swin / HTS-AT</tspan><tspan
+       x="848"
+       dy="23"
+       id="tspan124">depths 2/2/6/2</tspan><tspan
+       x="848"
+       dy="23"
+       id="tspan125">width 96→768</tspan><tspan
+       x="848"
+       dy="23"
+       id="tspan126">pooled output</tspan></text>
+  <rect
+     x="1010"
+     y="727"
+     width="205"
+     height="190"
+     rx="12"
+     class="stage"
+     id="rect126" />
+  <text
+     x="1028"
+     y="757"
+     class="sh"
+     id="text127">Official frontend</text>
+  <text
+     x="1028"
+     y="787"
+     class="t"
+     id="text130"><tspan
+       x="1028"
+       id="tspan127">16-kHz window</tspan><tspan
+       x="1028"
+       dy="25"
+       id="tspan128">log-mel/model image</tspan><tspan
+       x="1028"
+       dy="25"
+       id="tspan129">→ [B,1,256,256]</tspan><tspan
+       x="1028"
+       dy="25"
+       id="tspan130">example: 8 s</tspan></text>
+  <rect
+     x="1235"
+     y="727"
+     width="190"
+     height="190"
+     rx="12"
+     class="stage"
+     id="rect130" />
+  <text
+     x="1253"
+     y="757"
+     class="sh"
+     id="text131">Patch embed</text>
+  <text
+     x="1253"
+     y="787"
+     class="t"
+     id="text134"><tspan
+       x="1253"
+       id="tspan131">Conv2d patch 4</tspan><tspan
+       x="1253"
+       dy="25"
+       id="tspan132">stride 4×4</tspan><tspan
+       x="1253"
+       dy="25"
+       id="tspan133">→ [B,64×64,96]</tspan><tspan
+       x="1253"
+       dy="25"
+       id="tspan134">window size 8</tspan></text>
+  <rect
+     x="1445"
+     y="727"
+     width="225"
+     height="190"
+     rx="12"
+     class="stage"
+     id="rect134" />
+  <text
+     x="1463"
+     y="757"
+     class="sh"
+     id="text135">Swin stage 1 ×2</text>
+  <text
+     x="1463"
+     y="787"
+     class="t"
+     id="text138"><tspan
+       x="1463"
+       id="tspan135">D96 · 4 heads</tspan><tspan
+       x="1463"
+       dy="25"
+       id="tspan136">MLP ratio 4</tspan><tspan
+       x="1463"
+       dy="25"
+       id="tspan137">merge 64×64→32×32</tspan><tspan
+       x="1463"
+       dy="25"
+       id="tspan138">→ [B,32×32,192]</tspan></text>
+  <rect
+     x="1690"
+     y="727"
+     width="225"
+     height="190"
+     rx="12"
+     class="stage"
+     id="rect138" />
+  <text
+     x="1708"
+     y="757"
+     class="sh"
+     id="text139">Swin stage 2 ×2</text>
+  <text
+     x="1708"
+     y="787"
+     class="t"
+     id="text142"><tspan
+       x="1708"
+       id="tspan139">D192 · 8 heads</tspan><tspan
+       x="1708"
+       dy="25"
+       id="tspan140">MLP 192→768→192</tspan><tspan
+       x="1708"
+       dy="25"
+       id="tspan141">merge 32×32→16×16</tspan><tspan
+       x="1708"
+       dy="25"
+       id="tspan142">→ [B,16×16,384]</tspan></text>
+  <rect
+     x="1935"
+     y="727"
+     width="235"
+     height="190"
+     rx="12"
+     class="stage"
+     id="rect142" />
+  <text
+     x="1953"
+     y="757"
+     class="sh"
+     id="text143">Swin stage 3 ×6</text>
+  <text
+     x="1953"
+     y="787"
+     class="t"
+     id="text146"><tspan
+       x="1953"
+       id="tspan143">D384 · 16 heads</tspan><tspan
+       x="1953"
+       dy="25"
+       id="tspan144">MLP 384→1536→384</tspan><tspan
+       x="1953"
+       dy="25"
+       id="tspan145">merge 16×16→8×8</tspan><tspan
+       x="1953"
+       dy="25"
+       id="tspan146">→ [B,8×8,768]</tspan></text>
+  <rect
+     x="2190"
+     y="727"
+     width="220"
+     height="190"
+     rx="12"
+     class="stageWarn"
+     id="rect146" />
+  <text
+     x="2208"
+     y="757"
+     class="sh"
+     id="text147">Stage 4 ×2 + output</text>
+  <text
+     x="2208"
+     y="787"
+     class="t"
+     id="text150"><tspan
+       x="2208"
+       id="tspan147">D768 · 32 heads</tspan><tspan
+       x="2208"
+       dy="25"
+       id="tspan148">MLP 768→3072→768</tspan><tspan
+       x="2208"
+       dy="25"
+       id="tspan149">LN / pooling → [B,768]</tspan><tspan
+       x="2208"
+       dy="25"
+       id="tspan150">no mask or time_map</tspan></text>
+  <path
+     class="line"
+     d="M1215 822 H1235"
+     id="path150" />
+  <path
+     class="line"
+     d="M1425 822 H1445"
+     id="path151" />
+  <path
+     class="line"
+     d="M1670 822 H1690"
+     id="path152" />
+  <path
+     class="line"
+     d="M1915 822 H1935"
+     id="path153" />
+  <path
+     class="line"
+     d="M2170 822 H2190"
+     id="path154" />
+  <!-- HeAR -->
+  <rect
+     x="825"
+     y="960"
+     width="1610"
+     height="205"
+     rx="16"
+     class="candidate"
+     id="rect154" />
+  <text
+     x="848"
+     y="996"
+     class="h"
+     id="text154">HeAR 1.0.0</text>
+  <text
+     x="848"
+     y="1022"
+     class="tag blue"
+     id="text155">official serving interface</text>
+  <text
+     x="848"
+     y="1057"
+     class="small"
+     id="text157"><tspan
+       x="848"
+       id="tspan155">2-s input</tspan><tspan
+       x="848"
+       dy="23"
+       id="tspan156">ViT-L MAE family</tspan><tspan
+       x="848"
+       dy="23"
+       id="tspan157">D = 512 output</tspan></text>
+  <rect
+     x="1010"
+     y="986"
+     width="300"
+     height="153"
+     rx="12"
+     class="stage"
+     id="rect157" />
+  <text
+     x="1028"
+     y="1016"
+     class="sh"
+     id="text158">Serving input</text>
+  <text
+     x="1028"
+     y="1046"
+     class="t"
+     id="text160"><tspan
+       x="1028"
+       id="tspan158">2 s mono @16 kHz</tspan><tspan
+       x="1028"
+       dy="26"
+       id="tspan159">waveform [B,32000]</tspan><tspan
+       x="1028"
+       dy="26"
+       id="tspan160">no variable padding mask</tspan></text>
+  <rect
+     x="1330"
+     y="986"
+     width="610"
+     height="153"
+     rx="12"
+     class="stageWarn"
+     id="rect160" />
+  <text
+     x="1348"
+     y="1016"
+     class="sh"
+     id="text161">Masked autoencoder based on ViT-L</text>
+  <text
+     x="1348"
+     y="1046"
+     class="t"
+     id="text163"><tspan
+       x="1348"
+       id="tspan161">internal spectrogram / patch representation</tspan><tspan
+       x="1348"
+       dy="24"
+       id="tspan162">→ N transformer layers → internal representation</tspan><tspan
+       x="1348"
+       dy="24"
+       id="tspan163">N / patch / heads / MLP width not exposed; remain symbolic</tspan></text>
+  <rect
+     x="1960"
+     y="986"
+     width="450"
+     height="153"
+     rx="12"
+     class="stageWarn"
+     id="rect163" />
+  <text
+     x="1978"
+     y="1016"
+     class="sh"
+     id="text164">Service output</text>
+  <text
+     x="1978"
+     y="1046"
+     class="t"
+     id="text166"><tspan
+       x="1978"
+       id="tspan164">embedding [B,512]</tspan><tspan
+       x="1978"
+       dy="26"
+       id="tspan165">pooled only</tspan><tspan
+       x="1978"
+       dy="26"
+       id="tspan166">no tokens / token_mask / time_map</tspan></text>
+  <path
+     class="line"
+     d="M1310 1062 H1330"
+     id="path166" />
+  <path
+     class="line"
+     d="M1940 1062 H1960"
+     id="path167" />
+  <!-- PANNs -->
+  <rect
+     x="825"
+     y="1180"
+     width="1610"
+     height="255"
+     rx="16"
+     class="candidate"
+     id="rect167" />
+  <text
+     x="848"
+     y="1216"
+     class="h"
+     id="text167">PANNs Cnn14</text>
+  <text
+     x="848"
+     y="1242"
+     class="tag blue"
+     id="text168">CNN CONTROL</text>
+  <text
+     x="848"
+     y="1277"
+     class="small"
+     id="text170"><tspan
+       x="848"
+       id="tspan168">6 ConvBlocks</tspan><tspan
+       x="848"
+       dy="23"
+       id="tspan169">D = 2048</tspan><tspan
+       x="848"
+       dy="23"
+       id="tspan170">pooled output</tspan></text>
+  <rect
+     x="1010"
+     y="1207"
+     width="215"
+     height="200"
+     rx="12"
+     class="stage"
+     id="rect170" />
+  <text
+     x="1028"
+     y="1237"
+     class="sh"
+     id="text171">Frontend</text>
+  <text
+     x="1028"
+     y="1267"
+     class="t"
+     id="text174"><tspan
+       x="1028"
+       id="tspan171">waveform [B,T]</tspan><tspan
+       x="1028"
+       dy="25"
+       id="tspan172">STFT → log-mel64</tspan><tspan
+       x="1028"
+       dy="25"
+       id="tspan173">BN + SpecAugment</tspan><tspan
+       x="1028"
+       dy="25"
+       id="tspan174">→ [B,1,τ,64]</tspan></text>
+  <rect
+     x="1245"
+     y="1207"
+     width="260"
+     height="200"
+     rx="12"
+     class="stage"
+     id="rect174" />
+  <text
+     x="1263"
+     y="1237"
+     class="sh"
+     id="text175">ConvBlocks 1–2</text>
+  <text
+     x="1263"
+     y="1267"
+     class="t"
+     id="text178"><tspan
+       x="1263"
+       id="tspan175">each: 2×Conv3×3 + BN/ReLU</tspan><tspan
+       x="1263"
+       dy="25"
+       id="tspan176">CB1 1→64 + pool2×2</tspan><tspan
+       x="1263"
+       dy="25"
+       id="tspan177">→ [B,64,⌊τ/2⌋,32]</tspan><tspan
+       x="1263"
+       dy="25"
+       id="tspan178">CB2 → [B,128,⌊τ/4⌋,16]</tspan></text>
+  <rect
+     x="1525"
+     y="1207"
+     width="260"
+     height="200"
+     rx="12"
+     class="stage"
+     id="rect178" />
+  <text
+     x="1543"
+     y="1237"
+     class="sh"
+     id="text179">ConvBlocks 3–4</text>
+  <text
+     x="1543"
+     y="1267"
+     class="t"
+     id="text182"><tspan
+       x="1543"
+       id="tspan179">CB3 128→256 + pool2×2</tspan><tspan
+       x="1543"
+       dy="25"
+       id="tspan180">→ [B,256,⌊τ/8⌋,8]</tspan><tspan
+       x="1543"
+       dy="25"
+       id="tspan181">CB4 256→512 + pool2×2</tspan><tspan
+       x="1543"
+       dy="25"
+       id="tspan182">→ [B,512,⌊τ/16⌋,4]</tspan></text>
+  <rect
+     x="1805"
+     y="1207"
+     width="280"
+     height="200"
+     rx="12"
+     class="stage"
+     id="rect182" />
+  <text
+     x="1823"
+     y="1237"
+     class="sh"
+     id="text183">ConvBlocks 5–6</text>
+  <text
+     x="1823"
+     y="1267"
+     class="t"
+     id="text186"><tspan
+       x="1823"
+       id="tspan183">CB5 512→1024 + pool2×2</tspan><tspan
+       x="1823"
+       dy="25"
+       id="tspan184">→ [B,1024,⌊τ/32⌋,2]</tspan><tspan
+       x="1823"
+       dy="25"
+       id="tspan185">CB6 1024→2048 + pool1×1</tspan><tspan
+       x="1823"
+       dy="25"
+       id="tspan186">→ [B,2048,⌊τ/32⌋,2]</tspan></text>
+  <rect
+     x="2105"
+     y="1207"
+     width="305"
+     height="200"
+     rx="12"
+     class="stageWarn"
+     id="rect186" />
+  <text
+     x="2123"
+     y="1237"
+     class="sh"
+     id="text187">Pooling + embedding</text>
+  <text
+     x="2123"
+     y="1267"
+     class="t"
+     id="text190"><tspan
+       x="2123"
+       id="tspan187">mean over frequency</tspan><tspan
+       x="2123"
+       dy="25"
+       id="tspan188">time max + time mean</tspan><tspan
+       x="2123"
+       dy="25"
+       id="tspan189">Linear 2048→2048</tspan><tspan
+       x="2123"
+       dy="25"
+       id="tspan190">→ [B,2048]; temporal map discarded</tspan></text>
+  <path
+     class="line"
+     d="M1225 1307 H1245"
+     id="path190" />
+  <path
+     class="line"
+     d="M1505 1307 H1525"
+     id="path191" />
+  <path
+     class="line"
+     d="M1785 1307 H1805"
+     id="path192" />
+  <path
+     class="line"
+     d="M2085 1307 H2105"
+     id="path193" />
+  <!-- Common encoder output to optional modules -->
+  <path
+     class="line"
+     d="M2460 815 H2490"
+     id="path194" />
+  <!-- Optional adapter/fusion column -->
+  <rect
+     x="2490"
+     y="180"
+     width="310"
+     height="1170"
+     rx="20"
+     class="optional"
+     id="rect194" />
+  <text
+     x="2512"
+     y="218"
+     class="h"
+     id="text194">Adapter / Fusion</text>
+  <text
+     x="2512"
+     y="248"
+     class="small"
+     id="text195">enabled only when inputs exist</text>
+  <rect
+     x="2512"
+     y="275"
+     width="266"
+     height="165"
+     rx="13"
+     class="optionalBox"
+     id="rect195" />
+  <text
+     x="2530"
+     y="307"
+     class="sh"
+     id="text196">SG-SCL</text>
+  <text
+     x="2530"
+     y="337"
+     class="t"
+     id="text199"><tspan
+       x="2530"
+       id="tspan196">pooled [B,768]</tspan><tspan
+       x="2530"
+       dy="25"
+       id="tspan197">→ 768 → 768 → D_p</tspan><tspan
+       x="2530"
+       dy="25"
+       id="tspan198">requires comparable device ID</tspan><tspan
+       x="2530"
+       dy="25"
+       id="tspan199">native head stays separate</tspan></text>
+  <rect
+     x="2512"
+     y="458"
+     width="266"
+     height="185"
+     rx="13"
+     class="optionalBox"
+     id="rect199" />
+  <text
+     x="2530"
+     y="490"
+     class="sh"
+     id="text200">PAFA</text>
+  <text
+     x="2530"
+     y="520"
+     class="t"
+     id="text204"><tspan
+       x="2530"
+       id="tspan200">tokens [B,L,768] + mask</tspan><tspan
+       x="2530"
+       dy="25"
+       id="tspan201">attention pool → [B,768]</tspan><tspan
+       x="2530"
+       dy="25"
+       id="tspan202">project 768→H→D_p</tspan><tspan
+       x="2530"
+       dy="25"
+       id="tspan203">PCSL / GPAL need patient ID</tspan><tspan
+       x="2530"
+       dy="25"
+       id="tspan204">full-encoder effect unverified</tspan></text>
+  <rect
+     x="2512"
+     y="661"
+     width="266"
+     height="155"
+     rx="13"
+     class="optionalBox"
+     id="rect204" />
+  <text
+     x="2530"
+     y="693"
+     class="sh"
+     id="text205">Metadata-SCL</text>
+  <text
+     x="2530"
+     y="723"
+     class="t"
+     id="text207"><tspan
+       x="2530"
+       id="tspan205">pooled [B,D] → [B,D_p]</tspan><tspan
+       x="2530"
+       dy="25"
+       id="tspan206">metadata-conditioned positives</tspan><tspan
+       x="2530"
+       dy="25"
+       id="tspan207">missing metadata → bypass</tspan></text>
+  <rect
+     x="2512"
+     y="834"
+     width="266"
+     height="170"
+     rx="13"
+     class="optionalBox"
+     id="rect207" />
+  <text
+     x="2530"
+     y="866"
+     class="sh"
+     id="text208">MVST fusion</text>
+  <text
+     x="2530"
+     y="896"
+     class="t"
+     id="text211"><tspan
+       x="2530"
+       id="tspan208">five view embeddings</tspan><tspan
+       x="2530"
+       dy="25"
+       id="tspan209">5 × [B,768]</tspan><tspan
+       x="2530"
+       dy="25"
+       id="tspan210">feature-wise sigmoid gates</tspan><tspan
+       x="2530"
+       dy="25"
+       id="tspan211">weighted sum → [B,768]</tspan></text>
+  <rect
+     x="2512"
+     y="1022"
+     width="266"
+     height="205"
+     rx="13"
+     class="stageWarn"
+     id="rect211" />
+  <text
+     x="2530"
+     y="1054"
+     class="sh"
+     id="text212">BTS / Resp-Agent</text>
+  <text
+     x="2530"
+     y="1084"
+     class="t"
+     id="text216"><tspan
+       x="2530"
+       id="tspan212">audio + text fusion</tspan><tspan
+       x="2530"
+       dy="25"
+       id="tspan213">CLAP or BEATs + Longformer</tspan><tspan
+       x="2530"
+       dy="25"
+       id="tspan214">requires text provenance</tspan><tspan
+       x="2530"
+       dy="25"
+       id="tspan215">not an audio-only replacement</tspan><tspan
+       x="2530"
+       dy="25"
+       id="tspan216">multimodal path not yet connected</tspan></text>
+  <text
+     x="2512"
+     y="1270"
+     class="small"
+     id="text218"><tspan
+       x="2512"
+       id="tspan217">No eligible side-channel?</tspan><tspan
+       x="2512"
+       dy="24"
+       id="tspan218">Bypass and use encoder output.</tspan></text>
+  <!-- Dataset-native heads -->
+  <rect
+     x="2840"
+     y="180"
+     width="480"
+     height="270"
+     rx="18"
+     class="head icbhi"
+     id="rect218" />
+  <text
+     x="2864"
+     y="216"
+     class="h"
+     id="text219">ICBHI cycle head</text>
+  <text
+     x="2864"
+     y="252"
+     class="t"
+     id="text223"><tspan
+       x="2864"
+       id="tspan219">pooled z [B,D] → LayerNorm → Linear D→4</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan220">logits [B,4]</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan221">normal / crackle / wheeze / both</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan222">prediction: one class per cycle</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan223">metrics: SE, SP, Score, macro-F1, UAR</tspan></text>
+  <rect
+     x="2840"
+     y="480"
+     width="480"
+     height="270"
+     rx="18"
+     class="head spr"
+     id="rect223" />
+  <text
+     x="2864"
+     y="516"
+     class="h"
+     id="text224">SPRSound native heads</text>
+  <text
+     x="2864"
+     y="552"
+     class="t"
+     id="text228"><tspan
+       x="2864"
+       id="tspan224">event pooled z → Linear → [B,2] + [B,7]</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan225">recording pooled z → Linear → [B,5]</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan226">event and recording are separate tasks</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan227">inter is primary; intra is diagnostic</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan228">metrics: SE / SP / AS / HS + macro-F1</tspan></text>
+  <rect
+     x="2840"
+     y="780"
+     width="480"
+     height="270"
+     rx="18"
+     class="headWarn hf"
+     id="rect228" />
+  <text
+     x="2864"
+     y="816"
+     class="h"
+     id="text229">HF temporal heads</text>
+  <text
+     x="2864"
+     y="852"
+     class="t"
+     id="text234"><tspan
+       x="2864"
+       id="tspan229">generic: tokens [B,L,D] + mask + time_map</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan230">→ temporal decoder → logits [B,L,4]</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan231">paper path: 4 × [B,938,1] or [B,469,1]</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan232">AST / OPERA / HeAR / PANNs: pooled only</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan233">BEATs: time_map still missing</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan234">unannotated gaps are excluded</tspan></text>
+  <rect
+     x="2840"
+     y="1080"
+     width="480"
+     height="270"
+     rx="18"
+     class="headWarn kauh"
+     id="rect234" />
+  <text
+     x="2864"
+     y="1116"
+     class="h"
+     id="text235">KAUH recording head</text>
+  <text
+     x="2864"
+     y="1152"
+     class="t"
+     id="text240"><tspan
+       x="2864"
+       id="tspan235">recording embedding z [B,D]</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan236">→ LayerNorm → Linear D→9</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan237">raw sound logits [B,9]</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan238">aggregate windows before one recording decision</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan239">P-number grouped; B/D/E remain together</tspan><tspan
+       x="2864"
+       dy="28"
+       id="tspan240">diagnosis and shared mapping remain separate</tspan></text>
+  <!-- Output routing -->
+  <path
+     class="bus"
+     d="M2820 315 V1215"
+     id="path240" />
+  <path
+     class="line"
+     d="M2800 815 H2820"
+     id="path241" />
+  <path
+     class="line"
+     d="M2820 315 H2840"
+     id="path242" />
+  <path
+     class="line"
+     d="M2820 615 H2840"
+     id="path243" />
+  <path
+     class="warn"
+     d="M2820 915 H2840"
+     id="path244" />
+  <path
+     class="warn"
+     d="M2820 1215 H2840"
+     id="path245" />
+  <!-- Compact presentation notes; no audit/control boxes -->
+  <path
+     class="cls-1"
+     d="m 3152.3882,114.1546 v 14.24 l -11.66,-14.24 h -4.49 v 23.45 h 5.36 v -14.24 l 11.69,14.24 h 4.46 v -23.45 z m 10.92,23.45 h 5.43 v -23.45 h -5.43 z m 19.33,0.27 c 3.79,0 6.77,-1.68 8.07,-4.56 l -4.05,-2.21 c -0.97,1.74 -2.41,2.48 -4.05,2.48 -2.65,0 -4.72,-1.84 -4.72,-4.99 0,-3.15 2.08,-4.99 4.72,-4.99 1.64,0 3.08,0.77 4.05,2.48 l 4.05,-2.18 c -1.31,-2.95 -4.29,-4.59 -8.07,-4.59 -5.86,0 -10.05,3.85 -10.05,9.28 0,5.43 4.19,9.28 10.05,9.28 z m 16.85,-4.63 v -5.43 h 10.89 v -4.22 h -10.89 v -5.09 h 12.33 v -4.36 h -17.72 v 23.45 h 18.16 v -4.36 h -12.76 z m 47.61,4.36 -8.74,-12.13 8.18,-11.32 h -5.86 l -5.29,7.61 -5.39,-7.61 h -6.17 l 8.24,11.53 -8.68,11.93 h 6.23 l 5.56,-8.14 5.66,8.14 h 6.26 z m 12.36,0 h 17.19 v -4.42 h -11.76 v -19.03 h -5.43 z m 37.96,0 h 5.7 l -10.49,-23.45 h -5.36 l -10.45,23.45 h 5.56 l 2.08,-5.03 h 10.89 l 2.08,5.03 v 0 z m -11.23,-9.15 3.72,-8.98 3.72,8.98 z m 36.59,-3.05 c 1.91,-1.01 3.12,-2.81 3.12,-5.16 0,-3.65 -3.01,-6.1 -8.88,-6.1 h -11.46 v 23.45 h 12.13 c 6.16,0 9.38,-2.35 9.38,-6.4 0,-2.95 -1.68,-4.96 -4.29,-5.8 v 0 z m -6.44,-7.17 c 2.65,0 4.09,0.9 4.09,2.75 0,1.85 -1.44,2.78 -4.09,2.78 h -5.39 v -5.53 z m 0.94,15.28 h -6.33 v -5.8 h 6.33 c 2.81,0 4.32,0.94 4.32,2.91 0,1.97 -1.51,2.88 -4.32,2.88 v 0 z"
+     id="path1-2"
+     style="fill:#78a8cb" />
+  <g
+     id="g4"
+     transform="translate(3136.2382,26.354604)">
+    <path
+       class="cls-1"
+       d="m 127.86,48.23 c -0.99,-1.91 -2.32,-3.43 -4,-4.57 -1.68,-1.14 -3.58,-1.72 -5.67,-1.72 -1.02,0 -1.97,0.13 -2.86,0.38 -0.89,0.26 -1.68,0.6 -2.38,1.05 0.13,0.25 0.19,0.51 0.19,0.76 0,1.08 -0.6,1.62 -1.81,1.62 -1.02,0 -1.84,-0.63 -2.48,-1.91 l -4.41,-8.82 h 0.02 l -10,-20.63 C 92.05,9.5 89.3,5.87 86.22,3.52 83.14,1.17 79.53,-0.01 75.4,-0.01 c -4.51,0 -8.2,1.29 -11.06,3.86 -2.86,2.57 -4.29,5.89 -4.29,9.96 0,2.35 0.49,4.48 1.48,6.39 0.99,1.91 2.32,3.43 4,4.58 1.69,1.14 3.58,1.72 5.67,1.72 1.02,0 1.97,-0.13 2.86,-0.38 0.89,-0.25 1.68,-0.6 2.38,-1.05 -0.13,-0.26 -0.19,-0.51 -0.19,-0.76 0,-1.08 0.6,-1.62 1.81,-1.62 1.02,0 1.84,0.63 2.48,1.91 l 4.41,8.82 h -0.02 l 10,20.63 c 2.41,4.89 5.16,8.52 8.24,10.87 3.08,2.35 6.69,3.53 10.82,3.53 4.51,0 8.2,-1.29 11.06,-3.86 2.86,-2.57 4.29,-5.89 4.29,-9.96 0,-2.35 -0.49,-4.48 -1.48,-6.39 z"
+       id="path2-7"
+       style="fill:#78a8cb" />
+    <path
+       class="cls-1"
+       d="M 81.06,50.95 C 80.2,50.09 79.77,48.93 79.77,47.47 V 35.17 H 66.43 v 12.3 c 0,1.46 -0.44,2.62 -1.33,3.48 -0.89,0.86 -2.03,1.29 -3.43,1.29 H 61.1 v 16.2 h 24.02 v -16.2 h -0.57 c -1.46,0 -2.62,-0.43 -3.48,-1.29 z"
+       id="path3"
+       style="fill:#78a8cb" />
+    <path
+       class="cls-1"
+       d="m 115.74,27.18 c 7.37,0 13.34,-5.97 13.34,-13.34 0,-7.37 -5.97,-13.34 -13.34,-13.34 -7.37,0 -13.34,5.97 -13.34,13.34 0,7.37 5.97,13.34 13.34,13.34 z"
+       id="path4"
+       style="fill:#78a8cb" />
+  </g>
+  <path
+     class="cls-2"
+     d="m 3173.2582,160.8346 c 0.85,0 1.58,-0.29 2.07,-0.85 l -0.51,-0.49 c -0.42,0.44 -0.93,0.65 -1.53,0.65 -1.23,0 -2.14,-0.89 -2.14,-2.09 0,-1.2 0.91,-2.09 2.14,-2.09 0.6,0 1.11,0.2 1.53,0.64 l 0.51,-0.49 c -0.5,-0.56 -1.23,-0.85 -2.07,-0.85 -1.65,0 -2.88,1.17 -2.88,2.78 0,1.61 1.23,2.78 2.87,2.78 v 0 z m 5.99,-4.18 -1.42,3.29 -1.44,-3.29 h -0.78 l 1.82,4.11 -0.13,0.29 c -0.2,0.47 -0.43,0.64 -0.78,0.64 -0.28,0 -0.54,-0.11 -0.74,-0.3 l -0.32,0.56 c 0.26,0.25 0.66,0.38 1.06,0.38 0.63,0 1.1,-0.27 1.47,-1.14 l 2,-4.53 h -0.73 z m 3.61,-0.04 c -0.58,0 -1.1,0.22 -1.44,0.66 v -2.27 h -0.75 v 5.76 h 0.71 v -0.65 c 0.33,0.47 0.86,0.7 1.47,0.7 1.2,0 2.08,-0.85 2.08,-2.1 0,-1.25 -0.88,-2.1 -2.08,-2.1 v 0 z m -0.06,3.55 c -0.79,0 -1.38,-0.58 -1.38,-1.45 0,-0.87 0.6,-1.45 1.38,-1.45 0.78,0 1.39,0.57 1.39,1.45 0,0.88 -0.6,1.45 -1.39,1.45 z m 6.9,-1.43 c 0,-1.27 -0.85,-2.12 -2.04,-2.12 -1.19,0 -2.07,0.88 -2.07,2.1 0,1.22 0.89,2.1 2.21,2.1 0.68,0 1.25,-0.23 1.62,-0.67 l -0.41,-0.48 c -0.3,0.33 -0.71,0.5 -1.19,0.5 -0.82,0 -1.4,-0.48 -1.49,-1.21 h 3.34 c 0,-0.07 0.02,-0.16 0.02,-0.23 v 0 z m -2.04,-1.49 c 0.72,0 1.24,0.49 1.32,1.18 h -2.64 c 0.08,-0.7 0.61,-1.18 1.32,-1.18 z m 3.78,0.1 v -0.69 h -0.71 v 4.12 h 0.74 v -2.05 c 0,-0.9 0.5,-1.39 1.3,-1.39 0.05,0 0.11,0 0.17,0 v -0.72 c -0.72,0 -1.23,0.25 -1.5,0.73 z m 2.14,1.61 h 2.09 v -0.64 h -2.09 z m 4.12,1.14 v -1.76 h 2.73 v -0.66 h -2.73 v -1.67 h 3.06 v -0.68 h -3.84 v 5.44 h 3.95 v -0.67 z m 9.47,-3.48 c -0.7,0 -1.27,0.3 -1.58,0.76 -0.27,-0.51 -0.8,-0.76 -1.43,-0.76 -0.63,0 -1.13,0.23 -1.42,0.65 v -0.61 h -0.71 v 4.12 h 0.75 v -2.12 c 0,-0.89 0.49,-1.37 1.24,-1.37 0.68,0 1.06,0.4 1.06,1.2 v 2.28 h 0.74 v -2.12 c 0,-0.89 0.49,-1.37 1.24,-1.37 0.68,0 1.07,0.4 1.07,1.2 v 2.28 h 0.74 v -2.37 c 0,-1.21 -0.68,-1.79 -1.69,-1.79 v 0 z m 5.25,0 c -0.58,0 -1.1,0.22 -1.44,0.66 v -2.27 h -0.74 v 5.76 h 0.71 v -0.65 c 0.33,0.47 0.86,0.7 1.47,0.7 1.2,0 2.08,-0.85 2.08,-2.1 0,-1.25 -0.88,-2.1 -2.08,-2.1 z m -0.06,3.55 c -0.79,0 -1.38,-0.58 -1.38,-1.45 0,-0.87 0.6,-1.45 1.38,-1.45 0.78,0 1.39,0.57 1.39,1.45 0,0.88 -0.6,1.45 -1.39,1.45 z m 6.9,-1.43 c 0,-1.27 -0.85,-2.12 -2.03,-2.12 -1.18,0 -2.07,0.88 -2.07,2.1 0,1.22 0.88,2.1 2.21,2.1 0.68,0 1.25,-0.23 1.62,-0.67 l -0.41,-0.48 c -0.3,0.33 -0.71,0.5 -1.19,0.5 -0.82,0 -1.4,-0.48 -1.49,-1.21 h 3.34 c 0,-0.07 0.02,-0.16 0.02,-0.23 v 0 z m -2.04,-1.49 c 0.72,0 1.24,0.49 1.32,1.18 h -2.64 c 0.08,-0.7 0.61,-1.18 1.32,-1.18 z m 6.21,-2.24 v 2.27 c -0.34,-0.44 -0.85,-0.66 -1.44,-0.66 -1.21,0 -2.08,0.84 -2.08,2.1 0,1.26 0.88,2.1 2.08,2.1 0.61,0 1.13,-0.23 1.47,-0.7 v 0.65 h 0.71 v -5.76 z m -1.38,5.16 c -0.79,0 -1.39,-0.58 -1.39,-1.45 0,-0.87 0.6,-1.45 1.39,-1.45 0.79,0 1.38,0.57 1.38,1.45 0,0.88 -0.6,1.45 -1.38,1.45 z m 6.68,-5.16 v 2.27 c -0.34,-0.44 -0.86,-0.66 -1.44,-0.66 -1.2,0 -2.08,0.84 -2.08,2.1 0,1.26 0.88,2.1 2.08,2.1 0.61,0 1.14,-0.23 1.47,-0.7 v 0.65 h 0.71 v -5.76 z m -1.38,5.16 c -0.79,0 -1.39,-0.58 -1.39,-1.45 0,-0.87 0.6,-1.45 1.39,-1.45 0.79,0 1.38,0.57 1.38,1.45 0,0.88 -0.6,1.45 -1.38,1.45 z m 7.26,-1.43 c 0,-1.27 -0.85,-2.12 -2.04,-2.12 -1.19,0 -2.07,0.88 -2.07,2.1 0,1.22 0.89,2.1 2.21,2.1 0.68,0 1.25,-0.23 1.62,-0.67 l -0.41,-0.48 c -0.3,0.33 -0.71,0.5 -1.19,0.5 -0.82,0 -1.4,-0.48 -1.49,-1.21 h 3.34 c 0,-0.07 0.02,-0.16 0.02,-0.23 v 0 z m -2.04,-1.49 c 0.72,0 1.24,0.49 1.32,1.18 h -2.64 c 0.08,-0.7 0.61,-1.18 1.32,-1.18 z m 6.21,-2.24 v 2.27 c -0.34,-0.44 -0.85,-0.66 -1.44,-0.66 -1.21,0 -2.08,0.84 -2.08,2.1 0,1.26 0.88,2.1 2.08,2.1 0.61,0 1.13,-0.23 1.47,-0.7 v 0.65 h 0.71 v -5.76 z m -1.38,5.16 c -0.79,0 -1.39,-0.58 -1.39,-1.45 0,-0.87 0.6,-1.45 1.39,-1.45 0.79,0 1.38,0.57 1.38,1.45 0,0.88 -0.6,1.45 -1.38,1.45 z m 7.32,0.67 c 1.44,0 2.11,-0.71 2.11,-1.54 0,-2 -3.29,-1.16 -3.29,-2.49 0,-0.47 0.4,-0.86 1.32,-0.86 0.48,0 1.02,0.14 1.49,0.44 l 0.26,-0.62 c -0.45,-0.31 -1.11,-0.48 -1.75,-0.48 -1.43,0 -2.08,0.71 -2.08,1.55 0,2.02 3.29,1.18 3.29,2.51 0,0.47 -0.4,0.84 -1.34,0.84 -0.7,0 -1.39,-0.26 -1.79,-0.63 l -0.29,0.6 c 0.43,0.4 1.25,0.68 2.08,0.68 v 0 z m 5.97,-4.18 -1.42,3.29 -1.44,-3.29 h -0.78 l 1.82,4.11 -0.13,0.29 c -0.2,0.47 -0.43,0.64 -0.78,0.64 -0.28,0 -0.54,-0.11 -0.74,-0.3 l -0.32,0.56 c 0.26,0.25 0.66,0.38 1.06,0.38 0.63,0 1.1,-0.27 1.47,-1.14 l 2,-4.53 h -0.73 z m 2.56,4.16 c 1.1,0 1.78,-0.47 1.78,-1.22 0,-1.6 -2.61,-0.81 -2.61,-1.78 0,-0.33 0.32,-0.57 0.97,-0.57 0.4,0 0.82,0.09 1.19,0.33 l 0.32,-0.59 c -0.36,-0.23 -0.96,-0.37 -1.5,-0.37 -1.06,0 -1.72,0.5 -1.72,1.23 0,1.64 2.6,0.84 2.6,1.76 0,0.35 -0.29,0.56 -0.98,0.56 -0.54,0 -1.1,-0.18 -1.44,-0.43 l -0.31,0.59 c 0.34,0.27 1.02,0.48 1.7,0.48 v 0 z m 4.79,-0.82 c -0.16,0.12 -0.37,0.19 -0.58,0.19 -0.41,0 -0.65,-0.25 -0.65,-0.69 v -2.23 h 1.18 v -0.61 h -1.18 v -0.9 h -0.74 v 0.9 h -0.7 v 0.61 h 0.7 v 2.26 c 0,0.83 0.47,1.29 1.3,1.29 0.33,0 0.67,-0.09 0.9,-0.29 l -0.23,-0.54 v 0 z m 4.71,-1.26 c 0,-1.27 -0.84,-2.12 -2.03,-2.12 -1.19,0 -2.07,0.88 -2.07,2.1 0,1.22 0.88,2.1 2.21,2.1 0.68,0 1.25,-0.23 1.62,-0.67 l -0.41,-0.48 c -0.3,0.33 -0.71,0.5 -1.19,0.5 -0.82,0 -1.4,-0.48 -1.49,-1.21 h 3.34 c 0,-0.07 0.01,-0.16 0.01,-0.23 v 0 z m -2.03,-1.49 c 0.72,0 1.24,0.49 1.32,1.18 h -2.64 c 0.08,-0.7 0.61,-1.18 1.32,-1.18 z m 8.22,-0.63 c -0.7,0 -1.28,0.3 -1.58,0.76 -0.27,-0.51 -0.8,-0.76 -1.43,-0.76 -0.63,0 -1.13,0.23 -1.42,0.65 v -0.61 h -0.71 v 4.12 h 0.75 v -2.12 c 0,-0.89 0.49,-1.37 1.24,-1.37 0.68,0 1.07,0.4 1.07,1.2 v 2.28 h 0.74 v -2.12 c 0,-0.89 0.49,-1.37 1.24,-1.37 0.68,0 1.07,0.4 1.07,1.2 v 2.28 h 0.74 v -2.37 c 0,-1.21 -0.68,-1.79 -1.68,-1.79 v 0 z m 4.24,4.2 c 1.1,0 1.78,-0.47 1.78,-1.22 0,-1.6 -2.61,-0.81 -2.61,-1.78 0,-0.33 0.32,-0.57 0.97,-0.57 0.4,0 0.82,0.09 1.19,0.33 l 0.32,-0.59 c -0.36,-0.23 -0.96,-0.37 -1.5,-0.37 -1.06,0 -1.72,0.5 -1.72,1.23 0,1.64 2.6,0.84 2.6,1.76 0,0.35 -0.29,0.56 -0.98,0.56 -0.54,0 -1.1,-0.18 -1.45,-0.43 l -0.31,0.59 c 0.34,0.27 1.02,0.48 1.7,0.48 v 0 z m 4.91,-0.05 h 3.72 v -0.67 h -2.95 v -4.76 h -0.78 v 5.44 0 z m 6.03,-4.15 c -0.66,0 -1.27,0.19 -1.7,0.53 l 0.31,0.56 c 0.32,-0.27 0.82,-0.44 1.3,-0.44 0.74,0 1.1,0.36 1.1,0.99 v 0.15 h -1.18 c -1.23,0 -1.65,0.54 -1.65,1.2 0,0.72 0.59,1.21 1.52,1.21 0.64,0 1.1,-0.22 1.35,-0.59 v 0.54 h 0.71 v -2.49 c 0,-1.13 -0.64,-1.67 -1.76,-1.67 v 0 z m -0.17,3.63 c -0.57,0 -0.91,-0.26 -0.91,-0.67 0,-0.35 0.21,-0.64 0.95,-0.64 h 1.15 v 0.58 c -0.19,0.47 -0.63,0.73 -1.19,0.73 z m 5.5,-3.63 c -0.58,0 -1.1,0.22 -1.44,0.66 v -2.27 h -0.75 v 5.76 h 0.71 v -0.65 c 0.33,0.47 0.86,0.7 1.47,0.7 1.2,0 2.08,-0.85 2.08,-2.1 0,-1.25 -0.88,-2.1 -2.08,-2.1 v 0 z m -0.06,3.55 c -0.78,0 -1.38,-0.58 -1.38,-1.45 0,-0.87 0.6,-1.45 1.38,-1.45 0.78,0 1.39,0.57 1.39,1.45 0,0.88 -0.6,1.45 -1.39,1.45 z"
+     id="path5"
+     style="fill:#231815" />
+  <path
+     class="cls-2"
+     d="m 3185.6982,146.0046 v 4.05 l -3.26,-4.05 h -0.64 v 5.44 h 0.78 v -4.05 l 3.26,4.05 h 0.64 v -5.44 z m 6.02,3.41 c 0,-1.27 -0.85,-2.12 -2.03,-2.12 -1.18,0 -2.07,0.88 -2.07,2.1 0,1.22 0.88,2.1 2.21,2.1 0.68,0 1.25,-0.23 1.62,-0.67 l -0.41,-0.48 c -0.3,0.33 -0.71,0.5 -1.19,0.5 -0.82,0 -1.4,-0.48 -1.49,-1.21 h 3.34 c 0,-0.07 0.02,-0.16 0.02,-0.23 v 0 z m -2.04,-1.5 c 0.72,0 1.24,0.49 1.32,1.18 h -2.64 c 0.08,-0.7 0.61,-1.18 1.32,-1.18 z m 5.15,2.76 c -0.15,0.12 -0.36,0.19 -0.58,0.19 -0.41,0 -0.64,-0.25 -0.64,-0.69 v -2.23 h 1.18 v -0.61 h -1.18 v -0.9 h -0.74 v 0.9 h -0.7 v 0.61 h 0.7 v 2.26 c 0,0.83 0.47,1.29 1.3,1.29 0.33,0 0.68,-0.09 0.9,-0.29 l -0.23,-0.53 v 0 z m 6.62,-3.34 -1.23,3.29 -1.22,-3.29 h -0.63 l -1.24,3.28 -1.2,-3.28 h -0.71 l 1.53,4.12 h 0.72 l 1.2,-3.12 1.19,3.12 h 0.71 l 1.54,-4.12 h -0.67 z m 3.07,4.16 c 1.24,0 2.14,-0.88 2.14,-2.1 0,-1.22 -0.9,-2.1 -2.14,-2.1 -1.24,0 -2.14,0.87 -2.14,2.1 0,1.23 0.91,2.1 2.14,2.1 z m 0,-0.65 c -0.79,0 -1.39,-0.58 -1.39,-1.45 0,-0.87 0.6,-1.44 1.39,-1.44 0.79,0 1.38,0.57 1.38,1.44 0,0.87 -0.59,1.45 -1.38,1.45 z m 3.89,-2.83 v -0.69 h -0.71 v 4.12 h 0.75 v -2.05 c 0,-0.9 0.5,-1.39 1.3,-1.39 0.05,0 0.11,0 0.17,0 v -0.72 c -0.72,0 -1.24,0.25 -1.5,0.73 v 0 z m 5.56,3.43 h 0.92 l -1.9,-2.41 1.73,-1.7 h -0.9 l -2.24,2.05 v -3.7 h -0.74 v 5.76 h 0.74 v -1.13 l 0.85,-0.79 1.55,1.92 v 0 z m 5.19,-2.03 c 0,-1.27 -0.85,-2.12 -2.04,-2.12 -1.19,0 -2.07,0.88 -2.07,2.1 0,1.22 0.89,2.1 2.21,2.1 0.68,0 1.25,-0.23 1.62,-0.67 l -0.41,-0.48 c -0.3,0.33 -0.71,0.5 -1.19,0.5 -0.82,0 -1.4,-0.48 -1.49,-1.21 h 3.34 c 0,-0.07 0.02,-0.16 0.02,-0.23 v 0 z m -2.04,-1.5 c 0.72,0 1.24,0.49 1.32,1.18 h -2.64 c 0.08,-0.7 0.61,-1.18 1.32,-1.18 z m 6.21,-2.23 v 2.27 c -0.34,-0.44 -0.85,-0.66 -1.44,-0.66 -1.2,0 -2.08,0.84 -2.08,2.1 0,1.26 0.88,2.1 2.08,2.1 0.61,0 1.13,-0.23 1.47,-0.7 v 0.65 h 0.71 v -5.76 z m -1.37,5.16 c -0.79,0 -1.39,-0.58 -1.39,-1.45 0,-0.87 0.6,-1.44 1.39,-1.44 0.79,0 1.38,0.57 1.38,1.44 0,0.87 -0.6,1.45 -1.38,1.45 z m 5.73,0.6 h 0.78 v -5.44 h -0.78 z m 4.5,-4.15 c -0.65,0 -1.18,0.24 -1.48,0.66 v -0.62 h -0.71 v 4.12 h 0.75 v -2.12 c 0,-0.89 0.51,-1.37 1.31,-1.37 0.71,0 1.11,0.4 1.11,1.2 v 2.28 h 0.74 v -2.37 c 0,-1.21 -0.71,-1.79 -1.71,-1.79 v 0 z m 5.17,3.38 c -0.16,0.12 -0.37,0.19 -0.58,0.19 -0.41,0 -0.65,-0.25 -0.65,-0.69 v -2.23 h 1.18 v -0.61 h -1.18 v -0.9 h -0.74 v 0.9 h -0.7 v 0.61 h 0.7 v 2.26 c 0,0.83 0.47,1.29 1.3,1.29 0.33,0 0.68,-0.09 0.9,-0.29 z m 4.72,-1.26 c 0,-1.27 -0.85,-2.12 -2.04,-2.12 -1.19,0 -2.07,0.88 -2.07,2.1 0,1.22 0.88,2.1 2.21,2.1 0.68,0 1.25,-0.23 1.62,-0.67 l -0.41,-0.48 c -0.3,0.33 -0.71,0.5 -1.19,0.5 -0.82,0 -1.4,-0.48 -1.49,-1.21 h 3.34 c 0,-0.07 0.02,-0.16 0.02,-0.23 v 0 z m -2.04,-1.5 c 0.72,0 1.24,0.49 1.32,1.18 h -2.64 c 0.08,-0.7 0.61,-1.18 1.32,-1.18 z m 3.07,3.53 h 0.75 v -5.76 h -0.75 z m 2.17,0 h 0.75 v -5.76 h -0.75 z m 2.54,-4.91 c 0.3,0 0.51,-0.22 0.51,-0.5 0,-0.26 -0.22,-0.47 -0.51,-0.47 -0.29,0 -0.5,0.22 -0.5,0.49 0,0.27 0.22,0.48 0.5,0.48 z m -0.37,4.91 h 0.75 v -4.12 h -0.75 z m 5.4,-4.11 v 0.64 c -0.35,-0.45 -0.91,-0.67 -1.52,-0.67 -1.19,0 -2.09,0.8 -2.09,1.99 0,1.19 0.9,2 2.09,2 0.59,0 1.13,-0.21 1.48,-0.64 v 0.33 c 0,0.93 -0.44,1.38 -1.41,1.38 -0.61,0 -1.2,-0.21 -1.58,-0.54 l -0.36,0.58 c 0.45,0.4 1.21,0.61 1.96,0.61 1.4,0 2.14,-0.66 2.14,-2.11 v -3.56 h -0.71 z m -1.44,3.29 c -0.83,0 -1.42,-0.55 -1.42,-1.34 0,-0.79 0.59,-1.34 1.42,-1.34 0.83,0 1.41,0.54 1.41,1.34 0,0.8 -0.59,1.35 -1.41,1.35 v 0 z m 7.28,-1.21 c 0,-1.27 -0.85,-2.12 -2.03,-2.12 -1.18,0 -2.07,0.88 -2.07,2.1 0,1.22 0.89,2.1 2.21,2.1 0.68,0 1.25,-0.23 1.62,-0.67 l -0.41,-0.48 c -0.3,0.33 -0.71,0.5 -1.19,0.5 -0.82,0 -1.4,-0.48 -1.49,-1.21 h 3.34 c 0,-0.07 0.01,-0.16 0.01,-0.23 v 0 z m -2.03,-1.5 c 0.72,0 1.24,0.49 1.32,1.18 h -2.64 c 0.08,-0.7 0.61,-1.18 1.32,-1.18 z m 5.27,-0.62 c -0.65,0 -1.18,0.24 -1.49,0.66 v -0.62 h -0.71 v 4.12 h 0.74 v -2.12 c 0,-0.89 0.51,-1.37 1.31,-1.37 0.71,0 1.11,0.4 1.11,1.2 v 2.28 h 0.75 v -2.37 c 0,-1.21 -0.71,-1.79 -1.71,-1.79 v 0 z m 4.91,4.2 c 0.74,0 1.35,-0.31 1.68,-0.88 l -0.57,-0.36 c -0.26,0.4 -0.67,0.59 -1.12,0.59 -0.81,0 -1.41,-0.56 -1.41,-1.45 0,-0.89 0.61,-1.44 1.41,-1.44 0.45,0 0.85,0.19 1.12,0.59 l 0.57,-0.37 c -0.33,-0.57 -0.94,-0.88 -1.68,-0.88 -1.27,0 -2.17,0.87 -2.17,2.1 0,1.23 0.91,2.1 2.17,2.1 z m 6.3,-2.08 c 0,-1.27 -0.85,-2.12 -2.04,-2.12 -1.19,0 -2.07,0.88 -2.07,2.1 0,1.22 0.88,2.1 2.21,2.1 0.68,0 1.25,-0.23 1.62,-0.67 l -0.41,-0.48 c -0.3,0.33 -0.71,0.5 -1.19,0.5 -0.82,0 -1.4,-0.48 -1.49,-1.21 h 3.34 c 0,-0.07 0.02,-0.16 0.02,-0.23 v 0 z m -2.04,-1.5 c 0.72,0 1.24,0.49 1.32,1.18 h -2.64 c 0.08,-0.7 0.61,-1.18 1.32,-1.18 z m 9.67,3.12 -0.73,-0.73 c 0.22,-0.34 0.38,-0.76 0.47,-1.24 l -0.6,-0.19 c -0.07,0.38 -0.19,0.71 -0.33,0.99 l -1.34,-1.34 c 0.83,-0.47 1.16,-0.87 1.16,-1.42 0,-0.71 -0.53,-1.13 -1.35,-1.13 -0.89,0 -1.47,0.49 -1.47,1.22 0,0.4 0.16,0.75 0.65,1.24 -0.94,0.54 -1.32,1 -1.32,1.67 0,0.83 0.8,1.41 1.9,1.41 0.72,0 1.34,-0.24 1.82,-0.7 l 0.72,0.72 z m -2.73,-4.53 c 0.47,0 0.72,0.24 0.72,0.6 0,0.36 -0.23,0.59 -0.95,0.99 -0.44,-0.45 -0.55,-0.65 -0.55,-0.93 0,-0.39 0.29,-0.66 0.78,-0.66 z m -0.19,4.38 c -0.73,0 -1.22,-0.35 -1.22,-0.87 0,-0.44 0.24,-0.75 1,-1.18 l 1.55,1.54 c -0.35,0.34 -0.81,0.51 -1.33,0.51 z"
+     id="path6"
+     style="fill:#231815" />
+</svg>

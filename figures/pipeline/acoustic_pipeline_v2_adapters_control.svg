@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1500" viewBox="0 0 2400 1500">
+  <title>Acoustic pipeline v2 adapter fusion and control candidates</title>
+  <desc>Candidate input systems, representation adapters, fusion methods, native head gates, and the training-only control plane. Alternatives are not simultaneous and external claims are not local results.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#29435C"/></marker>
+    <marker id="h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#C2410C"/></marker>
+    <style>
+      .bg{fill:#F6F8FB}.title{font:700 34px Arial,"PingFang SC",sans-serif;fill:#142B45}.sub{font:18px Arial,"PingFang SC",sans-serif;fill:#4B6177}.section{font:700 20px Arial,"PingFang SC",sans-serif;fill:#142B45;letter-spacing:.4px}.h{font:700 19px Arial,"PingFang SC",sans-serif;fill:#142B45}.t{font:15px Arial,"PingFang SC",sans-serif;fill:#263B50}.small{font:13px Arial,"PingFang SC",sans-serif;fill:#425A70}.candidate{fill:#F4F7FF;stroke:#2F6FED;stroke-width:2.4;stroke-dasharray:9 7}.paper{fill:#F7F2FF;stroke:#7C3AED;stroke-width:2.4;stroke-dasharray:10 6}.hold{fill:#FFF5ED;stroke:#C2410C;stroke-width:2.4;stroke-dasharray:7 6}.control{fill:#FFF9E8;stroke:#A16207;stroke-width:2.2}.fixed{fill:#FFFFFF;stroke:#1E3A5F;stroke-width:2.3}.exec{fill:#E8F6F0;stroke:#2A7F62;stroke-width:2.8}.rail{fill:#EEF2F6;stroke:#60758A;stroke-width:2}.line{fill:none;stroke:#29435C;stroke-width:2.3;marker-end:url(#a)}.holdline{fill:none;stroke:#C2410C;stroke-width:2.3;stroke-dasharray:7 6;marker-end:url(#h)}.controlLine{fill:none;stroke:#A16207;stroke-width:2;stroke-dasharray:5 6;marker-end:url(#a)}.divider{stroke:#C8D2DD;stroke-width:1.2}.tag{font:700 12px Arial,"PingFang SC",sans-serif}.blue{fill:#2F6FED}.purple{fill:#7C3AED}.orange{fill:#C2410C}.green{fill:#2A7F62}.amber{fill:#A16207}.navy{fill:#1E3A5F}
+    </style>
+  </defs>
+  <rect class="bg" width="2400" height="1500"/>
+  <text x="50" y="58" class="title">Candidate adapters, fusion and control · v2 detail</text>
+  <text x="50" y="91" class="sub">Read each column as alternatives. A printed work is a traceable option, not a selected composition or local performance result.</text>
+
+  <text x="50" y="136" class="section">A  INPUT / COMPLETE-PIPELINE REFERENCES</text>
+  <text x="815" y="136" class="section">B  REPRESENTATION / DOMAIN CANDIDATES</text>
+  <text x="1580" y="136" class="section">C  FUSION / MULTIMODAL CANDIDATES</text>
+
+  <!-- Column A -->
+  <rect x="50" y="160" width="720" height="250" rx="18" class="paper"/>
+  <text x="74" y="194" class="h">W05 · RespireNet · paper-faithful reference</text><text x="742" y="194" text-anchor="end" class="tag purple">REFERENCE</text>
+  <text x="74" y="226" class="t"><tspan x="74">respiratory segment → blank-region clipping / smart padding</tspan><tspan x="74" dy="23">→ dataset normalization + concatenation augmentation</tspan><tspan x="74" dy="23">→ torchvision ResNet34 feature [B,512]</tspan><tspan x="74" dy="23">→ Dropout → Linear 512→128 → ReLU → Dropout</tspan><tspan x="74" dy="23">→ Linear 128→128 → ReLU → native classifier [B,K]</tspan><tspan x="74" dy="23">local status: identity/smoke reference only; no score claim</tspan></text>
+  <rect x="50" y="432" width="720" height="270" rx="18" class="candidate"/>
+  <text x="74" y="466" class="h">W07 · MVST · multi-view spectrogram reference</text><text x="742" y="466" text-anchor="end" class="tag blue">CANDIDATE</text>
+  <text x="74" y="498" class="t"><tspan x="74">spectrogram [B,1,256,1024]</tspan><tspan x="74" dy="23">→ five AST branches, patch (256,1)/(128,2)/(64,4)/(32,8)/(16,16)</tspan><tspan x="74" dy="23">→ five view embeddings z_i [B,768]</tspan><tspan x="74" dy="23">→ view gate sigmoid(W_i z_i), W_i ∈ R^(768×768)</tspan><tspan x="74" dy="23">→ weighted sum z [B,768] → Linear 768→4</tspan><tspan x="74" dy="23">local status: architecture identity/smoke; score protocol caveat</tspan><tspan x="74" dy="23">gate: native input/grid and target head must be declared</tspan></text>
+  <rect x="50" y="724" width="720" height="270" rx="18" class="paper"/>
+  <text x="74" y="758" class="h">W21 · DeepBreath · external disease reference</text><text x="742" y="758" text-anchor="end" class="tag purple">REFERENCE</text>
+  <text x="74" y="790" class="t"><tspan x="74">4 kHz waveform → 5 s segment → log-mel</tspan><tspan x="74" dy="23">n_fft 256 · hop 64 · 32 mel bins · 250–750 Hz</tspan><tspan x="74" dy="23">→ ConvBlock ×5, each 2×Conv 3×3</tspan><tspan x="74" dy="23">channels 64→128→256→512→1024; pooling 2×2 ×4, then 1×1</tspan><tspan x="74" dy="23">→ frequency mean → local max+avg → FC1024 → attention Conv1d</tspan><tspan x="74" dy="23">→ four separate one-vs-rest disease models</tspan><tspan x="74" dy="23">gate: not a drop-in four-dataset native head; no local reproduction</tspan></text>
+
+  <!-- Column B -->
+  <rect x="815" y="160" width="720" height="190" rx="18" class="candidate"/>
+  <text x="839" y="194" class="h">W16 · SG-SCL · device-aware projection</text><text x="1507" y="194" text-anchor="end" class="tag blue">CANDIDATE</text>
+  <text x="839" y="226" class="t"><tspan x="839">AST pooled z [B,768] + device/domain side information</tspan><tspan x="839" dy="23">→ Linear 768→768 → BN → ReLU → Linear 768→D_p</tspan><tspan x="839" dy="23">→ supervised contrastive objective; native classifier remains separate</tspan><tspan x="839" dy="23">gate: unavailable metadata is masked, never imputed as truth</tspan><tspan x="839" dy="23">status: paper/repo candidate; not locally validated across four datasets</tspan></text>
+  <rect x="815" y="372" width="720" height="205" rx="18" class="hold"/>
+  <text x="839" y="406" class="h">W18 · PAFA · patient-aware frozen-feature branch</text><text x="1507" y="406" text-anchor="end" class="tag orange">LIMITED EVIDENCE</text>
+  <text x="839" y="438" class="t"><tspan x="839">BEATs tokens [B,L,768] + mask</tspan><tspan x="839" dy="23">→ optional attention Linear 768→1 → masked softmax pool [B,768]</tspan><tspan x="839" dy="23">→ projector 768→H→D_p → PCSL / GPAL patient-aware losses</tspan><tspan x="839" dy="23">local evidence: D2 frozen-feature diagnostics only</tspan><tspan x="839" dy="23">full-encoder effect and test-selected checkpoint generality: HOLD</tspan></text>
+  <rect x="815" y="599" width="720" height="170" rx="18" class="candidate"/>
+  <text x="839" y="633" class="h">W14 · Patch-Mix CL · patch-domain augmentation</text><text x="1507" y="633" text-anchor="end" class="tag blue">CANDIDATE</text>
+  <text x="839" y="665" class="t"><tspan x="839">AST patch sequence → patch mixing + mixed-label CE</tspan><tspan x="839" dy="23">→ pooled [B,768] → Linear768→768 → BN → ReLU → [B,768]</tspan><tspan x="839" dy="23">gate: patch/time correspondence must survive the selected frontend</tspan><tspan x="839" dy="23">status: paper/code candidate; no four-dataset local result</tspan></text>
+  <rect x="815" y="791" width="720" height="155" rx="18" class="hold"/>
+  <text x="839" y="825" class="h">W15 · metadata-SCL · symbolic compatibility only</text><text x="1507" y="825" text-anchor="end" class="tag orange">HOLD</text>
+  <text x="839" y="857" class="t"><tspan x="839">pooled z [B,D] → projector [B,D_p] + metadata-conditioned positives</tspan><tspan x="839" dy="23">exact widths / metadata contract not reverified → D_p symbolic</tspan><tspan x="839" dy="23">gate: missing metadata uses eligibility mask; no generic fallback</tspan><tspan x="839" dy="23">status: candidate work card only</tspan></text>
+
+  <!-- Column C -->
+  <rect x="1580" y="160" width="770" height="210" rx="18" class="candidate"/>
+  <text x="1604" y="194" class="h">W07 · MVST · audio-view fusion</text><text x="2322" y="194" text-anchor="end" class="tag blue">AUDIO FUSION</text>
+  <text x="1604" y="226" class="t"><tspan x="1604">five compatible view embeddings [B,768]</tspan><tspan x="1604" dy="23">→ five feature-wise sigmoid gates [B,768]</tspan><tspan x="1604" dy="23">→ weighted elementwise sum [B,768] → native eligible head</tspan><tspan x="1604" dy="23">requires all five views and declared view masks</tspan><tspan x="1604" dy="23">alternative to other fusion works; not stacked with them by default</tspan></text>
+  <rect x="1580" y="392" width="770" height="205" rx="18" class="hold"/>
+  <text x="1604" y="426" class="h">W24 · BTS · CLAP audio–text fusion</text><text x="2322" y="426" text-anchor="end" class="tag orange">MULTIMODAL HOLD</text>
+  <text x="1604" y="458" class="t"><tspan x="1604">CLAP audio [B,512] + text [B,512]</tspan><tspan x="1604" dy="23">→ concatenate [B,1024] or weighted add [B,512]</tspan><tspan x="1604" dy="23">→ classifier [B,K]</tspan><tspan x="1604" dy="23">gate: text provenance, missing-modality mask and native K required</tspan><tspan x="1604" dy="23">audio-only four-lane contract does not satisfy this input</tspan></text>
+  <rect x="1580" y="619" width="770" height="250" rx="18" class="hold"/>
+  <text x="1604" y="653" class="h">W30 · Resp-Agent · BEATs + Longformer</text><text x="2322" y="653" text-anchor="end" class="tag orange">PREPRINT / HOLD</text>
+  <text x="1604" y="685" class="t"><tspan x="1604">16 kHz, ≤10 s waveform [B,160000]</tspan><tspan x="1604" dy="23">→ BEATs audio tokens [B,496,768] → Linear 768→D_L</tspan><tspan x="1604" dy="23">+ text ≤128 tokens / 496 audio placeholders; total ≤4096</tspan><tspan x="1604" dy="23">→ Longformer classifier; audio anchor stride 4</tspan><tspan x="1604" dy="23">gate: language input and token alignment are additional modalities</tspan><tspan x="1604" dy="23">not an audio-only replacement and not locally reproduced</tspan></text>
+  <rect x="1580" y="891" width="770" height="175" rx="18" class="hold"/>
+  <text x="1604" y="925" class="h">W26 · ADD-RSC · loss/denoising reference</text><text x="2322" y="925" text-anchor="end" class="tag orange">HOLD</text>
+  <text x="1604" y="957" class="t"><tspan x="1604">released DiffTransformerLayer: D256, 8 heads, depth parameter 6</tspan><tspan x="1604" dy="23">RMSNorm + differential MHA + AFNO + SwiGLU</tspan><tspan x="1604" dy="23">label smoothing K4 / 0.2; total loss 0.5·denoise + CE</tspan><tspan x="1604" dy="23">do not read depth=6 as six verified stacked blocks</tspan></text>
+
+  <!-- control plane -->
+  <text x="50" y="1115" class="section">D  TRAINING / EVALUATION CONTROL PLANE — NOT AN AUDIO MODULE</text>
+  <rect x="50" y="1140" width="1500" height="290" rx="18" class="control"/>
+  <text x="76" y="1175" class="h">eligibility masks · source weights · task-native losses · protocol guards</text><text x="1522" y="1175" text-anchor="end" class="tag amber">TRAINING ONLY</text>
+  <line x1="76" y1="1192" x2="1524" y2="1192" class="divider"/>
+  <text x="76" y="1225" class="t"><tspan x="76">1  Build supervision only where the dataset contract declares a valid label; HF gaps stay unknown, never negative.</tspan><tspan x="76" dy="27">2  Preserve native units and protocol identity: ICBHI cycle; SPR event/recording and train/inter/intra; HF temporal grid; KAUH recording/P-group.</tspan><tspan x="76" dy="27">3  Weight source/task losses explicitly; keep cRT, event pooling and shared-head harmonization in the evidence registry, not as solved modules.</tspan><tspan x="76" dy="27">4  Select checkpoints/metrics inside each native protocol; smoke/profile validates execution only, never performance.</tspan><tspan x="76" dy="27">5  Inference receives only the selected frontend/encoder/adapter/head path; training labels and eligibility logic do not leak into deployment.</tspan></text>
+  <rect x="1580" y="1100" width="770" height="330" rx="18" class="rail"/>
+  <text x="1604" y="1136" class="h">Compatibility gates before composition</text><text x="2322" y="1136" text-anchor="end" class="tag navy">REQUIRED</text>
+  <text x="1604" y="1171" class="t"><tspan x="1604">G1  unit/label/head match</tspan><tspan x="1604" dy="26">G2  sample-rate/frontend variant declared</tspan><tspan x="1604" dy="26">G3  dimension adapter D_in→D_out explicit</tspan><tspan x="1604" dy="26">G4  mask/time_map propagated where temporal</tspan><tspan x="1604" dy="26">G5  modality availability + missingness mask</tspan><tspan x="1604" dy="26">G6  split/group/metric remains dataset-native</tspan><tspan x="1604" dy="32" font-weight="700">Hard stop:</tspan><tspan x="1604" dy="24">pooled-only output ≠ HF temporal input.</tspan><tspan x="1604" dy="24">tokens+mask without time_map also remains HOLD.</tspan></text>
+
+  <!-- control arrows and legend -->
+  <path class="controlLine" d="M800 1140 V1080 H1175 V946"/>
+  <path class="controlLine" d="M1325 1140 V1080 H1965 V1066"/>
+  <path class="holdline" d="M1535 473 H1560 V493 H1580"/>
+  <path class="line" d="M770 566 H792 V552 H815"/>
+  <text x="50" y="1472" class="small">Visual semantics: solid navy = fixed contract · green = executable engineering path · blue dashed = candidate · purple dashed = paper reference · orange dashed = HOLD / limited evidence · amber = training-only control</text>
+</svg>

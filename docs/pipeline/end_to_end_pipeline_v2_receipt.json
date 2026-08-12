@@ -1,0 +1,198 @@
+{
+  "artifact": "Acoustic End-to-End Pipeline v2",
+  "version": "2.0",
+  "generated_at_utc": "2026-08-03T16:36:24Z",
+  "status": "visual_qa_passed",
+  "scope": {
+    "authorized_write_roots": [
+      "docs/pipeline/",
+      "figures/pipeline/"
+    ],
+    "notion_modified": false,
+    "git_operation_performed": false,
+    "experiment_or_training_run": false,
+    "server_or_cache_run": false,
+    "v1_overwritten_or_deleted": false
+  },
+  "ambiguity_resolution": {
+    "user_phrase": "four baselines",
+    "resolved_as": "four dataset-native input/baseline lanes: ICBHI, SPRSound, HF_Lung_V1, and KAUH/Fraiwan",
+    "operational_matrix_note": "R0-R3 are four operational reproduction recipes and are not a one-to-one mapping to the four datasets",
+    "drawing_consequence": "the four native lanes are the main topology; R0-R3 appear only in a separate operational/evidence inset"
+  },
+  "read_only_inputs": {
+    "notion": [
+      "https://app.notion.com/p/3b0309efda2981bd944edae34fb913e2",
+      "https://app.notion.com/p/3b0309efda2981899476c6fcaca45d47"
+    ],
+    "v1": [
+      "docs/pipeline/end_to_end_pipeline_textual_spec_v1.md",
+      "docs/pipeline/module_interface_compatibility_matrix_v1.md",
+      "figures/pipeline/acoustic_end_to_end_pipeline_v1.svg",
+      "docs/pipeline/end_to_end_pipeline_v1_receipt.json"
+    ],
+    "dataset_and_task_contracts": [
+      "docs/datasets/four_dataset_task_contract_draft_2026-07-28.json",
+      "docs/datasets/four_dataset_task_contract_review_2026-07-28.md"
+    ],
+    "executable_reference": [
+      "experiments/icbhi_sprsound_shared_encoder_native_heads.yaml",
+      "baseline/shared_encoder_native_heads/protocol.py",
+      "baseline/shared_encoder_native_heads/protocol.json",
+      "baseline/shared_encoder_native_heads/README.md",
+      "baseline/shared_encoder_native_heads/run.py",
+      "baseline/shared_encoder_native_heads/verify.py",
+      "result/icbhi_sprsound_shared_encoder_native_heads/protocol_and_data_receipt.json",
+      "result/icbhi_sprsound_shared_encoder_native_heads/smoke_receipt.json",
+      "result/icbhi_sprsound_shared_encoder_native_heads/profile_receipt.json",
+      ".cache/icbhi_sprsound_shared_encoder_native_heads/source/repo/models/ast.py"
+    ],
+    "local_evidence_registry": [
+      "result/four_dataset_representation_attribution/hf_proxy_fixed_v2/comparison/encoder_selection.json",
+      "result/four_dataset_shared_compatible_head_harmonization/hf_proxy_fixed_v2/harmonization_decision.json",
+      "result/four_dataset_support_aware_crt/decision.json",
+      "result/four_dataset_shortcut_diagnostic/decision.json",
+      "result/four_dataset_event_sensitive_pooling/decision.json"
+    ]
+  },
+  "official_primary_sources": {
+    "W05_RespireNet": "https://github.com/microsoft/RespireNet",
+    "W07_MVST": "https://github.com/wentaoheunnc/MVST",
+    "W09_AST": "https://github.com/YuanGongND/ast",
+    "W10_BEATs": "https://github.com/microsoft/unilm/tree/master/beats",
+    "W11_PANNs": "https://github.com/qiuqiangkong/audioset_tagging_cnn",
+    "W12_OPERA": "https://github.com/evelyn0414/OPERA",
+    "W13_HeAR": "https://huggingface.co/google/hear",
+    "W14_PatchMix": "https://github.com/raymin0223/patch_mix_contrastive_learning",
+    "W16_SG_SCL": "https://github.com/kaen2891/stethoscope-guided_supervised_contrastive_learning",
+    "W18_PAFA": "https://github.com/wa976/pafaofficialpytorch",
+    "W21_DeepBreath": "https://github.com/epfl-iglobalhealth/DeepBreath-NatMed23",
+    "W24_BTS": "https://github.com/kaen2891/bts",
+    "W26_ADD_RSC": "https://github.com/deegy666/ADD-RSC",
+    "W30_Resp_Agent": "https://github.com/zpforlove/Resp-Agent",
+    "W02_HF_paper": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0254134"
+  },
+  "printed_work_ids": [
+    "W01",
+    "W02",
+    "W03",
+    "W04",
+    "W05",
+    "W07",
+    "W09",
+    "W10",
+    "W11",
+    "W12",
+    "W13",
+    "W14",
+    "W15",
+    "W16",
+    "W18",
+    "W21",
+    "W24",
+    "W26",
+    "W30"
+  ],
+  "work_id_trace_check": {
+    "printed_count": 19,
+    "shape_table_count": 19,
+    "sets_equal": true
+  },
+  "native_lane_outputs": {
+    "ICBHI": "cycle pooled -> flat4 logits [B,4]",
+    "SPRSound": "event pooled -> binary [B,2] and raw event [B,7]; recording pooled -> separate raw recording [B,5]",
+    "HF_Lung_V1": "paper reference -> four one-vs-rest temporal outputs [B,938,1] or [B,469,1]; generic target [B,L,4] remains HOLD",
+    "KAUH_Fraiwan": "recording pooled -> raw sound logits [B,9]; shared mapping and patient diagnosis remain HOLD"
+  },
+  "unresolved_or_symbolic_fields": [
+    "BEATs checkpoint patch size p was not persisted in the accepted decoded receipt",
+    "HeAR internal layer count, patch geometry, heads, and MLP width are not exposed by the accepted serving contract",
+    "Metadata-SCL projector dimension D_p is symbolic",
+    "PAFA H and D_p are CLI-configured and remain symbolic in the general interface",
+    "no current generic encoder candidate closes HF tokens + token_mask + time_map",
+    "KAUH Crep/Bronchial/I C B shared mapping and diagnosis head remain HOLD"
+  ],
+  "evidence_boundaries": [
+    "R0 smoke/profile is engineering evidence, not performance",
+    "target-head adaptation uses target labels and is not zero-shot",
+    "dataset-ID accessibility does not prove a pathology shortcut",
+    "HF missing or gap intervals are not implicit negatives",
+    "four fixed dataset contracts do not imply one shared head has four-dataset supervision",
+    "D2 is single-seed target-supervised frozen-feature evidence and does not establish a full-encoder effect",
+    "Phase 1A no-go is not promoted to a successful method"
+  ],
+  "qa": {
+    "svg_xml_valid": true,
+    "png_rendered": true,
+    "visual_inspection_method": "all four PNGs inspected at original resolution",
+    "visual_no_edge_clipping": true,
+    "visual_no_text_overlap": true,
+    "master_path_direction_checked": true,
+    "native_lane_units_and_heads_checked": true,
+    "candidate_labels_and_hold_gates_checked": true,
+    "work_ids_match_shape_table": true,
+    "v1_presence_checked": true
+  },
+  "artifacts": [
+    {
+      "path": "docs/pipeline/end_to_end_pipeline_textual_spec_v2.md",
+      "sha256": "be4b8cf2101e027fcb6773356a31c25df5af53a87fcdef405765320e49423cec"
+    },
+    {
+      "path": "docs/pipeline/pipeline_candidate_layer_shapes_v2.md",
+      "sha256": "742d80623ee31a60f419d72df95663718f1e321c6aafa7881e7ae83a396f0d3c"
+    },
+    {
+      "path": "docs/pipeline/module_interface_compatibility_matrix_v2.md",
+      "sha256": "ce4a91c423f1ac5c0ff35945380bbec976ddda567ef213017fa52f3b01cb51b4"
+    },
+    {
+      "path": "figures/pipeline/acoustic_end_to_end_pipeline_v2.svg",
+      "sha256": "a20c5eb271ed7c18e38061123d6013100b77aab1d8fc9825e79d717edcc7bcb2",
+      "width": 2600,
+      "height": 1500
+    },
+    {
+      "path": "figures/pipeline/acoustic_end_to_end_pipeline_v2.png",
+      "sha256": "ce6df20b02cd69e9d7b2471faca881c2f60ca59fbd81e959fe1c4a2490b6df6f",
+      "width": 2600,
+      "height": 1500
+    },
+    {
+      "path": "figures/pipeline/acoustic_pipeline_v2_native_lanes.svg",
+      "sha256": "04f75c328357aa34e6176894559beb66c12230b9f3c01babde98e712cd9acd91",
+      "width": 2400,
+      "height": 1400
+    },
+    {
+      "path": "figures/pipeline/acoustic_pipeline_v2_native_lanes.png",
+      "sha256": "d38f456058429fd7497040cc67101d1510d51b5e90d2ce584634fcffbd9f27e7",
+      "width": 2400,
+      "height": 1400
+    },
+    {
+      "path": "figures/pipeline/acoustic_pipeline_v2_encoder_candidates.svg",
+      "sha256": "da9868353eab417cf2ccec852b148cb69015a8c0443f5080c83c9e0d0ef100ae",
+      "width": 2400,
+      "height": 1400
+    },
+    {
+      "path": "figures/pipeline/acoustic_pipeline_v2_encoder_candidates.png",
+      "sha256": "a4861a4dbd6920363f3ecf30b44829c5f8dd364a86b57ac3f39cc8ade55c3712",
+      "width": 2400,
+      "height": 1400
+    },
+    {
+      "path": "figures/pipeline/acoustic_pipeline_v2_adapters_control.svg",
+      "sha256": "63c46f2c2b96a4f66194f81444319452f186f8de85430835366a45a6fc2d7dcd",
+      "width": 2400,
+      "height": 1500
+    },
+    {
+      "path": "figures/pipeline/acoustic_pipeline_v2_adapters_control.png",
+      "sha256": "0aec91411f82b19bf2daaf140113a9f73a38d74d37a319a380d2e7833e3f2823",
+      "width": 2400,
+      "height": 1500
+    }
+  ]
+}

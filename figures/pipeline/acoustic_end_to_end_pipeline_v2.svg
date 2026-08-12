@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2600" height="1500" viewBox="0 0 2600 1500">
+  <title>Acoustic end-to-end pipeline v2 master topology</title>
+  <desc>Four dataset-native lanes feed dataset-specific parsers and encoder-specific preprocessing, one selected candidate encoder, optional eligible adapters or fusion, and dataset-native heads. Training control and evidence are separated.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#29435C"/></marker>
+    <marker id="arrowHold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#C2410C"/></marker>
+    <style>
+      .bg{fill:#F6F8FB}.title{font:700 34px Arial,"PingFang SC",sans-serif;fill:#142B45}.sub{font:18px Arial,"PingFang SC",sans-serif;fill:#4B6177}.section{font:700 19px Arial,"PingFang SC",sans-serif;fill:#142B45;letter-spacing:.5px}.h{font:700 19px Arial,"PingFang SC",sans-serif;fill:#142B45}.t{font:15px Arial,"PingFang SC",sans-serif;fill:#263B50}.small{font:13px Arial,"PingFang SC",sans-serif;fill:#425A70}.fixed{fill:#FFFFFF;stroke:#1E3A5F;stroke-width:2.5}.exec{fill:#E8F6F0;stroke:#2A7F62;stroke-width:3}.candidate{fill:#F4F7FF;stroke:#2F6FED;stroke-width:2.5;stroke-dasharray:9 7}.paper{fill:#F7F2FF;stroke:#7C3AED;stroke-width:2.5;stroke-dasharray:10 6}.hold{fill:#FFF5ED;stroke:#C2410C;stroke-width:2.5;stroke-dasharray:7 6}.control{fill:#FFF9E8;stroke:#A16207;stroke-width:2.2}.rail{fill:#EEF2F6;stroke:#60758A;stroke-width:2}.arrow{fill:none;stroke:#29435C;stroke-width:2.5;marker-end:url(#arrow)}.thin{fill:none;stroke:#60758A;stroke-width:1.7;marker-end:url(#arrow)}.dotted{fill:none;stroke:#A16207;stroke-width:2;stroke-dasharray:5 6;marker-end:url(#arrow)}.holdline{fill:none;stroke:#C2410C;stroke-width:2.5;stroke-dasharray:7 6;marker-end:url(#arrowHold)}.lane1{fill:#E9F1FA}.lane2{fill:#EAF7F4}.lane3{fill:#FFF4E6}.lane4{fill:#F2ECFA}.tag{font:700 12px Arial,"PingFang SC",sans-serif}.tagfixed{fill:#1E3A5F}.tagexec{fill:#2A7F62}.tagcandidate{fill:#2F6FED}.tagpaper{fill:#7C3AED}.taghold{fill:#C2410C}.white{fill:#fff}.metric{font:700 15px Arial,"PingFang SC",sans-serif;fill:#1E3A5F}.divider{stroke:#C8D2DD;stroke-width:1.2}
+    </style>
+  </defs>
+  <rect class="bg" width="2600" height="1500"/>
+  <text x="50" y="58" class="title">Acoustic End-to-End Pipeline v2</text>
+  <text x="50" y="90" class="sub">Four dataset-native lanes → one selected candidate path → eligible native heads | complete system contract, not four-dataset training evidence</text>
+
+  <text x="50" y="132" class="section">1  NATIVE INPUTS</text>
+  <text x="465" y="132" class="section">2  PARSER / UNIT</text>
+  <text x="770" y="132" class="section">3  PREPROCESS</text>
+  <text x="1100" y="132" class="section">4  CANDIDATE ENCODER SLOT</text>
+  <text x="1515" y="132" class="section">5  OPTIONAL CANDIDATES</text>
+  <text x="1890" y="132" class="section">6  ELIGIBLE NATIVE HEADS</text>
+  <text x="2340" y="132" class="section">7  NATIVE METRIC</text>
+
+  <!-- Lane 1 -->
+  <rect x="50" y="155" width="375" height="150" rx="16" class="fixed lane1"/>
+  <text x="68" y="184" class="h">ICBHI 2017 · W01</text><text x="390" y="183" text-anchor="end" class="tag tagfixed">FIXED</text>
+  <text x="68" y="210" class="t"><tspan x="68">920 rec · 6,898 cycles · 126 patients</tspan><tspan x="68" dy="22">4/10/44.1 kHz mono · WAV + cycle TXT</tspan><tspan x="68" dy="22">unit: cycle · flat4</tspan><tspan x="68" dy="22">official split has patient overlap: 156/218</tspan></text>
+  <rect x="465" y="168" width="265" height="124" rx="14" class="fixed"/>
+  <text x="482" y="198" class="h">cycle builder</text><text x="482" y="223" class="t"><tspan x="482">crop (start_s,end_s)</tspan><tspan x="482" dy="21">x_i [T_i] + flat4</tspan><tspan x="482" dy="21">patient/split lineage</tspan></text>
+  <rect x="770" y="168" width="285" height="124" rx="14" class="candidate"/>
+  <text x="787" y="198" class="h">encoder-specific frontend</text><text x="787" y="223" class="t"><tspan x="787">waveform [B,T] + M_wav</tspan><tspan x="787" dy="21">or R0 fbank [B,1,798,128]</tspan><tspan x="787" dy="21">cycle lineage retained</tspan></text>
+
+  <!-- Lane 2 -->
+  <rect x="50" y="330" width="375" height="165" rx="16" class="fixed lane2"/>
+  <text x="68" y="360" class="h">SPRSound BioCAS2022 · W03</text><text x="390" y="359" text-anchor="end" class="tag tagfixed">FIXED</text>
+  <text x="68" y="386" class="t"><tspan x="68">2,683 rec · 9,089 events · 8 kHz/16-bit</tspan><tspan x="68" dy="22">unit A: event → binary2 + seven7</tspan><tspan x="68" dy="22">unit B: recording → raw five5</tspan><tspan x="68" dy="22">train / inter(0 overlap) / intra(162 overlap)</tspan><tspan x="68" dy="22">inter and intra never pooled</tspan></text>
+  <rect x="465" y="345" width="265" height="135" rx="14" class="fixed"/>
+  <text x="482" y="375" class="h">event / record builders</text><text x="482" y="400" class="t"><tspan x="482">event crop [T_i]</tspan><tspan x="482" dy="21">or whole recording [T_i]</tspan><tspan x="482" dy="21">native labels + patient</tspan><tspan x="482" dy="21">protocol identity</tspan></text>
+  <rect x="770" y="345" width="285" height="135" rx="14" class="candidate"/>
+  <text x="787" y="375" class="h">unit-aware frontend</text><text x="787" y="400" class="t"><tspan x="787">event: crop then encode</tspan><tspan x="787" dy="21">record: window + aggregate</tspan><tspan x="787" dy="21">R0 only supports event</tspan><tspan x="787" dy="21">mask/time lineage explicit</tspan></text>
+
+  <!-- Lane 3 -->
+  <rect x="50" y="520" width="375" height="175" rx="16" class="fixed lane3"/>
+  <text x="68" y="550" class="h">HF_Lung_V1 · W02</text><text x="390" y="549" text-anchor="end" class="tag tagfixed">FIXED</text>
+  <text x="68" y="576" class="t"><tspan x="68">9,765 × 15 s · 4 kHz/16-bit</tspan><tspan x="68" dy="22">81,933 positive intervals: I/E/D/W/R/S</tspan><tspan x="68" dy="22">paper tasks: I, E, CAS, DAS one-vs-rest</tspan><tspan x="68" dy="22">gap/missing = not_annotated, not negative</tspan><tspan x="68" dy="22">date proxy split ≠ patient independence</tspan></text>
+  <rect x="465" y="537" width="265" height="142" rx="14" class="fixed"/>
+  <text x="482" y="567" class="h">15-s sequence builder</text><text x="482" y="592" class="t"><tspan x="482">x [60000] + interval table</tspan><tspan x="482" dy="21">rasterize only by declared grid</tspan><tspan x="482" dy="21">valid annotation mask</tspan><tspan x="482" dy="21">source-time support</tspan></text>
+  <rect x="770" y="537" width="285" height="142" rx="14" class="hold"/>
+  <text x="787" y="567" class="h">temporal frontend gate</text><text x="787" y="592" class="t"><tspan x="787">paper: [938,193] → RNN</tspan><tspan x="787" dy="21">generic: tokens + mask + time_map</tspan><tspan x="787" dy="21">fixed 8 s/no-mask is illegal</tspan><tspan x="787" dy="21">generic path: HOLD</tspan></text>
+
+  <!-- Lane 4 -->
+  <rect x="50" y="720" width="375" height="170" rx="16" class="fixed lane4"/>
+  <text x="68" y="750" class="h">KAUH / Fraiwan v3 · W04</text><text x="390" y="749" text-anchor="end" class="tag tagfixed">FIXED</text>
+  <text x="68" y="776" class="t"><tspan x="68">336 rec · 112 patients · 3 B/D/E replicas</tspan><tspan x="68" dy="22">4 kHz mono/16-bit · WAV + workbook row</tspan><tspan x="68" dy="22">unit: recording · raw sound K=9</tspan><tspan x="68" dy="22">no official split · group by P-number</tspan><tspan x="68" dy="22">shared mapping + diagnosis: HOLD</tspan></text>
+  <rect x="465" y="737" width="265" height="138" rx="14" class="fixed"/>
+  <text x="482" y="767" class="h">recording builder</text><text x="482" y="792" class="t"><tspan x="482">whole recording [T_i]</tspan><tspan x="482" dy="21">raw9 + P-number</tspan><tspan x="482" dy="21">B/D/E filter lineage</tspan><tspan x="482" dy="21">disease separate/HOLD</tspan></text>
+  <rect x="770" y="737" width="285" height="138" rx="14" class="candidate"/>
+  <text x="787" y="767" class="h">record/window frontend</text><text x="787" y="792" class="t"><tspan x="787">variable or windowed [B,T]</tspan><tspan x="787" dy="21">M_wav + aggregation receipt</tspan><tspan x="787" dy="21">no event/cycle substitution</tspan><tspan x="787" dy="21">replicas stay grouped</tspan></text>
+
+  <!-- arrows source to parser to preprocess -->
+  <path class="arrow" d="M425 230 H465"/><path class="arrow" d="M730 230 H770"/>
+  <path class="arrow" d="M425 412 H465"/><path class="arrow" d="M730 412 H770"/>
+  <path class="arrow" d="M425 608 H465"/><path class="arrow" d="M730 608 H770"/>
+  <path class="arrow" d="M425 805 H465"/><path class="arrow" d="M730 805 H770"/>
+
+  <!-- encoder slot -->
+  <rect x="1100" y="168" width="385" height="555" rx="18" class="candidate"/>
+  <text x="1122" y="203" class="h">ONE ENCODER PATH</text><text x="1455" y="202" text-anchor="end" class="tag tagcandidate">ALTERNATIVES</text>
+  <line x1="1120" y1="220" x2="1465" y2="220" class="divider"/>
+  <text x="1122" y="250" class="t"><tspan x="1122" font-weight="700">W09 AST base384</tspan><tspan x="1122" dy="20">12× Transformer · D768 · pooled only</tspan><tspan x="1122" dy="28" font-weight="700">W10 BEATs iter3+ AS2M</tspan><tspan x="1122" dy="20">12× Transformer · D768 · tokens + mask</tspan><tspan x="1122" dy="20">time_map missing → HF gate</tspan><tspan x="1122" dy="28" font-weight="700">W12 OPERA-CT</tspan><tspan x="1122" dy="20">Swin stages 2/2/6/2 · 96→768</tspan><tspan x="1122" dy="28" font-weight="700">W13 HeAR 1.0.0</tspan><tspan x="1122" dy="20">2 s @16 kHz → pooled D512</tspan><tspan x="1122" dy="28" font-weight="700">W11 PANNs Cnn14</tspan><tspan x="1122" dy="20">6 ConvBlocks 64→2048 → pooled D2048</tspan></text>
+  <rect x="1122" y="603" width="340" height="92" rx="12" class="fixed"/>
+  <text x="1139" y="630" class="h">required output contract</text><text x="1139" y="654" class="t"><tspan x="1139">pooled [B,D] · capability receipt</tspan><tspan x="1139" dy="20">HF requires tokens [B,L,D] + mask + time_map</tspan></text>
+  <path class="arrow" d="M1055 230 H1080 V300 H1100"/><path class="arrow" d="M1055 412 H1100"/><path class="holdline" d="M1055 608 H1080 V520 H1100"/><path class="arrow" d="M1055 805 H1080 V670 H1100"/>
+
+  <!-- paper-faithful alternative under encoder -->
+  <rect x="1100" y="745" width="385" height="145" rx="16" class="paper"/>
+  <text x="1122" y="778" class="h">HF PAPER BYPASS · W02</text><text x="1455" y="777" text-anchor="end" class="tag tagpaper">REFERENCE</text>
+  <text x="1122" y="807" class="t"><tspan x="1122">[938,193] → RNN/BiRNN → 4×[938,1]</tspan><tspan x="1122" dy="22">or CNN-RNN → 4×[469,1]</tspan><tspan x="1122" dy="22">fixed-grid source benchmark; no local reproduction</tspan><tspan x="1122" dy="22">does not validate generic token interface</tspan></text>
+  <path class="holdline" d="M1055 608 H1070 V817 H1100"/>
+
+  <!-- optional candidates -->
+  <rect x="1515" y="168" width="330" height="245" rx="16" class="candidate"/>
+  <text x="1535" y="200" class="h">DOMAIN / ADAPTER</text><text x="1818" y="199" text-anchor="end" class="tag tagcandidate">OPT.</text>
+  <text x="1535" y="230" class="t"><tspan x="1535" font-weight="700">W16 SG-SCL</tspan><tspan x="1535" dy="21">device/stethoscope side-channel</tspan><tspan x="1535" dy="28" font-weight="700">W18 PAFA</tspan><tspan x="1535" dy="21">patient IDs · PCSL + GPAL</tspan><tspan x="1535" dy="28" font-weight="700">W15 Metadata-SCL</tspan><tspan x="1535" dy="21">age/sex parity required</tspan><tspan x="1535" dy="26">No side-channel → bypass, not impute</tspan></text>
+  <rect x="1515" y="440" width="330" height="250" rx="16" class="paper"/>
+  <text x="1535" y="472" class="h">FUSION / AGGREGATION</text><text x="1818" y="471" text-anchor="end" class="tag tagpaper">ALT.</text>
+  <text x="1535" y="502" class="t"><tspan x="1535" font-weight="700">W07 MVST</tspan><tspan x="1535" dy="21">5×D768 gated pooled fusion</tspan><tspan x="1535" dy="28" font-weight="700">W24 BTS · HOLD</tspan><tspan x="1535" dy="21">CLAP audio/text 512; concat/add</tspan><tspan x="1535" dy="28" font-weight="700">W30 Resp-Agent · HOLD</tspan><tspan x="1535" dy="21">496×768 BEATs + text → Longformer</tspan><tspan x="1535" dy="26">Alternatives, never automatic composition</tspan></text>
+  <rect x="1515" y="720" width="330" height="105" rx="14" class="control"/>
+  <text x="1535" y="751" class="h">ELIGIBILITY GATE</text><text x="1535" y="778" class="t"><tspan x="1535">task · unit · capability · annotation state</tspan><tspan x="1535" dy="21">opens legal head; never reads target at inference</tspan></text>
+  <path class="arrow" d="M1485 360 H1515"/><path class="thin" d="M1485 440 H1500 V565 H1515"/>
+  <path class="arrow" d="M1825 413 H1860 V772 H1845"/><path class="arrow" d="M1760 690 V720"/><path class="arrow" d="M1485 650 H1498 V772 H1515"/>
+
+  <!-- native heads -->
+  <rect x="1890" y="168" width="410" height="125" rx="14" class="fixed lane1"/>
+  <text x="1910" y="198" class="h">ICBHI native cycle head</text><text x="2270" y="197" text-anchor="end" class="tag tagfixed">W01</text>
+  <text x="1910" y="225" class="t"><tspan x="1910">pooled [B,D*] → Linear → logits [B,4]</tspan><tspan x="1910" dy="22">normal / crackle / wheeze / both</tspan><tspan x="1910" dy="22">split caveat stays attached</tspan></text>
+  <rect x="1890" y="318" width="410" height="155" rx="14" class="fixed lane2"/>
+  <text x="1910" y="348" class="h">SPRSound native heads</text><text x="2270" y="347" text-anchor="end" class="tag tagfixed">W03</text>
+  <text x="1910" y="375" class="t"><tspan x="1910">event pooled → [B,2] + [B,7]</tspan><tspan x="1910" dy="22">record pooled → [B,5] (separate task)</tspan><tspan x="1910" dy="22">target-head adaptation ≠ zero-shot</tspan><tspan x="1910" dy="22">inter primary; intra diagnostic</tspan></text>
+  <rect x="1890" y="498" width="410" height="170" rx="14" class="hold lane3"/>
+  <text x="1910" y="528" class="h">HF temporal heads</text><text x="2270" y="527" text-anchor="end" class="tag taghold">W02 · GATE</text>
+  <text x="1910" y="555" class="t"><tspan x="1910">generic: tokens+mask+time_map → [B,L,4]</tspan><tspan x="1910" dy="22">current AST/OPERA/HeAR/PANNs: blocked</tspan><tspan x="1910" dy="22">BEATs: time_map still missing</tspan><tspan x="1910" dy="22">paper bypass: 4 one-vs-rest fixed-grid heads</tspan><tspan x="1910" dy="22">gap excluded, never negative</tspan></text>
+  <rect x="1890" y="693" width="410" height="150" rx="14" class="hold lane4"/>
+  <text x="1910" y="723" class="h">KAUH native recording head</text><text x="2270" y="722" text-anchor="end" class="tag taghold">W04 · HOLD</text>
+  <text x="1910" y="750" class="t"><tspan x="1910">record pooled [B,D*] → raw logits [B,9]</tspan><tspan x="1910" dy="22">P-number grouped; B/D/E replicas together</tspan><tspan x="1910" dy="22">shared mapping blocked</tspan><tspan x="1910" dy="22">patient diagnosis is separate secondary branch</tspan></text>
+  <path class="arrow" d="M1845 772 H1860 V230 H1890"/><path class="arrow" d="M1845 772 H1870 V395 H1890"/><path class="holdline" d="M1845 772 H1880 V582 H1890"/><path class="arrow" d="M1845 772 H1890"/>
+
+  <!-- metrics -->
+  <rect x="2340" y="168" width="210" height="125" rx="14" class="fixed"/><text x="2360" y="202" class="metric">SE · SP · Score</text><text x="2360" y="229" class="t"><tspan x="2360">macro-F1 · UAR</tspan><tspan x="2360" dy="22">class support</tspan><tspan x="2360" dy="22">split caveat</tspan></text>
+  <rect x="2340" y="318" width="210" height="155" rx="14" class="fixed"/><text x="2360" y="352" class="metric">SE/SP/AS/HS</text><text x="2360" y="379" class="t"><tspan x="2360">event/record metrics</tspan><tspan x="2360" dy="22">inter separate</tspan><tspan x="2360" dy="22">intra separate</tspan><tspan x="2360" dy="22">support</tspan></text>
+  <rect x="2340" y="498" width="210" height="170" rx="14" class="fixed"/><text x="2360" y="532" class="metric">segment + event</text><text x="2360" y="559" class="t"><tspan x="2360">F1/AUROC/AUPRC</tspan><tspan x="2360" dy="22">event JI&gt;0.5</tspan><tspan x="2360" dy="22">MAPE</tspan><tspan x="2360" dy="22">annotated duration</tspan><tspan x="2360" dy="22">valid-mask support</tspan></text>
+  <rect x="2340" y="693" width="210" height="150" rx="14" class="fixed"/><text x="2360" y="727" class="metric">patient-grouped</text><text x="2360" y="754" class="t"><tspan x="2360">macro-F1 · UAR</tspan><tspan x="2360" dy="22">balanced acc.</tspan><tspan x="2360" dy="22">per-class recall</tspan><tspan x="2360" dy="22">patient support</tspan></text>
+  <path class="arrow" d="M2300 230 H2340"/><path class="arrow" d="M2300 395 H2340"/><path class="arrow" d="M2300 582 H2340"/><path class="arrow" d="M2300 768 H2340"/>
+
+  <!-- training control plane -->
+  <text x="50" y="955" class="section">TRAINING / EVALUATION CONTROL PLANE — lateral controls, not sequential audio modules</text>
+  <rect x="50" y="980" width="500" height="190" rx="16" class="control"/>
+  <text x="72" y="1012" class="h">Eligibility &amp; annotation state</text><text x="72" y="1042" class="t"><tspan x="72">M_head [B,H] · M_class [B,K] · M_time [B,L,K]</tspan><tspan x="72" dy="23">observed / unknown / not_provided / not_annotated</tspan><tspan x="72" dy="23">only eligible native losses and metric rows</tspan><tspan x="72" dy="23">inference uses declared capability, not target labels</tspan></text>
+  <rect x="580" y="980" width="420" height="190" rx="16" class="control"/>
+  <text x="602" y="1012" class="h">Sampler / source weights</text><text x="602" y="1042" class="t"><tspan x="602">batch composition + effective update receipt</tspan><tspan x="602" dy="23">R0: source-proportional homogeneous batches</tspan><tspan x="602" dy="23">D2: frozen-feature diagnostic only</tspan><tspan x="602" dy="23">no full-encoder balancing conclusion</tspan></text>
+  <rect x="1030" y="980" width="480" height="190" rx="16" class="control"/>
+  <text x="1052" y="1012" class="h">Eligible loss alternatives</text><text x="1052" y="1042" class="t"><tspan x="1052">W14 Patch-Mix · W15 Metadata-SCL</tspan><tspan x="1052" dy="23">W16 SG-SCL · W18 PAFA · W26 ADD-RSC</tspan><tspan x="1052" dy="23">L = Σ λ_h · masked_loss_h</tspan><tspan x="1052" dy="23">one preregistered intervention point at a time</tspan></text>
+  <rect x="1540" y="980" width="500" height="190" rx="16" class="control"/>
+  <text x="1562" y="1012" class="h">Native evaluation</text><text x="1562" y="1042" class="t"><tspan x="1562">per dataset · per unit · per class · worst dataset</tspan><tspan x="1562" dy="23">split/group/checkpoint/target-label receipts</tspan><tspan x="1562" dy="23">zero-target ≠ target-head adaptation ≠ full training</tspan><tspan x="1562" dy="23">external paper claims kept separate</tspan></text>
+  <rect x="2070" y="980" width="480" height="190" rx="16" class="control"/>
+  <text x="2092" y="1012" class="h">Claim ledger</text><text x="2092" y="1042" class="t"><tspan x="2092">Fixed Contract · Executable · Verified Result</tspan><tspan x="2092" dy="23">Interpretation · Candidate · HOLD · Future</tspan><tspan x="2092" dy="23">engineering smoke/profile never becomes performance</tspan><tspan x="2092" dy="23">Phase 1A no-go is not promoted</tspan></text>
+  <path class="dotted" d="M300 980 V930 H1675 V825"/><path class="dotted" d="M790 980 V930 H1260 V723"/><path class="dotted" d="M1270 980 V930 H2100 V843"/><path class="arrow" d="M2040 1075 H2070"/>
+
+  <!-- evidence inset -->
+  <text x="50" y="1215" class="section">OPERATIONAL / EVIDENCE INSET — separate from the four-lane target system</text>
+  <rect x="50" y="1235" width="790" height="210" rx="17" class="exec"/>
+  <text x="72" y="1268" class="h">R0 CURRENT EXECUTABLE REFERENCE</text><text x="810" y="1267" text-anchor="end" class="tag tagexec">ENGINEERING ONLY</text>
+  <text x="72" y="1300" class="t"><tspan x="72">ICBHI cycles + SPRSound events → mono/16 kHz → fixed 8 s repeat/truncate</tspan><tspan x="72" dy="24">→ fbank [B,1,798,128] → AST base384 pooled [B,768]</tspan><tspan x="72" dy="24">→ ICBHI [B,4] + SPR [B,2]/[B,7]</tspan><tspan x="72" dy="24">protocol/smoke/profile prove finite routing, loss, gradients and profiling—not performance</tspan><tspan x="72" dy="24">HF and KAUH are not active in R0</tspan></text>
+  <rect x="870" y="1235" width="650" height="210" rx="17" class="rail"/>
+  <text x="892" y="1268" class="h">R0–R3 ARE RECIPES, NOT THE FOUR DATASETS</text>
+  <text x="892" y="1300" class="t"><tspan x="892"><tspan font-weight="700">R0</tspan> AST ICBHI+SPR · executable engineering</tspan><tspan x="892" dy="25"><tspan font-weight="700">R1</tspan> RespireNet · paper-faithful draft/reference</tspan><tspan x="892" dy="25"><tspan font-weight="700">R2</tspan> MVST · identity/smoke; paper protocol caveat</tspan><tspan x="892" dy="25"><tspan font-weight="700">R3</tspan> PAFA · smoke/profile; test-selected checkpoint caveat</tspan><tspan x="892" dy="25">No one-to-one R0↔ICBHI, R1↔SPR, R2↔HF, R3↔KAUH mapping</tspan></text>
+  <rect x="1550" y="1235" width="1000" height="210" rx="17" class="hold"/>
+  <text x="1572" y="1268" class="h">CORRECTED LOCAL EVIDENCE REGISTRY</text><text x="2520" y="1267" text-anchor="end" class="tag taghold">DO NOT DRAW AS SOLUTION</text>
+  <text x="1572" y="1300" class="t"><tspan x="1572">shared-compatible head: 0 material improvements · negative within frozen-feature scope</tspan><tspan x="1572" dy="25">support-aware cRT: 2 gains, but global regression guardrail failed · HOLD/negative</tspan><tspan x="1572" dy="25">shortcut diagnostic: 0/2 votes · not supported/inconclusive; dataset-ID access is not causal proof</tspan><tspan x="1572" dy="25">event-sensitive pooling: 0 material votes · not supported/inconclusive</tspan><tspan x="1572" dy="25">four-dataset attribution/D2: target-supervised single-seed frozen features · no full-encoder conclusion</tspan></text>
+
+  <!-- legend -->
+  <rect x="50" y="1460" width="24" height="14" class="fixed"/><text x="82" y="1473" class="small">Fixed contract</text>
+  <rect x="235" y="1460" width="24" height="14" class="exec"/><text x="267" y="1473" class="small">Executable reference</text>
+  <rect x="470" y="1460" width="24" height="14" class="paper"/><text x="502" y="1473" class="small">Paper-faithful</text>
+  <rect x="660" y="1460" width="24" height="14" class="candidate"/><text x="692" y="1473" class="small">Candidate / proposed</text>
+  <rect x="900" y="1460" width="24" height="14" class="hold"/><text x="932" y="1473" class="small">HOLD / blocked</text>
+  <rect x="1080" y="1460" width="24" height="14" class="control"/><text x="1112" y="1473" class="small">Control plane</text>
+  <text x="1390" y="1473" class="small">Detail panels: native lanes · encoder layer shapes · adapter/fusion/control</text>
+</svg>

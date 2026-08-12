@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1400" viewBox="0 0 2400 1400">
+  <title>Acoustic pipeline v2 native lane detail</title>
+  <desc>Detailed contracts for ICBHI, SPRSound, HF Lung V1 and KAUH Fraiwan v3 from raw inputs through native outputs.</desc>
+  <defs>
+    <style>
+      .bg{fill:#F6F8FB}.title{font:700 34px Arial,"PingFang SC",sans-serif;fill:#142B45}.sub{font:18px Arial,"PingFang SC",sans-serif;fill:#4B6177}.h{font:700 22px Arial,"PingFang SC",sans-serif;fill:#142B45}.sh{font:700 17px Arial,"PingFang SC",sans-serif;fill:#1E3A5F}.t{font:15px Arial,"PingFang SC",sans-serif;fill:#263B50}.small{font:13px Arial,"PingFang SC",sans-serif;fill:#425A70}.card{fill:#fff;stroke:#1E3A5F;stroke-width:2}.soft{fill:#F2F6FA;stroke:#96A8BA;stroke-width:1.5}.hold{fill:#FFF5ED;stroke:#C2410C;stroke-width:2;stroke-dasharray:7 6}.paper{fill:#F7F2FF;stroke:#7C3AED;stroke-width:2;stroke-dasharray:8 6}.blue{fill:#E9F1FA}.green{fill:#EAF7F4}.orange{fill:#FFF4E6}.purple{fill:#F2ECFA}.line{stroke:#C8D2DD;stroke-width:1.2}.tag{font:700 12px Arial,"PingFang SC",sans-serif;fill:#1E3A5F}
+    </style>
+  </defs>
+  <rect class="bg" width="2400" height="1400"/>
+  <text x="50" y="58" class="title">Native Input → Unit → Head Contracts</text>
+  <text x="50" y="91" class="sub">Four lanes remain different prediction problems; each column is complete and independently auditable.</text>
+
+  <!-- ICBHI -->
+  <rect x="50" y="125" width="540" height="1215" rx="18" class="card blue"/>
+  <text x="75" y="165" class="h">ICBHI 2017 · W01</text><text x="565" y="163" text-anchor="end" class="tag">FIXED CONTRACT</text>
+  <line x1="75" y1="185" x2="565" y2="185" class="line"/>
+  <text x="75" y="220" class="sh">Release / raw structure</text>
+  <text x="75" y="248" class="t"><tspan x="75">official 2017 challenge package</tspan><tspan x="75" dy="23">mono WAV + cycle TXT:</tspan><tspan x="75" dy="23">start_s · end_s · crackle flag · wheeze flag</tspan><tspan x="75" dy="23">patient diagnosis is a separate side file</tspan></text>
+  <rect x="75" y="350" width="490" height="155" rx="12" class="soft"/>
+  <text x="95" y="382" class="sh">Scale / audio</text><text x="95" y="410" class="t"><tspan x="95">920 recordings · 5.492508 h</tspan><tspan x="95" dy="23">6,898 respiratory cycles · 126 patients</tspan><tspan x="95" dy="23">4 / 10 / 44.1 kHz · 16 / 24 bit</tspan><tspan x="95" dy="23">raw duration variable</tspan></text>
+  <text x="75" y="550" class="sh">Prediction unit and parser</text>
+  <text x="75" y="578" class="t"><tspan x="75">recording → boundary crop → cycle x_i [T_i]</tspan><tspan x="75" dy="23">unit mismatch is a hard error</tspan><tspan x="75" dy="23">source-time and patient lineage retained</tspan></text>
+  <rect x="75" y="670" width="490" height="150" rx="12" class="card"/>
+  <text x="95" y="702" class="sh">Native head</text><text x="95" y="732" class="t"><tspan x="95">pooled [B,D*] → Linear D*→4</tspan><tspan x="95" dy="23">logits [B,4]</tspan><tspan x="95" dy="23">normal · crackle · wheeze · both</tspan><tspan x="95" dy="23">R0 exact: LN(768)+Linear(768,4)</tspan></text>
+  <text x="75" y="865" class="sh">Split / metric</text>
+  <text x="75" y="893" class="t"><tspan x="75">official: 539/381 recordings; 4,142/2,756 cycles</tspan><tspan x="75" dy="23">patient overlap: 156 and 218</tspan><tspan x="75" dy="23">SE · SP · ICBHI Score · macro-F1 · UAR</tspan><tspan x="75" dy="23">per-class recall/support</tspan></text>
+  <rect x="75" y="1020" width="490" height="170" rx="12" class="hold"/>
+  <text x="95" y="1052" class="sh">Critical gate</text><text x="95" y="1080" class="t"><tspan x="95">Official split is not patient-independent.</tspan><tspan x="95" dy="23">A strict robustness claim needs a separate</tspan><tspan x="95" dy="23">patient-grouped protocol. Diagnosis must not</tspan><tspan x="95" dy="23">replace the cycle acoustic target.</tspan></text>
+  <text x="75" y="1275" class="small">Source: accepted four-dataset contract + ICBHI challenge</text>
+
+  <!-- SPR -->
+  <rect x="640" y="125" width="540" height="1215" rx="18" class="card green"/>
+  <text x="665" y="165" class="h">SPRSound BioCAS2022 · W03</text><text x="1155" y="163" text-anchor="end" class="tag">FIXED CONTRACT</text>
+  <line x1="665" y1="185" x2="1155" y2="185" class="line"/>
+  <text x="665" y="220" class="sh">Release / raw structure</text>
+  <text x="665" y="248" class="t"><tspan x="665">commit 874eeb8736ddb78937c2fb5332fc7e7293d0f0ca</tspan><tspan x="665" dy="23">8-kHz mono 16-bit WAV</tspan><tspan x="665" dy="23">event start/end rows + recording labels</tspan><tspan x="665" dy="23">patient number in filename</tspan></text>
+  <rect x="665" y="350" width="490" height="155" rx="12" class="soft"/>
+  <text x="685" y="382" class="sh">Scale / protocol</text><text x="685" y="410" class="t"><tspan x="685">2,683 recordings · 8.162338 h · 9,089 events</tspan><tspan x="685" dy="23">train 1,949 rec / 251 patients</tspan><tspan x="685" dy="23">inter 355 / 41 / overlap 0</tspan><tspan x="685" dy="23">intra 379 / 162 / overlap 162</tspan></text>
+  <text x="665" y="550" class="sh">Two native prediction units</text>
+  <text x="665" y="578" class="t"><tspan x="665">A. event crop [T_i] → binary + seven-class</tspan><tspan x="665" dy="23">B. whole recording [T_i] → five-class</tspan><tspan x="665" dy="23">event and recording heads never share rows</tspan></text>
+  <rect x="665" y="670" width="490" height="200" rx="12" class="card"/>
+  <text x="685" y="702" class="sh">Native heads</text><text x="685" y="732" class="t"><tspan x="685">event pooled → [B,2] normal/adventitious</tspan><tspan x="685" dy="23">event pooled → [B,7] raw event ontology</tspan><tspan x="685" dy="23">record pooled → [B,5]: Normal/CAS/DAS/</tspan><tspan x="685" dy="23">CAS&amp;DAS/Poor Quality</tspan><tspan x="685" dy="23">R0 implements event 2 + 7 only</tspan></text>
+  <text x="665" y="915" class="sh">Metric / evidence</text>
+  <text x="665" y="943" class="t"><tspan x="665">SE/SP/AS/HS; macro-F1/UAR/support</tspan><tspan x="665" dy="23">inter is primary unseen-patient evaluation</tspan><tspan x="665" dy="23">intra is repeated-subject diagnostic</tspan></text>
+  <rect x="665" y="1040" width="490" height="150" rx="12" class="hold"/>
+  <text x="685" y="1072" class="sh">Critical gate</text><text x="685" y="1100" class="t"><tspan x="685">Never pool inter and intra. Recording Poor</tspan><tspan x="685" dy="23">Quality is not an acoustic event. A target-</tspan><tspan x="685" dy="23">trained head is not zero-shot.</tspan></text>
+  <text x="665" y="1275" class="small">Source: accepted contract + official SPRSound repository</text>
+
+  <!-- HF -->
+  <rect x="1230" y="125" width="540" height="1215" rx="18" class="card orange"/>
+  <text x="1255" y="165" class="h">HF_Lung_V1 · W02</text><text x="1745" y="163" text-anchor="end" class="tag">FIXED + PAPER REF.</text>
+  <line x1="1255" y1="185" x2="1745" y2="185" class="line"/>
+  <text x="1255" y="220" class="sh">Release / raw structure</text>
+  <text x="1255" y="248" class="t"><tspan x="1255">V1 · README update 2022-01-18</tspan><tspan x="1255" dy="23">15-s mono WAV · 4 kHz · 16 bit</tspan><tspan x="1255" dy="23">overlapping positive intervals: I/E/D/Wheeze/</tspan><tspan x="1255" dy="23">Rhonchi/Stridor; no raw Normal token</tspan></text>
+  <rect x="1255" y="350" width="490" height="155" rx="12" class="soft"/>
+  <text x="1275" y="382" class="sh">Scale / split</text><text x="1275" y="410" class="t"><tspan x="1275">9,765 recordings · 40.6875 h</tspan><tspan x="1275" dy="23">81,933 positive intervals</tspan><tspan x="1275" dy="23">source train/test 7,809 / 1,956</tspan><tspan x="1275" dy="23">date-proxy non-overlap ≠ patient independence</tspan></text>
+  <text x="1255" y="550" class="sh">Paper-faithful fixed-grid path</text>
+  <text x="1255" y="578" class="t"><tspan x="1255">80-Hz HPF → STFT 256/hop64</tspan><tspan x="1255" dy="23">[938,129] + MFCC60 + band energy4</tspan><tspan x="1255" dy="23">→ [938,193] → four one-vs-rest models</tspan></text>
+  <rect x="1255" y="670" width="490" height="200" rx="12" class="paper"/>
+  <text x="1275" y="702" class="sh">Paper outputs / generic target</text><text x="1275" y="732" class="t"><tspan x="1275">RNN: 4 × [B,938,1]</tspan><tspan x="1275" dy="23">CNN-RNN: 4 × [B,469,1]</tspan><tspan x="1275" dy="23">tasks: inhalation / exhalation / CAS / DAS</tspan><tspan x="1275" dy="23">generic v2: [B,L,4] only with token mask</tspan><tspan x="1275" dy="23">and time_map; no current candidate closes it</tspan></text>
+  <text x="1255" y="915" class="sh">Metric</text>
+  <text x="1255" y="943" class="t"><tspan x="1255">segment PPV/SE/SP/F1/AUROC</tspan><tspan x="1255" dy="23">event F1 (JI&gt;0.5) · MAPE · AUPRC</tspan><tspan x="1255" dy="23">annotated-duration/support masks</tspan></text>
+  <rect x="1255" y="1040" width="490" height="150" rx="12" class="hold"/>
+  <text x="1275" y="1072" class="sh">Critical gate</text><text x="1275" y="1100" class="t"><tspan x="1275">Pooled-only encoders cannot drive the temporal</tspan><tspan x="1275" dy="23">head. Unclear/incomplete/gap intervals remain</tspan><tspan x="1275" dy="23">not_annotated, never implicit negatives.</tspan></text>
+  <text x="1255" y="1275" class="small">Source: accepted contract + PLOS One source benchmark</text>
+
+  <!-- KAUH -->
+  <rect x="1820" y="125" width="530" height="1215" rx="18" class="card purple"/>
+  <text x="1845" y="165" class="h">KAUH / Fraiwan v3 · W04</text><text x="2325" y="163" text-anchor="end" class="tag">FIXED / HOLD</text>
+  <line x1="1845" y1="185" x2="2325" y2="185" class="line"/>
+  <text x="1845" y="220" class="sh">Release / raw structure</text>
+  <text x="1845" y="248" class="t"><tspan x="1845">Mendeley jwyy9np4gv_v3</tspan><tspan x="1845" dy="23">4-kHz mono 16-bit WAV + patient workbook row</tspan><tspan x="1845" dy="23">B/D/E prefixes = Bell/Diaphragm/Extended</tspan><tspan x="1845" dy="23">three filtered replicas per P-number</tspan></text>
+  <rect x="1845" y="350" width="480" height="155" rx="12" class="soft"/>
+  <text x="1865" y="382" class="sh">Scale / grouping</text><text x="1865" y="410" class="t"><tspan x="1865">336 recordings · 112 patients · 1.623918 h</tspan><tspan x="1865" dy="23">5–30 s recordings in source description</tspan><tspan x="1865" dy="23">no official split</tspan><tspan x="1865" dy="23">P-number groups all B/D/E replicas</tspan></text>
+  <text x="1845" y="550" class="sh">Raw native sound ontology</text>
+  <text x="1845" y="578" class="t"><tspan x="1845">N 35/105 · E W 39/117 · I E W 2/6</tspan><tspan x="1845" dy="23">C 7/21 · I C 1/3 · I C E W 2/6</tspan><tspan x="1845" dy="23">Crep 23/69 · Bronchial 1/3 · I C B 2/6</tspan><tspan x="1845" dy="23">counts shown patient / recording</tspan></text>
+  <rect x="1845" y="690" width="480" height="175" rx="12" class="card"/>
+  <text x="1865" y="722" class="sh">Native head</text><text x="1865" y="752" class="t"><tspan x="1865">whole-record embedding [B,D*]</tspan><tspan x="1865" dy="23">→ Linear D*→9 → raw logits [B,9]</tspan><tspan x="1865" dy="23">patient diagnosis: separate secondary task</tspan><tspan x="1865" dy="23">K_diag and normalization remain TBD/HOLD</tspan></text>
+  <text x="1845" y="915" class="sh">Metric</text>
+  <text x="1845" y="943" class="t"><tspan x="1845">patient-grouped macro-F1 · UAR</tspan><tspan x="1845" dy="23">balanced accuracy · class recall</tspan><tspan x="1845" dy="23">patient support; replica integrity receipt</tspan></text>
+  <rect x="1845" y="1040" width="480" height="175" rx="12" class="hold"/>
+  <text x="1865" y="1072" class="sh">Critical gate</text><text x="1865" y="1100" class="t"><tspan x="1865">Crep is not silently equated with C. The source</tspan><tspan x="1865" dy="23">does not define B inside I C B. Bronchial and</tspan><tspan x="1865" dy="23">diagnosis strings are not shared acoustic labels.</tspan><tspan x="1865" dy="23">Shared mapping remains HOLD.</tspan></text>
+  <text x="1845" y="1275" class="small">Source: accepted contract + Mendeley v3/Data in Brief</text>
+
+  <text x="50" y="1375" class="small">Fixed data/task contracts are not evidence that one shared model or head has been trained across all four datasets.</text>
+</svg>

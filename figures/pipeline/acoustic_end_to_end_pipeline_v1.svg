@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="2800" height="1600" viewBox="0 0 2800 1600">
+  <title>Acoustic End-to-End Pipeline v1</title>
+  <desc>Four-dataset target system contract with executable two-dataset AST reference, architecture candidates, training control plane, and evidence registry.</desc>
+  <defs>
+    <marker id="arrow-main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#314260"/>
+    </marker>
+    <marker id="arrow-control" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7A8798"/>
+    </marker>
+    <marker id="arrow-candidate" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4674D6"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#20304A" flood-opacity="0.12"/>
+    </filter>
+    <style><![CDATA[
+      .title { font-family: Arial, Helvetica, sans-serif; font-size: 38px; font-weight: 700; fill: #13213A; }
+      .subtitle { font-family: Arial, Helvetica, sans-serif; font-size: 18px; fill: #5C6B7E; }
+      .region { font-family: Arial, Helvetica, sans-serif; font-size: 21px; font-weight: 700; letter-spacing: 0.4px; fill: #28356B; }
+      .box-title { font-family: Arial, Helvetica, sans-serif; font-size: 18px; font-weight: 700; fill: #17233B; }
+      .box-title-white { font-family: Arial, Helvetica, sans-serif; font-size: 18px; font-weight: 700; fill: #FFFFFF; }
+      .body { font-family: Arial, Helvetica, sans-serif; font-size: 15px; fill: #394A62; }
+      .body-small { font-family: Arial, Helvetica, sans-serif; font-size: 13px; fill: #53657A; }
+      .micro { font-family: Arial, Helvetica, sans-serif; font-size: 11.5px; fill: #5F6F82; }
+      .tag { font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.55px; }
+      .fixed { fill: #F4F7FF; stroke: #28356B; stroke-width: 2.2; }
+      .exec { fill: #EAF7EF; stroke: #2E8B57; stroke-width: 2.4; }
+      .candidate { fill: #EEF4FF; stroke: #3B6FD8; stroke-width: 2.2; stroke-dasharray: 10 7; }
+      .candidate-purple { fill: #F5F0FB; stroke: #7043A4; stroke-width: 2.2; stroke-dasharray: 10 7; }
+      .hold { fill: #FFF3E9; stroke: #C55A11; stroke-width: 2.2; }
+      .control { fill: #F4F6F9; stroke: #66758A; stroke-width: 2; stroke-dasharray: 8 6; }
+      .evidence { fill: #FFF9E8; stroke: #B57A13; stroke-width: 2; }
+      .main-arrow { fill: none; stroke: #314260; stroke-width: 4; marker-end: url(#arrow-main); }
+      .control-arrow { fill: none; stroke: #7A8798; stroke-width: 3; stroke-dasharray: 7 6; marker-end: url(#arrow-control); }
+      .candidate-arrow { fill: none; stroke: #4674D6; stroke-width: 3; stroke-dasharray: 7 6; marker-end: url(#arrow-candidate); }
+    ]]></style>
+  </defs>
+
+  <rect x="0" y="0" width="2800" height="1600" fill="#F7F9FC"/>
+
+  <!-- Header -->
+  <text x="58" y="62" class="title">Acoustic End-to-End Pipeline v1</text>
+  <text x="58" y="94" class="subtitle">Four audited datasets • native-task preservation • capability-gated representation • evidence-aware control</text>
+  <text x="58" y="123" class="body-small">Target system contract — not a claim that a four-dataset end-to-end model has already been trained</text>
+
+  <g transform="translate(1700,34)">
+    <rect x="0" y="0" width="178" height="30" rx="15" fill="#F4F7FF" stroke="#28356B" stroke-width="2"/>
+    <text x="89" y="20" text-anchor="middle" class="tag" fill="#28356B">FIXED CONTRACT</text>
+    <rect x="190" y="0" width="190" height="30" rx="15" fill="#EAF7EF" stroke="#2E8B57" stroke-width="2"/>
+    <text x="285" y="20" text-anchor="middle" class="tag" fill="#2E8B57">EXECUTABLE REF.</text>
+    <rect x="392" y="0" width="164" height="30" rx="15" fill="#EEF4FF" stroke="#3B6FD8" stroke-width="2" stroke-dasharray="7 5"/>
+    <text x="474" y="20" text-anchor="middle" class="tag" fill="#2F63C8">CANDIDATE</text>
+    <rect x="568" y="0" width="108" height="30" rx="15" fill="#FFF3E9" stroke="#C55A11" stroke-width="2"/>
+    <text x="622" y="20" text-anchor="middle" class="tag" fill="#A84B0E">HOLD</text>
+    <rect x="688" y="0" width="174" height="30" rx="15" fill="#F4F6F9" stroke="#66758A" stroke-width="2" stroke-dasharray="7 5"/>
+    <text x="775" y="20" text-anchor="middle" class="tag" fill="#5C6B7E">CONTROL PLANE</text>
+    <rect x="874" y="0" width="162" height="30" rx="15" fill="#FFF9E8" stroke="#B57A13" stroke-width="2"/>
+    <text x="955" y="20" text-anchor="middle" class="tag" fill="#98640D">EVIDENCE</text>
+  </g>
+
+  <!-- Region 1: target system -->
+  <rect x="45" y="155" width="2710" height="670" rx="26" fill="#FFFFFF" stroke="#D7DEE8" stroke-width="2" filter="url(#shadow)"/>
+  <text x="75" y="193" class="region">TARGET FOUR-DATASET SYSTEM CONTRACT</text>
+  <text x="690" y="193" class="body-small">main audio / inference path</text>
+
+  <!-- Dataset cards -->
+  <text x="75" y="227" class="box-title">Box 01 · Audited inputs</text>
+
+  <g id="dataset-icbhi">
+    <rect x="72" y="247" width="330" height="112" rx="16" class="fixed"/>
+    <rect x="72" y="247" width="11" height="112" rx="5" fill="#4F2A83"/>
+    <text x="98" y="275" class="box-title">ICBHI 2017</text>
+    <text x="377" y="275" text-anchor="end" class="micro">W01</text>
+    <text x="98" y="300" class="body">6,898 cycles • 920 rec • 126 pts</text>
+    <text x="98" y="323" class="body-small">4/10/44.1 kHz • native flat-four</text>
+    <text x="98" y="345" class="micro">official split has patient overlap</text>
+  </g>
+  <g id="dataset-sprsound">
+    <rect x="72" y="372" width="330" height="112" rx="16" class="fixed"/>
+    <rect x="72" y="372" width="11" height="112" rx="5" fill="#008A9A"/>
+    <text x="98" y="400" class="box-title">SPRSound BioCAS2022</text>
+    <text x="377" y="400" text-anchor="end" class="micro">W03</text>
+    <text x="98" y="425" class="body">9,089 events • 2,683 rec</text>
+    <text x="98" y="448" class="body-small">8 kHz • binary + seven-class</text>
+    <text x="98" y="470" class="micro">inter primary; intra separate diagnostic</text>
+  </g>
+  <g id="dataset-hf">
+    <rect x="72" y="497" width="330" height="112" rx="16" class="fixed"/>
+    <rect x="72" y="497" width="11" height="112" rx="5" fill="#237AB5"/>
+    <text x="98" y="525" class="box-title">HF_Lung_V1</text>
+    <text x="377" y="525" text-anchor="end" class="micro">W02</text>
+    <text x="98" y="550" class="body">9,765 × 15 s • 81,933 intervals</text>
+    <text x="98" y="573" class="body-small">4 kHz • overlapping temporal labels</text>
+    <text x="98" y="595" class="micro">gap = not_annotated, not negative</text>
+  </g>
+  <g id="dataset-kauh">
+    <rect x="72" y="622" width="330" height="112" rx="16" class="fixed"/>
+    <rect x="72" y="622" width="11" height="112" rx="5" fill="#C45A12"/>
+    <text x="98" y="650" class="box-title">KAUH / Fraiwan v3</text>
+    <text x="377" y="650" text-anchor="end" class="micro">W04</text>
+    <text x="98" y="675" class="body">336 recordings • 112 patients</text>
+    <text x="98" y="698" class="body-small">4 kHz • raw recording sound strings</text>
+    <text x="98" y="720" class="micro">P-number groups B/D/E filter replicas</text>
+  </g>
+
+  <!-- dataset bus -->
+  <path d="M402 303 H426 M402 428 H426 M402 553 H426 M402 678 H426 M426 303 V678" stroke="#9AA6B5" stroke-width="3" fill="none"/>
+  <path d="M426 490 H455" class="main-arrow"/>
+
+  <!-- Adapter + units -->
+  <g id="box-03-04">
+    <rect x="458" y="252" width="306" height="482" rx="18" class="fixed"/>
+    <rect x="476" y="270" width="117" height="24" rx="12" fill="#28356B"/>
+    <text x="534" y="287" text-anchor="middle" class="tag" fill="#FFFFFF">BOX 03–04</text>
+    <text x="478" y="326" class="box-title">Adapter + native unit</text>
+    <text x="478" y="354" class="body">CanonicalRecord preserves:</text>
+    <text x="494" y="380" class="body-small">• source/native labels</text>
+    <text x="494" y="403" class="body-small">• release + lineage receipt</text>
+    <text x="494" y="426" class="body-small">• group/split/status codes</text>
+    <text x="494" y="449" class="body-small">• missing ≠ unknown ≠ N/A</text>
+    <line x1="478" y1="470" x2="744" y2="470" stroke="#CFD7E3" stroke-width="2"/>
+    <text x="478" y="502" class="body">Prediction units stay distinct</text>
+    <rect x="482" y="522" width="258" height="38" rx="9" fill="#F1EDFA"/>
+    <text x="611" y="546" text-anchor="middle" class="body-small">ICBHI → cycle</text>
+    <rect x="482" y="568" width="258" height="38" rx="9" fill="#E8F7F8"/>
+    <text x="611" y="592" text-anchor="middle" class="body-small">SPRSound → event</text>
+    <rect x="482" y="614" width="258" height="38" rx="9" fill="#EAF4FB"/>
+    <text x="611" y="638" text-anchor="middle" class="body-small">HF → temporal sequence</text>
+    <rect x="482" y="660" width="258" height="38" rx="9" fill="#FFF0E6"/>
+    <text x="611" y="684" text-anchor="middle" class="body-small">KAUH → recording</text>
+    <text x="478" y="719" class="micro">no label harmonization in raw parser</text>
+  </g>
+  <path d="M764 490 H795" class="main-arrow"/>
+
+  <!-- Proposed preprocessing -->
+  <g id="box-05">
+    <rect x="798" y="296" width="316" height="390" rx="18" class="candidate"/>
+    <rect x="816" y="314" width="100" height="24" rx="12" fill="#3B6FD8"/>
+    <text x="866" y="331" text-anchor="middle" class="tag" fill="#FFFFFF">BOX 05</text>
+    <text x="818" y="370" class="box-title">Mask-aware preprocessing</text>
+    <text x="818" y="399" class="body">unit-aware extraction</text>
+    <text x="818" y="424" class="body">resample to declared f<tspan baseline-shift="sub" font-size="11">enc</tspan></text>
+    <text x="818" y="449" class="body">variable/windowed audio</text>
+    <text x="818" y="474" class="body">pad + aligned collate</text>
+    <rect x="818" y="499" width="276" height="62" rx="10" fill="#FFFFFF" stroke="#B8C8EA"/>
+    <text x="956" y="524" text-anchor="middle" class="body">X [B,T] + M<tspan baseline-shift="sub" font-size="11">pad</tspan> [B,T]</text>
+    <text x="956" y="548" text-anchor="middle" class="body-small">or aligned spectrogram batch</text>
+    <text x="818" y="590" class="body-small">must derive:</text>
+    <text x="836" y="615" class="body-small">token_mask [B,L]</text>
+    <text x="836" y="638" class="body-small">time_map [B,L,2]</text>
+    <rect x="818" y="652" width="138" height="22" rx="11" fill="#EEF4FF"/>
+    <text x="887" y="667" text-anchor="middle" class="tag" fill="#2F63C8">PROPOSED</text>
+    <text x="968" y="667" class="micro">window/frontend open</text>
+  </g>
+  <path d="M1114 490 H1145" class="main-arrow"/>
+
+  <!-- Backbone interface -->
+  <g id="box-06">
+    <rect x="1148" y="252" width="360" height="482" rx="18" class="fixed"/>
+    <rect x="1166" y="270" width="92" height="24" rx="12" fill="#28356B"/>
+    <text x="1212" y="287" text-anchor="middle" class="tag" fill="#FFFFFF">BOX 06</text>
+    <text x="1168" y="326" class="box-title">Backbone interface</text>
+    <text x="1168" y="353" class="body-small">selection remains open</text>
+    <rect x="1168" y="378" width="320" height="92" rx="12" fill="#FFFFFF" stroke="#8291A5" stroke-width="1.8"/>
+    <text x="1186" y="405" class="box-title">Base capability</text>
+    <text x="1186" y="433" class="body">pooled [B,D]</text>
+    <text x="1186" y="457" class="body-small">capability = pooled_only</text>
+    <rect x="1168" y="486" width="320" height="128" rx="12" fill="#EEF4FF" stroke="#3B6FD8" stroke-width="1.8"/>
+    <text x="1186" y="513" class="box-title">Temporal extension</text>
+    <text x="1186" y="540" class="body">tokens [B,L,D]</text>
+    <text x="1186" y="565" class="body">token_mask [B,L]</text>
+    <text x="1186" y="590" class="body">time_map [B,L,2]</text>
+    <text x="1186" y="607" class="micro">contract only • not current AST</text>
+    <rect x="1168" y="630" width="320" height="68" rx="12" fill="#F5F0FB" stroke="#7043A4" stroke-dasharray="7 5"/>
+    <text x="1186" y="655" class="body-small">Candidates: AST W09 • BEATs W10</text>
+    <text x="1186" y="678" class="body-small">OPERA W12 • controls W11/W13</text>
+    <text x="1168" y="719" class="micro">candidate name never implies capability</text>
+  </g>
+  <path d="M1508 490 H1540" class="main-arrow"/>
+
+  <!-- Head block -->
+  <g id="boxes-13-17">
+    <rect x="1543" y="224" width="650" height="538" rx="20" class="fixed"/>
+    <rect x="1562" y="242" width="138" height="24" rx="12" fill="#28356B"/>
+    <text x="1631" y="259" text-anchor="middle" class="tag" fill="#FFFFFF">BOXES 13–17</text>
+    <text x="1563" y="294" class="box-title">Eligible prediction heads</text>
+
+    <rect x="1564" y="316" width="607" height="72" rx="12" class="candidate"/>
+    <text x="1582" y="342" class="box-title">Shared-compatible heads — candidate / HOLD</text>
+    <text x="1582" y="366" class="body-small">ICBHI + approved SPR subset only • corrected shared head: 0 material wins</text>
+
+    <rect x="1564" y="402" width="292" height="112" rx="12" fill="#F5F1FB" stroke="#4F2A83" stroke-width="2"/>
+    <text x="1582" y="430" class="box-title">ICBHI native</text>
+    <text x="1582" y="456" class="body">cycle logits [B,4]</text>
+    <text x="1582" y="480" class="body-small">normal • crackle • wheeze • both</text>
+    <rect x="1582" y="489" width="88" height="18" rx="9" fill="#28356B"/>
+    <text x="1626" y="502" text-anchor="middle" class="tag" fill="#FFFFFF">FIXED</text>
+
+    <rect x="1870" y="402" width="301" height="112" rx="12" fill="#EAF8F9" stroke="#008A9A" stroke-width="2"/>
+    <text x="1888" y="430" class="box-title">SPRSound native</text>
+    <text x="1888" y="456" class="body">event [B,2] + [B,7]</text>
+    <text x="1888" y="480" class="body-small">inter primary • intra diagnostic</text>
+    <rect x="1888" y="489" width="88" height="18" rx="9" fill="#28356B"/>
+    <text x="1932" y="502" text-anchor="middle" class="tag" fill="#FFFFFF">FIXED</text>
+
+    <rect x="1564" y="528" width="292" height="151" rx="12" class="hold"/>
+    <text x="1582" y="556" class="box-title">HF temporal native</text>
+    <text x="1582" y="582" class="body">phase [B,L,2]</text>
+    <text x="1582" y="606" class="body">adventitious [B,L,4]</text>
+    <text x="1582" y="630" class="body-small">requires tokens + mask + time_map</text>
+    <text x="1582" y="653" class="micro">W02 • W08 • W29</text>
+    <rect x="1738" y="640" width="96" height="22" rx="11" fill="#C55A11"/>
+    <text x="1786" y="655" text-anchor="middle" class="tag" fill="#FFFFFF">CAP-GATE</text>
+
+    <rect x="1870" y="528" width="301" height="151" rx="12" fill="#FFF3E9" stroke="#C55A11" stroke-width="2"/>
+    <text x="1888" y="556" class="box-title">KAUH recording native</text>
+    <text x="1888" y="582" class="body">raw sound logits [B,C<tspan baseline-shift="sub" font-size="11">kauh</tspan>]</text>
+    <text x="1888" y="606" class="body-small">patient-grouped B/D/E replicas</text>
+    <text x="1888" y="630" class="body-small">shared mapping remains blocked</text>
+    <text x="1888" y="653" class="micro">W04 • W21 • W22</text>
+
+    <rect x="1564" y="697" width="607" height="42" rx="10" fill="#F4F6F9"/>
+    <text x="1867" y="723" text-anchor="middle" class="body-small">Box 18 eligibility opens legal outputs; target labels are never used at inference</text>
+  </g>
+  <path d="M2193 490 H2225" class="main-arrow"/>
+
+  <!-- Predictions / evaluation -->
+  <g id="predictions">
+    <rect x="2228" y="292" width="482" height="392" rx="20" class="fixed"/>
+    <rect x="2246" y="310" width="150" height="24" rx="12" fill="#28356B"/>
+    <text x="2321" y="327" text-anchor="middle" class="tag" fill="#FFFFFF">OUTPUT CONTRACT</text>
+    <text x="2248" y="366" class="box-title">Predictions + provenance</text>
+    <text x="2248" y="397" class="body">• native logits / probabilities</text>
+    <text x="2248" y="425" class="body">• valid head/class/time masks</text>
+    <text x="2248" y="453" class="body">• unit + source-time lineage</text>
+    <text x="2248" y="481" class="body">• backbone/checkpoint receipt</text>
+    <line x1="2248" y1="506" x2="2690" y2="506" stroke="#CFD7E3" stroke-width="2"/>
+    <text x="2248" y="538" class="box-title">Evaluation hand-off</text>
+    <text x="2248" y="568" class="body-small">per dataset • per unit • per class</text>
+    <text x="2248" y="592" class="body-small">protocol + split + target-label use</text>
+    <text x="2248" y="616" class="body-small">support + selection caveat</text>
+    <rect x="2248" y="638" width="259" height="25" rx="12" fill="#EEF1F5"/>
+    <text x="2378" y="655" text-anchor="middle" class="tag" fill="#5C6B7E">→ BOX 22 CLAIM LEDGER</text>
+  </g>
+
+  <!-- main-path footer warning -->
+  <rect x="458" y="752" width="2268" height="48" rx="12" fill="#FFF9E8" stroke="#D2A24A" stroke-width="1.6"/>
+  <text x="480" y="782" class="body-small">Inference: Boxes 19–21 are bypassed. LODO is limited to these four audited datasets. No generic raw-audio fallback or unseen/private-data claim.</text>
+
+  <!-- Region 2A: executable reference -->
+  <rect x="45" y="852" width="1125" height="318" rx="24" class="exec" filter="url(#shadow)"/>
+  <text x="72" y="890" class="region" fill="#246E45">EXECUTABLE REFERENCE · ENGINEERING EVIDENCE ONLY</text>
+  <text x="72" y="918" class="body-small">Figure A remains self-contained: ICBHI + SPRSound only</text>
+
+  <rect x="72" y="950" width="180" height="116" rx="14" fill="#FFFFFF" stroke="#2E8B57" stroke-width="1.8"/>
+  <text x="162" y="981" text-anchor="middle" class="box-title">Active inputs</text>
+  <text x="162" y="1010" text-anchor="middle" class="body-small">ICBHI cycles</text>
+  <text x="162" y="1035" text-anchor="middle" class="body-small">SPRSound events</text>
+  <text x="162" y="1058" text-anchor="middle" class="micro">no HF / KAUH</text>
+
+  <path d="M252 1008 H280" class="main-arrow"/>
+  <rect x="283" y="936" width="222" height="144" rx="14" fill="#FFFFFF" stroke="#2E8B57" stroke-width="1.8"/>
+  <text x="394" y="965" text-anchor="middle" class="box-title">Legacy preprocessing</text>
+  <text x="394" y="993" text-anchor="middle" class="body-small">16 kHz • fixed 8 s</text>
+  <text x="394" y="1017" text-anchor="middle" class="body-small">repeat / truncate • no mask</text>
+  <text x="394" y="1041" text-anchor="middle" class="body-small">128-bin fbank</text>
+  <text x="394" y="1064" text-anchor="middle" class="micro">[B,1,798,128]</text>
+
+  <path d="M505 1008 H533" class="main-arrow"/>
+  <rect x="536" y="926" width="246" height="164" rx="14" fill="#FFFFFF" stroke="#2E8B57" stroke-width="1.8"/>
+  <text x="659" y="955" text-anchor="middle" class="box-title">AST base384 · W09</text>
+  <text x="659" y="983" text-anchor="middle" class="body-small">AudioSet initialization</text>
+  <text x="659" y="1007" text-anchor="middle" class="body-small">12×79 = 948 patches</text>
+  <text x="659" y="1031" text-anchor="middle" class="body-small">12 blocks • D=768</text>
+  <text x="659" y="1055" text-anchor="middle" class="body-small">pooled z [B,768] only</text>
+  <text x="659" y="1079" text-anchor="middle" class="micro">12×101 pos grid → center-crop time to 79</text>
+
+  <path d="M782 1008 H810" class="main-arrow"/>
+  <rect x="813" y="936" width="202" height="144" rx="14" fill="#FFFFFF" stroke="#2E8B57" stroke-width="1.8"/>
+  <text x="914" y="965" text-anchor="middle" class="box-title">Native heads</text>
+  <text x="914" y="993" text-anchor="middle" class="body-small">ICBHI [B,4]</text>
+  <text x="914" y="1017" text-anchor="middle" class="body-small">SPR [B,2] + [B,7]</text>
+  <text x="914" y="1041" text-anchor="middle" class="body-small">source-proportional</text>
+  <text x="914" y="1064" text-anchor="middle" class="micro">unweighted CE</text>
+
+  <path d="M1015 1008 H1043" class="main-arrow"/>
+  <rect x="1046" y="950" width="98" height="116" rx="14" fill="#DFF2E6" stroke="#2E8B57" stroke-width="1.8"/>
+  <text x="1095" y="983" text-anchor="middle" class="box-title">Receipts</text>
+  <text x="1095" y="1010" text-anchor="middle" class="micro">protocol</text>
+  <text x="1095" y="1031" text-anchor="middle" class="micro">smoke</text>
+  <text x="1095" y="1052" text-anchor="middle" class="micro">profile</text>
+  <text x="72" y="1138" class="body-small">No completed 50-epoch joint-training result • smoke/profile ≠ performance • target-head adaptation ≠ zero-shot</text>
+
+  <!-- Region 2B: candidates -->
+  <rect x="1198" y="852" width="1557" height="318" rx="24" fill="#FFFFFF" stroke="#7050A0" stroke-width="2.2" stroke-dasharray="12 8" filter="url(#shadow)"/>
+  <text x="1225" y="890" class="region" fill="#7043A4">ARCHITECTURE CANDIDATES &amp; SOTA TRACEABILITY</text>
+  <text x="1225" y="918" class="body-small">external evidence and frozen diagnostics do not select a branch</text>
+
+  <rect x="1225" y="944" width="274" height="181" rx="14" class="candidate"/>
+  <text x="1243" y="973" class="box-title">Encoder slot</text>
+  <text x="1243" y="1000" class="body-small">AST W09 • BEATs W10</text>
+  <text x="1243" y="1024" class="body-small">OPERA W12</text>
+  <text x="1243" y="1048" class="body-small">controls: PANNs W11</text>
+  <text x="1243" y="1072" class="body-small">HeAR W13</text>
+  <text x="1243" y="1103" class="micro">checkpoint/input/capability gate</text>
+
+  <rect x="1516" y="944" width="288" height="181" rx="14" class="candidate-purple"/>
+  <text x="1534" y="973" class="box-title">P-Shared / P-Specific</text>
+  <text x="1534" y="1000" class="body-small">general: W12 • W19 HOLD</text>
+  <text x="1534" y="1024" class="body-small">specific: W15 • W16 • W18</text>
+  <text x="1534" y="1048" class="body-small">factorization not selected</text>
+  <text x="1534" y="1077" class="micro">P-Shared: no local empirical evidence</text>
+  <text x="1534" y="1103" class="micro">metadata/patient parity required</text>
+
+  <rect x="1821" y="944" width="288" height="181" rx="14" class="candidate-purple"/>
+  <text x="1839" y="973" class="box-title">Fusion / router / experts</text>
+  <text x="1839" y="1000" class="body-small">MVST fusion W07</text>
+  <text x="1839" y="1024" class="body-small">EZhouNet W08</text>
+  <text x="1839" y="1048" class="body-small">CNN-MoE W23 • HOLD</text>
+  <text x="1839" y="1072" class="body-small">BTS W24 • multimodal HOLD</text>
+  <text x="1839" y="1103" class="micro">dataset-ID routing ≠ domain generalization</text>
+
+  <rect x="2126" y="944" width="286" height="181" rx="14" class="candidate"/>
+  <text x="2144" y="973" class="box-title">Native branches</text>
+  <text x="2144" y="1000" class="body-small">HF temporal W02/W08/W29</text>
+  <text x="2144" y="1024" class="body-small">KAUH recording W04</text>
+  <text x="2144" y="1048" class="body-small">disease refs W21/W22</text>
+  <text x="2144" y="1072" class="body-small">dataset-specific W25/W32</text>
+  <text x="2144" y="1103" class="micro">native unit + protocol gates remain</text>
+
+  <rect x="2429" y="944" width="300" height="181" rx="14" class="hold"/>
+  <text x="2447" y="973" class="box-title">Tail / supervision controls</text>
+  <text x="2447" y="1000" class="body-small">focal W06/W32</text>
+  <text x="2447" y="1024" class="body-small">Patch-Mix/SupCon W14/W33</text>
+  <text x="2447" y="1048" class="body-small">KD W27 • aug/denoise W20/W26</text>
+  <text x="2447" y="1072" class="body-small">new preregistration required</text>
+  <text x="2447" y="1103" class="micro">not a selected dual-imbalance solution</text>
+
+  <!-- Region 3A: control plane -->
+  <rect x="45" y="1200" width="1930" height="330" rx="24" fill="#FFFFFF" stroke="#7A8798" stroke-width="2" stroke-dasharray="10 7" filter="url(#shadow)"/>
+  <text x="72" y="1238" class="region" fill="#53657A">TRAINING CONTROL PLANE · NOT AUDIO FLOW</text>
+  <text x="72" y="1266" class="body-small">lateral controls; Boxes 19–21 are bypassed at inference</text>
+
+  <rect x="72" y="1290" width="355" height="182" rx="15" class="control"/>
+  <text x="91" y="1320" class="box-title">Box 18 · Eligibility</text>
+  <text x="91" y="1349" class="body">M<tspan baseline-shift="sub" font-size="11">head</tspan> [B,H] • M<tspan baseline-shift="sub" font-size="11">class</tspan> [B,C]</text>
+  <text x="91" y="1375" class="body">M<tspan baseline-shift="sub" font-size="11">time</tspan> [B,L,K]</text>
+  <text x="91" y="1403" class="body-small">→ legal heads • losses • eval rows</text>
+  <text x="91" y="1428" class="body-small">missing / unknown / gap ≠ negative</text>
+  <text x="91" y="1454" class="micro">inference uses declared task, not target labels</text>
+
+  <rect x="450" y="1290" width="355" height="182" rx="15" class="control"/>
+  <text x="469" y="1320" class="box-title">Box 19 · Source control</text>
+  <text x="469" y="1349" class="body">sampler composition + w<tspan baseline-shift="sub" font-size="11">d</tspan></text>
+  <text x="469" y="1375" class="body-small">current ref: source-proportional</text>
+  <text x="469" y="1400" class="body-small">D2: frozen-feature diagnostic only</text>
+  <text x="469" y="1425" class="body-small">full-encoder effect unverified</text>
+  <text x="469" y="1454" class="micro">track effective rows + updates per source/task</text>
+
+  <rect x="828" y="1290" width="355" height="182" rx="15" class="control"/>
+  <text x="847" y="1320" class="box-title">Box 21 · Masked loss</text>
+  <text x="847" y="1349" class="body">L = Σ<tspan baseline-shift="sub" font-size="11">h</tspan> λ<tspan baseline-shift="sub" font-size="11">h</tspan> · masked_loss<tspan baseline-shift="sub" font-size="11">h</tspan></text>
+  <text x="847" y="1376" class="body-small">eligibility × valid annotation</text>
+  <text x="847" y="1401" class="body-small">× approved source/class control</text>
+  <text x="847" y="1426" class="body-small">all-masked task: safe skip + receipt</text>
+  <text x="847" y="1454" class="micro">head logits + targets → loss → update</text>
+
+  <rect x="1206" y="1290" width="741" height="182" rx="15" class="hold"/>
+  <text x="1225" y="1320" class="box-title">Box 20 · Tail research control + evidence pointer</text>
+  <text x="1225" y="1350" class="body">cRT: local gains, global guardrail fail</text>
+  <text x="1225" y="1376" class="body">learned event pooling: 0 material votes</text>
+  <text x="1225" y="1403" class="body-small">not a selected solution • new branch requires a new preregistration</text>
+  <text x="1225" y="1429" class="body-small">approved experiment connects to one point: sampler OR loss OR pooling</text>
+  <text x="1225" y="1454" class="micro">future candidate trace: W06/W14/W27/W32/W33</text>
+
+  <!-- control arrows -->
+  <path d="M427 1381 H450" class="control-arrow"/>
+  <path d="M805 1381 H828" class="control-arrow"/>
+  <path d="M1206 1435 C1160 1488,1014 1490,1006 1472" class="candidate-arrow"/>
+  <path d="M248 1290 V1184 H1184 V838 H1760 V762" class="control-arrow"/>
+  <path d="M626 1290 V1178 H1178 V832 H950 V686" class="control-arrow"/>
+  <text x="270" y="1281" class="micro">controls eligible heads</text>
+  <text x="646" y="1281" class="micro">controls batch construction</text>
+
+  <!-- Region 3B: evidence and claim ledger -->
+  <rect x="2005" y="1200" width="750" height="330" rx="24" fill="#FFFFFF" stroke="#B57A13" stroke-width="2" filter="url(#shadow)"/>
+  <text x="2032" y="1238" class="region" fill="#98640D">BOX 22 · EVIDENCE &amp; CLAIM LEDGER</text>
+  <text x="2032" y="1266" class="body-small">results guide decisions; they are not forward modules</text>
+
+  <rect x="2032" y="1290" width="420" height="208" rx="14" class="evidence"/>
+  <text x="2050" y="1320" class="box-title">Corrected local evidence</text>
+  <text x="2050" y="1348" class="body-small">ER-01 shared head: 0 material wins → HOLD</text>
+  <text x="2050" y="1373" class="body-small">ER-02 cRT: global regression guardrail fail</text>
+  <text x="2050" y="1398" class="body-small">ER-03 shortcut: 0/2 votes → inconclusive</text>
+  <text x="2050" y="1423" class="body-small">ER-04 event pooling: 0 material votes</text>
+  <text x="2050" y="1448" class="body-small">frozen diagnostics: target-supervised, single seed</text>
+  <text x="2050" y="1478" class="micro">no full-encoder / router / MoE conclusion</text>
+
+  <rect x="2471" y="1290" width="257" height="208" rx="14" fill="#F4F7FF" stroke="#28356B" stroke-width="1.8"/>
+  <text x="2489" y="1320" class="box-title">Claim limits</text>
+  <text x="2489" y="1348" class="body-small">• no pooled cross-task score</text>
+  <text x="2489" y="1373" class="body-small">• no HF gap-as-negative</text>
+  <text x="2489" y="1398" class="body-small">• no zero-shot relabeling</text>
+  <text x="2489" y="1423" class="body-small">• dataset-ID ≠ shortcut use</text>
+  <text x="2489" y="1448" class="body-small">• paper claim ≠ local result</text>
+  <text x="2489" y="1478" class="micro">report protocol • split • support</text>
+
+  <!-- link predictions to ledger -->
+  <path d="M2710 490 H2775 V1182 H2380 V1200" class="control-arrow"/>
+
+  <!-- Footer -->
+  <text x="58" y="1570" class="body-small">P0-2 visual v1 • editable SVG • SOTA candidate IDs resolve in module_interface_compatibility_matrix_v1.md</text>
+  <text x="2742" y="1570" text-anchor="end" class="body-small">2026-08-01</text>
+</svg>

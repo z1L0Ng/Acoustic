@@ -1,0 +1,148 @@
+{
+  "artifact_id": "acoustic_end_to_end_pipeline_v1",
+  "phase": "P0-2",
+  "created_at": "2026-08-01",
+  "status": "visual_qa_passed",
+  "scope": {
+    "datasets": [
+      "icbhi_2017",
+      "sprsound_biocas2022",
+      "hf_lung_v1",
+      "kauh_fraiwan_v3"
+    ],
+    "new_private_or_self_collected_data": "out_of_scope",
+    "experiments_or_training_started": false,
+    "server_or_cache_work_started": false,
+    "notion_modified": false,
+    "management_pages_modified": false,
+    "git_operation_performed": false
+  },
+  "authoritative_inputs": {
+    "notion_pages_read_only": [
+      {
+        "title": "Pipeline Module SOTA Map",
+        "url": "https://app.notion.com/p/3b0309efda2981899476c6fcaca45d47",
+        "role": "accepted W01-W33 SOTA traceability registry"
+      },
+      {
+        "title": "End-to-End Pipeline — Phase 0",
+        "url": "https://app.notion.com/p/3ab309efda2981f7a7ceeed39832700c",
+        "role": "reviewed box-by-box content and approved topology gates"
+      }
+    ],
+    "rough_decks_read_only": [
+      {
+        "path": "slides/acoustic_end_to_end_pipeline_sketch_v0.pptx",
+        "slides_rendered": 2,
+        "use": "visual reference only"
+      },
+      {
+        "path": "slides/acoustic_end_to_end_pipeline_audit_rough_v1.pptx",
+        "slides_rendered": 7,
+        "use": "audit layout reference only; not inherited as scientific authority"
+      }
+    ],
+    "local_evidence_read_only": [
+      "docs/datasets/four_dataset_task_contract_draft_2026-07-28.json",
+      "docs/datasets/four_dataset_task_contract_review_2026-07-28.md",
+      "experiments/icbhi_sprsound_shared_encoder_native_heads.yaml",
+      "baseline/shared_encoder_native_heads/protocol.py",
+      "baseline/shared_encoder_native_heads/protocol.json",
+      "baseline/shared_encoder_native_heads/run.py",
+      "result/icbhi_sprsound_shared_encoder_native_heads/protocol_and_data_receipt.json",
+      "result/icbhi_sprsound_shared_encoder_native_heads/smoke_receipt.json",
+      "result/icbhi_sprsound_shared_encoder_native_heads/profile_receipt.json",
+      ".cache/icbhi_sprsound_shared_encoder_native_heads/source/repo/models/ast.py",
+      "result/four_dataset_representation_attribution/hf_proxy_fixed_v2/comparison/encoder_selection.json",
+      "result/four_dataset_shared_compatible_head_harmonization/hf_proxy_fixed_v2/harmonization_decision.json",
+      "result/four_dataset_support_aware_crt/decision.json",
+      "result/four_dataset_shortcut_diagnostic/decision.json",
+      "result/four_dataset_event_sensitive_pooling/decision.json"
+    ]
+  },
+  "artifacts": [
+    {
+      "path": "docs/pipeline/end_to_end_pipeline_textual_spec_v1.md",
+      "bytes": 21166,
+      "sha256": "e32254c777c844e50989c90c1a7569b882deff5bfe3eddda9f3fc357a9954287",
+      "role": "frozen complete textual specification"
+    },
+    {
+      "path": "docs/pipeline/module_interface_compatibility_matrix_v1.md",
+      "bytes": 17041,
+      "sha256": "2d268148e92e67cfd76b4951d638f4c1195a96af0ce122aff02ca4ef36e7b302",
+      "role": "interface, dataset compatibility, SOTA traceability, and W01-W33 disposition"
+    },
+    {
+      "path": "figures/pipeline/acoustic_end_to_end_pipeline_v1.svg",
+      "bytes": 29631,
+      "sha256": "700521c8ad6d7efde0bee03727600f76ade4cc6f7aec961763243ff55f1fb096",
+      "role": "editable Inkscape-compatible vector master"
+    },
+    {
+      "path": "figures/pipeline/acoustic_end_to_end_pipeline_v1.png",
+      "bytes": 684643,
+      "sha256": "bb21077ad1b39e7a7a4a5e35c4dcfafdf67835f5e9dca509ae3b17a018fa99f4",
+      "role": "2800x1600 visual-QA preview"
+    }
+  ],
+  "traceability_qa": {
+    "accepted_work_cards": 33,
+    "work_cards_dispositioned_in_matrix": 33,
+    "unique_work_cards_printed_in_master_figure": 28,
+    "printed_candidate_ids_resolve_in_matrix": true,
+    "intentionally_not_printed_but_dispositioned": [
+      "W05",
+      "W17",
+      "W28",
+      "W30",
+      "W31"
+    ]
+  },
+  "semantic_qa": {
+    "four_dataset_target_contract_separate_from_executable_reference": true,
+    "executable_reference_inputs": [
+      "icbhi_2017",
+      "sprsound_biocas2022"
+    ],
+    "smoke_profile_not_presented_as_performance": true,
+    "target_head_adaptation_not_presented_as_zero_shot": true,
+    "hf_gap_not_presented_as_negative": true,
+    "sprsound_inter_intra_separated": true,
+    "kauh_filter_replicas_patient_grouped": true,
+    "current_ast_public_output_pooled_only": true,
+    "hf_temporal_branch_requires_tokens_mask_time_map": true,
+    "ast_position_grid_current_behavior": "12x101 source grid center-cropped on time to 79 under 798-frame input",
+    "p_shared_has_no_local_empirical_evidence_label": true,
+    "router_moe_general_specific_not_presented_as_selected": true,
+    "dataset_id_access_not_presented_as_pathology_shortcut_proof": true,
+    "d2_frozen_diagnostic_not_presented_as_full_encoder_effect": true,
+    "negative_and_inconclusive_results_kept_off_forward_audio_path": true,
+    "phase_1a_success_claim_absent": true,
+    "external_paper_claim_not_presented_as_local_result": true
+  },
+  "visual_qa": {
+    "svg_xml_validation": "passed_with_xmllint",
+    "rasterization": "passed_with_bundled_sharp_runtime",
+    "preview_dimensions": [
+      2800,
+      1600
+    ],
+    "manual_visual_inspection": {
+      "clipping": "none_observed",
+      "text_overlap": "none_observed",
+      "main_path_legibility": "passed",
+      "status_legend_consistency": "passed",
+      "control_arrows_use_separate_corridor": "passed",
+      "candidate_and_hold_separation": "passed"
+    },
+    "inkscape_cli_available_in_current_environment": false,
+    "inkscape_note": "The master is standards-based editable SVG and can be opened in Inkscape; local QA used XML validation plus the bundled SVG rasterizer because the Inkscape CLI was unavailable."
+  },
+  "claim_boundary": [
+    "The master figure is a target-system contract with bounded references, not a completed four-dataset training result.",
+    "The current ICBHI+SPRSound AST path has engineering receipts only.",
+    "Four-dataset PAFA/D2 and related decisions are target-supervised frozen-feature diagnostics, not full-encoder evidence.",
+    "P-Shared, P-Specific, multiple encoders, router, MoE, fusion, and tail methods remain candidate or HOLD unless separately promoted."
+  ]
+}
