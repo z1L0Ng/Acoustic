@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import unittest
 from dataclasses import replace
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import torch
 from torch import nn
@@ -21,6 +23,13 @@ from baseline.multidataset_pipeline.beats_temporal import (
     temporalize_transformer_output,
     verify_non_hf_pooled_parity,
 )
+from baseline.multidataset_pipeline.adapter_factory import (
+    AdapterFactoryConfig,
+    build_production_adapter,
+)
+from baseline.multidataset_pipeline.ast_window_encoder import ASTWindowBackend
+from baseline.multidataset_pipeline.hear_window_encoder import HeARWindowBackend
+from baseline.multidataset_pipeline.panns_window_encoder import PANNsWindowBackend
 from baseline.multidataset_pipeline.contracts import (
     ObservationState,
     WaveformSample,
@@ -67,6 +76,13 @@ from baseline.multidataset_pipeline.sliding_window import (
     hf_window_supervision,
     masked_mean_window_embeddings,
     source_window_starts,
+)
+from baseline.multidataset_pipeline.window_encoder import (
+    AdapterProvenance,
+    FrozenWindowBackend,
+    ProductionWindowEncoder,
+    require_file_identity,
+    sha256_file,
 )
 
 
@@ -766,6 +782,144 @@ class FirstQueuePreflightTest(unittest.TestCase):
             empty = torch.zeros_like(valid)
             hf_masked_channel_balanced_bce(logits.detach(), targets, empty, empty)
 
+
+class FakeWindowBackend(FrozenWindowBackend):
+    def __init__(self, native_dim: int) -> None:
+        super().__init__()
+        self.native_dim = native_dim
+        self.register_buffer("basis", torch.linspace(0.25, 1.25, native_dim))
+
+    def encode_valid_windows(self, waveform_windows, valid_samples):
+        positions = torch.arange(
+            waveform_windows.shape[1], device=waveform_windows.device
+        ).unsqueeze(0)
+        mask = positions < valid_samples.unsqueeze(1)
+        means = (waveform_windows * mask).sum(dim=1) / valid_samples
+        return means.unsqueeze(1) * self.basis.unsqueeze(0)
+
+
+class FakePANNsModel(nn.Module):
+    def forward(self, waveform, mixup_lambda=None):
+        means = waveform.mean(dim=1, keepdim=True)
+        return {"embedding": means.expand(-1, 2048)}
+
+
+class FakeTensorFlow:
+    @staticmethod
+    def convert_to_tensor(value):
+        return value
+
+
+class FakeNumpyTensor:
+    def __init__(self, value):
+        self.value = value
+
+    def numpy(self):
+        return self.value
+
+
+def fake_provenance(identity: str) -> AdapterProvenance:
+    return AdapterProvenance(
+        encoder_identity=identity,
+        source_url="fixture://source",
+        source_revision="0" * 40,
+        source_license="test-only",
+        checkpoint_name="fixture.pt",
+        checkpoint_source="deterministic fixture",
+        checkpoint_sha256="0" * 64,
+        checkpoint_size_bytes=0,
+        asset_status="synthetic_fixture_not_model_asset",
+    )
+
+
+class ProductionWindowAdapterTest(unittest.TestCase):
+    def test_flatten_restore_lineage_padding_and_batch_invariance(self):
+        short = sample("ICBHI", "cycle", 800, "short", start_s=3.0)
+        long = sample("KAUH", "recording", 48_000, "long")
+        adapter = ProductionWindowEncoder(
+            "AST", FakeWindowBackend(768), fake_provenance("AST")
+        )
+        alone_batch = collate_sliding_windows([short])
+        mixed_batch = collate_sliding_windows([short, long])
+        alone = adapter(alone_batch)
+        mixed = adapter(mixed_batch)
+        torch.testing.assert_close(alone.embeddings[0, 0], mixed.embeddings[0, 0])
+        self.assertEqual(mixed.embeddings.shape, (2, 2, 768))
+        self.assertEqual(torch.count_nonzero(mixed.embeddings[0, 1]).item(), 0)
+        self.assertEqual(mixed.sample_ids, ("short", "long"))
+        self.assertTrue(torch.equal(mixed.window_mask, mixed_batch.window_mask))
+        self.assertTrue(torch.equal(mixed.time_map, mixed_batch.time_map))
+        self.assertTrue(torch.isfinite(mixed.embeddings).all())
+
+    def test_dimension_adapter_is_trainable_and_invalid_slots_stay_zero(self):
+        adapter = ProductionWindowEncoder(
+            "PANNs_Cnn14",
+            FakeWindowBackend(2048),
+            fake_provenance("PANNs_Cnn14"),
+            dimension_adapter=CandidateDimensionAdapter("PANNs_Cnn14"),
+        )
+        batch = collate_sliding_windows(
+            [
+                sample("SPRSound", "event", 1_000, "short"),
+                sample("KAUH", "recording", 48_000, "long"),
+            ]
+        )
+        output = adapter(batch)
+        output.embeddings.sum().backward()
+        gradients = [
+            parameter.grad
+            for parameter in adapter.dimension_adapter.parameters()
+            if parameter.requires_grad
+        ]
+        self.assertTrue(all(value is not None for value in gradients))
+        self.assertEqual(torch.count_nonzero(output.embeddings[0, 1]).item(), 0)
+        receipt = adapter.receipt()
+        self.assertEqual(receipt["output_shape"], "[B,K,768]")
+        self.assertEqual(receipt["candidate_encoder_scope"], "frozen_eval_no_grad")
+
+    def test_checkpoint_identity_and_factory_fail_closed(self):
+        with TemporaryDirectory() as temporary:
+            path = Path(temporary) / "asset.bin"
+            path.write_bytes(b"adapter-asset")
+            digest = sha256_file(path)
+            receipt = require_file_identity(path, digest, expected_size_bytes=13)
+            self.assertTrue(receipt["identity_verified"])
+            with self.assertRaises(RuntimeError):
+                require_file_identity(path, "0" * 64)
+        root = Path(__file__).resolve().parents[1]
+        with self.assertRaises(RuntimeError):
+            build_production_adapter(AdapterFactoryConfig("P3", root))
+        with self.assertRaises(RuntimeError):
+            build_production_adapter(AdapterFactoryConfig("P4", root))
+
+    def test_ast_frontend_zero_pads_fbank_without_repeat_or_truncate(self):
+        waveform = torch.linspace(-0.1, 0.1, 32_000).repeat(2, 1)
+        images = ASTWindowBackend.frontend(waveform)
+        self.assertEqual(images.shape, (2, 1, 798, 128))
+        torch.testing.assert_close(images[0], images[1])
+        nonzero_frames = torch.count_nonzero(images[0, 0], dim=1).bool()
+        self.assertTrue(nonzero_frames[:190].all())
+        self.assertFalse(nonzero_frames[210:].any())
+
+    def test_panns_and_hear_specific_backend_synthetic_cpu_smoke(self):
+        waveforms = torch.linspace(-0.2, 0.2, 32_000).repeat(2, 1)
+        valid = torch.tensor([32_000, 800], dtype=torch.long)
+        panns = PANNsWindowBackend(FakePANNsModel())
+        panns_values = panns.encode_valid_windows(waveforms, valid)
+        self.assertEqual(panns_values.shape, (2, 2048))
+        self.assertTrue(torch.isfinite(panns_values).all())
+
+        def signature(*, x):
+            means = x.mean(axis=1, keepdims=True)
+            return {"output_0": FakeNumpyTensor(means.repeat(512, axis=1))}
+
+        hear = HeARWindowBackend(
+            signature, device="cpu", tensorflow_module=FakeTensorFlow()
+        )
+        hear_values = hear.encode_valid_windows(waveforms, valid)
+        self.assertEqual(hear_values.shape, (2, 512))
+        self.assertTrue(torch.isfinite(hear_values).all())
+
     @unittest.skipUnless(torch.cuda.is_available(), "CUDA is not available")
     def test_p6_token_head_cuda_contract(self):
         device = torch.device("cuda")
@@ -779,17 +933,16 @@ class FirstQueuePreflightTest(unittest.TestCase):
         self.assertEqual(logits.device.type, "cuda")
         self.assertEqual(set(receipt["denominators"]), {"I", "E", "CAS", "DAS"})
 
-    def test_preflight_marks_all_production_adapters_hold(self):
+    def test_preflight_separates_code_asset_and_scientific_holds(self):
         receipt = freeze_receipt()
         self.assertFalse(receipt["experiment_result"])
         self.assertEqual(receipt["p1_p5"]["update_budget"], 86_250)
         self.assertEqual(receipt["window_policy"]["status"], "proposed_benchmark_policy")
-        self.assertTrue(
-            all(
-                entry["status"].startswith("HOLD")
-                for entry in PRODUCTION_ADAPTER_STATUS.values()
-            )
-        )
+        self.assertIn("code_READY", PRODUCTION_ADAPTER_STATUS["AST"]["status"])
+        self.assertIn("code_READY", PRODUCTION_ADAPTER_STATUS["BEATs"]["status"])
+        self.assertIn("asset_HOLD", PRODUCTION_ADAPTER_STATUS["PANNs_Cnn14"]["status"])
+        self.assertIn("HOLD", PRODUCTION_ADAPTER_STATUS["HeAR"]["status"])
+        self.assertTrue(PRODUCTION_ADAPTER_STATUS["OPERA_CT"]["status"].startswith("HOLD"))
         self.assertFalse(receipt["p6"]["first_round_required"])
 
     def test_independent_verifier_schema_rejects_pooled_score_and_p6(self):
@@ -800,12 +953,17 @@ class FirstQueuePreflightTest(unittest.TestCase):
             "verifier_code_commit": "pending",
             "subject_code_commit": "pending",
             "config_sha256": "pending",
+            "provider_data_identity_sha256": "pending",
             "approval_receipt_sha256": "pending",
             "manifest_sha256_by_dataset": {},
             "split_sha256_by_dataset": {},
             "checkpoint_sha256_by_component": {},
             "window_contract_receipt": {},
             "encoder_adapter_receipt": {},
+            "runner_schema_version": "shared_window_training_v2",
+            "phase_gate_receipt": {},
+            "optimizer_receipt": {},
+            "resume_receipt": {},
             "seed": 20260728,
             "update_budget": 86250,
             "selection_receipt": {},
