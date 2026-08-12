@@ -7,6 +7,7 @@ from .contracts import (
     WaveformSample,
     collate_waveforms,
 )
+from .hf_data import HFSampleRecord, build_hf_manifest, load_hf_waveform
 
 __all__ = [
     "SAMPLE_RATE",
@@ -14,4 +15,7 @@ __all__ = [
     "WaveformBatch",
     "WaveformSample",
     "collate_waveforms",
+    "HFSampleRecord",
+    "build_hf_manifest",
+    "load_hf_waveform",
 ]
