@@ -51,16 +51,16 @@ def validate_pipeline_adapter_identity(
 def _complete_state_snapshot(
     adapter: ProductionWindowEncoder, model: JointNativeProjector
 ) -> dict[str, torch.Tensor]:
-    return {
-        **{
-            f"adapter.{name}": value.detach().cpu().clone()
-            for name, value in adapter.state_dict().items()
-        },
-        **{
-            f"model.{name}": value.detach().cpu().clone()
-            for name, value in model.state_dict().items()
-        },
-    }
+    snapshot: dict[str, torch.Tensor] = {}
+    for prefix, module in (("adapter", adapter), ("model", model)):
+        for name, value in module.state_dict().items():
+            snapshot[f"{prefix}.state.{name}"] = value.detach().cpu().clone()
+        # state_dict intentionally excludes buffers registered with
+        # persistent=False.  Compare named_buffers separately so the
+        # zero-update claim covers those tensors as well.
+        for name, value in module.named_buffers():
+            snapshot[f"{prefix}.buffer.{name}"] = value.detach().cpu().clone()
+    return snapshot
 
 
 def run_zero_update_preflight(

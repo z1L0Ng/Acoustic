@@ -16,6 +16,7 @@ from baseline.multidataset_pipeline.contracts import ObservationState, PREDICTIO
 from baseline.multidataset_pipeline.hf_data import HFSampleRecord
 from baseline.multidataset_pipeline.joint_native import JointNativeProjector
 from baseline.multidataset_pipeline.l40_preflight import (
+    _complete_state_snapshot,
     validate_pipeline_adapter_identity,
 )
 from baseline.multidataset_pipeline.preflight import (
@@ -326,6 +327,7 @@ class _FakeAdapter(nn.Module):
         self.encoder_identity = identity
         self.backend = _FakeBackend()
         self.dimension_adapter = CandidateDimensionAdapter(identity)
+        self.register_buffer("nonpersistent_probe", torch.tensor([7.0]), persistent=False)
 
     def forward(self, batch):
         values = batch.waveform_windows.mean(dim=-1, keepdim=True).expand(-1, -1, 768)
@@ -363,6 +365,13 @@ def _native_batch(lane: str) -> NativeWindowBatch:
 
 
 class TrainingAssemblyTest(unittest.TestCase):
+    def test_l40_snapshot_includes_nonpersistent_buffers(self):
+        adapter = _FakeAdapter("AST")
+        model = JointNativeProjector()
+        snapshot = _complete_state_snapshot(adapter, model)
+        self.assertIn("adapter.buffer.nonpersistent_probe", snapshot)
+        self.assertNotIn("adapter.state.nonpersistent_probe", snapshot)
+
     def test_l40_pipeline_adapter_identity_gate(self):
         adapter = _FakeAdapter("AST")
         validate_pipeline_adapter_identity("P1", adapter)
