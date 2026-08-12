@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import copy
+import shutil
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -14,6 +15,9 @@ from baseline.multidataset_pipeline.beats_temporal import HFRawInterval
 from baseline.multidataset_pipeline.contracts import ObservationState, PREDICTION_UNITS, WaveformSample
 from baseline.multidataset_pipeline.hf_data import HFSampleRecord
 from baseline.multidataset_pipeline.joint_native import JointNativeProjector
+from baseline.multidataset_pipeline.l40_preflight import (
+    validate_pipeline_adapter_identity,
+)
 from baseline.multidataset_pipeline.preflight import (
     CandidateDimensionAdapter,
     FOUR_DATASET_SUBTRAIN_UNITS,
@@ -33,6 +37,7 @@ from baseline.multidataset_pipeline.sliding_window import collate_sliding_window
 from baseline.multidataset_pipeline.train_shared_window import (
     LEARNING_RATE,
     RUNNER_SCHEMA_VERSION,
+    VALIDATION_SELECTION_SCHEMA_VERSION,
     WEIGHT_DECAY,
     SourceProportionalBatchPlanner,
     TrainingRunnerConfig,
@@ -42,8 +47,10 @@ from baseline.multidataset_pipeline.train_shared_window import (
     load_training_checkpoint,
     native_batch_loss,
     save_training_checkpoint,
+    sha256_path,
     terminal_score_gate,
     trainable_scope_receipt,
+    write_validation_selection_receipt,
 )
 
 
@@ -356,6 +363,12 @@ def _native_batch(lane: str) -> NativeWindowBatch:
 
 
 class TrainingAssemblyTest(unittest.TestCase):
+    def test_l40_pipeline_adapter_identity_gate(self):
+        adapter = _FakeAdapter("AST")
+        validate_pipeline_adapter_identity("P1", adapter)
+        with self.assertRaisesRegex(RuntimeError, "identity mismatch"):
+            validate_pipeline_adapter_identity("P2", adapter)
+
     def test_frozen_budget_scope_optimizer_and_planner_resume(self):
         with TemporaryDirectory() as directory:
             config = TrainingRunnerConfig.frozen("P1", Path(directory), phase="full")
@@ -412,7 +425,7 @@ class TrainingAssemblyTest(unittest.TestCase):
             optimizer.step()
         self.assertFalse(torch.equal(before, model.projector.weight))
 
-    def test_approval_and_terminal_outer_isolation(self):
+    def test_approval_and_terminal_selection_binding(self):
         with TemporaryDirectory() as directory:
             root = Path(directory)
             smoke = TrainingRunnerConfig.frozen("P2", root, phase="smoke")
@@ -440,26 +453,137 @@ class TrainingAssemblyTest(unittest.TestCase):
             with self.assertRaisesRegex(PermissionError, "outer_test_authorized"):
                 load_and_validate_approval(approval, smoke)
 
+            full = TrainingRunnerConfig.frozen("P2", root, phase="full")
+            adapter = _FakeAdapter("BEATs")
+            model = assemble_trainable_modules(adapter, device=torch.device("cpu"))
+            optimizer, _ = build_optimizer(adapter, model)
+            scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+                optimizer, T_max=full.update_budget
+            )
+            planner = SourceProportionalBatchPlanner(FOUR_DATASET_SUBTRAIN_UNITS)
+            full_approval_sha = "f" * 64
+            first = save_training_checkpoint(
+                root / "update_001725.pt",
+                config=full,
+                update=1_725,
+                adapter=adapter,
+                model=model,
+                optimizer=optimizer,
+                scheduler=scheduler,
+                planner=planner,
+                validation_history=[],
+                data_identity_sha256="c" * 64,
+                approval_receipt_sha256=full_approval_sha,
+                selection_scalar=0.4,
+            )
+            second = save_training_checkpoint(
+                root / "update_003450.pt",
+                config=full,
+                update=3_450,
+                adapter=adapter,
+                model=model,
+                optimizer=optimizer,
+                scheduler=scheduler,
+                planner=planner,
+                validation_history=[],
+                data_identity_sha256="c" * 64,
+                approval_receipt_sha256=full_approval_sha,
+                selection_scalar=0.3,
+            )
+            selection_path = root / "validation_selection_receipt.json"
+            selection = write_validation_selection_receipt(
+                selection_path,
+                config=full,
+                data_identity_sha256="c" * 64,
+                full_approval_receipt_sha256=full_approval_sha,
+                candidates=[first, second],
+            )
+            self.assertEqual(
+                selection["schema_version"], VALIDATION_SELECTION_SCHEMA_VERSION
+            )
+            self.assertEqual(selection["selected_update"], 3_450)
+
             terminal = TrainingRunnerConfig.frozen("P2", root, phase="terminal-score")
             approval.write_text(json.dumps({
                 "status": "approved",
                 "pipeline_id": "P2",
                 "phase": "terminal-score",
                 "config_sha256": terminal.sha256(),
-                "data_identity_sha256": "b" * 64,
+                "data_identity_sha256": "c" * 64,
+                "selection_receipt_sha256": selection["selection_receipt_artifact"]["sha256"],
                 "authorized_by": "management-fixture",
                 "outer_test_authorized": True,
             }), encoding="utf-8")
-            checkpoint = root / "selected.pt"
-            checkpoint.touch()
+            result = terminal_score_gate(
+                terminal,
+                approval,
+                selection_path,
+                selection["selection_receipt_artifact"]["sha256"],
+                Path(second["path"]),
+                scorer=lambda _: {"HF": {"I": {"accuracy": 0.5}}},
+            )
+            self.assertFalse(result["cross_dataset_pooled_performance"])
             with self.assertRaisesRegex(RuntimeError, "terminal scorer HOLD"):
-                terminal_score_gate(terminal, approval, checkpoint)
+                terminal_score_gate(
+                    terminal,
+                    approval,
+                    selection_path,
+                    selection["selection_receipt_artifact"]["sha256"],
+                    Path(second["path"]),
+                )
             with self.assertRaisesRegex(RuntimeError, "forbidden pooled"):
                 terminal_score_gate(
                     terminal,
                     approval,
-                    checkpoint,
+                    selection_path,
+                    selection["selection_receipt_artifact"]["sha256"],
+                    Path(second["path"]),
                     scorer=lambda _: {"pooled_score": 0.5},
+                )
+            with self.assertRaisesRegex(RuntimeError, "not the exact"):
+                terminal_score_gate(
+                    terminal,
+                    approval,
+                    selection_path,
+                    selection["selection_receipt_artifact"]["sha256"],
+                    Path(first["path"]),
+                    scorer=lambda _: {},
+                )
+
+            tampered_selection = root / "tampered_selection.json"
+            tampered = json.loads(selection_path.read_text())
+            tampered["selection_rule"] = "tampered"
+            tampered_selection.write_text(json.dumps(tampered), encoding="utf-8")
+            with self.assertRaisesRegex(RuntimeError, "SHA256 mismatch"):
+                terminal_score_gate(
+                    terminal,
+                    approval,
+                    tampered_selection,
+                    selection["selection_receipt_artifact"]["sha256"],
+                    Path(second["path"]),
+                    scorer=lambda _: {},
+                )
+            with self.assertRaisesRegex(RuntimeError, "identity/rule"):
+                terminal_score_gate(
+                    terminal,
+                    approval,
+                    tampered_selection,
+                    sha256_path(tampered_selection),
+                    Path(second["path"]),
+                    scorer=lambda _: {},
+                )
+
+            wrong_data = json.loads(approval.read_text())
+            wrong_data["data_identity_sha256"] = "d" * 64
+            approval.write_text(json.dumps(wrong_data), encoding="utf-8")
+            with self.assertRaisesRegex(PermissionError, "authority/annotation"):
+                terminal_score_gate(
+                    terminal,
+                    approval,
+                    selection_path,
+                    selection["selection_receipt_artifact"]["sha256"],
+                    Path(second["path"]),
+                    scorer=lambda _: {},
                 )
 
     def test_checkpoint_resume_schema(self):
@@ -478,7 +602,7 @@ class TrainingAssemblyTest(unittest.TestCase):
             receipt = save_training_checkpoint(
                 path,
                 config=config,
-                update=1,
+                update=1_725,
                 adapter=adapter,
                 model=model,
                 optimizer=optimizer,
@@ -486,9 +610,19 @@ class TrainingAssemblyTest(unittest.TestCase):
                 planner=planner,
                 validation_history=[],
                 data_identity_sha256="c" * 64,
+                approval_receipt_sha256="a" * 64,
+                selection_scalar=0.25,
             )
             self.assertEqual(receipt["schema_version"], RUNNER_SCHEMA_VERSION)
             self.assertFalse(receipt["outer_test_accessed"])
+            self.assertEqual(receipt["size_bytes"], path.stat().st_size)
+            self.assertEqual(receipt["sha256"], sha256_path(path))
+            self.assertEqual(receipt["approval_receipt_sha256"], "a" * 64)
+            self.assertEqual(
+                set(receipt["component_state_sha256"]),
+                {"dimension_adapter", "joint_native_model", "optimizer", "scheduler", "planner"},
+            )
+            self.assertTrue(path.with_suffix(".receipt.json").is_file())
             restored_adapter = _FakeAdapter()
             restored_model = assemble_trainable_modules(
                 restored_adapter, device=torch.device("cpu")
@@ -498,7 +632,7 @@ class TrainingAssemblyTest(unittest.TestCase):
                 restored_optimizer, T_max=config.update_budget
             )
             restored_planner = SourceProportionalBatchPlanner(FOUR_DATASET_SUBTRAIN_UNITS)
-            update, history = load_training_checkpoint(
+            update, history, loaded_receipt = load_training_checkpoint(
                 path,
                 config=config,
                 adapter=restored_adapter,
@@ -507,9 +641,12 @@ class TrainingAssemblyTest(unittest.TestCase):
                 scheduler=restored_scheduler,
                 planner=restored_planner,
                 expected_data_identity_sha256="c" * 64,
+                expected_checkpoint_sha256=receipt["sha256"],
+                expected_approval_receipt_sha256="a" * 64,
             )
-            self.assertEqual(update, 1)
+            self.assertEqual(update, 1_725)
             self.assertEqual(history, [])
+            self.assertEqual(loaded_receipt["sha256"], receipt["sha256"])
             torch.testing.assert_close(model.projector.weight, restored_model.projector.weight)
             with self.assertRaisesRegex(RuntimeError, "resume identity"):
                 load_training_checkpoint(
@@ -521,6 +658,110 @@ class TrainingAssemblyTest(unittest.TestCase):
                     scheduler=restored_scheduler,
                     planner=restored_planner,
                     expected_data_identity_sha256="d" * 64,
+                    expected_checkpoint_sha256=receipt["sha256"],
+                    expected_approval_receipt_sha256="a" * 64,
+                )
+
+            with self.assertRaisesRegex(RuntimeError, "resume identity"):
+                load_training_checkpoint(
+                    path,
+                    config=config,
+                    adapter=restored_adapter,
+                    model=restored_model,
+                    optimizer=restored_optimizer,
+                    scheduler=restored_scheduler,
+                    planner=restored_planner,
+                    expected_data_identity_sha256="c" * 64,
+                    expected_checkpoint_sha256=receipt["sha256"],
+                    expected_approval_receipt_sha256="b" * 64,
+                )
+
+            with self.assertRaisesRegex(RuntimeError, "byte SHA256 mismatch"):
+                load_training_checkpoint(
+                    path,
+                    config=config,
+                    adapter=restored_adapter,
+                    model=restored_model,
+                    optimizer=restored_optimizer,
+                    scheduler=restored_scheduler,
+                    planner=restored_planner,
+                    expected_data_identity_sha256="c" * 64,
+                    expected_checkpoint_sha256="e" * 64,
+                    expected_approval_receipt_sha256="a" * 64,
+                )
+
+            payload = torch.load(path, weights_only=False)
+            payload["update"] = 1_725
+            payload["schema_version"] = "shared_window_training_v2"
+            old_schema = root / "old_schema.pt"
+            torch.save(payload, old_schema)
+            with self.assertRaisesRegex(RuntimeError, "resume identity"):
+                load_training_checkpoint(
+                    old_schema,
+                    config=config,
+                    adapter=restored_adapter,
+                    model=restored_model,
+                    optimizer=restored_optimizer,
+                    scheduler=restored_scheduler,
+                    planner=restored_planner,
+                    expected_data_identity_sha256="c" * 64,
+                    expected_checkpoint_sha256=sha256_path(old_schema),
+                    expected_approval_receipt_sha256="a" * 64,
+                )
+
+            replacement = root / "replacement_same_payload.pt"
+            shutil.copy2(path, replacement)
+            with replacement.open("ab") as handle:
+                handle.write(b"replacement")
+            self.assertEqual(torch.load(replacement, weights_only=False)["update"], 1_725)
+            with self.assertRaisesRegex(RuntimeError, "byte SHA256 mismatch"):
+                load_training_checkpoint(
+                    replacement,
+                    config=config,
+                    adapter=restored_adapter,
+                    model=restored_model,
+                    optimizer=restored_optimizer,
+                    scheduler=restored_scheduler,
+                    planner=restored_planner,
+                    expected_data_identity_sha256="c" * 64,
+                    expected_checkpoint_sha256=receipt["sha256"],
+                    expected_approval_receipt_sha256="a" * 64,
+                )
+
+            payload = torch.load(path, weights_only=False)
+            payload["update"] = config.update_budget + 1
+            out_of_range = root / "out_of_range.pt"
+            torch.save(payload, out_of_range)
+            with self.assertRaisesRegex(RuntimeError, "resume identity"):
+                load_training_checkpoint(
+                    out_of_range,
+                    config=config,
+                    adapter=restored_adapter,
+                    model=restored_model,
+                    optimizer=restored_optimizer,
+                    scheduler=restored_scheduler,
+                    planner=restored_planner,
+                    expected_data_identity_sha256="c" * 64,
+                    expected_checkpoint_sha256=sha256_path(out_of_range),
+                    expected_approval_receipt_sha256="a" * 64,
+                )
+
+            payload = torch.load(path, weights_only=False)
+            payload["update"] = 1
+            non_validation_update = root / "non_validation_update.pt"
+            torch.save(payload, non_validation_update)
+            with self.assertRaisesRegex(RuntimeError, "resume identity"):
+                load_training_checkpoint(
+                    non_validation_update,
+                    config=config,
+                    adapter=restored_adapter,
+                    model=restored_model,
+                    optimizer=restored_optimizer,
+                    scheduler=restored_scheduler,
+                    planner=restored_planner,
+                    expected_data_identity_sha256="c" * 64,
+                    expected_checkpoint_sha256=sha256_path(non_validation_update),
+                    expected_approval_receipt_sha256="a" * 64,
                 )
 
 

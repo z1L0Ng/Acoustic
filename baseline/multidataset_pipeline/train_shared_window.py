@@ -45,7 +45,8 @@ from .sliding_window import hf_window_supervision, masked_mean_window_embeddings
 from .window_encoder import ProductionWindowEncoder
 
 
-RUNNER_SCHEMA_VERSION = "shared_window_training_v2"
+RUNNER_SCHEMA_VERSION = "shared_window_training_v3"
+VALIDATION_SELECTION_SCHEMA_VERSION = "validation_selection_v1"
 OPTIMIZER_POLICY_STATUS = "proposed_benchmark_policy"
 OPTIMIZER_POLICY_REFERENCE = "baseline/shared_encoder_native_heads/protocol.json"
 OPTIMIZER_NAME = "Adam"
@@ -57,6 +58,68 @@ INITIALIZATION = (
     "Linear(768,256), and native Linear heads; torch.nn.Linear.reset_parameters"
 )
 ALLOWED_PHASES = ("preflight", "smoke", "full", "terminal-score")
+
+
+def sha256_path(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _require_sha256(value: str, label: str) -> str:
+    if (
+        not isinstance(value, str)
+        or len(value) != 64
+        or any(character not in "0123456789abcdef" for character in value.lower())
+    ):
+        raise ValueError(f"{label} must be a full 64-character SHA256")
+    return value.lower()
+
+
+def structured_state_sha256(value: object) -> str:
+    """Deterministically hash nested tensor/state objects without pickle."""
+
+    digest = hashlib.sha256()
+
+    def visit(current: object) -> None:
+        if isinstance(current, torch.Tensor):
+            tensor = current.detach().cpu().contiguous()
+            digest.update(b"tensor\0")
+            digest.update(str(tensor.dtype).encode("utf-8") + b"\0")
+            digest.update(json.dumps(list(tensor.shape)).encode("utf-8") + b"\0")
+            digest.update(tensor.view(torch.uint8).numpy().tobytes())
+        elif isinstance(current, Mapping):
+            digest.update(b"mapping\0")
+            for key in sorted(current, key=lambda item: (type(item).__name__, repr(item))):
+                visit(key)
+                visit(current[key])
+        elif isinstance(current, tuple):
+            digest.update(b"tuple\0")
+            for item in current:
+                visit(item)
+        elif isinstance(current, list):
+            digest.update(b"list\0")
+            for item in current:
+                visit(item)
+        elif current is None:
+            digest.update(b"none\0")
+        elif isinstance(current, bool):
+            digest.update(b"bool\0" + (b"1" if current else b"0"))
+        elif isinstance(current, int):
+            digest.update(b"int\0" + str(current).encode("ascii") + b"\0")
+        elif isinstance(current, float):
+            if not math.isfinite(current):
+                raise ValueError("state hash refuses non-finite floats")
+            digest.update(b"float\0" + current.hex().encode("ascii") + b"\0")
+        elif isinstance(current, str):
+            digest.update(b"str\0" + current.encode("utf-8") + b"\0")
+        else:
+            raise TypeError(f"unsupported checkpoint state type: {type(current).__name__}")
+
+    visit(value)
+    return digest.hexdigest()
 
 
 @dataclass(frozen=True)
@@ -451,22 +514,47 @@ def save_training_checkpoint(
     planner: SourceProportionalBatchPlanner,
     validation_history: Sequence[Mapping[str, object]],
     data_identity_sha256: str,
+    approval_receipt_sha256: str,
+    selection_scalar: float,
 ) -> dict[str, object]:
-    if not 0 <= update <= config.update_budget:
+    if (
+        not 0 <= update <= config.update_budget
+        or update % config.validation_interval_updates
+    ):
         raise ValueError("checkpoint update outside frozen budget")
-    if len(data_identity_sha256) != 64:
-        raise ValueError("checkpoint requires a full frozen data identity SHA256")
+    data_identity_sha256 = _require_sha256(
+        data_identity_sha256, "checkpoint data identity"
+    )
+    approval_receipt_sha256 = _require_sha256(
+        approval_receipt_sha256, "checkpoint approval receipt"
+    )
+    if not math.isfinite(selection_scalar):
+        raise ValueError("checkpoint selection scalar must be finite")
+    component_states = {
+        "dimension_adapter": adapter.dimension_adapter.state_dict(),
+        "joint_native_model": model.state_dict(),
+        "optimizer": optimizer.state_dict(),
+        "scheduler": scheduler.state_dict(),
+        "planner": planner.state_dict(),
+    }
+    component_state_sha256 = {
+        name: structured_state_sha256(state)
+        for name, state in component_states.items()
+    }
     payload = {
         "schema_version": RUNNER_SCHEMA_VERSION,
         "config": config.normalized(),
         "config_sha256": config.sha256(),
         "data_identity_sha256": data_identity_sha256,
+        "approval_receipt_sha256": approval_receipt_sha256,
         "update": update,
-        "dimension_adapter_state": adapter.dimension_adapter.state_dict(),
-        "joint_native_state": model.state_dict(),
-        "optimizer_state": optimizer.state_dict(),
-        "scheduler_state": scheduler.state_dict(),
-        "planner_state": planner.state_dict(),
+        "selection_scalar": float(selection_scalar),
+        "component_state_sha256": component_state_sha256,
+        "dimension_adapter_state": component_states["dimension_adapter"],
+        "joint_native_state": component_states["joint_native_model"],
+        "optimizer_state": component_states["optimizer"],
+        "scheduler_state": component_states["scheduler"],
+        "planner_state": component_states["planner"],
         "torch_rng_state": torch.get_rng_state(),
         "python_rng_state": random.getstate(),
         "validation_history": list(validation_history),
@@ -474,15 +562,30 @@ def save_training_checkpoint(
         "native_metrics_only": True,
     }
     path.parent.mkdir(parents=True, exist_ok=True)
-    torch.save(payload, path)
-    return {
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    try:
+        torch.save(payload, temporary)
+        temporary.replace(path)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+    artifact_sha256 = sha256_path(path)
+    receipt = {
         "schema_version": RUNNER_SCHEMA_VERSION,
         "path": str(path.resolve()),
+        "size_bytes": path.stat().st_size,
+        "sha256": artifact_sha256,
         "update": update,
+        "selection_scalar": float(selection_scalar),
         "config_sha256": config.sha256(),
         "data_identity_sha256": data_identity_sha256,
+        "approval_receipt_sha256": approval_receipt_sha256,
+        "component_state_sha256": component_state_sha256,
         "outer_test_accessed": False,
+        "native_metrics_only": True,
     }
+    _write_json(path.with_suffix(".receipt.json"), receipt)
+    return receipt
 
 
 def load_training_checkpoint(
@@ -495,15 +598,56 @@ def load_training_checkpoint(
     scheduler: torch.optim.lr_scheduler.LRScheduler,
     planner: SourceProportionalBatchPlanner,
     expected_data_identity_sha256: str,
-) -> tuple[int, list[Mapping[str, object]]]:
+    expected_checkpoint_sha256: str,
+    expected_approval_receipt_sha256: str,
+) -> tuple[int, list[Mapping[str, object]], Mapping[str, object]]:
+    expected_checkpoint_sha256 = _require_sha256(
+        expected_checkpoint_sha256, "expected checkpoint"
+    )
+    expected_approval_receipt_sha256 = _require_sha256(
+        expected_approval_receipt_sha256, "expected approval receipt"
+    )
+    expected_data_identity_sha256 = _require_sha256(
+        expected_data_identity_sha256, "expected data identity"
+    )
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    actual_checkpoint_sha256 = sha256_path(path)
+    if actual_checkpoint_sha256 != expected_checkpoint_sha256:
+        raise RuntimeError("checkpoint byte SHA256 mismatch before deserialization")
     payload = torch.load(path, map_location="cpu", weights_only=False)
+    update = payload.get("update")
     if (
         payload.get("schema_version") != RUNNER_SCHEMA_VERSION
         or payload.get("config_sha256") != config.sha256()
         or payload.get("data_identity_sha256") != expected_data_identity_sha256
+        or payload.get("approval_receipt_sha256")
+        != expected_approval_receipt_sha256
         or payload.get("outer_test_accessed") is not False
+        or payload.get("native_metrics_only") is not True
+        or not isinstance(update, int)
+        or not 0 <= update <= config.update_budget
+        or update % config.validation_interval_updates
     ):
         raise RuntimeError("checkpoint resume identity/isolation gate failed")
+    expected_components = payload.get("component_state_sha256")
+    component_states = {
+        "dimension_adapter": payload.get("dimension_adapter_state"),
+        "joint_native_model": payload.get("joint_native_state"),
+        "optimizer": payload.get("optimizer_state"),
+        "scheduler": payload.get("scheduler_state"),
+        "planner": payload.get("planner_state"),
+    }
+    if not isinstance(expected_components, Mapping) or set(expected_components) != set(
+        component_states
+    ):
+        raise RuntimeError("checkpoint component hash schema failed")
+    actual_components = {
+        name: structured_state_sha256(state)
+        for name, state in component_states.items()
+    }
+    if dict(expected_components) != actual_components:
+        raise RuntimeError("checkpoint component state hash mismatch")
     adapter.dimension_adapter.load_state_dict(payload["dimension_adapter_state"])
     model.load_state_dict(payload["joint_native_state"])
     optimizer.load_state_dict(payload["optimizer_state"])
@@ -511,8 +655,150 @@ def load_training_checkpoint(
     planner.load_state_dict(payload["planner_state"])
     torch.set_rng_state(payload["torch_rng_state"])
     random.setstate(payload["python_rng_state"])
-    update = int(payload["update"])
-    return update, list(payload["validation_history"])
+    selection_scalar = payload.get("selection_scalar")
+    if not isinstance(selection_scalar, (int, float)) or not math.isfinite(
+        float(selection_scalar)
+    ):
+        raise RuntimeError("checkpoint selection scalar is invalid")
+    receipt = {
+        "schema_version": RUNNER_SCHEMA_VERSION,
+        "path": str(path.resolve()),
+        "size_bytes": path.stat().st_size,
+        "sha256": actual_checkpoint_sha256,
+        "update": update,
+        "selection_scalar": float(selection_scalar),
+        "config_sha256": config.sha256(),
+        "data_identity_sha256": expected_data_identity_sha256,
+        "approval_receipt_sha256": expected_approval_receipt_sha256,
+        "component_state_sha256": actual_components,
+        "outer_test_accessed": False,
+        "native_metrics_only": True,
+    }
+    return update, list(payload["validation_history"]), receipt
+
+
+def write_validation_selection_receipt(
+    path: Path,
+    *,
+    config: TrainingRunnerConfig,
+    data_identity_sha256: str,
+    full_approval_receipt_sha256: str,
+    candidates: Sequence[Mapping[str, object]],
+) -> dict[str, object]:
+    """Persist the exact validation-selected checkpoint artifact contract."""
+
+    data_identity_sha256 = _require_sha256(
+        data_identity_sha256, "selection data identity"
+    )
+    full_approval_receipt_sha256 = _require_sha256(
+        full_approval_receipt_sha256, "selection full approval"
+    )
+    if not candidates:
+        raise ValueError("validation selection requires checkpoint candidates")
+    normalized = []
+    for candidate in candidates:
+        required = {
+            "schema_version",
+            "path",
+            "size_bytes",
+            "sha256",
+            "update",
+            "selection_scalar",
+            "config_sha256",
+            "data_identity_sha256",
+            "approval_receipt_sha256",
+            "component_state_sha256",
+            "outer_test_accessed",
+            "native_metrics_only",
+        }
+        missing = sorted(required - set(candidate))
+        if missing:
+            raise ValueError(f"validation checkpoint receipt missing fields: {missing}")
+        candidate_path = Path(str(candidate["path"]))
+        candidate_sha256 = _require_sha256(
+            str(candidate["sha256"]), "validation checkpoint"
+        )
+        update = candidate["update"]
+        scalar = candidate["selection_scalar"]
+        if (
+            candidate["schema_version"] != RUNNER_SCHEMA_VERSION
+            or candidate["config_sha256"] != config.sha256()
+            or candidate["data_identity_sha256"] != data_identity_sha256
+            or candidate["approval_receipt_sha256"]
+            != full_approval_receipt_sha256
+            or candidate["outer_test_accessed"] is not False
+            or candidate["native_metrics_only"] is not True
+            or not isinstance(update, int)
+            or not 0 < update <= config.update_budget
+            or update % config.validation_interval_updates
+            or not isinstance(scalar, (int, float))
+            or not math.isfinite(float(scalar))
+        ):
+            raise RuntimeError("validation checkpoint candidate contract failed")
+        if (
+            not candidate_path.is_file()
+            or candidate_path.stat().st_size != int(candidate["size_bytes"])
+            or sha256_path(candidate_path) != candidate_sha256
+        ):
+            raise RuntimeError("validation checkpoint candidate artifact changed")
+        normalized.append(dict(candidate))
+    selected_update, selected_scalar = select_validation_checkpoint(
+        [
+            (int(candidate["update"]), float(candidate["selection_scalar"]))
+            for candidate in normalized
+        ]
+    )
+    selected_candidates = [
+        candidate
+        for candidate in normalized
+        if candidate["update"] == selected_update
+        and float(candidate["selection_scalar"]) == selected_scalar
+    ]
+    if len(selected_candidates) != 1:
+        raise RuntimeError("validation selection does not identify one exact artifact")
+    document = {
+        "schema_version": VALIDATION_SELECTION_SCHEMA_VERSION,
+        "runner_schema_version": RUNNER_SCHEMA_VERSION,
+        "pipeline_id": config.pipeline_id,
+        "config_sha256": config.sha256(),
+        "data_identity_sha256": data_identity_sha256,
+        "full_approval_receipt_sha256": full_approval_receipt_sha256,
+        "selection_rule": config.selection_rule,
+        "candidates": normalized,
+        "selected_update": selected_update,
+        "selected_checkpoint": selected_candidates[0],
+        "outer_test_accessed": False,
+        "reported_as_pooled_performance": False,
+    }
+    _write_json(path, document)
+    return {
+        **document,
+        "selection_receipt_artifact": {
+            "path": str(path.resolve()),
+            "size_bytes": path.stat().st_size,
+            "sha256": sha256_path(path),
+        },
+    }
+
+
+def _load_verified_selection_receipt(
+    path: Path,
+    expected_sha256: str,
+) -> tuple[dict[str, object], dict[str, object]]:
+    expected_sha256 = _require_sha256(expected_sha256, "selection receipt")
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    actual_sha256 = sha256_path(path)
+    if actual_sha256 != expected_sha256:
+        raise RuntimeError("validation selection receipt SHA256 mismatch")
+    document = json.loads(path.read_bytes())
+    if not isinstance(document, dict):
+        raise TypeError("validation selection receipt must be a JSON object")
+    return document, {
+        "path": str(path.resolve()),
+        "size_bytes": path.stat().st_size,
+        "sha256": actual_sha256,
+    }
 
 
 def preflight_receipt(config: TrainingRunnerConfig, repo_root: Path) -> dict[str, object]:
@@ -590,6 +876,7 @@ def run_approved_training(
     approval_path: Path,
     adapter_config: AdapterFactoryConfig,
     resume: Path | None = None,
+    resume_sha256: str | None = None,
 ) -> dict[str, object]:
     """Run future approved smoke/full training; callers control authorization file."""
 
@@ -612,6 +899,11 @@ def run_approved_training(
         config,
         expected_data_identity_sha256=data_identity_sha256,
     )
+    approval_receipt_sha256 = str(approval["approval_receipt_sha256"])
+    if (resume is None) != (resume_sha256 is None):
+        raise PermissionError("--resume and --resume-sha256 must be provided together")
+    if resume is not None and config.phase != "full":
+        raise PermissionError("resume is permitted only for an approved full phase")
     adapter = build_production_adapter(adapter_config)
     model = assemble_trainable_modules(adapter, device=device)
     scope = trainable_scope_receipt(adapter, model)
@@ -622,8 +914,9 @@ def run_approved_training(
     planner = SourceProportionalBatchPlanner(FOUR_DATASET_SUBTRAIN_UNITS)
     start_update = 0
     validation_history: list[Mapping[str, object]] = []
+    validation_checkpoint_receipts: list[Mapping[str, object]] = []
     if resume is not None:
-        start_update, validation_history = load_training_checkpoint(
+        start_update, validation_history, resumed_checkpoint_receipt = load_training_checkpoint(
             resume,
             config=config,
             adapter=adapter,
@@ -632,7 +925,27 @@ def run_approved_training(
             scheduler=scheduler,
             planner=planner,
             expected_data_identity_sha256=data_identity_sha256,
+            expected_checkpoint_sha256=str(resume_sha256),
+            expected_approval_receipt_sha256=approval_receipt_sha256,
         )
+        validation_checkpoint_receipts.extend(
+            item["checkpoint_receipt"]
+            for item in validation_history
+            if isinstance(item, Mapping) and "checkpoint_receipt" in item
+        )
+        if start_update % config.validation_interval_updates == 0:
+            validation_checkpoint_receipts.append(resumed_checkpoint_receipt)
+            validation_history = [
+                {
+                    **item,
+                    "checkpoint_receipt": resumed_checkpoint_receipt,
+                }
+                if isinstance(item, Mapping)
+                and item.get("update") == start_update
+                and "checkpoint_receipt" not in item
+                else item
+                for item in validation_history
+            ]
     config.run_root.mkdir(parents=True, exist_ok=True)
     _write_json(config.run_root / "config.json", config.normalized())
     _write_json(config.run_root / "approval_receipt.json", approval)
@@ -678,7 +991,7 @@ def run_approved_training(
             _append_jsonl(
                 config.run_root / "validation_log.jsonl", validation_history[-1]
             )
-            save_training_checkpoint(
+            checkpoint_receipt = save_training_checkpoint(
                 config.run_root / "checkpoints" / f"update_{update:06d}.pt",
                 config=config,
                 update=update,
@@ -689,13 +1002,23 @@ def run_approved_training(
                 planner=planner,
                 validation_history=validation_history,
                 data_identity_sha256=data_identity_sha256,
+                approval_receipt_sha256=approval_receipt_sha256,
+                selection_scalar=scalar,
             )
-    selected = None
-    if validation_history:
-        selected = select_validation_checkpoint([
-            (int(item["update"]), float(item["selection_scalar"]))
-            for item in validation_history
-        ])
+            validation_checkpoint_receipts.append(checkpoint_receipt)
+            validation_history[-1] = {
+                **validation_history[-1],
+                "checkpoint_receipt": checkpoint_receipt,
+            }
+    validation_selection_receipt = None
+    if config.phase == "full":
+        validation_selection_receipt = write_validation_selection_receipt(
+            config.run_root / "validation_selection_receipt.json",
+            config=config,
+            data_identity_sha256=data_identity_sha256,
+            full_approval_receipt_sha256=approval_receipt_sha256,
+            candidates=validation_checkpoint_receipts,
+        )
     final_receipt = {
         "status": (
             "engineering_smoke_completed_not_performance_result"
@@ -711,7 +1034,7 @@ def run_approved_training(
         "updates_completed": maximum,
         "last_native_loss_receipt": last_loss_receipt,
         "validation_history": validation_history,
-        "selected_checkpoint": selected,
+        "validation_selection_receipt": validation_selection_receipt,
         "metrics_reporting": "per_dataset_per_native_task_only",
         "cross_dataset_pooled_performance": False,
         "outer_test_accessed": False,
@@ -723,6 +1046,8 @@ def run_approved_training(
 def terminal_score_gate(
     config: TrainingRunnerConfig,
     approval_path: Path,
+    selection_receipt_path: Path,
+    expected_selection_receipt_sha256: str,
     selected_checkpoint: Path,
     scorer: Callable[[Path], Mapping[str, object]] | None = None,
 ) -> Mapping[str, object]:
@@ -730,9 +1055,151 @@ def terminal_score_gate(
 
     if config.phase != "terminal-score":
         raise ValueError("terminal_score_gate requires terminal-score phase")
-    load_and_validate_approval(approval_path, config)
-    if not selected_checkpoint.is_file():
-        raise FileNotFoundError("validation-selected checkpoint is missing")
+    selection, selection_artifact = _load_verified_selection_receipt(
+        selection_receipt_path, expected_selection_receipt_sha256
+    )
+    required = {
+        "schema_version",
+        "runner_schema_version",
+        "pipeline_id",
+        "config_sha256",
+        "data_identity_sha256",
+        "full_approval_receipt_sha256",
+        "selection_rule",
+        "candidates",
+        "selected_update",
+        "selected_checkpoint",
+        "outer_test_accessed",
+        "reported_as_pooled_performance",
+    }
+    missing = sorted(required - set(selection))
+    if missing:
+        raise ValueError(f"validation selection receipt missing fields: {missing}")
+    data_identity_sha256 = _require_sha256(
+        str(selection["data_identity_sha256"]), "terminal data identity"
+    )
+    full_approval_receipt_sha256 = _require_sha256(
+        str(selection["full_approval_receipt_sha256"]), "full approval receipt"
+    )
+    candidates = selection["candidates"]
+    selected = selection["selected_checkpoint"]
+    if (
+        selection["schema_version"] != VALIDATION_SELECTION_SCHEMA_VERSION
+        or selection["runner_schema_version"] != RUNNER_SCHEMA_VERSION
+        or selection["pipeline_id"] != config.pipeline_id
+        or selection["config_sha256"] != config.sha256()
+        or selection["selection_rule"] != config.selection_rule
+        or selection["outer_test_accessed"] is not False
+        or selection["reported_as_pooled_performance"] is not False
+        or not isinstance(candidates, list)
+        or not candidates
+        or not isinstance(selected, Mapping)
+    ):
+        raise RuntimeError("validation selection identity/rule/isolation gate failed")
+    candidate_required = {
+        "schema_version",
+        "path",
+        "size_bytes",
+        "sha256",
+        "update",
+        "selection_scalar",
+        "config_sha256",
+        "data_identity_sha256",
+        "approval_receipt_sha256",
+        "component_state_sha256",
+        "outer_test_accessed",
+        "native_metrics_only",
+    }
+    for candidate in candidates:
+        if not isinstance(candidate, Mapping) or candidate_required - set(candidate):
+            raise RuntimeError("validation selection candidate schema failed")
+        if (
+            candidate["schema_version"] != RUNNER_SCHEMA_VERSION
+            or candidate["config_sha256"] != config.sha256()
+            or candidate["data_identity_sha256"] != data_identity_sha256
+            or candidate["approval_receipt_sha256"]
+            != full_approval_receipt_sha256
+            or candidate["outer_test_accessed"] is not False
+            or candidate["native_metrics_only"] is not True
+        ):
+            raise RuntimeError("validation selection candidate binding failed")
+    if candidate_required - set(selected):
+        raise RuntimeError("selected checkpoint receipt schema failed")
+    chosen_update, chosen_scalar = select_validation_checkpoint(
+        [
+            (int(candidate["update"]), float(candidate["selection_scalar"]))
+            for candidate in candidates
+        ]
+    )
+    if (
+        selection["selected_update"] != chosen_update
+        or selected.get("update") != chosen_update
+        or float(selected.get("selection_scalar")) != chosen_scalar
+        or sum(dict(candidate) == dict(selected) for candidate in candidates)
+        != 1
+    ):
+        raise RuntimeError("validation selection winner was altered")
+    selected_expected_path = Path(str(selected["path"])).resolve()
+    if selected_checkpoint.resolve() != selected_expected_path:
+        raise RuntimeError("terminal checkpoint is not the exact validation-selected artifact")
+    selected_sha256 = _require_sha256(
+        str(selected["sha256"]), "selected checkpoint"
+    )
+    if (
+        not selected_checkpoint.is_file()
+        or selected_checkpoint.stat().st_size != int(selected["size_bytes"])
+        or sha256_path(selected_checkpoint) != selected_sha256
+    ):
+        raise RuntimeError("selected checkpoint byte identity failed")
+
+    terminal_approval = load_and_validate_approval(
+        approval_path,
+        config,
+        expected_data_identity_sha256=data_identity_sha256,
+    )
+    if (
+        terminal_approval.get("selection_receipt_sha256")
+        != selection_artifact["sha256"]
+    ):
+        raise PermissionError(
+            "terminal approval is not bound to the exact validation selection receipt"
+        )
+
+    payload = torch.load(selected_checkpoint, map_location="cpu", weights_only=False)
+    update = payload.get("update")
+    payload_selection_scalar = payload.get("selection_scalar")
+    if (
+        payload.get("schema_version") != RUNNER_SCHEMA_VERSION
+        or payload.get("config_sha256") != config.sha256()
+        or payload.get("data_identity_sha256") != data_identity_sha256
+        or payload.get("approval_receipt_sha256")
+        != full_approval_receipt_sha256
+        or payload.get("outer_test_accessed") is not False
+        or payload.get("native_metrics_only") is not True
+        or update != chosen_update
+        or not isinstance(update, int)
+        or not 0 <= update <= config.update_budget
+        or not isinstance(payload_selection_scalar, (int, float))
+        or not math.isfinite(float(payload_selection_scalar))
+        or float(payload_selection_scalar) != chosen_scalar
+    ):
+        raise RuntimeError("selected checkpoint internal binding failed")
+    component_states = {
+        "dimension_adapter": payload.get("dimension_adapter_state"),
+        "joint_native_model": payload.get("joint_native_state"),
+        "optimizer": payload.get("optimizer_state"),
+        "scheduler": payload.get("scheduler_state"),
+        "planner": payload.get("planner_state"),
+    }
+    actual_components = {
+        name: structured_state_sha256(state)
+        for name, state in component_states.items()
+    }
+    if (
+        payload.get("component_state_sha256") != actual_components
+        or selected.get("component_state_sha256") != actual_components
+    ):
+        raise RuntimeError("selected checkpoint component state identity failed")
     if scorer is None:
         raise RuntimeError(
             "terminal scorer HOLD: supply an independently verified per-native-task scorer; "
@@ -742,7 +1209,16 @@ def terminal_score_gate(
     forbidden = {"pooled_score", "cross_dataset_score", "global_score"}
     if forbidden & set(receipt):
         raise RuntimeError("terminal scorer returned a forbidden pooled score")
-    return receipt
+    return {
+        "status": "terminal_native_task_scoring_complete",
+        "selection_receipt_artifact": selection_artifact,
+        "selected_checkpoint": dict(selected),
+        "terminal_approval_receipt_sha256": terminal_approval[
+            "approval_receipt_sha256"
+        ],
+        "native_metrics_by_dataset_task": receipt,
+        "cross_dataset_pooled_performance": False,
+    }
 
 
 def main() -> None:
@@ -753,6 +1229,7 @@ def main() -> None:
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--approval-receipt", type=Path)
     parser.add_argument("--resume", type=Path)
+    parser.add_argument("--resume-sha256")
     parser.add_argument("--source-repo", type=Path)
     parser.add_argument("--source-revision")
     parser.add_argument("--checkpoint", type=Path)
@@ -764,11 +1241,16 @@ def main() -> None:
     elif args.phase in {"smoke", "full"}:
         if args.approval_receipt is None:
             raise PermissionError("smoke/full require --approval-receipt")
+        if (args.resume is None) != (args.resume_sha256 is None):
+            raise PermissionError(
+                "--resume and --resume-sha256 must be provided together"
+            )
         receipt = run_approved_training(
             config,
             repo_root=args.repo_root,
             approval_path=args.approval_receipt,
             resume=args.resume,
+            resume_sha256=args.resume_sha256,
             adapter_config=AdapterFactoryConfig(
                 pipeline_id=args.pipeline,
                 repo_root=args.repo_root,

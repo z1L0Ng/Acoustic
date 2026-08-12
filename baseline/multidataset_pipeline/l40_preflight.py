@@ -13,6 +13,7 @@ import torch
 
 from .adapter_factory import AdapterFactoryConfig, build_production_adapter
 from .joint_native import JOINT_LANES, JointNativeProjector
+from .preflight import PIPELINE_ENCODERS
 from .sliding_window import SlidingWindowBatch, masked_mean_window_embeddings
 from .window_encoder import ProductionWindowEncoder
 
@@ -36,6 +37,32 @@ def _require_subtrain(batch: SlidingWindowBatch) -> None:
             raise RuntimeError("outer/test access is forbidden in adapter preflight")
 
 
+def validate_pipeline_adapter_identity(
+    pipeline_id: str, adapter: ProductionWindowEncoder
+) -> None:
+    expected = PIPELINE_ENCODERS.get(pipeline_id)
+    if expected is None or adapter.encoder_identity != expected:
+        raise RuntimeError(
+            f"pipeline/adapter identity mismatch: {pipeline_id} requires {expected}, "
+            f"got {adapter.encoder_identity}"
+        )
+
+
+def _complete_state_snapshot(
+    adapter: ProductionWindowEncoder, model: JointNativeProjector
+) -> dict[str, torch.Tensor]:
+    return {
+        **{
+            f"adapter.{name}": value.detach().cpu().clone()
+            for name, value in adapter.state_dict().items()
+        },
+        **{
+            f"model.{name}": value.detach().cpu().clone()
+            for name, value in model.state_dict().items()
+        },
+    }
+
+
 def run_zero_update_preflight(
     pipeline_id: str,
     adapter: ProductionWindowEncoder,
@@ -47,16 +74,13 @@ def run_zero_update_preflight(
         raise RuntimeError("L40 preflight requires an available CUDA device")
     if "L40" not in torch.cuda.get_device_name(device).upper():
         raise RuntimeError(f"expected an NVIDIA L40-class device, got {torch.cuda.get_device_name(device)}")
+    validate_pipeline_adapter_identity(pipeline_id, adapter)
     materialized = list(islice(batches, 3))
     if not 1 <= len(materialized) <= 2:
         raise RuntimeError("L40 preflight requires one or two subtrain batches")
     model = JointNativeProjector().to(device)
     adapter = adapter.to(device)
-    before = {
-        name: parameter.detach().clone()
-        for name, parameter in (*adapter.named_parameters(), *model.named_parameters())
-        if parameter.requires_grad
-    }
+    before = _complete_state_snapshot(adapter, model)
     seen: set[str] = set()
     batch_receipts = []
     properties = torch.cuda.get_device_properties(device)
@@ -91,12 +115,14 @@ def run_zero_update_preflight(
         raise RuntimeError(f"frozen encoder received gradients: {encoder_gradients}")
     if model.projector.weight.grad is None or not bool(model.projector.weight.grad.abs().sum() > 0):
         raise RuntimeError("shared projector did not receive a gradient")
-    after = {
-        name: parameter.detach()
-        for name, parameter in (*adapter.named_parameters(), *model.named_parameters())
-        if parameter.requires_grad
-    }
-    changed = [name for name in before if not torch.equal(before[name], after[name])]
+    after = _complete_state_snapshot(adapter, model)
+    changed = [
+        name
+        for name in sorted(set(before) | set(after))
+        if name not in before
+        or name not in after
+        or not torch.equal(before[name], after[name])
+    ]
     if changed:
         raise RuntimeError(f"zero-update preflight changed parameters: {changed}")
     return {
@@ -119,7 +145,8 @@ def run_zero_update_preflight(
         "shared_projector_gradient_nonzero": True,
         "optimizer_created": False,
         "optimizer_updates": 0,
-        "parameters_unchanged": True,
+        "complete_state_dict_unchanged": True,
+        "state_tensors_compared": len(before),
         "memory_allocated_before_bytes": memory_before,
         "peak_memory_bytes": int(torch.cuda.max_memory_allocated(device)),
         "memory_allocated_after_bytes": int(torch.cuda.memory_allocated(device)),
