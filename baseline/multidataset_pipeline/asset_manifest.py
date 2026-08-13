@@ -12,6 +12,10 @@ ASSET_MANIFEST_SCHEMA_VERSION = "multidataset_adapter_assets_v1"
 ASSET_MANIFEST_RELATIVE_PATH = Path(
     "baseline/multidataset_pipeline/adapter_assets.json"
 )
+P3_ASSET_MANIFEST_SCHEMA_VERSION = "multidataset_p3_adapter_asset_v1"
+P3_ASSET_MANIFEST_RELATIVE_PATH = Path(
+    "baseline/multidataset_pipeline/p3_adapter_asset.json"
+)
 EXPECTED_PIPELINES = {"P1": "AST", "P2": "BEATs"}
 
 
@@ -108,6 +112,53 @@ def manifest_asset_paths(repo_root: Path, pipeline_id: str) -> tuple[Path, Path,
     if pipeline_id not in assets:
         raise KeyError(f"no production manifest asset for {pipeline_id}")
     asset = assets[pipeline_id]
+    root = repo_root.resolve()
+    return (
+        root / str(asset["canonical_source_path"]),
+        root / str(asset["canonical_checkpoint_path"]),
+        asset,
+    )
+
+
+def load_p3_adapter_asset_manifest(repo_root: Path) -> dict[str, object]:
+    """Load P3 independently so adding it cannot change P1/P2 cache identities."""
+
+    path = repo_root.resolve() / P3_ASSET_MANIFEST_RELATIVE_PATH
+    raw = path.read_bytes()
+    payload = json.loads(raw)
+    if not isinstance(payload, Mapping) or payload.get("schema_version") != P3_ASSET_MANIFEST_SCHEMA_VERSION:
+        raise RuntimeError("P3 adapter asset manifest schema mismatch")
+    asset = payload.get("asset")
+    required = {
+        "encoder_identity", "code_source_url", "source_revision", "source_license",
+        "checkpoint_source", "checkpoint_sha256", "checkpoint_size_bytes",
+        "checkpoint_license", "canonical_source_path", "canonical_checkpoint_path",
+        "required_dependency", "server_provision_expectation",
+    }
+    if not isinstance(asset, Mapping) or set(asset) != required:
+        raise RuntimeError("P3 adapter asset fields do not match the frozen schema")
+    if asset["encoder_identity"] != "PANNs_Cnn14" or len(str(asset["source_revision"])) != 40:
+        raise RuntimeError("P3 encoder/source revision identity mismatch")
+    _require_sha256(asset["checkpoint_sha256"], "P3 checkpoint")
+    if not isinstance(asset["checkpoint_size_bytes"], int) or asset["checkpoint_size_bytes"] <= 0:
+        raise ValueError("P3 checkpoint size must be positive")
+    _canonical_cache_path(asset["canonical_source_path"], "P3 source path")
+    _canonical_cache_path(asset["canonical_checkpoint_path"], "P3 checkpoint path")
+    for field in required - {"checkpoint_size_bytes"}:
+        if not isinstance(asset[field], str) or not asset[field].strip():
+            raise ValueError(f"P3.{field} must be non-empty")
+    return {
+        "schema_version": P3_ASSET_MANIFEST_SCHEMA_VERSION,
+        "manifest_path": str(path),
+        "manifest_file_sha256": hashlib.sha256(raw).hexdigest(),
+        "manifest_identity_sha256": canonical_json_sha256(payload),
+        "asset": dict(asset),
+    }
+
+
+def p3_manifest_asset_paths(repo_root: Path) -> tuple[Path, Path, Mapping[str, object]]:
+    manifest = load_p3_adapter_asset_manifest(repo_root)
+    asset = manifest["asset"]
     root = repo_root.resolve()
     return (
         root / str(asset["canonical_source_path"]),

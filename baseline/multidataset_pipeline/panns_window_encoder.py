@@ -26,8 +26,11 @@ from .window_encoder import (
 PANNS_IDENTITY = "PANNs_Cnn14"
 PANNS_SOURCE_URL = "https://github.com/qiuqiangkong/audioset_tagging_cnn"
 PANNS_SOURCE_LICENSE = "MIT"
+PANNS_SOURCE_REVISION = "d2f4b8c18eab44737fcc0de1248ae21eb43f6aa4"
 PANNS_CHECKPOINT_NAME = "Cnn14_16k_mAP=0.438.pth"
 PANNS_CHECKPOINT_SOURCE = "https://zenodo.org/records/3987831"
+PANNS_CHECKPOINT_SHA256 = "e2ee543a27919542c2ea03eabaa70b24dcd4e6c8e05621de6b67a94e4c5058e6"
+PANNS_CHECKPOINT_SIZE_BYTES = 358_668_570
 PANNS_MODEL_CLASS = "Cnn14_16k"
 PANNS_WINDOW_SAMPLES = 32_000
 
@@ -68,7 +71,9 @@ def _load_panns(
     if len(source_revision) != 40:
         raise ValueError("PANNs requires an exact 40-character source revision")
     require_clean_source_revision(source_repo, source_revision)
-    require_file_identity(checkpoint, checkpoint_sha256)
+    require_file_identity(
+        checkpoint, checkpoint_sha256, expected_size_bytes=PANNS_CHECKPOINT_SIZE_BYTES
+    )
     pytorch_dir = str((source_repo / "pytorch").resolve())
     utils_dir = str((source_repo / "utils").resolve())
     for path in (utils_dir, pytorch_dir):

@@ -356,8 +356,9 @@ def _waveform(lane: str, sample_id: str, samples: int = 32_000) -> WaveformSampl
 
 
 class _FakeBackend(nn.Module):
-    def __init__(self):
+    def __init__(self, native_dim: int = 768):
         super().__init__()
+        self.native_dim = native_dim
         self.weight = nn.Parameter(torch.ones(1), requires_grad=False)
 
 
@@ -365,16 +366,22 @@ class _FakeAdapter(nn.Module):
     def __init__(self, identity: str = "AST"):
         super().__init__()
         self.encoder_identity = identity
-        self.backend = _FakeBackend()
         self.dimension_adapter = CandidateDimensionAdapter(identity)
+        self.backend = _FakeBackend(self.dimension_adapter.input_dim)
         self.register_buffer("nonpersistent_probe", torch.tensor([7.0]), persistent=False)
         self.forward_calls = 0
 
-    def forward(self, batch):
+    def encode_native(self, batch):
         self.forward_calls += 1
-        values = batch.waveform_windows.mean(dim=-1, keepdim=True).expand(-1, -1, 768)
-        values = self.dimension_adapter(values)
-        values = torch.where(batch.window_mask.unsqueeze(-1), values, torch.zeros_like(values))
+        values = batch.waveform_windows.mean(dim=-1, keepdim=True).expand(
+            -1, -1, self.dimension_adapter.input_dim
+        )
+        return torch.where(
+            batch.window_mask.unsqueeze(-1), values, torch.zeros_like(values)
+        )
+
+    def forward(self, batch):
+        values = self.dimension_adapter(self.encode_native(batch))
         return SharedWindowEncoderOutput(
             embeddings=values,
             window_mask=batch.window_mask,
@@ -656,6 +663,10 @@ class TrainingAssemblyTest(unittest.TestCase):
                 batch_loader=_cache_fixture_batch_loader,
             )
             cache_set.validate_complete()
+            self.assertEqual(
+                cache_set.receipt["schema_version"],
+                "shared_window_runner_cache_set_v2",
+            )
             self.assertEqual(len(cache_set.entries), 8)
             self.assertEqual(adapter.forward_calls, 8)
             first_calls = adapter.forward_calls
@@ -733,6 +744,55 @@ class TrainingAssemblyTest(unittest.TestCase):
                 RunnerEmbeddingCacheSet(
                     "P1", incomplete, cache_set.receipt
                 ).validate_complete()
+
+    def test_p3_runner_cache_stays_before_trainable_dimension_adapter(self):
+        repo_root = Path(__file__).resolve().parents[1]
+        indexes = {
+            partition: _cache_fixture_index(partition)
+            for partition in ("subtrain", "validation")
+        }
+        adapter = _FakeAdapter("PANNs_Cnn14").eval()
+        with TemporaryDirectory() as directory:
+            cache_set = build_or_load_runner_embedding_caches(
+                repo_root=repo_root,
+                cache_root=Path(directory) / "runner-cache",
+                pipeline_id="P3",
+                config_identity_sha256="c" * 64,
+                adapter=adapter,
+                indexes=indexes,
+                device=torch.device("cpu"),
+                batch_size=2,
+                batch_loader=_cache_fixture_batch_loader,
+            )
+            cache_set.validate_complete()
+            self.assertEqual(
+                cache_set.receipt["schema_version"],
+                "shared_window_runner_cache_set_v3",
+            )
+            self.assertEqual(cache_set.receipt["cache_boundary"], "pre_dimension_adapter")
+            self.assertTrue(
+                all(
+                    entry.receipt["cached_embedding_dimension"] == 2048
+                    and entry.receipt["dimension_adapter_executed_after_cache_load"] is True
+                    for entry in cache_set.entries.values()
+                )
+            )
+            batch = cache_set.batch(
+                "subtrain",
+                "ICBHI",
+                (0,),
+                device=torch.device("cpu"),
+                dimension_adapter=adapter.dimension_adapter,
+            )
+            self.assertEqual(batch.output.embeddings.shape[0], 1)
+            self.assertEqual(batch.output.embeddings.shape[-1], 768)
+            batch.output.embeddings.sum().backward()
+            self.assertTrue(
+                any(
+                    parameter.grad is not None and bool(parameter.grad.abs().sum() > 0)
+                    for parameter in adapter.dimension_adapter.parameters()
+                )
+            )
 
     def test_l40_snapshot_includes_nonpersistent_buffers(self):
         adapter = _FakeAdapter("AST")

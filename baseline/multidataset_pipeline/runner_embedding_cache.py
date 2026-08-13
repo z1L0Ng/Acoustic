@@ -35,9 +35,21 @@ from .window_encoder import ProductionWindowEncoder
 
 
 RUNNER_CACHE_SET_SCHEMA_VERSION = "shared_window_runner_cache_set_v2"
-RUNNER_CACHE_PIPELINES = {"P1": "AST", "P2": "BEATs"}
+P3_RUNNER_CACHE_SET_SCHEMA_VERSION = "shared_window_runner_cache_set_v3"
+RUNNER_CACHE_PIPELINES = {"P1": "AST", "P2": "BEATs", "P3": "PANNs_Cnn14"}
+PRE_DIMENSION_ADAPTER_CACHE_PIPELINES = {"P3"}
 RUNNER_CACHE_PARTITIONS = ("subtrain", "validation")
 RUNNER_CACHE_LANES = ("ICBHI", "SPRSound", "HF", "KAUH")
+
+
+def runner_cache_set_schema_version(pipeline_id: str) -> str:
+    if pipeline_id not in RUNNER_CACHE_PIPELINES:
+        raise ValueError("runner cache schema supports only P1/P2/P3")
+    return (
+        P3_RUNNER_CACHE_SET_SCHEMA_VERSION
+        if pipeline_id in PRE_DIMENSION_ADAPTER_CACHE_PIPELINES
+        else RUNNER_CACHE_SET_SCHEMA_VERSION
+    )
 
 
 def canonical_json_sha256(value: object) -> str:
@@ -67,6 +79,11 @@ PIPELINE_CODE_DEPENDENCIES = {
     + ("baseline/multidataset_pipeline/ast_window_encoder.py",),
     "P2": COMMON_CODE_DEPENDENCIES
     + ("baseline/multidataset_pipeline/beats_window_encoder.py",),
+    "P3": COMMON_CODE_DEPENDENCIES
+    + (
+        "baseline/multidataset_pipeline/p3_adapter_asset.json",
+        "baseline/multidataset_pipeline/panns_window_encoder.py",
+    ),
 }
 
 
@@ -74,7 +91,7 @@ def _file_set_sha256(repo_root: Path, pipeline_id: str) -> dict[str, object]:
     """Return the audited production dependency closure and its aggregate hash."""
 
     if pipeline_id not in PIPELINE_CODE_DEPENDENCIES:
-        raise ValueError("cache code dependency closure supports only P1/P2")
+        raise ValueError("cache code dependency closure supports only P1/P2/P3")
     relatives = PIPELINE_CODE_DEPENDENCIES[pipeline_id]
     if len(relatives) != len(set(relatives)) or any(
         relative.startswith(("tests/", "docs/")) for relative in relatives
@@ -90,6 +107,10 @@ def _file_set_sha256(repo_root: Path, pipeline_id: str) -> dict[str, object]:
         "P2": {
             "baseline/multidataset_pipeline/beats_temporal.py",
             "baseline/multidataset_pipeline/beats_window_encoder.py",
+        },
+        "P3": {
+            "baseline/multidataset_pipeline/p3_adapter_asset.json",
+            "baseline/multidataset_pipeline/panns_window_encoder.py",
         },
     }[pipeline_id]
     if not (mandatory | candidate_mandatory) <= set(relatives):
@@ -159,7 +180,13 @@ class CachedLanePartition:
     payload: EmbeddingCachePayload
     receipt: Mapping[str, object]
 
-    def batch(self, indices: Sequence[int], *, device: torch.device) -> CachedNativeBatch:
+    def batch(
+        self,
+        indices: Sequence[int],
+        *,
+        device: torch.device,
+        dimension_adapter: torch.nn.Module | None = None,
+    ) -> CachedNativeBatch:
         if not indices:
             raise ValueError("cannot construct an empty cached native batch")
         if self.partition not in RUNNER_CACHE_PARTITIONS or self.lane not in RUNNER_CACHE_LANES:
@@ -171,8 +198,11 @@ class CachedLanePartition:
         selected_time_maps = tuple(self.payload.time_maps[index] for index in indices)
         selected_masks = tuple(self.payload.window_masks[index] for index in indices)
         max_windows = max(value.shape[0] for value in selected_embeddings)
+        dimension = selected_embeddings[0].shape[1]
+        if any(value.shape[1] != dimension for value in selected_embeddings):
+            raise RuntimeError("cached native embedding dimension changed")
         embeddings = torch.zeros(
-            len(indices), max_windows, 768, dtype=torch.float32, device=device
+            len(indices), max_windows, dimension, dtype=torch.float32, device=device
         )
         window_mask = torch.zeros(len(indices), max_windows, dtype=torch.bool, device=device)
         time_map = torch.zeros(
@@ -187,6 +217,19 @@ class CachedLanePartition:
             embeddings[row, :count].copy_(values.to(device))
             window_mask[row, :count] = True
             time_map[row, :count].copy_(times.to(device))
+        cache_boundary = str(self.receipt["cache_boundary"])
+        if cache_boundary == "pre_dimension_adapter":
+            if dimension_adapter is None:
+                raise RuntimeError("pre-adapter cache requires the trainable dimension adapter")
+            embeddings = dimension_adapter(embeddings)
+            embeddings = torch.where(
+                window_mask.unsqueeze(-1), embeddings, torch.zeros_like(embeddings)
+            )
+        elif cache_boundary == "post_dimension_adapter":
+            if dimension != 768 or dimension_adapter is not None:
+                raise RuntimeError("identity-adapter cache boundary changed")
+        else:
+            raise RuntimeError("unknown runner cache boundary")
         output = SharedWindowEncoderOutput(
             embeddings=embeddings,
             window_mask=window_mask,
@@ -231,9 +274,10 @@ class RunnerEmbeddingCacheSet:
             for lane in RUNNER_CACHE_LANES
         }
         if self.pipeline_id not in RUNNER_CACHE_PIPELINES or set(self.entries) != expected:
-            raise RuntimeError("full P1/P2 requires all eight lane/partition caches")
+            raise RuntimeError("full P1/P2/P3 requires all eight lane/partition caches")
         if (
-            self.receipt.get("schema_version") != RUNNER_CACHE_SET_SCHEMA_VERSION
+            self.receipt.get("schema_version")
+            != runner_cache_set_schema_version(self.pipeline_id)
             or self.receipt.get("pipeline_id") != self.pipeline_id
             or self.receipt.get("all_required_caches_complete") is not True
             or self.receipt.get("outer_test_cached") is not False
@@ -254,9 +298,12 @@ class RunnerEmbeddingCacheSet:
         indices: Sequence[int],
         *,
         device: torch.device,
+        dimension_adapter: torch.nn.Module | None = None,
     ) -> CachedNativeBatch:
         self.validate_complete()
-        return self.entries[(partition, lane)].batch(indices, device=device)
+        return self.entries[(partition, lane)].batch(
+            indices, device=device, dimension_adapter=dimension_adapter
+        )
 
 
 def _identity_for_lane(
@@ -271,13 +318,24 @@ def _identity_for_lane(
     if index.partition not in RUNNER_CACHE_PARTITIONS:
         raise PermissionError("runner cache cannot bind an outer/test partition")
     adapter_receipt = adapter.receipt()
+    frontend = {
+        "encoder_identity": adapter.encoder_identity,
+        "window_policy": "16k_source_time_2s_window_1s_stride",
+        "provenance": adapter_receipt["provenance"],
+    }
+    dimension = adapter_receipt["dimension_adapter"]
     frontend_adapter = {
-        "frontend": {
-            "encoder_identity": adapter.encoder_identity,
-            "window_policy": "16k_source_time_2s_window_1s_stride",
-            "provenance": adapter_receipt["provenance"],
-        },
-        "adapter": adapter_receipt["dimension_adapter"],
+        "frontend": frontend,
+        "adapter": (
+            {
+                **dimension,
+                "cache_boundary": "pre_dimension_adapter",
+                "cached_embedding_dim": adapter.backend.native_dim,
+                "adapter_executed_after_cache_load": True,
+            }
+            if pipeline_id in PRE_DIMENSION_ADAPTER_CACHE_PIPELINES
+            else dimension
+        ),
     }
     units = index.lanes[lane]
     dataset_release = canonical_json_sha256(
@@ -345,13 +403,26 @@ def _compute_lane_payload(
             ):
                 raise RuntimeError("cache builder batch loader changed ordered unit IDs")
             windows = batch.windows.to(device)
-            output = adapter(windows)
-            for row in range(len(output.sample_ids)):
-                count = int(output.window_mask[row].sum())
-                if count <= 0 or not bool(output.window_mask[row, :count].all()):
+            if adapter.encoder_identity in {
+                RUNNER_CACHE_PIPELINES[pipeline]
+                for pipeline in PRE_DIMENSION_ADAPTER_CACHE_PIPELINES
+            }:
+                output_embeddings = adapter.encode_native(windows)
+                output_mask = windows.window_mask
+                output_time_map = windows.time_map
+                output_sample_ids = windows.sample_ids
+            else:
+                output = adapter(windows)
+                output_embeddings = output.embeddings
+                output_mask = output.window_mask
+                output_time_map = output.time_map
+                output_sample_ids = output.sample_ids
+            for row in range(len(output_sample_ids)):
+                count = int(output_mask[row].sum())
+                if count <= 0 or not bool(output_mask[row, :count].all()):
                     raise RuntimeError("cache builder received invalid window prefix")
-                embeddings.append(output.embeddings[row, :count].detach().cpu().to(torch.float32))
-                time_maps.append(output.time_map[row, :count].detach().cpu())
+                embeddings.append(output_embeddings[row, :count].detach().cpu().to(torch.float32))
+                time_maps.append(output_time_map[row, :count].detach().cpu())
                 valid_samples.append(batch.windows.valid_samples[row, :count].detach().cpu())
                 window_masks.append(torch.ones(count, dtype=torch.bool))
     payload = EmbeddingCachePayload(
@@ -376,10 +447,10 @@ def build_or_load_runner_embedding_caches(
     batch_size: int,
     batch_loader: Callable[[Sequence[FrozenNativeUnit]], NativeWindowBatch] = load_native_window_batch,
 ) -> RunnerEmbeddingCacheSet:
-    """Build/verify all eight P1/P2 caches before any optimizer update."""
+    """Build/verify all eight P1/P2/P3 caches before any optimizer update."""
 
     if pipeline_id not in RUNNER_CACHE_PIPELINES:
-        raise ValueError("production runner embedding cache currently supports P1/P2 only")
+        raise ValueError("production runner embedding cache currently supports P1/P2/P3 only")
     if adapter.encoder_identity != RUNNER_CACHE_PIPELINES[pipeline_id]:
         raise RuntimeError("runner cache pipeline/adapter encoder identity mismatch")
     if set(indexes) != set(RUNNER_CACHE_PARTITIONS) or any(
@@ -408,7 +479,11 @@ def build_or_load_runner_embedding_caches(
             )
             payload, cache_receipt = cache.get_or_compute(
                 identity,
-                adapter,
+                (
+                    adapter.backend
+                    if pipeline_id in PRE_DIMENSION_ADAPTER_CACHE_PIPELINES
+                    else adapter
+                ),
                 lambda units=units: _compute_lane_payload(
                     adapter,
                     units,
@@ -426,6 +501,15 @@ def build_or_load_runner_embedding_caches(
                 "encoder_identity": adapter.encoder_identity,
                 "lane": lane,
                 "partition": partition,
+                "cache_boundary": (
+                    "pre_dimension_adapter"
+                    if pipeline_id in PRE_DIMENSION_ADAPTER_CACHE_PIPELINES
+                    else "post_dimension_adapter"
+                ),
+                "cached_embedding_dimension": payload.embeddings[0].shape[1],
+                "dimension_adapter_executed_after_cache_load": (
+                    pipeline_id in PRE_DIMENSION_ADAPTER_CACHE_PIPELINES
+                ),
                 "ordered_unit_id_sha256": canonical_json_sha256(list(payload.unit_ids)),
                 "data_identity_sha256": index.receipt["data_identity_sha256"],
                 "identity_binding": {
@@ -452,7 +536,7 @@ def build_or_load_runner_embedding_caches(
             )
             receipts[partition][lane] = entry_receipt
     receipt: dict[str, object] = {
-        "schema_version": RUNNER_CACHE_SET_SCHEMA_VERSION,
+        "schema_version": runner_cache_set_schema_version(pipeline_id),
         "embedding_cache_schema_version": EMBEDDING_CACHE_SCHEMA_VERSION,
         "pipeline_id": pipeline_id,
         "encoder_identity": adapter.encoder_identity,
@@ -465,6 +549,11 @@ def build_or_load_runner_embedding_caches(
         "training_reads_waveforms_after_cache_gate": False,
         "validation_reads_waveforms_after_cache_gate": False,
         "outer_test_cached": False,
+        "cache_boundary": (
+            "pre_dimension_adapter"
+            if pipeline_id in PRE_DIMENSION_ADAPTER_CACHE_PIPELINES
+            else "post_dimension_adapter"
+        ),
     }
     receipt["receipt_sha256"] = canonical_json_sha256(receipt)
     result = RunnerEmbeddingCacheSet(pipeline_id, entries, receipt)

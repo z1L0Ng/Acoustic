@@ -238,8 +238,10 @@ def load_exact_selected_model(
     normalized["run_root"] = Path(str(normalized["run_root"]))
     config = TrainingRunnerConfig(**normalized)
     config.validate()
-    if config.phase != "full" or config.pipeline_id not in {"P1", "P2"}:
-        raise RuntimeError("registered terminal provider currently supports selected P1/P2 full checkpoints")
+    if config.phase != "full" or config.pipeline_id not in {"P1", "P2", "P3"}:
+        raise RuntimeError(
+            "registered terminal provider currently supports selected P1/P2/P3 full checkpoints"
+        )
     try:
         selected_checkpoint.resolve().relative_to(config.run_root.resolve())
     except ValueError as error:

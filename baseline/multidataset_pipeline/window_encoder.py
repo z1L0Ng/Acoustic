@@ -185,7 +185,9 @@ class ProductionWindowEncoder(nn.Module):
     def device(self) -> torch.device:
         return module_device(self.backend)
 
-    def forward(self, batch: SlidingWindowBatch) -> SharedWindowEncoderOutput:
+    def encode_native(self, batch: SlidingWindowBatch) -> torch.Tensor:
+        """Encode and restore frozen native D-dimensional windows before adaptation."""
+
         batch.validate()
         if batch.device != self.device:
             raise RuntimeError(
@@ -206,16 +208,23 @@ class ProductionWindowEncoder(nn.Module):
             raise RuntimeError("backend output device/dtype contract failed")
         if not bool(torch.isfinite(native).all()):
             raise RuntimeError("backend output contains non-finite values")
-        adapted = self.dimension_adapter(native.unsqueeze(1)).squeeze(1)
         restored = torch.zeros(
             batch_size * windows,
-            768,
-            dtype=adapted.dtype,
-            device=adapted.device,
+            self.backend.native_dim,
+            dtype=native.dtype,
+            device=native.device,
         )
-        restored[flat_valid] = adapted
+        restored[flat_valid] = native
+        return restored.reshape(batch_size, windows, self.backend.native_dim)
+
+    def forward(self, batch: SlidingWindowBatch) -> SharedWindowEncoderOutput:
+        native = self.encode_native(batch)
+        adapted = self.dimension_adapter(native)
+        adapted = torch.where(
+            batch.window_mask.unsqueeze(-1), adapted, torch.zeros_like(adapted)
+        )
         output = SharedWindowEncoderOutput(
-            embeddings=restored.reshape(batch_size, windows, 768),
+            embeddings=adapted,
             window_mask=batch.window_mask,
             time_map=batch.time_map,
             encoder_identity=self.encoder_identity,

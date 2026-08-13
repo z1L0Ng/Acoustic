@@ -1,0 +1,17 @@
+{
+  "schema_version": "multidataset_p3_adapter_asset_v1",
+  "asset": {
+    "encoder_identity": "PANNs_Cnn14",
+    "code_source_url": "https://github.com/qiuqiangkong/audioset_tagging_cnn.git",
+    "source_revision": "d2f4b8c18eab44737fcc0de1248ae21eb43f6aa4",
+    "source_license": "MIT",
+    "checkpoint_source": "https://zenodo.org/records/3987831/files/Cnn14_16k_mAP=0.438.pth",
+    "checkpoint_sha256": "e2ee543a27919542c2ea03eabaa70b24dcd4e6c8e05621de6b67a94e4c5058e6",
+    "checkpoint_size_bytes": 358668570,
+    "checkpoint_license": "CC-BY-4.0 record metadata; no redistribution by this project",
+    "canonical_source_path": ".cache/multidataset_pipeline/assets/P3/source/repo",
+    "canonical_checkpoint_path": ".cache/multidataset_pipeline/assets/P3/checkpoints/Cnn14_16k_mAP=0.438.pth",
+    "required_dependency": "torchlibrosa==0.1.0",
+    "server_provision_expectation": "provision only from the official GitHub repository and open Zenodo record; verify exact clean revision, SHA256, and size before any model construction"
+  }
+}

@@ -54,6 +54,7 @@ from .runner_embedding_cache import (
     CachedNativeBatch,
     RunnerEmbeddingCacheSet,
     build_or_load_runner_embedding_caches,
+    runner_cache_set_schema_version,
 )
 from .sliding_window import masked_mean_window_embeddings
 from .terminal_scoring import (
@@ -1243,11 +1244,22 @@ def preflight_receipt(config: TrainingRunnerConfig, repo_root: Path) -> dict[str
         },
         "adapter_assets": audit_local_adapter_assets(repo_root)[config.pipeline_id],
         "embedding_cache_readiness": {
-            "schema_version": "shared_window_runner_cache_set_v2",
+            "schema_version": (
+                runner_cache_set_schema_version(config.pipeline_id)
+                if config.pipeline_id in {"P1", "P2", "P3"}
+                else "not_enabled"
+            ),
             "policy": (
                 "full_requires_verified_subtrain_and_validation_all_four_lanes_before_update_1"
+                if config.pipeline_id in {"P1", "P2", "P3"}
+                else "P4_cache_scope_not_enabled"
+            ),
+            "cache_boundary": (
+                "pre_dimension_adapter_2048_then_trainable_adapter_on_every_cache_read"
+                if config.pipeline_id == "P3"
+                else "post_identity_dimension_adapter_768"
                 if config.pipeline_id in {"P1", "P2"}
-                else "P3_P4_cache_scope_not_enabled"
+                else "not_enabled"
             ),
             "smoke_policy": "uncached_engineering_gate",
             "cache_built_during_preflight": False,
@@ -1291,7 +1303,15 @@ def _validation_native_losses(
                     weight = len(batch.windows.sample_ids)
                 else:
                     batch = cache_set.batch(
-                        "validation", lane, indices, device=device
+                        "validation",
+                        lane,
+                        indices,
+                        device=device,
+                        dimension_adapter=(
+                            adapter.dimension_adapter
+                            if cache_set.pipeline_id == "P3"
+                            else None
+                        ),
                     )
                     _, receipt = cached_native_batch_loss(model, batch, device=device)
                     weight = len(batch.output.sample_ids)
@@ -1352,7 +1372,7 @@ def run_approved_training(
     model = assemble_trainable_modules(adapter, device=device)
     scope = trainable_scope_receipt(adapter, model)
     cache_set: RunnerEmbeddingCacheSet | None = None
-    if config.phase == "full" and config.pipeline_id in {"P1", "P2"}:
+    if config.phase == "full" and config.pipeline_id in {"P1", "P2", "P3"}:
         cache_set = build_or_load_runner_embedding_caches(
             repo_root=repo_root,
             cache_root=(
@@ -1383,7 +1403,7 @@ def run_approved_training(
             "policy": (
                 "uncached_engineering_smoke"
                 if config.phase == "smoke"
-                else "cache_not_yet_enabled_for_P3_P4_package"
+                else "cache_not_yet_enabled_for_P4_package"
             ),
             "encoder_may_run_per_batch": True,
             "performance_result": False,
@@ -1456,7 +1476,15 @@ def run_approved_training(
             )
         else:
             cached_batch = cache_set.batch(
-                "subtrain", lane, indices, device=device
+                "subtrain",
+                lane,
+                indices,
+                device=device,
+                dimension_adapter=(
+                    adapter.dimension_adapter
+                    if cache_set.pipeline_id == "P3"
+                    else None
+                ),
             )
             loss, last_loss_receipt = cached_native_batch_loss(
                 model, cached_batch, device=device

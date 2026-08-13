@@ -8,7 +8,12 @@ from typing import Mapping
 
 import torch
 
-from .asset_manifest import load_adapter_asset_manifest, manifest_asset_paths
+from .asset_manifest import (
+    load_adapter_asset_manifest,
+    load_p3_adapter_asset_manifest,
+    manifest_asset_paths,
+    p3_manifest_asset_paths,
+)
 
 from .ast_window_encoder import (
     AST_CHECKPOINT_SHA256,
@@ -30,7 +35,10 @@ from .hear_window_encoder import (
 )
 from .panns_window_encoder import (
     PANNS_CHECKPOINT_NAME,
+    PANNS_CHECKPOINT_SHA256,
+    PANNS_CHECKPOINT_SIZE_BYTES,
     PANNS_SOURCE_LICENSE,
+    PANNS_SOURCE_REVISION,
     PANNS_SOURCE_URL,
     build_panns_window_encoder,
 )
@@ -70,6 +78,36 @@ def _manifest_bound_paths(config: AdapterFactoryConfig) -> tuple[Path, Path, Map
     return source, checkpoint, asset
 
 
+def _p3_manifest_bound_paths(config: AdapterFactoryConfig) -> tuple[Path, Path, Mapping[str, object]]:
+    source, checkpoint, asset = p3_manifest_asset_paths(config.repo_root)
+    if (
+        asset["source_revision"] != PANNS_SOURCE_REVISION
+        or asset["checkpoint_sha256"] != PANNS_CHECKPOINT_SHA256
+        or asset["checkpoint_size_bytes"] != PANNS_CHECKPOINT_SIZE_BYTES
+    ):
+        raise RuntimeError("P3 canonical asset manifest differs from the audited constants")
+    supplied = {
+        "source_repo": config.source_repo,
+        "source_revision": config.source_revision,
+        "checkpoint": config.checkpoint,
+        "checkpoint_sha256": config.checkpoint_sha256,
+    }
+    expected = {
+        "source_repo": source,
+        "source_revision": asset["source_revision"],
+        "checkpoint": checkpoint,
+        "checkpoint_sha256": asset["checkpoint_sha256"],
+    }
+    for key, value in supplied.items():
+        if value is None:
+            continue
+        normalized = _at_root(config.repo_root, value).resolve() if key in {"source_repo", "checkpoint"} else value
+        expected_value = expected[key].resolve() if isinstance(expected[key], Path) else expected[key]
+        if normalized != expected_value:
+            raise RuntimeError(f"P3 {key} differs from the tracked canonical asset manifest")
+    return source, checkpoint, asset
+
+
 def build_production_adapter(config: AdapterFactoryConfig) -> ProductionWindowEncoder:
     root = config.repo_root.resolve()
     if config.pipeline_id == "P1":
@@ -87,18 +125,12 @@ def build_production_adapter(config: AdapterFactoryConfig) -> ProductionWindowEn
             device=config.device,
         )
     if config.pipeline_id == "P3":
-        if not all(
-            (config.source_repo, config.source_revision, config.checkpoint, config.checkpoint_sha256)
-        ):
-            raise RuntimeError(
-                "P3 asset HOLD: source_repo, exact source_revision, checkpoint, and "
-                "checkpoint_sha256 are all required; downloading is not allowed"
-            )
+        source, checkpoint, asset = _p3_manifest_bound_paths(config)
         return build_panns_window_encoder(
-            _at_root(root, config.source_repo),
-            config.source_revision,
-            _at_root(root, config.checkpoint),
-            config.checkpoint_sha256,
+            source,
+            str(asset["source_revision"]),
+            checkpoint,
+            str(asset["checkpoint_sha256"]),
             device=config.device,
         )
     if config.pipeline_id == "P4":
@@ -175,14 +207,36 @@ def audit_local_adapter_assets(repo_root: Path) -> dict[str, Mapping[str, object
                 },
                 "experiment_result": False,
             }
-    output["P3"] = missing_asset_receipt(
-        "PANNs_Cnn14",
-        required_checkpoint=PANNS_CHECKPOINT_NAME,
-        required_dependency="pinned official audioset_tagging_cnn + torchlibrosa",
-        source_url=PANNS_SOURCE_URL,
-        source_revision="HOLD_until_local_checkout_is_pinned",
-        license_name=PANNS_SOURCE_LICENSE,
-    )
+    try:
+        source, checkpoint, asset = p3_manifest_asset_paths(root)
+        source_receipt = require_clean_source_revision(source, PANNS_SOURCE_REVISION)
+        checkpoint_receipt = require_file_identity(
+            checkpoint, PANNS_CHECKPOINT_SHA256,
+            expected_size_bytes=PANNS_CHECKPOINT_SIZE_BYTES,
+        )
+        manifest = load_p3_adapter_asset_manifest(root)
+        output["P3"] = {
+            "code_status": "READY",
+            "asset_status": "READY_verified_local",
+            "source": source_receipt,
+            "checkpoint": checkpoint_receipt,
+            "required_dependency": asset["required_dependency"],
+            "asset_manifest": {
+                "schema_version": manifest["schema_version"],
+                "manifest_file_sha256": manifest["manifest_file_sha256"],
+                "manifest_identity_sha256": manifest["manifest_identity_sha256"],
+                "canonical_source_path": asset["canonical_source_path"],
+                "canonical_checkpoint_path": asset["canonical_checkpoint_path"],
+            },
+            "experiment_result": False,
+        }
+    except (FileNotFoundError, RuntimeError, ValueError) as error:
+        output["P3"] = missing_asset_receipt(
+            "PANNs_Cnn14", required_checkpoint=PANNS_CHECKPOINT_NAME,
+            required_dependency="torchlibrosa==0.1.0",
+            source_url=PANNS_SOURCE_URL, source_revision=PANNS_SOURCE_REVISION,
+            license_name=PANNS_SOURCE_LICENSE,
+        ) | {"reason": str(error)}
     output["P4"] = missing_asset_receipt(
         "HeAR",
         required_checkpoint="accepted local google/hear SavedModel 1.0.0 bundle",
