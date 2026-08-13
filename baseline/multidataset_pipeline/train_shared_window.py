@@ -1848,6 +1848,7 @@ def terminal_score_gate(
         "terminal_targets_loaded",
         "native_task_names",
         "native_tasks",
+        "prediction_artifacts",
         "cross_dataset_pooling",
     }
     if set(receipt) != required_scorer_fields:
@@ -1868,6 +1869,8 @@ def terminal_score_gate(
         or receipt["native_task_names"] != list(NATIVE_TASKS)
         or not isinstance(receipt["native_tasks"], Mapping)
         or set(receipt["native_tasks"]) != set(NATIVE_TASKS)
+        or set(receipt["prediction_artifacts"])
+        != {"sprsound_label_free_predictions", "terminal_joined_predictions"}
         or receipt["cross_dataset_pooling"] is not False
     ):
         raise RuntimeError("terminal scorer identity/task/isolation contract failed")

@@ -29,7 +29,7 @@ from .beats_temporal import CHANNEL_ORDER
 from .hf_thresholds import VerifiedHFThresholdReceipt
 
 
-TERMINAL_SCORER_SCHEMA_VERSION = "shared_window_terminal_scorer_v1"
+TERMINAL_SCORER_SCHEMA_VERSION = "shared_window_terminal_scorer_v2"
 TERMINAL_PROVIDER_MANIFEST_SCHEMA_VERSION = "terminal_provider_registration_v1"
 TERMINAL_PROVIDER_MANIFEST_RELATIVE_PATH = Path(
     "baseline/multidataset_pipeline/terminal_provider_manifest.json"
@@ -211,12 +211,30 @@ class TerminalScoringInput:
     expected_prediction_ids_by_task: Mapping[str, tuple[str, ...]]
     data_identity_sha256: str
     provider_identity_sha256: str
+    prediction_artifacts: Mapping[str, Mapping[str, object]] | None = None
     outer_test_accessed: bool = True
     terminal_targets_loaded: bool = True
 
     def validate(self) -> None:
         _require_sha256(self.data_identity_sha256, "terminal data identity")
         _require_sha256(self.provider_identity_sha256, "terminal provider identity")
+        if self.prediction_artifacts is not None:
+            if set(self.prediction_artifacts) != {
+                "sprsound_label_free_predictions",
+                "terminal_joined_predictions",
+            }:
+                raise RuntimeError("terminal prediction artifact set changed")
+            for name, artifact in self.prediction_artifacts.items():
+                if set(artifact) != {"path", "size_bytes", "sha256"}:
+                    raise RuntimeError(f"{name} artifact receipt fields changed")
+                path = Path(str(artifact["path"])).resolve()
+                if (
+                    not path.is_file()
+                    or path.stat().st_size != int(artifact["size_bytes"])
+                    or _sha256_path(path)
+                    != _require_sha256(artifact["sha256"], f"{name} artifact")
+                ):
+                    raise RuntimeError(f"{name} artifact byte identity failed")
         if self.outer_test_accessed is not True or self.terminal_targets_loaded is not True:
             raise RuntimeError("terminal scorer input must explicitly identify terminal target access")
         if set(self.expected_prediction_ids_by_task) != set(NATIVE_TASKS):
@@ -554,6 +572,11 @@ class ProductionTerminalScorer:
             "terminal_targets_loaded": True,
             "native_task_names": list(NATIVE_TASKS),
             "native_tasks": tasks,
+            "prediction_artifacts": (
+                {key: dict(value) for key, value in inputs.prediction_artifacts.items()}
+                if inputs.prediction_artifacts is not None
+                else {}
+            ),
             "cross_dataset_pooling": False,
         }
         _reject_forbidden_keys(receipt)

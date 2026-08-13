@@ -25,7 +25,7 @@ HF_THRESHOLD_SELECTION_POLICY = (
 )
 HF_THRESHOLD_SERIALIZATION = "ieee754_big_endian_4xfloat64"
 HF_THRESHOLD_NATIVE_TASK = "HF_temporal4"
-HF_THRESHOLD_SCORER_SCHEMA_VERSION = "shared_window_terminal_scorer_v1"
+HF_THRESHOLD_SCORER_SCHEMA_VERSION = "shared_window_terminal_scorer_v2"
 HF_THRESHOLD_SELECTION_RECEIPT_SCHEMA_VERSION = "validation_selection_v2"
 HF_THRESHOLD_RUNNER_SCHEMA_VERSION = "shared_window_training_v5"
 

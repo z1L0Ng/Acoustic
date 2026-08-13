@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import uuid
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Mapping, Sequence
@@ -305,6 +307,83 @@ def _write_spr_label_free_predictions(
     return path
 
 
+def _artifact_receipt(path: Path) -> dict[str, object]:
+    return {
+        "path": str(path.resolve()),
+        "size_bytes": path.stat().st_size,
+        "sha256": _sha256_path(path),
+    }
+
+
+def _write_terminal_joined_predictions(
+    selected_checkpoint: Path,
+    batches: Sequence[MulticlassTerminalBatch | HFTemporalTerminalBatch],
+) -> Path:
+    """Persist post-join scorer inputs without overwriting an existing artifact."""
+
+    payload: dict[str, object] = {
+        "schema_version": "shared_window_terminal_joined_predictions_v1",
+        "selected_checkpoint_sha256": _sha256_path(selected_checkpoint),
+        "native_tasks": list(NATIVE_TASKS),
+        "prediction_before_spr_label_join": True,
+        "outer_test_accessed": True,
+        "tasks": {},
+    }
+    tasks: dict[str, object] = {}
+    for batch in batches:
+        batch.validate()
+        if isinstance(batch, MulticlassTerminalBatch):
+            tasks[batch.task] = {
+                "prediction_ids": list(batch.prediction_ids),
+                "targets": batch.targets.detach().cpu(),
+                "predicted_classes": batch.predicted_classes.detach().cpu(),
+            }
+        else:
+            entries = tasks.setdefault(
+                batch.task,
+                {
+                    "prediction_ids": [],
+                    "probabilities": [],
+                    "targets": [],
+                    "window_mask": [],
+                    "annotation_mask": [],
+                    "valid_mask": [],
+                    "time_map": [],
+                    "thresholds": batch.thresholds.detach().cpu(),
+                    "threshold_receipt_sha256": batch.threshold_receipt_sha256,
+                },
+            )
+            entries["prediction_ids"].extend(batch.prediction_ids)
+            for key in (
+                "probabilities",
+                "targets",
+                "window_mask",
+                "annotation_mask",
+                "valid_mask",
+                "time_map",
+            ):
+                entries[key].append(getattr(batch, key).detach().cpu())
+    if set(tasks) != set(NATIVE_TASKS):
+        raise RuntimeError("terminal joined artifact lacks an exact native task")
+    payload["tasks"] = tasks
+    root = selected_checkpoint.parent.parent / "terminal_provider"
+    root.mkdir(parents=True, exist_ok=True)
+    path = root / f"{selected_checkpoint.stem}_terminal_joined_predictions.pt"
+    temporary = root / f".{path.name}.tmp-{os.getpid()}-{uuid.uuid4().hex}"
+    try:
+        torch.save(payload, temporary)
+        try:
+            os.link(temporary, path)
+        except FileExistsError as error:
+            raise FileExistsError(
+                f"terminal joined prediction artifact already exists: {path}"
+            ) from error
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+    return path
+
+
 def provide_terminal_inputs(
     selected_checkpoint: Path,
     *,
@@ -388,7 +467,7 @@ def provide_terminal_inputs(
 
     spr_binary = torch.cat(predicted["SPRSound_binary"])
     spr_raw7 = torch.cat(predicted["SPRSound_raw7"])
-    _write_spr_label_free_predictions(
+    spr_label_free_path = _write_spr_label_free_predictions(
         selected_checkpoint, ids["SPRSound_binary"], spr_binary, spr_raw7
     )
     all_samples, _ = build_samples(config.dataset_root, config.kauh_outer_fold)
@@ -412,6 +491,7 @@ def provide_terminal_inputs(
             )
         )
     batches.extend(hf_batches)
+    joined_path = _write_terminal_joined_predictions(selected_checkpoint, batches)
     expected = {task: tuple(ids[task]) for task in NATIVE_TASKS}
     if set(expected) != set(NATIVE_TASKS) or any(not values for values in expected.values()):
         raise RuntimeError("production provider did not cover exactly all native tasks")
@@ -426,6 +506,12 @@ def provide_terminal_inputs(
         expected_prediction_ids_by_task=expected,
         data_identity_sha256=str(payload["data_identity_sha256"]),
         provider_identity_sha256=production_provider_identity_sha256(),
+        prediction_artifacts={
+            "sprsound_label_free_predictions": _artifact_receipt(
+                spr_label_free_path
+            ),
+            "terminal_joined_predictions": _artifact_receipt(joined_path),
+        },
         outer_test_accessed=True,
         terminal_targets_loaded=True,
     )

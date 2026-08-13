@@ -422,13 +422,13 @@ class TerminalScoringTest(unittest.TestCase):
                         ("I", "E", "CAS", "DAS"), (0.2, 0.3, 0.4, 0.5)
                     )
                 ],
-                scorer_schema_version="shared_window_terminal_scorer_v1",
+                scorer_schema_version="shared_window_terminal_scorer_v2",
             )
             artifact = write_hf_threshold_receipt(path, payload)
             verified = load_and_verify_hf_threshold_receipt(
                 path,
                 artifact["sha256"],
-                expected_scorer_schema_version="shared_window_terminal_scorer_v1",
+                expected_scorer_schema_version="shared_window_terminal_scorer_v2",
                 expected_validation_data_identity_sha256="1" * 64,
                 expected_hf_validation_manifest_identity_sha256="2" * 64,
                 expected_hf_validation_ordered_prediction_ids_sha256="3" * 64,
@@ -444,7 +444,7 @@ class TerminalScoringTest(unittest.TestCase):
                 load_and_verify_hf_threshold_receipt(
                     path,
                     artifact["sha256"],
-                    expected_scorer_schema_version="shared_window_terminal_scorer_v1",
+                    expected_scorer_schema_version="shared_window_terminal_scorer_v2",
                     expected_validation_data_identity_sha256="1" * 64,
                     expected_hf_validation_manifest_identity_sha256="2" * 64,
                     expected_hf_validation_ordered_prediction_ids_sha256="3" * 64,
@@ -474,7 +474,7 @@ class TerminalScoringTest(unittest.TestCase):
                         load_and_verify_hf_threshold_receipt(
                             changed_path,
                             changed_artifact["sha256"],
-                            expected_scorer_schema_version="shared_window_terminal_scorer_v1",
+                            expected_scorer_schema_version="shared_window_terminal_scorer_v2",
                             expected_validation_data_identity_sha256="1" * 64,
                             expected_hf_validation_manifest_identity_sha256="2" * 64,
                             expected_hf_validation_ordered_prediction_ids_sha256="3" * 64,

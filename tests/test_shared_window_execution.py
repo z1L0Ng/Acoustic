@@ -459,11 +459,21 @@ def _terminal_scorer(
     )
 
     def provider(_checkpoint: Path) -> TerminalScoringInput:
+        artifacts = {}
+        for name in ("sprsound_label_free_predictions", "terminal_joined_predictions"):
+            path = _checkpoint.parent / f"{name}.fixture"
+            path.write_bytes(name.encode("utf-8"))
+            artifacts[name] = {
+                "path": str(path),
+                "size_bytes": path.stat().st_size,
+                "sha256": sha256_path(path),
+            }
         return TerminalScoringInput(
             batches=(*multiclass, hf),
             expected_prediction_ids_by_task=ids,
             data_identity_sha256=data_identity_sha256,
             provider_identity_sha256=FIXTURE_PROVIDER_IDENTITY_SHA256,
+            prediction_artifacts=artifacts,
         )
 
     return ProductionTerminalScorer(
@@ -487,7 +497,7 @@ def _register_terminal_provider(root: Path) -> None:
                 "provider_identity_sha256": FIXTURE_PROVIDER_IDENTITY_SHA256,
                 "implementation_path": "fixture_provider.py",
                 "implementation_sha256": FIXTURE_PROVIDER_IMPLEMENTATION_SHA256,
-                "scorer_schema_version": "shared_window_terminal_scorer_v1",
+                "scorer_schema_version": "shared_window_terminal_scorer_v2",
                 "native_tasks": [
                     "ICBHI_flat4",
                     "SPRSound_binary",
@@ -1104,7 +1114,7 @@ class TrainingAssemblyTest(unittest.TestCase):
                         }
                         for channel in ("I", "E", "CAS", "DAS")
                     ],
-                    scorer_schema_version="shared_window_terminal_scorer_v1",
+                    scorer_schema_version="shared_window_terminal_scorer_v2",
                 ),
             )
             approval.write_text(json.dumps({
@@ -1118,7 +1128,7 @@ class TrainingAssemblyTest(unittest.TestCase):
                 "selected_checkpoint_sha256": second["sha256"],
                 "selected_checkpoint_size_bytes": second["size_bytes"],
                 "selected_checkpoint_update": second["update"],
-                "terminal_scorer_schema_version": "shared_window_terminal_scorer_v1",
+                "terminal_scorer_schema_version": "shared_window_terminal_scorer_v2",
                 "terminal_provider_identity_sha256": FIXTURE_PROVIDER_IDENTITY_SHA256,
                 "hf_threshold_receipt_sha256": threshold_artifact["sha256"],
                 "hf_validation_data_identity_sha256": "3" * 64,
