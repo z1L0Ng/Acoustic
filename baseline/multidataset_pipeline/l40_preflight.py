@@ -162,7 +162,7 @@ def run_zero_update_preflight(
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--pipeline", choices=("P1", "P2", "P3", "P4"), required=True)
+    parser.add_argument("--pipeline", choices=("P1", "P2", "P3", "P4", "P5"), required=True)
     parser.add_argument("--repo-root", type=Path, default=Path.cwd())
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument(

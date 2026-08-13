@@ -143,7 +143,7 @@ PRODUCTION_ADAPTER_STATUS = {
         "gate": "accepted gated SavedModel/revision/tree SHA, TensorFlow runtime, then real CPU and L40 placement smoke",
     },
     "OPERA_CT": {
-        "status": "HOLD_provenance_overlap_and_adapter",
+        "status": "code_READY_manifest_bound_overlap_aware_runtime_gate_pending",
         "required_file": "baseline/multidataset_pipeline/opera_window_encoder.py",
         "gate": (
             "checkpoint/revision/SHA, 2 s-to-8 s zero-pad adapter, and explicit "

@@ -1,4 +1,4 @@
-"""Runner integration for immutable P1/P2 frozen window embeddings.
+"""Runner integration for immutable P1/P2/P3/P5 frozen window embeddings.
 
 The full phase builds or verifies all four native lanes for both subtrain and
 validation before update 1.  Subsequent batches reconstruct an exact
@@ -36,7 +36,12 @@ from .window_encoder import ProductionWindowEncoder
 
 RUNNER_CACHE_SET_SCHEMA_VERSION = "shared_window_runner_cache_set_v2"
 P3_RUNNER_CACHE_SET_SCHEMA_VERSION = "shared_window_runner_cache_set_v3"
-RUNNER_CACHE_PIPELINES = {"P1": "AST", "P2": "BEATs", "P3": "PANNs_Cnn14"}
+RUNNER_CACHE_PIPELINES = {
+    "P1": "AST",
+    "P2": "BEATs",
+    "P3": "PANNs_Cnn14",
+    "P5": "OPERA_CT",
+}
 PRE_DIMENSION_ADAPTER_CACHE_PIPELINES = {"P3"}
 RUNNER_CACHE_PARTITIONS = ("subtrain", "validation")
 RUNNER_CACHE_LANES = ("ICBHI", "SPRSound", "HF", "KAUH")
@@ -44,7 +49,7 @@ RUNNER_CACHE_LANES = ("ICBHI", "SPRSound", "HF", "KAUH")
 
 def runner_cache_set_schema_version(pipeline_id: str) -> str:
     if pipeline_id not in RUNNER_CACHE_PIPELINES:
-        raise ValueError("runner cache schema supports only P1/P2/P3")
+        raise ValueError("runner cache schema supports only P1/P2/P3/P5")
     return (
         P3_RUNNER_CACHE_SET_SCHEMA_VERSION
         if pipeline_id in PRE_DIMENSION_ADAPTER_CACHE_PIPELINES
@@ -84,6 +89,11 @@ PIPELINE_CODE_DEPENDENCIES = {
         "baseline/multidataset_pipeline/p3_adapter_asset.json",
         "baseline/multidataset_pipeline/panns_window_encoder.py",
     ),
+    "P5": COMMON_CODE_DEPENDENCIES
+    + (
+        "baseline/multidataset_pipeline/p5_adapter_asset.json",
+        "baseline/multidataset_pipeline/opera_window_encoder.py",
+    ),
 }
 
 
@@ -91,7 +101,7 @@ def _file_set_sha256(repo_root: Path, pipeline_id: str) -> dict[str, object]:
     """Return the audited production dependency closure and its aggregate hash."""
 
     if pipeline_id not in PIPELINE_CODE_DEPENDENCIES:
-        raise ValueError("cache code dependency closure supports only P1/P2/P3")
+        raise ValueError("cache code dependency closure supports only P1/P2/P3/P5")
     relatives = PIPELINE_CODE_DEPENDENCIES[pipeline_id]
     if len(relatives) != len(set(relatives)) or any(
         relative.startswith(("tests/", "docs/")) for relative in relatives
@@ -111,6 +121,10 @@ def _file_set_sha256(repo_root: Path, pipeline_id: str) -> dict[str, object]:
         "P3": {
             "baseline/multidataset_pipeline/p3_adapter_asset.json",
             "baseline/multidataset_pipeline/panns_window_encoder.py",
+        },
+        "P5": {
+            "baseline/multidataset_pipeline/p5_adapter_asset.json",
+            "baseline/multidataset_pipeline/opera_window_encoder.py",
         },
     }[pipeline_id]
     if not (mandatory | candidate_mandatory) <= set(relatives):
@@ -274,7 +288,7 @@ class RunnerEmbeddingCacheSet:
             for lane in RUNNER_CACHE_LANES
         }
         if self.pipeline_id not in RUNNER_CACHE_PIPELINES or set(self.entries) != expected:
-            raise RuntimeError("full P1/P2/P3 requires all eight lane/partition caches")
+            raise RuntimeError("full P1/P2/P3/P5 requires all eight lane/partition caches")
         if (
             self.receipt.get("schema_version")
             != runner_cache_set_schema_version(self.pipeline_id)
@@ -447,10 +461,10 @@ def build_or_load_runner_embedding_caches(
     batch_size: int,
     batch_loader: Callable[[Sequence[FrozenNativeUnit]], NativeWindowBatch] = load_native_window_batch,
 ) -> RunnerEmbeddingCacheSet:
-    """Build/verify all eight P1/P2/P3 caches before any optimizer update."""
+    """Build/verify all eight P1/P2/P3/P5 caches before any optimizer update."""
 
     if pipeline_id not in RUNNER_CACHE_PIPELINES:
-        raise ValueError("production runner embedding cache currently supports P1/P2/P3 only")
+        raise ValueError("production runner embedding cache supports P1/P2/P3/P5 only")
     if adapter.encoder_identity != RUNNER_CACHE_PIPELINES[pipeline_id]:
         raise RuntimeError("runner cache pipeline/adapter encoder identity mismatch")
     if set(indexes) != set(RUNNER_CACHE_PARTITIONS) or any(

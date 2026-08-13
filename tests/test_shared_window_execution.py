@@ -794,6 +794,42 @@ class TrainingAssemblyTest(unittest.TestCase):
                 )
             )
 
+    def test_p5_runner_cache_is_pipeline_bound_post_identity_adapter(self):
+        repo_root = Path(__file__).resolve().parents[1]
+        indexes = {
+            partition: _cache_fixture_index(partition)
+            for partition in ("subtrain", "validation")
+        }
+        adapter = _FakeAdapter("OPERA_CT").eval()
+        with TemporaryDirectory() as directory:
+            cache_set = build_or_load_runner_embedding_caches(
+                repo_root=repo_root,
+                cache_root=Path(directory) / "runner-cache",
+                pipeline_id="P5",
+                config_identity_sha256="5" * 64,
+                adapter=adapter,
+                indexes=indexes,
+                device=torch.device("cpu"),
+                batch_size=2,
+                batch_loader=_cache_fixture_batch_loader,
+            )
+            cache_set.validate_complete()
+            self.assertEqual(cache_set.receipt["pipeline_id"], "P5")
+            self.assertEqual(cache_set.receipt["cache_boundary"], "post_dimension_adapter")
+            self.assertTrue(
+                all(
+                    entry.receipt["cached_embedding_dimension"] == 768
+                    and entry.receipt["dimension_adapter_executed_after_cache_load"] is False
+                    and entry.receipt["identity_binding"]["asset_manifest_identity_sha256"]
+                    for entry in cache_set.entries.values()
+                )
+            )
+            batch = cache_set.batch(
+                "validation", "HF", (0,), device=torch.device("cpu")
+            )
+            self.assertEqual(tuple(batch.output.embeddings.shape[-1:]), (768,))
+            self.assertEqual(adapter.forward_calls, 8)
+
     def test_l40_snapshot_includes_nonpersistent_buffers(self):
         adapter = _FakeAdapter("AST")
         model = JointNativeProjector()

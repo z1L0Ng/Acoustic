@@ -1,0 +1,22 @@
+{
+  "schema_version": "multidataset_p5_adapter_asset_v1",
+  "asset": {
+    "encoder_identity": "OPERA_CT",
+    "code_source_url": "https://github.com/evelyn0414/OPERA.git",
+    "source_revision": "3622310e667afb8aa40169050b4dd45de75946a2",
+    "source_license": "MIT",
+    "checkpoint_source": "https://huggingface.co/evelyn0414/OPERA/resolve/d8de4322870b596f0a6ff6ea907b9a6996cd243a/encoder-operaCT.ckpt",
+    "checkpoint_repository_revision": "d8de4322870b596f0a6ff6ea907b9a6996cd243a",
+    "checkpoint_sha256": "83c35b435518ad5f395bf4d34e552caa088faf9e63f6b8058d5288e9abb350ae",
+    "checkpoint_size_bytes": 355598886,
+    "checkpoint_license": "CC-BY-NC-4.0 Hugging Face repository metadata; no redistribution by this project",
+    "canonical_source_path": ".cache/multidataset_pipeline/assets/P5/source/repo",
+    "canonical_checkpoint_path": ".cache/multidataset_pipeline/assets/P5/checkpoints/encoder-operaCT.ckpt",
+    "required_dependency": "torchlibrosa==0.1.0; librosa==0.10.1; timm==1.0.3",
+    "input_contract": "16kHz shared 2s source window zero-padded once to 8s (128000 samples), then official OPERA 64-mel frontend; no repeat, no truncate",
+    "standard_pretraining_overlap": "ICBHI and HF Lung",
+    "kauh_checkpoint_provenance": "unknown",
+    "scientific_role": "overlap-aware reference comparator only; not a clean cross-dataset generalization candidate",
+    "server_provision_expectation": "provision only from the official GitHub and pinned public Hugging Face repositories; verify clean revision, SHA256, size, licenses, and overlap caveat before construction"
+  }
+}

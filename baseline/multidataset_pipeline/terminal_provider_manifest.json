@@ -1,6 +1,6 @@
 {
   "implementation_path": "baseline/multidataset_pipeline/production_terminal_provider.py",
-  "implementation_sha256": "30a0d9d5a625d11aedb219e8ece20d15704f06f2bb586aa40e049f0aa3a90a18",
+  "implementation_sha256": "4203d9d6ac00a40ba26080cb8dd7e6c63cd524e9f093750f3d239b18364dd088",
   "native_tasks": [
     "ICBHI_flat4",
     "SPRSound_binary",
@@ -9,7 +9,7 @@
     "KAUH_raw9"
   ],
   "outer_test_access_policy": "terminal_score_only_after_exact_selection_checkpoint_and_approval",
-  "provider_identity_sha256": "eba92dc603d47e27a26e6204cc28fc8e3b12a7126554c2269d2ef48cfc8ebc9a",
+  "provider_identity_sha256": "a4dc63beb73bc140c48eb05d0630fd9e639280143d3c88f5e9deb39fab630a86",
   "provider_specification": "baseline.multidataset_pipeline.production_terminal_provider:provide_terminal_inputs",
   "schema_version": "terminal_provider_registration_v1",
   "scorer_schema_version": "shared_window_terminal_scorer_v2",

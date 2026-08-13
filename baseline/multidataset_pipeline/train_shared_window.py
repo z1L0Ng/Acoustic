@@ -1,4 +1,4 @@
-"""Approval-gated P1-P4 shared-window training assembly.
+"""Approval-gated P1-P5 shared-window training assembly.
 
 Importing this module is inert.  ``preflight`` is inventory-only.  ``smoke`` and
 ``full`` require a matching immutable approval receipt; ``terminal-score`` also
@@ -185,8 +185,8 @@ class TrainingRunnerConfig:
         )
 
     def validate(self) -> None:
-        if self.pipeline_id not in {"P1", "P2", "P3", "P4"}:
-            raise ValueError("training runner supports P1-P4")
+        if self.pipeline_id not in {"P1", "P2", "P3", "P4", "P5"}:
+            raise ValueError("training runner supports P1-P5")
         if self.phase not in ALLOWED_PHASES:
             raise ValueError("invalid runner phase")
         if (
@@ -1246,19 +1246,19 @@ def preflight_receipt(config: TrainingRunnerConfig, repo_root: Path) -> dict[str
         "embedding_cache_readiness": {
             "schema_version": (
                 runner_cache_set_schema_version(config.pipeline_id)
-                if config.pipeline_id in {"P1", "P2", "P3"}
+                if config.pipeline_id in {"P1", "P2", "P3", "P5"}
                 else "not_enabled"
             ),
             "policy": (
                 "full_requires_verified_subtrain_and_validation_all_four_lanes_before_update_1"
-                if config.pipeline_id in {"P1", "P2", "P3"}
+                if config.pipeline_id in {"P1", "P2", "P3", "P5"}
                 else "P4_cache_scope_not_enabled"
             ),
             "cache_boundary": (
                 "pre_dimension_adapter_2048_then_trainable_adapter_on_every_cache_read"
                 if config.pipeline_id == "P3"
                 else "post_identity_dimension_adapter_768"
-                if config.pipeline_id in {"P1", "P2"}
+                if config.pipeline_id in {"P1", "P2", "P5"}
                 else "not_enabled"
             ),
             "smoke_policy": "uncached_engineering_gate",
@@ -1372,7 +1372,7 @@ def run_approved_training(
     model = assemble_trainable_modules(adapter, device=device)
     scope = trainable_scope_receipt(adapter, model)
     cache_set: RunnerEmbeddingCacheSet | None = None
-    if config.phase == "full" and config.pipeline_id in {"P1", "P2", "P3"}:
+    if config.phase == "full" and config.pipeline_id in {"P1", "P2", "P3", "P5"}:
         cache_set = build_or_load_runner_embedding_caches(
             repo_root=repo_root,
             cache_root=(
@@ -1403,7 +1403,7 @@ def run_approved_training(
             "policy": (
                 "uncached_engineering_smoke"
                 if config.phase == "smoke"
-                else "cache_not_yet_enabled_for_P4_package"
+                else "cache_not_enabled_for_gated_P4_package"
             ),
             "encoder_may_run_per_batch": True,
             "performance_result": False,
@@ -1923,7 +1923,7 @@ def terminal_score_gate(
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--pipeline", choices=("P1", "P2", "P3", "P4"), required=True)
+    parser.add_argument("--pipeline", choices=("P1", "P2", "P3", "P4", "P5"), required=True)
     parser.add_argument("--phase", choices=ALLOWED_PHASES, default="preflight")
     parser.add_argument("--repo-root", type=Path, default=Path.cwd())
     parser.add_argument("--device", default="cpu")

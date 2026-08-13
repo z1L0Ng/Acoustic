@@ -32,6 +32,12 @@ from baseline.multidataset_pipeline.ast_window_encoder import ASTWindowBackend
 from baseline.multidataset_pipeline.beats_window_encoder import BEATsWindowBackend
 from baseline.multidataset_pipeline.hear_window_encoder import HeARWindowBackend
 from baseline.multidataset_pipeline.panns_window_encoder import PANNsWindowBackend
+from baseline.multidataset_pipeline.opera_window_encoder import (
+    OPERA_FRONTEND_FRAMES,
+    OPERA_FRONTEND_SAMPLES,
+    OPERA_MEL_BINS,
+    OPERAWindowBackend,
+)
 from baseline.multidataset_pipeline.contracts import (
     ObservationState,
     WaveformSample,
@@ -806,6 +812,16 @@ class FakePANNsModel(nn.Module):
         return {"embedding": means.expand(-1, 2048)}
 
 
+class FakeOPERAModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.register_buffer("device_probe", torch.ones(()))
+
+    def forward(self, mel):
+        means = mel.mean(dim=(1, 2, 3), keepdim=False).unsqueeze(1)
+        return means.expand(-1, 768)
+
+
 class FakeTensorFlow:
     @staticmethod
     def convert_to_tensor(value):
@@ -957,6 +973,38 @@ class ProductionWindowAdapterTest(unittest.TestCase):
         hear_values = hear.encode_valid_windows(waveforms, valid)
         self.assertEqual(hear_values.shape, (2, 512))
         self.assertTrue(torch.isfinite(hear_values).all())
+
+    def test_opera_zero_pad_frontend_preserves_source_validity_and_time_map(self):
+        captured = {}
+
+        def frontend(padded):
+            captured["padded"] = padded.detach().clone()
+            return torch.ones(
+                padded.shape[0], OPERA_FRONTEND_FRAMES, OPERA_MEL_BINS
+            )
+
+        backend = OPERAWindowBackend(FakeOPERAModel(), frontend=frontend)
+        source = torch.linspace(-0.2, 0.2, 32_000).repeat(2, 1)
+        valid = torch.tensor([32_000, 800], dtype=torch.long)
+        values = backend.encode_valid_windows(source, valid)
+        self.assertEqual(tuple(values.shape), (2, 768))
+        padded = captured["padded"]
+        self.assertEqual(tuple(padded.shape), (2, OPERA_FRONTEND_SAMPLES))
+        torch.testing.assert_close(padded[0, :32_000], source[0])
+        torch.testing.assert_close(padded[1, :800], source[1, :800])
+        self.assertEqual(torch.count_nonzero(padded[1, 800:]).item(), 0)
+        self.assertEqual(torch.count_nonzero(padded[:, 32_000:]).item(), 0)
+
+        adapter = ProductionWindowEncoder(
+            "OPERA_CT", backend, fake_provenance("OPERA_CT")
+        )
+        batch = collate_sliding_windows(
+            [sample("ICBHI", "cycle", 800, "opera-short", start_s=4.0)]
+        )
+        output = adapter(batch)
+        self.assertTrue(torch.equal(output.window_mask, batch.window_mask))
+        self.assertTrue(torch.equal(output.time_map, batch.time_map))
+        self.assertEqual(output.sample_ids, batch.sample_ids)
 
     @unittest.skipUnless(torch.cuda.is_available(), "CUDA is not available")
     def test_p6_token_head_cuda_contract(self):

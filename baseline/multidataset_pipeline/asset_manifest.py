@@ -16,6 +16,10 @@ P3_ASSET_MANIFEST_SCHEMA_VERSION = "multidataset_p3_adapter_asset_v1"
 P3_ASSET_MANIFEST_RELATIVE_PATH = Path(
     "baseline/multidataset_pipeline/p3_adapter_asset.json"
 )
+P5_ASSET_MANIFEST_SCHEMA_VERSION = "multidataset_p5_adapter_asset_v1"
+P5_ASSET_MANIFEST_RELATIVE_PATH = Path(
+    "baseline/multidataset_pipeline/p5_adapter_asset.json"
+)
 EXPECTED_PIPELINES = {"P1": "AST", "P2": "BEATs"}
 
 
@@ -158,6 +162,65 @@ def load_p3_adapter_asset_manifest(repo_root: Path) -> dict[str, object]:
 
 def p3_manifest_asset_paths(repo_root: Path) -> tuple[Path, Path, Mapping[str, object]]:
     manifest = load_p3_adapter_asset_manifest(repo_root)
+    asset = manifest["asset"]
+    root = repo_root.resolve()
+    return (
+        root / str(asset["canonical_source_path"]),
+        root / str(asset["canonical_checkpoint_path"]),
+        asset,
+    )
+
+
+def load_p5_adapter_asset_manifest(repo_root: Path) -> dict[str, object]:
+    """Load the independent P5 overlap-aware reference asset identity."""
+
+    path = repo_root.resolve() / P5_ASSET_MANIFEST_RELATIVE_PATH
+    raw = path.read_bytes()
+    payload = json.loads(raw)
+    if not isinstance(payload, Mapping) or payload.get("schema_version") != P5_ASSET_MANIFEST_SCHEMA_VERSION:
+        raise RuntimeError("P5 adapter asset manifest schema mismatch")
+    asset = payload.get("asset")
+    required = {
+        "encoder_identity", "code_source_url", "source_revision", "source_license",
+        "checkpoint_source", "checkpoint_repository_revision", "checkpoint_sha256",
+        "checkpoint_size_bytes", "checkpoint_license", "canonical_source_path",
+        "canonical_checkpoint_path", "required_dependency", "input_contract",
+        "standard_pretraining_overlap", "kauh_checkpoint_provenance", "scientific_role",
+        "server_provision_expectation",
+    }
+    if not isinstance(asset, Mapping) or set(asset) != required:
+        raise RuntimeError("P5 adapter asset fields do not match the frozen schema")
+    if asset["encoder_identity"] != "OPERA_CT":
+        raise RuntimeError("P5 encoder identity mismatch")
+    for field in ("source_revision", "checkpoint_repository_revision"):
+        value = asset[field]
+        if not isinstance(value, str) or len(value) != 40:
+            raise RuntimeError(f"P5 {field} must be an exact Git revision")
+    _require_sha256(asset["checkpoint_sha256"], "P5 checkpoint")
+    if not isinstance(asset["checkpoint_size_bytes"], int) or asset["checkpoint_size_bytes"] <= 0:
+        raise ValueError("P5 checkpoint size must be positive")
+    _canonical_cache_path(asset["canonical_source_path"], "P5 source path")
+    _canonical_cache_path(asset["canonical_checkpoint_path"], "P5 checkpoint path")
+    for field in required - {"checkpoint_size_bytes"}:
+        if not isinstance(asset[field], str) or not asset[field].strip():
+            raise ValueError(f"P5.{field} must be non-empty")
+    if (
+        asset["standard_pretraining_overlap"] != "ICBHI and HF Lung"
+        or asset["kauh_checkpoint_provenance"] != "unknown"
+        or "overlap-aware reference" not in asset["scientific_role"]
+    ):
+        raise RuntimeError("P5 overlap/provenance scientific boundary changed")
+    return {
+        "schema_version": P5_ASSET_MANIFEST_SCHEMA_VERSION,
+        "manifest_path": str(path),
+        "manifest_file_sha256": hashlib.sha256(raw).hexdigest(),
+        "manifest_identity_sha256": canonical_json_sha256(payload),
+        "asset": dict(asset),
+    }
+
+
+def p5_manifest_asset_paths(repo_root: Path) -> tuple[Path, Path, Mapping[str, object]]:
+    manifest = load_p5_adapter_asset_manifest(repo_root)
     asset = manifest["asset"]
     root = repo_root.resolve()
     return (

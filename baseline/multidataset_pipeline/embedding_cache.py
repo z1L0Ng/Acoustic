@@ -15,7 +15,11 @@ import numpy as np
 import torch
 from torch import nn
 
-from .asset_manifest import load_adapter_asset_manifest, load_p3_adapter_asset_manifest
+from .asset_manifest import (
+    load_adapter_asset_manifest,
+    load_p3_adapter_asset_manifest,
+    load_p5_adapter_asset_manifest,
+)
 
 
 EMBEDDING_CACHE_SCHEMA_VERSION = "frozen_window_embedding_cache_v2"
@@ -114,10 +118,13 @@ class EmbeddingCacheIdentity:
         if pipeline_id == "P3":
             manifest = load_p3_adapter_asset_manifest(repo_root)
             asset = manifest["asset"]
+        elif pipeline_id == "P5":
+            manifest = load_p5_adapter_asset_manifest(repo_root)
+            asset = manifest["asset"]
         else:
             manifest = load_adapter_asset_manifest(repo_root)
             if pipeline_id not in manifest["assets"]:
-                raise ValueError("tracked cache assets cover only P1/P2/P3")
+                raise ValueError("tracked cache assets cover only P1/P2/P3/P5")
             asset = manifest["assets"][pipeline_id]
         return cls(
             dataset_id=dataset_id,

@@ -390,7 +390,7 @@ def _write_json_no_replace(path: Path, payload: Mapping[str, object]) -> dict[st
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--pipeline", choices=("P1", "P2"), required=True)
+    parser.add_argument("--pipeline", choices=("P1", "P2", "P3", "P5"), required=True)
     parser.add_argument("--terminal-receipt", type=Path, required=True)
     parser.add_argument("--terminal-approval", type=Path, required=True)
     parser.add_argument("--selection-receipt", type=Path, required=True)

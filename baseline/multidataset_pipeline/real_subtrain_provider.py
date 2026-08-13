@@ -559,8 +559,8 @@ def build_real_subtrain_preflight_batches(
 ) -> tuple[SlidingWindowBatch, ...]:
     """Return one real mixed-lane batch for the zero-update L40 preflight."""
 
-    if pipeline_id not in {"P1", "P2", "P3", "P4"}:
-        raise ValueError("real preflight provider supports P1-P4")
+    if pipeline_id not in {"P1", "P2", "P3", "P4", "P5"}:
+        raise ValueError("real preflight provider supports P1-P5")
     index = build_frozen_provider_index(dataset_root, partition="subtrain")
     units = [index.unit(lane) for lane in PREDICTION_UNITS]
     samples = [load_frozen_waveform(unit)[0] for unit in units]
