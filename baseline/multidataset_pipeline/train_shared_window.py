@@ -1694,6 +1694,27 @@ def terminal_score_gate(
         raise PermissionError(
             "terminal approval is not bound to the exact validation selection receipt"
         )
+    checkpoint_approval_fields = {
+        "selected_checkpoint_path",
+        "selected_checkpoint_sha256",
+        "selected_checkpoint_size_bytes",
+        "selected_checkpoint_update",
+    }
+    if checkpoint_approval_fields - set(terminal_approval):
+        raise PermissionError(
+            "terminal approval is missing selected-checkpoint identity fields"
+        )
+    if (
+        Path(str(terminal_approval["selected_checkpoint_path"])).resolve()
+        != selected_expected_path
+        or terminal_approval["selected_checkpoint_sha256"] != selected_sha256
+        or terminal_approval["selected_checkpoint_size_bytes"]
+        != int(selected["size_bytes"])
+        or terminal_approval["selected_checkpoint_update"] != chosen_update
+    ):
+        raise PermissionError(
+            "terminal approval is not bound to the exact selected checkpoint"
+        )
     threshold_approval_fields = {
         "hf_threshold_receipt_sha256",
         "hf_validation_data_identity_sha256",

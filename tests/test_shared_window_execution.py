@@ -1114,6 +1114,10 @@ class TrainingAssemblyTest(unittest.TestCase):
                 "config_sha256": terminal.sha256(),
                 "data_identity_sha256": "c" * 64,
                 "selection_receipt_sha256": selection["selection_receipt_artifact"]["sha256"],
+                "selected_checkpoint_path": second["path"],
+                "selected_checkpoint_sha256": second["sha256"],
+                "selected_checkpoint_size_bytes": second["size_bytes"],
+                "selected_checkpoint_update": second["update"],
                 "terminal_scorer_schema_version": "shared_window_terminal_scorer_v1",
                 "terminal_provider_identity_sha256": FIXTURE_PROVIDER_IDENTITY_SHA256,
                 "hf_threshold_receipt_sha256": threshold_artifact["sha256"],
@@ -1138,6 +1142,23 @@ class TrainingAssemblyTest(unittest.TestCase):
             )
             self.assertFalse(result["cross_dataset_pooled_performance"])
             approved_terminal = json.loads(approval.read_text())
+            wrong_checkpoint_approval = dict(approved_terminal)
+            wrong_checkpoint_approval["selected_checkpoint_sha256"] = "a" * 64
+            approval.write_text(json.dumps(wrong_checkpoint_approval), encoding="utf-8")
+            with self.assertRaisesRegex(PermissionError, "exact selected checkpoint"):
+                terminal_score_gate(
+                    terminal,
+                    approval,
+                    selection_path,
+                    selection["selection_receipt_artifact"]["sha256"],
+                    Path(second["path"]),
+                    threshold_path,
+                    threshold_artifact["sha256"],
+                    scorer=_terminal_scorer(
+                        "c" * 64, threshold_artifact["sha256"]
+                    ),
+                )
+            approval.write_text(json.dumps(approved_terminal), encoding="utf-8")
             wrong_threshold_approval = dict(approved_terminal)
             wrong_threshold_approval["hf_threshold_receipt_sha256"] = "a" * 64
             approval.write_text(json.dumps(wrong_threshold_approval), encoding="utf-8")
