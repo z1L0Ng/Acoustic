@@ -43,15 +43,26 @@ class BEATsWindowBackend(FrozenWindowBackend):
         count, width = waveform_windows.shape
         if width != BEATS_WINDOW_SAMPLES:
             raise ValueError("BEATs window backend requires [N,32000]")
+        geometry = self.temporal.geometry
+        minimum_complete_patch_samples = (
+            geometry.frame_length_samples
+            + (geometry.patch_kernel_time - 1) * geometry.frame_shift_samples
+        )
+        # The shared-window tensor is already zero-padded. Promote only the
+        # model-side mask so canonical short events still yield one BEATs patch;
+        # the outer window/cache contract retains the true valid_samples.
+        model_valid_samples = valid_samples.clamp_min(
+            minimum_complete_patch_samples
+        )
         starts = torch.zeros(count, dtype=torch.float64, device=waveform_windows.device)
-        ends = valid_samples.to(torch.float64) / 16_000
+        ends = model_valid_samples.to(torch.float64) / 16_000
         batch = WaveformBatch(
             waveform=waveform_windows,
             waveform_padding_mask=(
                 torch.arange(width, device=waveform_windows.device).unsqueeze(0)
-                >= valid_samples.unsqueeze(1)
+                >= model_valid_samples.unsqueeze(1)
             ),
-            valid_samples=valid_samples,
+            valid_samples=model_valid_samples,
             sample_rate=16_000,
             source_start_s=starts,
             source_end_s=ends,

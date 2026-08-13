@@ -4,6 +4,7 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from types import SimpleNamespace
 
 import torch
 from torch import nn
@@ -28,6 +29,7 @@ from baseline.multidataset_pipeline.adapter_factory import (
     build_production_adapter,
 )
 from baseline.multidataset_pipeline.ast_window_encoder import ASTWindowBackend
+from baseline.multidataset_pipeline.beats_window_encoder import BEATsWindowBackend
 from baseline.multidataset_pipeline.hear_window_encoder import HeARWindowBackend
 from baseline.multidataset_pipeline.panns_window_encoder import PANNsWindowBackend
 from baseline.multidataset_pipeline.contracts import (
@@ -833,6 +835,42 @@ def fake_provenance(identity: str) -> AdapterProvenance:
 
 
 class ProductionWindowAdapterTest(unittest.TestCase):
+    def test_beats_backend_zero_pads_short_event_to_first_complete_patch(self):
+        class PatchMaskTemporal(nn.Module):
+            def __init__(self) -> None:
+                super().__init__()
+                self.geometry = BEATsGeometry()
+                self.captured_valid_samples = None
+
+            def forward(self, batch):
+                exact_patch_masks(
+                    batch.valid_samples,
+                    batch.waveform.shape[1],
+                    self.geometry,
+                )
+                self.captured_valid_samples = batch.valid_samples.detach().clone()
+                return SimpleNamespace(
+                    pooled=torch.zeros(
+                        batch.waveform.shape[0],
+                        768,
+                        device=batch.waveform.device,
+                    )
+                )
+
+        backend = BEATsWindowBackend.__new__(BEATsWindowBackend)
+        nn.Module.__init__(backend)
+        temporal = PatchMaskTemporal()
+        backend.temporal = temporal
+        output = backend.encode_valid_windows(
+            torch.zeros(2, 32_000),
+            torch.tensor([2_496, 32_000], dtype=torch.long),
+        )
+        self.assertEqual(tuple(output.shape), (2, 768))
+        self.assertEqual(
+            temporal.captured_valid_samples.tolist(),
+            [2_800, 32_000],
+        )
+
     def test_flatten_restore_lineage_padding_and_batch_invariance(self):
         short = sample("ICBHI", "cycle", 800, "short", start_s=3.0)
         long = sample("KAUH", "recording", 48_000, "long")
