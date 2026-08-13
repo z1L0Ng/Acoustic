@@ -75,10 +75,24 @@ from baseline.multidataset_pipeline.train_shared_window import (
     prepare_phase_execution_root,
     save_training_checkpoint,
     sha256_path,
+    structured_state_sha256,
     terminal_score_gate,
     trainable_scope_receipt,
     write_validation_selection_receipt,
 )
+
+
+class StructuredStateHashTest(unittest.TestCase):
+    def test_zero_dim_tensor_is_hashed_deterministically(self):
+        scalar = torch.tensor(1.25, dtype=torch.float32)
+        self.assertEqual(
+            structured_state_sha256(scalar),
+            structured_state_sha256(scalar.clone()),
+        )
+        self.assertNotEqual(
+            structured_state_sha256(scalar),
+            structured_state_sha256(torch.tensor(2.25, dtype=torch.float32)),
+        )
 
 
 def _sample(

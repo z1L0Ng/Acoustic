@@ -113,7 +113,7 @@ def structured_state_sha256(value: object) -> str:
             digest.update(b"tensor\0")
             digest.update(str(tensor.dtype).encode("utf-8") + b"\0")
             digest.update(json.dumps(list(tensor.shape)).encode("utf-8") + b"\0")
-            digest.update(tensor.view(torch.uint8).numpy().tobytes())
+            digest.update(tensor.reshape(-1).view(torch.uint8).numpy().tobytes())
         elif isinstance(current, Mapping):
             digest.update(b"mapping\0")
             for key in sorted(current, key=lambda item: (type(item).__name__, repr(item))):
