@@ -947,7 +947,7 @@ class ProductionWindowAdapterTest(unittest.TestCase):
 
     def test_independent_verifier_schema_rejects_pooled_score_and_p6(self):
         base = {
-            "schema_version": "shared_window_first_queue_verifier_v1",
+            "schema_version": "shared_window_first_queue_verifier_v2",
             "pipeline_id": "P1",
             "verifier_identity": "new_independent_model_design_verifier",
             "verifier_code_commit": "pending",
@@ -961,11 +961,14 @@ class ProductionWindowAdapterTest(unittest.TestCase):
             "checkpoint_artifact_receipts": [],
             "window_contract_receipt": {},
             "encoder_adapter_receipt": {},
-            "runner_schema_version": "shared_window_training_v3",
+            "adapter_asset_manifest_receipt": {},
+            "embedding_cache_receipt": {},
+            "runner_schema_version": "shared_window_training_v5",
             "phase_gate_receipt": {},
             "optimizer_receipt": {},
             "resume_receipt": {},
             "terminal_binding_receipt": {},
+            "terminal_scorer_receipt": {},
             "seed": 20260728,
             "update_budget": 86250,
             "selection_receipt": {},

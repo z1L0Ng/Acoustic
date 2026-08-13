@@ -2,7 +2,7 @@
 
 Importing this module is inert.  ``preflight`` is inventory-only.  ``smoke`` and
 ``full`` require a matching immutable approval receipt; ``terminal-score`` also
-requires explicit outer/test authorization and an independently supplied scorer.
+requires explicit outer/test authorization and the production native-task scorer.
 Engineering smokes are never model-performance results.
 """
 
@@ -15,13 +15,18 @@ import math
 import random
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Callable, Mapping, Sequence
+from typing import Mapping, Sequence
 
 import torch
 from torch import nn
 from torch.nn import functional as F
 
 from .adapter_factory import AdapterFactoryConfig, audit_local_adapter_assets, build_production_adapter
+from .beats_temporal import (
+    HFTargetPolicy,
+    TokenAlignmentPolicy,
+    raw_intervals_to_token_supervision,
+)
 from .joint_native import JOINT_LANES, SEED, JointNativeProjector
 from .preflight import (
     FOUR_DATASET_SUBTRAIN_UNITS,
@@ -41,12 +46,25 @@ from .real_subtrain_provider import (
     build_frozen_provider_index,
     load_native_window_batch,
 )
-from .sliding_window import hf_window_supervision, masked_mean_window_embeddings
+from .runner_embedding_cache import (
+    CachedNativeBatch,
+    RunnerEmbeddingCacheSet,
+    build_or_load_runner_embedding_caches,
+)
+from .sliding_window import masked_mean_window_embeddings
+from .terminal_scoring import (
+    NATIVE_TASKS,
+    TERMINAL_SCORER_SCHEMA_VERSION,
+    ProductionTerminalScorer,
+    audit_terminal_provider_registration,
+    load_terminal_input_provider,
+)
 from .window_encoder import ProductionWindowEncoder
 
 
-RUNNER_SCHEMA_VERSION = "shared_window_training_v3"
+RUNNER_SCHEMA_VERSION = "shared_window_training_v5"
 VALIDATION_SELECTION_SCHEMA_VERSION = "validation_selection_v1"
+PHASE_EXECUTION_ROOT_SCHEMA_VERSION = "phase_execution_root_v1"
 OPTIMIZER_POLICY_STATUS = "proposed_benchmark_policy"
 OPTIMIZER_POLICY_REFERENCE = "baseline/shared_encoder_native_heads/protocol.json"
 OPTIMIZER_NAME = "Adam"
@@ -227,6 +245,223 @@ def _append_jsonl(path: Path, payload: Mapping[str, object]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(payload, sort_keys=True) + "\n")
+
+
+def _canonical_json(payload: Mapping[str, object]) -> str:
+    return json.dumps(payload, sort_keys=True, separators=(",", ":"))
+
+
+def derive_phase_execution_identity(
+    config: TrainingRunnerConfig,
+    approval: Mapping[str, object],
+    data_identity_sha256: str,
+) -> dict[str, object]:
+    """Bind mutable execution artifacts without changing the scientific config SHA."""
+
+    config.validate()
+    if config.phase not in {"smoke", "full"}:
+        raise ValueError("phase execution roots are defined only for smoke/full")
+    approval_sha256 = _require_sha256(
+        str(approval.get("approval_receipt_sha256", "")), "approval receipt"
+    )
+    data_identity_sha256 = _require_sha256(
+        data_identity_sha256, "execution data identity"
+    )
+    if (
+        approval.get("phase") != config.phase
+        or approval.get("pipeline_id") != config.pipeline_id
+        or approval.get("config_sha256") != config.sha256()
+        or approval.get("data_identity_sha256") != data_identity_sha256
+    ):
+        raise RuntimeError("phase execution identity does not match approval/config/data")
+    execution_root = (
+        config.run_root.resolve() / config.phase / approval_sha256
+    )
+    identity: dict[str, object] = {
+        "schema_version": PHASE_EXECUTION_ROOT_SCHEMA_VERSION,
+        "pipeline_id": config.pipeline_id,
+        "phase": config.phase,
+        "base_run_root": str(config.run_root.resolve()),
+        "execution_root": str(execution_root),
+        "config_sha256": config.sha256(),
+        "data_identity_sha256": data_identity_sha256,
+        "approval_receipt_sha256": approval_sha256,
+    }
+    identity["execution_root_identity_sha256"] = hashlib.sha256(
+        _canonical_json(identity).encode("utf-8")
+    ).hexdigest()
+    return identity
+
+
+def _read_json_mapping(path: Path, label: str) -> dict[str, object]:
+    if not path.is_file():
+        raise RuntimeError(f"{label} is missing: {path}")
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise RuntimeError(f"{label} must be a JSON object")
+    return payload
+
+
+def _require_exact_json_artifact(
+    path: Path, expected: Mapping[str, object], label: str
+) -> None:
+    actual = _read_json_mapping(path, label)
+    if _canonical_json(actual) != _canonical_json(expected):
+        raise RuntimeError(f"{label} identity mismatch")
+
+
+def _stable_cache_receipt(payload: Mapping[str, object]) -> dict[str, object]:
+    """Remove access-result fields while retaining cache identity/artifact binding."""
+
+    def visit(value: object) -> object:
+        if isinstance(value, Mapping):
+            return {
+                str(key): visit(item)
+                for key, item in value.items()
+                if key not in {"cache_status", "uncached_equivalence", "receipt_sha256"}
+            }
+        if isinstance(value, list):
+            return [visit(item) for item in value]
+        return value
+
+    result = visit(payload)
+    if not isinstance(result, dict):
+        raise TypeError("cache receipt must normalize to a mapping")
+    return result
+
+
+def _last_jsonl_update(path: Path, label: str) -> int:
+    if not path.is_file():
+        raise RuntimeError(f"resume {label} is missing")
+    rows = [line for line in path.read_text(encoding="utf-8").splitlines() if line]
+    if not rows:
+        raise RuntimeError(f"resume {label} is empty")
+    payload = json.loads(rows[-1])
+    update = payload.get("update") if isinstance(payload, Mapping) else None
+    if not isinstance(update, int):
+        raise RuntimeError(f"resume {label} has no integer update")
+    return update
+
+
+def prepare_phase_execution_root(
+    config: TrainingRunnerConfig,
+    approval: Mapping[str, object],
+    data_identity_sha256: str,
+    *,
+    resume: Path | None,
+    resume_sha256: str | None,
+) -> tuple[Path, dict[str, object]]:
+    """Fail closed before creating or reusing a phase-specific artifact tree."""
+
+    if (resume is None) != (resume_sha256 is None):
+        raise PermissionError("--resume and --resume-sha256 must be provided together")
+    identity = derive_phase_execution_identity(
+        config, approval, data_identity_sha256
+    )
+    execution_root = Path(str(identity["execution_root"]))
+    if resume is None:
+        if execution_root.exists() and any(execution_root.iterdir()):
+            raise FileExistsError(
+                f"fresh phase execution root already contains artifacts: {execution_root}"
+            )
+        return execution_root, identity
+
+    if config.phase != "full":
+        raise PermissionError("resume is permitted only for an approved full phase")
+    if not execution_root.is_dir():
+        raise RuntimeError("resume phase execution root is missing")
+    resume_path = resume.resolve()
+    if resume_path.parent != (execution_root / "checkpoints").resolve():
+        raise RuntimeError("resume checkpoint is outside the approved execution root")
+    if (execution_root / "run_receipt.json").exists() or (
+        execution_root / "validation_selection_receipt.json"
+    ).exists():
+        raise RuntimeError("completed phase execution root cannot be resumed")
+    _require_exact_json_artifact(
+        execution_root / "execution_identity.json", identity, "execution identity"
+    )
+    _require_exact_json_artifact(
+        execution_root / "config.json", config.normalized(), "execution config"
+    )
+    _require_exact_json_artifact(
+        execution_root / "approval_receipt.json", approval, "execution approval"
+    )
+    checkpoint_receipt = _read_json_mapping(
+        resume_path.with_suffix(".receipt.json"), "resume checkpoint receipt"
+    )
+    expected_resume_sha256 = _require_sha256(
+        str(resume_sha256), "resume checkpoint"
+    )
+    if not resume_path.is_file():
+        raise RuntimeError("resume checkpoint artifact is missing")
+    checkpoint_update = checkpoint_receipt.get("update")
+    if (
+        checkpoint_receipt.get("schema_version") != RUNNER_SCHEMA_VERSION
+        or checkpoint_receipt.get("path") != str(resume_path)
+        or checkpoint_receipt.get("sha256") != expected_resume_sha256
+        or checkpoint_receipt.get("size_bytes") != resume_path.stat().st_size
+        or checkpoint_receipt.get("config_sha256") != config.sha256()
+        or checkpoint_receipt.get("data_identity_sha256") != data_identity_sha256
+        or checkpoint_receipt.get("approval_receipt_sha256")
+        != approval["approval_receipt_sha256"]
+        or checkpoint_receipt.get("outer_test_accessed") is not False
+        or checkpoint_receipt.get("native_metrics_only") is not True
+        or not isinstance(checkpoint_update, int)
+        or not 0 < checkpoint_update <= config.update_budget
+        or checkpoint_update % config.validation_interval_updates
+        or sha256_path(resume_path) != expected_resume_sha256
+    ):
+        raise RuntimeError("resume checkpoint artifact/identity chain mismatch")
+    checkpoint_paths = sorted((execution_root / "checkpoints").glob("update_*.pt"))
+    if not checkpoint_paths or checkpoint_paths[-1].resolve() != resume_path:
+        raise RuntimeError("resume must use the latest checkpoint in its execution root")
+    if _last_jsonl_update(execution_root / "train_log.jsonl", "train log") != checkpoint_update:
+        raise RuntimeError("resume train log extends beyond or precedes checkpoint")
+    if _last_jsonl_update(
+        execution_root / "validation_log.jsonl", "validation log"
+    ) != checkpoint_update:
+        raise RuntimeError("resume validation log/checkpoint mismatch")
+    return execution_root, identity
+
+
+def initialize_or_validate_execution_contract(
+    execution_root: Path,
+    *,
+    identity: Mapping[str, object],
+    config: TrainingRunnerConfig,
+    approval: Mapping[str, object],
+    scope: Mapping[str, object],
+    optimizer_receipt: Mapping[str, object],
+    cache_receipt: Mapping[str, object],
+    resume: bool,
+) -> None:
+    artifacts = {
+        "execution_identity.json": identity,
+        "config.json": config.normalized(),
+        "approval_receipt.json": approval,
+        "trainable_scope_receipt.json": scope,
+        "optimizer_receipt.json": optimizer_receipt,
+        "embedding_cache_receipt.json": cache_receipt,
+    }
+    if not resume:
+        if execution_root.exists() and any(execution_root.iterdir()):
+            raise FileExistsError(
+                f"fresh phase execution root already contains artifacts: {execution_root}"
+            )
+        execution_root.mkdir(parents=True, exist_ok=True)
+        for name, payload in artifacts.items():
+            _write_json(execution_root / name, payload)
+        return
+    for name, expected in artifacts.items():
+        path = execution_root / name
+        if name == "embedding_cache_receipt.json":
+            actual = _read_json_mapping(path, "execution embedding cache receipt")
+            if _canonical_json(_stable_cache_receipt(actual)) != _canonical_json(
+                _stable_cache_receipt(expected)
+            ):
+                raise RuntimeError("execution embedding cache identity mismatch")
+        else:
+            _require_exact_json_artifact(path, expected, f"execution {name}")
 
 
 def load_and_validate_approval(
@@ -461,45 +696,96 @@ def native_batch_loss(
     """Compute one native-task loss; no optimizer step is performed here."""
 
     batch.validate()
-    windows = batch.windows.to(device)
-    output = adapter(windows)
-    if batch.lane == "HF":
-        logits = model(output.embeddings, "HF")["temporal4"]
-        supervision = hf_window_supervision(
-            windows, batch.hf_intervals, batch.hf_recording_states
+    output = adapter(batch.windows.to(device))
+    loss, receipt, _ = native_loss_from_shared_output(
+        model,
+        lane=batch.lane,
+        output=output,
+        targets=batch.targets,
+        hf_intervals=batch.hf_intervals,
+        hf_recording_states=batch.hf_recording_states,
+        device=device,
+    )
+    return loss, receipt
+
+
+def native_loss_from_shared_output(
+    model: JointNativeProjector,
+    *,
+    lane: str,
+    output: SharedWindowEncoderOutput,
+    targets: Mapping[str, torch.Tensor],
+    hf_intervals: Sequence[Sequence[object]] = (),
+    hf_recording_states: Sequence[object] = (),
+    device: torch.device,
+) -> tuple[torch.Tensor, dict[str, object], dict[str, torch.Tensor]]:
+    """Apply unchanged native heads/losses to uncached or cached encoder output."""
+
+    if output.embeddings.device != device or output.window_mask.device != device or output.time_map.device != device:
+        raise RuntimeError("shared-window output must already be on the requested device")
+    if lane == "HF":
+        logits = {"temporal4": model(output.embeddings, "HF")["temporal4"]}
+        supervision = raw_intervals_to_token_supervision(
+            output.time_map,
+            output.window_mask,
+            hf_intervals,
+            hf_recording_states,
+            policy=HFTargetPolicy.PAPER_NATIVE_RASTERIZED_OVR,
+            alignment=TokenAlignmentPolicy.TOKEN_CENTER_IN_INTERVAL,
         )
         loss, receipt = hf_masked_channel_balanced_bce(
-            logits,
-            supervision.targets.to(device),
-            supervision.observation_mask.to(device),
-            supervision.valid_mask.to(device),
+            logits["temporal4"],
+            supervision.targets,
+            supervision.observation_mask,
+            supervision.valid_mask,
         )
         return loss, {
             "lane": "HF",
             "native_task_losses": {"HF_temporal4": float(loss.detach())},
             "target_receipt": supervision.receipt,
             "loss_receipt": receipt,
-        }
+        }, logits
     pooled = masked_mean_window_embeddings(output.embeddings, output.window_mask)
-    logits = model(pooled, batch.lane)
-    targets = {key: value.to(device) for key, value in batch.targets.items()}
-    if batch.lane == "ICBHI":
-        loss = F.cross_entropy(logits["flat4"], targets["icbhi_flat4"])
+    device_targets = {key: value.to(device) for key, value in targets.items()}
+    logits = model(pooled, lane)
+    if lane == "ICBHI":
+        loss = F.cross_entropy(logits["flat4"], device_targets["icbhi_flat4"])
         losses = {"ICBHI_flat4": float(loss.detach())}
-    elif batch.lane == "SPRSound":
-        binary = F.cross_entropy(logits["binary"], targets["spr_binary"])
-        raw7 = F.cross_entropy(logits["raw7"], targets["spr_seven"])
+    elif lane == "SPRSound":
+        binary = F.cross_entropy(logits["binary"], device_targets["spr_binary"])
+        raw7 = F.cross_entropy(logits["raw7"], device_targets["spr_seven"])
         loss = (binary + raw7) / 2
         losses = {
             "SPRSound_binary": float(binary.detach()),
             "SPRSound_raw7": float(raw7.detach()),
         }
-    elif batch.lane == "KAUH":
-        loss = F.cross_entropy(logits["raw9"], targets["kauh_raw9"])
+    elif lane == "KAUH":
+        loss = F.cross_entropy(logits["raw9"], device_targets["kauh_raw9"])
         losses = {"KAUH_raw9": float(loss.detach())}
     else:
-        raise ValueError(f"unsupported lane: {batch.lane}")
-    return loss, {"lane": batch.lane, "native_task_losses": losses}
+        raise ValueError(f"unsupported lane: {lane}")
+    return loss, {"lane": lane, "native_task_losses": losses}, logits
+
+
+def cached_native_batch_loss(
+    model: JointNativeProjector,
+    batch: CachedNativeBatch,
+    *,
+    device: torch.device,
+) -> tuple[torch.Tensor, dict[str, object]]:
+    """Train only projector/native heads from verified frozen embeddings."""
+
+    batch.validate()
+    loss, receipt, _ = native_loss_from_shared_output(
+        model,
+        lane=batch.lane,
+        output=batch.output,
+        targets=batch.targets,
+        hf_intervals=batch.hf_intervals,
+        hf_recording_states=batch.hf_recording_states,
+        device=device,
+    )
+    return loss, {**receipt, "encoder_execution": "cache_hit_no_encoder_call"}
 
 
 def save_training_checkpoint(
@@ -826,6 +1112,18 @@ def preflight_receipt(config: TrainingRunnerConfig, repo_root: Path) -> dict[str
             key: value for key, value in index.receipt.items() if key != "sample_ids"
         },
         "adapter_assets": audit_local_adapter_assets(repo_root)[config.pipeline_id],
+        "embedding_cache_readiness": {
+            "schema_version": "shared_window_runner_cache_set_v1",
+            "policy": (
+                "full_requires_verified_subtrain_and_validation_all_four_lanes_before_update_1"
+                if config.pipeline_id in {"P1", "P2"}
+                else "P3_P4_cache_scope_not_enabled"
+            ),
+            "smoke_policy": "uncached_engineering_gate",
+            "cache_built_during_preflight": False,
+            "outer_test_cache_allowed": False,
+        },
+        "terminal_provider_readiness": audit_terminal_provider_registration(repo_root),
         "trainable_scope_declared": (
             "frozen candidate encoder; P3/P4 trainable dimension adapter; shared biased "
             "Linear(768,256); dataset-native heads"
@@ -844,6 +1142,7 @@ def _validation_native_losses(
     *,
     device: torch.device,
     batch_size: int,
+    cache_set: RunnerEmbeddingCacheSet | None = None,
 ) -> dict[str, float]:
     totals = {key: 0.0 for key in (
         "ICBHI_flat4", "SPRSound_binary", "SPRSound_raw7", "HF_temporal4", "KAUH_raw9"
@@ -855,9 +1154,17 @@ def _validation_native_losses(
         for lane in JOINT_LANES:
             rows = index.lanes[lane]
             for start in range(0, len(rows), batch_size):
-                batch = load_native_window_batch(rows[start : start + batch_size])
-                _, receipt = native_batch_loss(adapter, model, batch, device=device)
-                weight = len(batch.windows.sample_ids)
+                indices = tuple(range(start, min(start + batch_size, len(rows))))
+                if cache_set is None:
+                    batch = load_native_window_batch(rows[start : start + batch_size])
+                    _, receipt = native_batch_loss(adapter, model, batch, device=device)
+                    weight = len(batch.windows.sample_ids)
+                else:
+                    batch = cache_set.batch(
+                        "validation", lane, indices, device=device
+                    )
+                    _, receipt = cached_native_batch_loss(model, batch, device=device)
+                    weight = len(batch.output.sample_ids)
                 for task, value in receipt["native_task_losses"].items():
                     totals[task] += float(value) * weight
                     weights[task] += weight
@@ -904,14 +1211,70 @@ def run_approved_training(
         raise PermissionError("--resume and --resume-sha256 must be provided together")
     if resume is not None and config.phase != "full":
         raise PermissionError("resume is permitted only for an approved full phase")
+    execution_root, execution_identity = prepare_phase_execution_root(
+        config,
+        approval,
+        data_identity_sha256,
+        resume=resume,
+        resume_sha256=resume_sha256,
+    )
     adapter = build_production_adapter(adapter_config)
     model = assemble_trainable_modules(adapter, device=device)
     scope = trainable_scope_receipt(adapter, model)
+    cache_set: RunnerEmbeddingCacheSet | None = None
+    if config.phase == "full" and config.pipeline_id in {"P1", "P2"}:
+        cache_set = build_or_load_runner_embedding_caches(
+            repo_root=repo_root,
+            cache_root=(
+                repo_root
+                / ".cache"
+                / "multidataset_pipeline"
+                / "embeddings"
+                / config.pipeline_id
+            ),
+            pipeline_id=config.pipeline_id,
+            config_identity_sha256=config.sha256(),
+            adapter=adapter,
+            indexes={
+                "subtrain": train_index,
+                "validation": validation_index,
+            },
+            device=device,
+            batch_size=config.batch_size,
+        )
+        cache_set.validate_complete()
+    cache_execution_receipt: Mapping[str, object] = (
+        cache_set.receipt
+        if cache_set is not None
+        else {
+            "schema_version": "shared_window_runner_cache_policy_v1",
+            "pipeline_id": config.pipeline_id,
+            "phase": config.phase,
+            "policy": (
+                "uncached_engineering_smoke"
+                if config.phase == "smoke"
+                else "cache_not_yet_enabled_for_P3_P4_package"
+            ),
+            "encoder_may_run_per_batch": True,
+            "performance_result": False,
+            "outer_test_cached": False,
+        }
+    )
     optimizer, optimizer_receipt = build_optimizer(adapter, model)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
         optimizer, T_max=config.update_budget
     )
     planner = SourceProportionalBatchPlanner(FOUR_DATASET_SUBTRAIN_UNITS)
+    initialize_or_validate_execution_contract(
+        execution_root,
+        identity=execution_identity,
+        config=config,
+        approval=approval,
+        scope=scope,
+        optimizer_receipt=optimizer_receipt,
+        cache_receipt=cache_execution_receipt,
+        resume=resume is not None,
+    )
     start_update = 0
     validation_history: list[Mapping[str, object]] = []
     validation_checkpoint_receipts: list[Mapping[str, object]] = []
@@ -946,11 +1309,6 @@ def run_approved_training(
                 else item
                 for item in validation_history
             ]
-    config.run_root.mkdir(parents=True, exist_ok=True)
-    _write_json(config.run_root / "config.json", config.normalized())
-    _write_json(config.run_root / "approval_receipt.json", approval)
-    _write_json(config.run_root / "trainable_scope_receipt.json", scope)
-    _write_json(config.run_root / "optimizer_receipt.json", optimizer_receipt)
     maximum = 1 if config.phase == "smoke" else config.update_budget
     adapter.train()
     adapter.backend.eval()
@@ -958,16 +1316,28 @@ def run_approved_training(
     last_loss_receipt: Mapping[str, object] | None = None
     for update in range(start_update + 1, maximum + 1):
         lane, indices = planner.next()
-        batch = load_native_window_batch([train_index.lanes[lane][i] for i in indices])
         optimizer.zero_grad(set_to_none=True)
-        loss, last_loss_receipt = native_batch_loss(adapter, model, batch, device=device)
+        if cache_set is None:
+            batch = load_native_window_batch(
+                [train_index.lanes[lane][i] for i in indices]
+            )
+            loss, last_loss_receipt = native_batch_loss(
+                adapter, model, batch, device=device
+            )
+        else:
+            cached_batch = cache_set.batch(
+                "subtrain", lane, indices, device=device
+            )
+            loss, last_loss_receipt = cached_native_batch_loss(
+                model, cached_batch, device=device
+            )
         loss.backward()
         if any(parameter.grad is not None for parameter in adapter.backend.parameters()):
             raise RuntimeError("frozen encoder received a gradient")
         optimizer.step()
         scheduler.step()
         _append_jsonl(
-            config.run_root / "train_log.jsonl",
+            execution_root / "train_log.jsonl",
             {
                 "update": update,
                 "lane": lane,
@@ -979,7 +1349,12 @@ def run_approved_training(
         )
         if config.phase == "full" and update % config.validation_interval_updates == 0:
             native_losses = _validation_native_losses(
-                adapter, model, validation_index, device=device, batch_size=config.batch_size
+                adapter,
+                model,
+                validation_index,
+                device=device,
+                batch_size=config.batch_size,
+                cache_set=cache_set,
             )
             scalar, selection_receipt = source_proportional_validation_selection_loss(native_losses)
             validation_history.append({
@@ -989,10 +1364,10 @@ def run_approved_training(
                 "selection_receipt": selection_receipt,
             })
             _append_jsonl(
-                config.run_root / "validation_log.jsonl", validation_history[-1]
+                execution_root / "validation_log.jsonl", validation_history[-1]
             )
             checkpoint_receipt = save_training_checkpoint(
-                config.run_root / "checkpoints" / f"update_{update:06d}.pt",
+                execution_root / "checkpoints" / f"update_{update:06d}.pt",
                 config=config,
                 update=update,
                 adapter=adapter,
@@ -1013,7 +1388,7 @@ def run_approved_training(
     validation_selection_receipt = None
     if config.phase == "full":
         validation_selection_receipt = write_validation_selection_receipt(
-            config.run_root / "validation_selection_receipt.json",
+            execution_root / "validation_selection_receipt.json",
             config=config,
             data_identity_sha256=data_identity_sha256,
             full_approval_receipt_sha256=approval_receipt_sha256,
@@ -1027,10 +1402,17 @@ def run_approved_training(
         ),
         "pipeline_id": config.pipeline_id,
         "phase": config.phase,
+        "base_run_root": str(config.run_root.resolve()),
+        "execution_root": str(execution_root),
+        "execution_root_identity_sha256": execution_identity[
+            "execution_root_identity_sha256"
+        ],
+        "execution_identity": execution_identity,
         "approval": approval,
         "data_identity_sha256": data_identity_sha256,
         "scope": scope,
         "optimizer": optimizer_receipt,
+        "embedding_cache": cache_execution_receipt,
         "updates_completed": maximum,
         "last_native_loss_receipt": last_loss_receipt,
         "validation_history": validation_history,
@@ -1039,7 +1421,7 @@ def run_approved_training(
         "cross_dataset_pooled_performance": False,
         "outer_test_accessed": False,
     }
-    _write_json(config.run_root / "run_receipt.json", final_receipt)
+    _write_json(execution_root / "run_receipt.json", final_receipt)
     return final_receipt
 
 
@@ -1049,9 +1431,9 @@ def terminal_score_gate(
     selection_receipt_path: Path,
     expected_selection_receipt_sha256: str,
     selected_checkpoint: Path,
-    scorer: Callable[[Path], Mapping[str, object]] | None = None,
+    scorer: ProductionTerminalScorer | None = None,
 ) -> Mapping[str, object]:
-    """Keep terminal scoring isolated until an independently verified scorer is supplied."""
+    """Keep terminal scoring isolated behind the immutable production-scorer chain."""
 
     if config.phase != "terminal-score":
         raise ValueError("terminal_score_gate requires terminal-score phase")
@@ -1164,6 +1546,33 @@ def terminal_score_gate(
         raise PermissionError(
             "terminal approval is not bound to the exact validation selection receipt"
         )
+    if not isinstance(scorer, ProductionTerminalScorer):
+        raise RuntimeError("terminal-score requires the production native-task scorer")
+    provider_registration = audit_terminal_provider_registration(
+        config.dataset_root.resolve().parents[1]
+    )
+    if provider_registration.get("terminal_score_ready") is not True:
+        raise RuntimeError(
+            "terminal-score HOLD: no verified production provider registration"
+        )
+    if (
+        provider_registration.get("provider_specification")
+        != scorer.provider_specification
+        or provider_registration.get("provider_identity_sha256")
+        != scorer.expected_provider_identity_sha256
+    ):
+        raise PermissionError(
+            "terminal scorer does not match registered provider implementation identity"
+        )
+    if (
+        terminal_approval.get("terminal_scorer_schema_version")
+        != TERMINAL_SCORER_SCHEMA_VERSION
+        or terminal_approval.get("terminal_provider_identity_sha256")
+        != scorer.expected_provider_identity_sha256
+    ):
+        raise PermissionError(
+            "terminal approval is not bound to the production scorer/provider identity"
+        )
 
     payload = torch.load(selected_checkpoint, map_location="cpu", weights_only=False)
     update = payload.get("update")
@@ -1200,15 +1609,41 @@ def terminal_score_gate(
         or selected.get("component_state_sha256") != actual_components
     ):
         raise RuntimeError("selected checkpoint component state identity failed")
-    if scorer is None:
-        raise RuntimeError(
-            "terminal scorer HOLD: supply an independently verified per-native-task scorer; "
-            "this runner will not infer or pool outer/test metrics"
-        )
     receipt = dict(scorer(selected_checkpoint))
-    forbidden = {"pooled_score", "cross_dataset_score", "global_score"}
-    if forbidden & set(receipt):
-        raise RuntimeError("terminal scorer returned a forbidden pooled score")
+    required_scorer_fields = {
+        "schema_version",
+        "status",
+        "data_identity_sha256",
+        "provider_identity_sha256",
+        "selected_checkpoint_path",
+        "selected_checkpoint_sha256",
+        "outer_test_accessed",
+        "terminal_targets_loaded",
+        "native_task_names",
+        "native_tasks",
+        "cross_dataset_pooling",
+    }
+    if set(receipt) != required_scorer_fields:
+        raise RuntimeError("terminal scorer result schema changed or contains extra fields")
+    if (
+        receipt["schema_version"] != TERMINAL_SCORER_SCHEMA_VERSION
+        or receipt["status"] != "terminal_native_tasks_scored"
+        or receipt["data_identity_sha256"] != data_identity_sha256
+        or _require_sha256(
+            str(receipt["provider_identity_sha256"]), "terminal provider identity"
+        )
+        != receipt["provider_identity_sha256"]
+        or Path(str(receipt["selected_checkpoint_path"])).resolve()
+        != selected_checkpoint.resolve()
+        or receipt["selected_checkpoint_sha256"] != selected_sha256
+        or receipt["outer_test_accessed"] is not True
+        or receipt["terminal_targets_loaded"] is not True
+        or receipt["native_task_names"] != list(NATIVE_TASKS)
+        or not isinstance(receipt["native_tasks"], Mapping)
+        or set(receipt["native_tasks"]) != set(NATIVE_TASKS)
+        or receipt["cross_dataset_pooling"] is not False
+    ):
+        raise RuntimeError("terminal scorer identity/task/isolation contract failed")
     return {
         "status": "terminal_native_task_scoring_complete",
         "selection_receipt_artifact": selection_artifact,
@@ -1216,6 +1651,7 @@ def terminal_score_gate(
         "terminal_approval_receipt_sha256": terminal_approval[
             "approval_receipt_sha256"
         ],
+        "terminal_provider_registration": provider_registration,
         "native_metrics_by_dataset_task": receipt,
         "cross_dataset_pooled_performance": False,
     }
@@ -1234,6 +1670,10 @@ def main() -> None:
     parser.add_argument("--source-revision")
     parser.add_argument("--checkpoint", type=Path)
     parser.add_argument("--checkpoint-sha256")
+    parser.add_argument("--selection-receipt", type=Path)
+    parser.add_argument("--selection-sha256")
+    parser.add_argument("--terminal-provider")
+    parser.add_argument("--terminal-provider-sha256")
     args = parser.parse_args()
     config = TrainingRunnerConfig.frozen(args.pipeline, args.repo_root, phase=args.phase)
     if args.phase == "preflight":
@@ -1262,9 +1702,33 @@ def main() -> None:
             ),
         )
     else:
-        raise RuntimeError(
-            "terminal-score is not exposed through the generic CLI; invoke terminal_score_gate "
-            "with an independently verified scorer after explicit terminal approval"
+        required = {
+            "approval receipt": args.approval_receipt,
+            "selection receipt": args.selection_receipt,
+            "selection SHA256": args.selection_sha256,
+            "selected checkpoint": args.checkpoint,
+            "selected checkpoint SHA256": args.checkpoint_sha256,
+            "terminal provider": args.terminal_provider,
+            "terminal provider SHA256": args.terminal_provider_sha256,
+        }
+        missing = [name for name, value in required.items() if value is None]
+        if missing:
+            raise PermissionError(f"terminal-score missing explicit inputs: {missing}")
+        if sha256_path(args.checkpoint) != _require_sha256(
+            args.checkpoint_sha256, "CLI selected checkpoint"
+        ):
+            raise RuntimeError("CLI selected checkpoint SHA256 mismatch")
+        receipt = terminal_score_gate(
+            config,
+            args.approval_receipt,
+            args.selection_receipt,
+            args.selection_sha256,
+            args.checkpoint,
+            scorer=ProductionTerminalScorer(
+                load_terminal_input_provider(args.terminal_provider),
+                expected_provider_identity_sha256=args.terminal_provider_sha256,
+                provider_specification=args.terminal_provider,
+            ),
         )
     print(json.dumps(receipt, indent=2, sort_keys=True))
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import copy
+import hashlib
 import shutil
 import unittest
 from pathlib import Path
@@ -26,15 +27,28 @@ from baseline.multidataset_pipeline.preflight import (
     P1_P5_UPDATE_BUDGET,
     P1_P5_VALIDATION_INTERVAL_UPDATES,
     SharedWindowEncoderOutput,
+    source_proportional_validation_selection_loss,
 )
 from baseline.multidataset_pipeline.real_subtrain_provider import (
     FrozenNativeUnit,
+    FrozenProviderIndex,
     NativeWindowBatch,
     PROVIDER_SCHEMA_VERSION,
     build_frozen_provider_index,
     canonical_json_sha256,
 )
+from baseline.multidataset_pipeline.runner_embedding_cache import (
+    RunnerEmbeddingCacheSet,
+    build_or_load_runner_embedding_caches,
+)
 from baseline.multidataset_pipeline.sliding_window import collate_sliding_windows
+from baseline.multidataset_pipeline.terminal_scoring import (
+    HFTemporalTerminalBatch,
+    MulticlassTerminalBatch,
+    ProductionTerminalScorer,
+    TerminalScoringInput,
+    terminal_provider_identity_sha256,
+)
 from baseline.multidataset_pipeline.train_shared_window import (
     LEARNING_RATE,
     RUNNER_SCHEMA_VERSION,
@@ -44,9 +58,14 @@ from baseline.multidataset_pipeline.train_shared_window import (
     TrainingRunnerConfig,
     assemble_trainable_modules,
     build_optimizer,
+    cached_native_batch_loss,
+    derive_phase_execution_identity,
+    initialize_or_validate_execution_contract,
     load_and_validate_approval,
     load_training_checkpoint,
     native_batch_loss,
+    native_loss_from_shared_output,
+    prepare_phase_execution_root,
     save_training_checkpoint,
     sha256_path,
     terminal_score_gate,
@@ -328,8 +347,10 @@ class _FakeAdapter(nn.Module):
         self.backend = _FakeBackend()
         self.dimension_adapter = CandidateDimensionAdapter(identity)
         self.register_buffer("nonpersistent_probe", torch.tensor([7.0]), persistent=False)
+        self.forward_calls = 0
 
     def forward(self, batch):
+        self.forward_calls += 1
         values = batch.waveform_windows.mean(dim=-1, keepdim=True).expand(-1, -1, 768)
         values = self.dimension_adapter(values)
         values = torch.where(batch.window_mask.unsqueeze(-1), values, torch.zeros_like(values))
@@ -342,6 +363,120 @@ class _FakeAdapter(nn.Module):
             dataset_ids=batch.dataset_ids,
             prediction_units=batch.prediction_units,
         )
+
+    def receipt(self):
+        return {
+            "provenance": {
+                "encoder_identity": self.encoder_identity,
+                "source_url": "fixture",
+                "source_revision": "fixture",
+                "source_license": "fixture",
+                "checkpoint_name": "fixture",
+                "checkpoint_source": "fixture",
+                "checkpoint_sha256": "a" * 64,
+                "checkpoint_size_bytes": 1,
+                "asset_status": "fixture",
+                "license_boundary": "fixture",
+            },
+            "dimension_adapter": self.dimension_adapter.receipt(),
+        }
+
+
+FIXTURE_PROVIDER_SPECIFICATION = "fixture.module:provider"
+FIXTURE_PROVIDER_SOURCE = "def provider(path):\n    raise RuntimeError('not executed')\n"
+FIXTURE_PROVIDER_IMPLEMENTATION_SHA256 = hashlib.sha256(
+    FIXTURE_PROVIDER_SOURCE.encode("utf-8")
+).hexdigest()
+FIXTURE_PROVIDER_IDENTITY_SHA256 = terminal_provider_identity_sha256(
+    FIXTURE_PROVIDER_SPECIFICATION, FIXTURE_PROVIDER_IMPLEMENTATION_SHA256
+)
+
+
+def _terminal_scorer(data_identity_sha256: str) -> ProductionTerminalScorer:
+    ids = {
+        "ICBHI_flat4": ("icbhi-0", "icbhi-1"),
+        "SPRSound_binary": ("spr-0", "spr-1"),
+        "SPRSound_raw7": ("spr-0", "spr-1"),
+        "HF_temporal4": ("hf-0", "hf-1"),
+        "KAUH_raw9": ("kauh-0", "kauh-1"),
+    }
+    multiclass = tuple(
+        MulticlassTerminalBatch(
+            task=task,
+            prediction_ids=ids[task],
+            targets=torch.tensor([0, 1]),
+            predicted_classes=torch.tensor([0, 1]),
+        )
+        for task in (
+            "ICBHI_flat4",
+            "SPRSound_binary",
+            "SPRSound_raw7",
+            "KAUH_raw9",
+        )
+    )
+    hf_targets = torch.tensor(
+        [
+            [[1.0, 0.0, 1.0, 0.0], [0.0, 1.0, 0.0, 1.0]],
+            [[0.0, 1.0, 0.0, 1.0], [1.0, 0.0, 1.0, 0.0]],
+        ]
+    )
+    hf = HFTemporalTerminalBatch(
+        prediction_ids=ids["HF_temporal4"],
+        probabilities=hf_targets * 0.8 + (1 - hf_targets) * 0.2,
+        targets=hf_targets,
+        window_mask=torch.ones(2, 2, dtype=torch.bool),
+        annotation_mask=torch.ones(2, 2, 4, dtype=torch.bool),
+        valid_mask=torch.ones(2, 2, 4, dtype=torch.bool),
+        time_map=torch.tensor(
+            [[[0.0, 2.0], [1.0, 3.0]], [[0.0, 2.0], [1.0, 3.0]]],
+            dtype=torch.float64,
+        ),
+        thresholds=torch.full((4,), 0.5),
+        threshold_receipt_sha256="7" * 64,
+    )
+
+    def provider(_checkpoint: Path) -> TerminalScoringInput:
+        return TerminalScoringInput(
+            batches=(*multiclass, hf),
+            expected_prediction_ids_by_task=ids,
+            data_identity_sha256=data_identity_sha256,
+            provider_identity_sha256=FIXTURE_PROVIDER_IDENTITY_SHA256,
+        )
+
+    return ProductionTerminalScorer(
+        provider,
+        expected_provider_identity_sha256=FIXTURE_PROVIDER_IDENTITY_SHA256,
+        provider_specification=FIXTURE_PROVIDER_SPECIFICATION,
+    )
+
+
+def _register_terminal_provider(root: Path) -> None:
+    implementation = root / "fixture_provider.py"
+    implementation.write_text(FIXTURE_PROVIDER_SOURCE)
+    manifest = root / "baseline/multidataset_pipeline/terminal_provider_manifest.json"
+    manifest.parent.mkdir(parents=True)
+    manifest.write_text(
+        json.dumps(
+            {
+                "schema_version": "terminal_provider_registration_v1",
+                "status": "registered",
+                "provider_specification": FIXTURE_PROVIDER_SPECIFICATION,
+                "provider_identity_sha256": FIXTURE_PROVIDER_IDENTITY_SHA256,
+                "implementation_path": "fixture_provider.py",
+                "implementation_sha256": FIXTURE_PROVIDER_IMPLEMENTATION_SHA256,
+                "scorer_schema_version": "shared_window_terminal_scorer_v1",
+                "native_tasks": [
+                    "ICBHI_flat4",
+                    "SPRSound_binary",
+                    "SPRSound_raw7",
+                    "HF_temporal4",
+                    "KAUH_raw9",
+                ],
+                "outer_test_access_policy": "terminal_score_only_after_exact_selection_checkpoint_and_approval",
+            }
+        ),
+        encoding="utf-8",
+    )
 
 
 def _native_batch(lane: str) -> NativeWindowBatch:
@@ -364,7 +499,208 @@ def _native_batch(lane: str) -> NativeWindowBatch:
     )
 
 
+def _cache_fixture_index(partition: str) -> FrozenProviderIndex:
+    datasets = {
+        "ICBHI": "icbhi",
+        "SPRSound": "sprsound",
+        "HF": "hf_lung",
+        "KAUH": "kauh",
+    }
+    target_values = {
+        "ICBHI": {"icbhi_flat4": 1},
+        "SPRSound": {"spr_binary": 1, "spr_seven": 2},
+        "HF": {},
+        "KAUH": {"kauh_raw9": 3},
+    }
+    lanes = {}
+    for lane, dataset in datasets.items():
+        sample_id = f"{lane.lower()}:{partition}:one"
+        group_id = (
+            "date_proxy:2020-01-01"
+            if lane == "HF"
+            else f"group:{lane}:{partition}"
+        )
+        sample = _sample(
+            sample_id,
+            dataset,
+            partition,
+            group_id,
+            Path("fixture") / f"{sample_id}.wav",
+            target_values[lane],
+        )
+        record = None
+        if lane == "HF":
+            record = HFSampleRecord(
+                sample_id=sample_id,
+                source_split="train",
+                partition=partition,
+                date_proxy="2020-01-01",
+                group_id=group_id,
+                wav_relative_path=f"train/{sample_id}.wav",
+                label_relative_path=f"train/{sample_id}_label.txt",
+                raw_intervals=(HFRawInterval("I", 0.0, 1.1),),
+                recording_state=ObservationState.OBSERVED,
+            )
+        lanes[lane] = (FrozenNativeUnit(lane, sample, record),)
+    manifest_ids = {lane: canonical_json_sha256({"lane": lane}) for lane in lanes}
+    data_identity = {
+        "manifest_ordered_id_sha256_by_dataset": manifest_ids,
+        "fixture_partition": partition,
+    }
+    return FrozenProviderIndex(
+        partition=partition,
+        lanes=lanes,
+        receipt={
+            "partition": partition,
+            "canonical_receipt": {"fixture": True, "partition": partition},
+            "data_identity": data_identity,
+            "data_identity_sha256": canonical_json_sha256(data_identity),
+            "outer_test_accessed": False,
+        },
+    )
+
+
+def _cache_fixture_batch_loader(units) -> NativeWindowBatch:
+    lane = units[0].lane
+    samples = []
+    for unit in units:
+        sample_count = 240_000 if lane == "HF" else 48_000
+        samples.append(
+            WaveformSample(
+                waveform=torch.linspace(-0.5, 0.5, sample_count),
+                sample_id=unit.sample.sample_id,
+                dataset_id=lane,
+                prediction_unit=PREDICTION_UNITS[lane],
+                source_start_s=0.0,
+                source_end_s=sample_count / 16_000,
+                lineage={
+                    "partition": unit.sample.partition,
+                    "outer_test_accessed": "false",
+                    "group_id": unit.sample.group_id,
+                    "source_id": unit.sample.sample_id,
+                },
+            )
+        )
+    targets = {
+        key: torch.tensor([int(unit.sample.targets[key]) for unit in units])
+        for key in {
+            "ICBHI": ("icbhi_flat4",),
+            "SPRSound": ("spr_binary", "spr_seven"),
+            "HF": (),
+            "KAUH": ("kauh_raw9",),
+        }[lane]
+    }
+    return NativeWindowBatch(
+        lane=lane,
+        windows=collate_sliding_windows(samples),
+        targets=targets,
+        hf_intervals=tuple(
+            unit.hf_record.raw_intervals for unit in units if unit.hf_record
+        ),
+        hf_recording_states=tuple(
+            unit.hf_record.recording_state for unit in units if unit.hf_record
+        ),
+    )
 class TrainingAssemblyTest(unittest.TestCase):
+    def test_runner_cache_complete_hit_and_cached_uncached_numeric_equivalence(self):
+        repo_root = Path(__file__).resolve().parents[1]
+        indexes = {
+            partition: _cache_fixture_index(partition)
+            for partition in ("subtrain", "validation")
+        }
+        adapter = _FakeAdapter("AST").eval()
+        with TemporaryDirectory() as directory:
+            cache_root = Path(directory) / "runner-cache"
+            cache_set = build_or_load_runner_embedding_caches(
+                repo_root=repo_root,
+                cache_root=cache_root,
+                pipeline_id="P1",
+                config_identity_sha256="b" * 64,
+                adapter=adapter,
+                indexes=indexes,
+                device=torch.device("cpu"),
+                batch_size=2,
+                batch_loader=_cache_fixture_batch_loader,
+            )
+            cache_set.validate_complete()
+            self.assertEqual(len(cache_set.entries), 8)
+            self.assertEqual(adapter.forward_calls, 8)
+            first_calls = adapter.forward_calls
+            hit_set = build_or_load_runner_embedding_caches(
+                repo_root=repo_root,
+                cache_root=cache_root,
+                pipeline_id="P1",
+                config_identity_sha256="b" * 64,
+                adapter=adapter,
+                indexes=indexes,
+                device=torch.device("cpu"),
+                batch_size=2,
+                batch_loader=_cache_fixture_batch_loader,
+            )
+            self.assertEqual(adapter.forward_calls, first_calls)
+            self.assertTrue(
+                all(
+                    entry.receipt["cache_status"] == "hit_verified_existing"
+                    for entry in hit_set.entries.values()
+                )
+            )
+            model = JointNativeProjector()
+            uncached_losses = {}
+            cached_losses = {}
+            for lane in ("ICBHI", "SPRSound", "HF", "KAUH"):
+                native = _cache_fixture_batch_loader(indexes["validation"].lanes[lane])
+                uncached_output = adapter(native.windows)
+                uncached_loss, uncached_receipt, uncached_logits = native_loss_from_shared_output(
+                    model,
+                    lane=lane,
+                    output=uncached_output,
+                    targets=native.targets,
+                    hf_intervals=native.hf_intervals,
+                    hf_recording_states=native.hf_recording_states,
+                    device=torch.device("cpu"),
+                )
+                cached = hit_set.batch("validation", lane, (0,), device=torch.device("cpu"))
+                runner_cached_loss, runner_cached_receipt = cached_native_batch_loss(
+                    model, cached, device=torch.device("cpu")
+                )
+                cached_loss, cached_receipt, cached_logits = native_loss_from_shared_output(
+                    model,
+                    lane=lane,
+                    output=cached.output,
+                    targets=cached.targets,
+                    hf_intervals=cached.hf_intervals,
+                    hf_recording_states=cached.hf_recording_states,
+                    device=torch.device("cpu"),
+                )
+                torch.testing.assert_close(cached_loss, uncached_loss, rtol=0, atol=0)
+                torch.testing.assert_close(
+                    runner_cached_loss, uncached_loss, rtol=0, atol=0
+                )
+                self.assertEqual(
+                    runner_cached_receipt["encoder_execution"],
+                    "cache_hit_no_encoder_call",
+                )
+                self.assertEqual(set(cached_logits), set(uncached_logits))
+                for task in cached_logits:
+                    torch.testing.assert_close(
+                        cached_logits[task], uncached_logits[task], rtol=0, atol=0
+                    )
+                uncached_losses.update(uncached_receipt["native_task_losses"])
+                cached_losses.update(cached_receipt["native_task_losses"])
+            uncached_selection = source_proportional_validation_selection_loss(
+                uncached_losses
+            )
+            cached_selection = source_proportional_validation_selection_loss(
+                cached_losses
+            )
+            self.assertEqual(cached_selection, uncached_selection)
+            incomplete = dict(cache_set.entries)
+            incomplete.pop(("validation", "HF"))
+            with self.assertRaisesRegex(RuntimeError, "all eight"):
+                RunnerEmbeddingCacheSet(
+                    "P1", incomplete, cache_set.receipt
+                ).validate_complete()
+
     def test_l40_snapshot_includes_nonpersistent_buffers(self):
         adapter = _FakeAdapter("AST")
         model = JointNativeProjector()
@@ -410,6 +746,155 @@ class TrainingAssemblyTest(unittest.TestCase):
             restored.load_state_dict(state)
             self.assertEqual(restored.next(), expected)
 
+    def test_phase_execution_roots_are_isolated_fresh_and_resume_bound(self):
+        with TemporaryDirectory() as directory:
+            repo_root = Path(directory)
+            data_identity = "d" * 64
+            scope = {"scope": "fixture"}
+            optimizer_receipt = {"optimizer": "fixture"}
+            smoke_cache = {
+                "policy": "uncached_engineering_smoke",
+                "outer_test_cached": False,
+            }
+            full_cache = {
+                "cache_status": "miss_computed_and_written",
+                "receipt_sha256": "1" * 64,
+                "identity": "cache-fixture",
+                "outer_test_cached": False,
+            }
+
+            def approval(config: TrainingRunnerConfig, digest: str) -> dict[str, object]:
+                return {
+                    "status": "approved",
+                    "pipeline_id": config.pipeline_id,
+                    "phase": config.phase,
+                    "config_sha256": config.sha256(),
+                    "data_identity_sha256": data_identity,
+                    "authorized_by": "management-fixture",
+                    "outer_test_authorized": False,
+                    "approval_receipt_sha256": digest,
+                }
+
+            smoke = TrainingRunnerConfig.frozen("P1", repo_root, phase="smoke")
+            full = TrainingRunnerConfig.frozen("P1", repo_root, phase="full")
+            self.assertEqual(smoke.sha256(), full.sha256())
+            smoke_approval = approval(smoke, "a" * 64)
+            full_approval = approval(full, "b" * 64)
+            smoke_root, smoke_identity = prepare_phase_execution_root(
+                smoke,
+                smoke_approval,
+                data_identity,
+                resume=None,
+                resume_sha256=None,
+            )
+            full_root, full_identity = prepare_phase_execution_root(
+                full,
+                full_approval,
+                data_identity,
+                resume=None,
+                resume_sha256=None,
+            )
+            self.assertNotEqual(smoke_root, full_root)
+            self.assertEqual(smoke_root.parent.name, "smoke")
+            self.assertEqual(full_root.parent.name, "full")
+            initialize_or_validate_execution_contract(
+                smoke_root,
+                identity=smoke_identity,
+                config=smoke,
+                approval=smoke_approval,
+                scope=scope,
+                optimizer_receipt=optimizer_receipt,
+                cache_receipt=smoke_cache,
+                resume=False,
+            )
+            initialize_or_validate_execution_contract(
+                full_root,
+                identity=full_identity,
+                config=full,
+                approval=full_approval,
+                scope=scope,
+                optimizer_receipt=optimizer_receipt,
+                cache_receipt=full_cache,
+                resume=False,
+            )
+            (smoke_root / "train_log.jsonl").write_text(
+                json.dumps({"update": 1, "phase": "smoke"}) + "\n",
+                encoding="utf-8",
+            )
+            full_log = json.dumps({"update": 1_725, "phase": "full"}) + "\n"
+            (full_root / "train_log.jsonl").write_text(full_log, encoding="utf-8")
+            (full_root / "validation_log.jsonl").write_text(
+                full_log, encoding="utf-8"
+            )
+            self.assertNotIn("smoke", (full_root / "train_log.jsonl").read_text())
+            self.assertNotIn("full", (smoke_root / "train_log.jsonl").read_text())
+            with self.assertRaisesRegex(FileExistsError, "already contains artifacts"):
+                prepare_phase_execution_root(
+                    full,
+                    full_approval,
+                    data_identity,
+                    resume=None,
+                    resume_sha256=None,
+                )
+
+            checkpoint = full_root / "checkpoints" / "update_001725.pt"
+            checkpoint.parent.mkdir()
+            checkpoint.write_bytes(b"synthetic-checkpoint-artifact")
+            checkpoint_sha = sha256_path(checkpoint)
+            checkpoint_receipt = {
+                "schema_version": RUNNER_SCHEMA_VERSION,
+                "path": str(checkpoint.resolve()),
+                "size_bytes": checkpoint.stat().st_size,
+                "sha256": checkpoint_sha,
+                "update": 1_725,
+                "selection_scalar": 0.5,
+                "config_sha256": full.sha256(),
+                "data_identity_sha256": data_identity,
+                "approval_receipt_sha256": full_approval["approval_receipt_sha256"],
+                "component_state_sha256": {},
+                "outer_test_accessed": False,
+                "native_metrics_only": True,
+            }
+            checkpoint.with_suffix(".receipt.json").write_text(
+                json.dumps(checkpoint_receipt), encoding="utf-8"
+            )
+            resumed_root, resumed_identity = prepare_phase_execution_root(
+                full,
+                full_approval,
+                data_identity,
+                resume=checkpoint,
+                resume_sha256=checkpoint_sha,
+            )
+            self.assertEqual(resumed_root, full_root)
+            self.assertEqual(resumed_identity, full_identity)
+            initialize_or_validate_execution_contract(
+                resumed_root,
+                identity=resumed_identity,
+                config=full,
+                approval=full_approval,
+                scope=scope,
+                optimizer_receipt=optimizer_receipt,
+                cache_receipt={
+                    **full_cache,
+                    "cache_status": "hit_verified_existing",
+                    "receipt_sha256": "2" * 64,
+                },
+                resume=True,
+            )
+            wrong_approval = approval(full, "c" * 64)
+            with self.assertRaisesRegex(RuntimeError, "execution root is missing"):
+                prepare_phase_execution_root(
+                    full,
+                    wrong_approval,
+                    data_identity,
+                    resume=checkpoint,
+                    resume_sha256=checkpoint_sha,
+                )
+            self.assertEqual(
+                derive_phase_execution_identity(full, full_approval, data_identity),
+                full_identity,
+            )
+
     def test_engineering_one_step_native_and_hf_masks(self):
         torch.manual_seed(20260728)
         adapter = _FakeAdapter()
@@ -437,6 +922,7 @@ class TrainingAssemblyTest(unittest.TestCase):
     def test_approval_and_terminal_selection_binding(self):
         with TemporaryDirectory() as directory:
             root = Path(directory)
+            _register_terminal_provider(root)
             smoke = TrainingRunnerConfig.frozen("P2", root, phase="smoke")
             approval = root / "approval.json"
             approval.write_text(json.dumps({
@@ -520,6 +1006,8 @@ class TrainingAssemblyTest(unittest.TestCase):
                 "config_sha256": terminal.sha256(),
                 "data_identity_sha256": "c" * 64,
                 "selection_receipt_sha256": selection["selection_receipt_artifact"]["sha256"],
+                "terminal_scorer_schema_version": "shared_window_terminal_scorer_v1",
+                "terminal_provider_identity_sha256": FIXTURE_PROVIDER_IDENTITY_SHA256,
                 "authorized_by": "management-fixture",
                 "outer_test_authorized": True,
             }), encoding="utf-8")
@@ -529,10 +1017,33 @@ class TrainingAssemblyTest(unittest.TestCase):
                 selection_path,
                 selection["selection_receipt_artifact"]["sha256"],
                 Path(second["path"]),
-                scorer=lambda _: {"HF": {"I": {"accuracy": 0.5}}},
+                scorer=_terminal_scorer("c" * 64),
             )
             self.assertFalse(result["cross_dataset_pooled_performance"])
-            with self.assertRaisesRegex(RuntimeError, "terminal scorer HOLD"):
+            approved_terminal = json.loads(approval.read_text())
+            wrong_provider = dict(approved_terminal)
+            wrong_provider["terminal_provider_identity_sha256"] = "9" * 64
+            approval.write_text(json.dumps(wrong_provider), encoding="utf-8")
+            with self.assertRaisesRegex(PermissionError, "scorer/provider identity"):
+                terminal_score_gate(
+                    terminal,
+                    approval,
+                    selection_path,
+                    selection["selection_receipt_artifact"]["sha256"],
+                    Path(second["path"]),
+                    scorer=_terminal_scorer("c" * 64),
+                )
+            approval.write_text(json.dumps(approved_terminal), encoding="utf-8")
+            with self.assertRaisesRegex(RuntimeError, "identity/task/isolation"):
+                terminal_score_gate(
+                    terminal,
+                    approval,
+                    selection_path,
+                    selection["selection_receipt_artifact"]["sha256"],
+                    Path(second["path"]),
+                    scorer=_terminal_scorer("d" * 64),
+                )
+            with self.assertRaisesRegex(RuntimeError, "production native-task scorer"):
                 terminal_score_gate(
                     terminal,
                     approval,
@@ -540,14 +1051,17 @@ class TrainingAssemblyTest(unittest.TestCase):
                     selection["selection_receipt_artifact"]["sha256"],
                     Path(second["path"]),
                 )
-            with self.assertRaisesRegex(RuntimeError, "forbidden pooled"):
+            with self.assertRaisesRegex(RuntimeError, "production native-task scorer"):
                 terminal_score_gate(
                     terminal,
                     approval,
                     selection_path,
                     selection["selection_receipt_artifact"]["sha256"],
                     Path(second["path"]),
-                    scorer=lambda _: {"pooled_score": 0.5},
+                    scorer=lambda path: {
+                        **_terminal_scorer("c" * 64)(path),
+                        "pooled_score": 0.5,
+                    },
                 )
             with self.assertRaisesRegex(RuntimeError, "not the exact"):
                 terminal_score_gate(

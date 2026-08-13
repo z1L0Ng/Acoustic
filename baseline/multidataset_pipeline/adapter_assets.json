@@ -1,0 +1,31 @@
+{
+  "schema_version": "multidataset_adapter_assets_v1",
+  "assets": {
+    "P1": {
+      "encoder_identity": "AST",
+      "code_source_url": "https://github.com/raymin0223/patch-mix_contrastive_learning",
+      "source_revision": "836b09fea1b70eb29fe0b25afa481286b56f5104",
+      "source_license": "MIT",
+      "checkpoint_source": "MIT/ast-finetuned-audioset-10-10-0.4593@f826b80d28226b62986cc218e5cec390b1096902",
+      "checkpoint_sha256": "bc9fe72b1a38b7071db8b606c63f8f2e41bf2cccaf3e80fc0ba5c33094877cb1",
+      "checkpoint_size_bytes": 346425476,
+      "checkpoint_license": "upstream model terms require review before redistribution",
+      "canonical_source_path": ".cache/icbhi_sprsound_shared_encoder_native_heads/source/repo",
+      "canonical_checkpoint_path": ".cache/icbhi_sprsound_shared_encoder_native_heads/checkpoints/hf_ast_legacy_compat.pth",
+      "server_provision_expectation": "provision exact clean source revision and exact checkpoint bytes at canonical paths before CUDA preflight; never download in runner"
+    },
+    "P2": {
+      "encoder_identity": "BEATs",
+      "code_source_url": "https://github.com/wa976/PAFA",
+      "source_revision": "e49e294d0db0d6af10ac46290512b9c85d3f71e1",
+      "source_license": "no LICENSE in audited PAFA checkout; vendored BEATs header says MIT",
+      "checkpoint_source": "BEATs_iter3_plus_AS2M AudioSet mirror from accepted PAFA audit",
+      "checkpoint_sha256": "d43cbfad4d7b56381c061d7a24774f908d4d94c72961f6eb1d9090ff18cd8d34",
+      "checkpoint_size_bytes": 361499833,
+      "checkpoint_license": "upstream source and checkpoint terms require review before redistribution",
+      "canonical_source_path": ".cache/multidataset_pipeline/assets/P2/source/repo",
+      "canonical_checkpoint_path": ".cache/multidataset_pipeline/assets/P2/checkpoints/BEATs_iter3_plus_AS2M.pt",
+      "server_provision_expectation": "copy or provision independently verified exact source and checkpoint into canonical paths; legacy result/pafa paths are audit references only and are never fallback inputs"
+    }
+  }
+}

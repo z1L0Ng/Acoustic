@@ -11,10 +11,15 @@ from pathlib import Path
 
 import torch
 
-from .adapter_factory import AdapterFactoryConfig, build_production_adapter
+from .adapter_factory import (
+    AdapterFactoryConfig,
+    audit_local_adapter_assets,
+    build_production_adapter,
+)
 from .joint_native import JOINT_LANES, JointNativeProjector
 from .preflight import PIPELINE_ENCODERS
 from .sliding_window import SlidingWindowBatch, masked_mean_window_embeddings
+from .terminal_scoring import audit_terminal_provider_registration
 from .window_encoder import ProductionWindowEncoder
 
 
@@ -174,6 +179,12 @@ def main() -> None:
     parser.add_argument("--checkpoint-sha256")
     args = parser.parse_args()
     device = torch.device(args.device)
+    asset_audit = audit_local_adapter_assets(args.repo_root)[args.pipeline]
+    if asset_audit.get("asset_status") != "READY_verified_local":
+        raise RuntimeError(
+            f"{args.pipeline} canonical asset manifest gate is HOLD: "
+            f"{asset_audit.get('reason', asset_audit.get('asset_status'))}"
+        )
     adapter = build_production_adapter(
         AdapterFactoryConfig(
             pipeline_id=args.pipeline,
@@ -188,6 +199,10 @@ def main() -> None:
     provider = _load_provider(args.batch_provider)
     receipt = run_zero_update_preflight(
         args.pipeline, adapter, provider(args.pipeline), device=device
+    )
+    receipt["adapter_asset_audit"] = asset_audit
+    receipt["terminal_provider_readiness"] = audit_terminal_provider_registration(
+        args.repo_root
     )
     print(json.dumps(receipt, indent=2, sort_keys=True))
 
