@@ -2,6 +2,8 @@
 
 **Rule:** every number below is tied to an official paper/repository, an accepted local contract, or an inspected local implementation/receipt. `S` is a symbolic dimension. `TBD/HOLD` means that the precise value or interface was not confirmed and must not be guessed.
 
+**Current execution interpretation (2026-08-12):** P1–P5 call a candidate encoder independently on each source-time window and stack its pooled outputs. Therefore `pooled_only` below is an encoder-output fact, not a statement that the encoder cannot serve the HF window-level lane. Only the deferred P6 token-level refinement requires encoder tokens, token mask, and a token-level time map. The current 2.0-s window / 1.0-s stride is an adjustable Proposed Benchmark Policy.
+
 ## 1. Shape notation
 
 | Symbol | Meaning |
@@ -11,6 +13,7 @@
 | `tau` | spectrogram time frames |
 | `F` | spectrogram/fbank bins |
 | `L` | acoustic token/time-step length |
+| `N_w` | source-time windows per native prediction unit |
 | `D` | representation width |
 | `K` | native output classes/channels |
 | `P` | patients represented in a batch |
@@ -20,21 +23,21 @@
 | Work | Variant | Stage | Operation / kernel / stride / blocks | Input | Output | Mask / time-map behavior | Source and verification |
 |---|---|---|---|---|---|---|---|
 | `W01` | ICBHI official 2017 | raw parser | WAV + cycle TXT row | recording waveform + `(start,end,c,w)` | one variable cycle `[T_i]` + flat4 target | retains source `(start,end)` | accepted local contract; fixed |
-| `W01` | native head | classifier | task projection + Linear `D→4` | pooled `[B,D]` | logits `[B,4]` | one row per cycle | fixed contract; current R0 head is `LN(768)+Linear(768,4)` |
+| `W01` | native head | classifier | shared projector + Linear `256→4` | pooled `[B,256]` | logits `[B,4]` | one row per cycle | fixed contract; P1/P2 implementation identity is frozen before execution |
 | `W02` | HF source benchmark | high-pass/STFT | order 10, 80 Hz; Hanning 256, hop 64 | `[B,60000]` at 4 kHz | log magnitude `[B,938,129]` | fixed 938-frame grid maps to 15 s | PLOS paper; paper-faithful |
 | `W02` | HF source benchmark | feature concat | 129 spectrogram + 60 MFCC/delta/delta2 + 4 band energy | `[B,938,*]` | `[B,938,193]` | per-feature min-max | PLOS paper; paper-faithful |
 | `W02` | RNN family | recurrent + time-distributed FC | LSTM/GRU/Bi variants; source figure gives cells, text confirms Bi simplified 128 vs full 256 | `[B,938,193]` | one task `[B,938,1]` | fixed grid; four one-vs-rest models | paper; no official code/checkpoint located |
 | `W02` | CNN-RNN family | CNN downsample + recurrent + time-distributed FC | exact conv kernels are figure-only/not recovered as code | `[B,938,193]` | one task `[B,469,1]` | fixed half-rate grid; postprocess to events | paper; layer internals `TBD`, reference only |
 | `W03` | SPR BioCAS2022 | event parser | interval crop by milliseconds | recording + event row | event waveform `[T_i]` | retains event time lineage | accepted local contract; fixed |
-| `W03` | current event heads | two independent heads | `LN(768)+Linear` | pooled `[B,768]` | binary `[B,2]`; seven `[B,7]` | inter/intra evaluated separately | local R0 implementation/smoke; engineering only |
+| `W03` | current event heads | two independent heads | native Linear from shared projected width | pooled `[B,256]` | binary `[B,2]`; seven `[B,7]` | inter/intra evaluated separately | P1/P2 contract; performance not run |
 | `W03` | recording head | one native head | task projection + Linear `D→5` | recording pooled `[B,D]` | raw record logits `[B,5]` | Poor Quality remains a class | accepted contract; not active in R0 |
 | `W04` | KAUH v3 | parser/grouping | WAV + workbook row; B/D/E filter prefix | recording `[T_i]` | record + raw sound string + P-number | replicas share patient group | accepted local contract; fixed |
-| `W04` | raw sound head | classifier | task projection + Linear `D→9` | recording pooled `[B,D]` | logits `[B,9]` | group by P-number | fixed safe native contract; implementation HOLD |
+| `W04` | raw sound head | classifier | masked window mean + Linear `256→9` | window embeddings `[B,N_w,256]` | logits `[B,9]` | group by P-number; B/D/E together | fixed safe native contract; P1/P2 implementation present, performance not run |
 | `W04` | diagnosis branch | separate patient task | aggregation/head `TBD` | 3 filtered recordings + patient row | patient diagnosis logits `K_diag=TBD` | requires patient aggregation | HOLD; raw diagnosis normalization unapproved |
 
 ## 3. Encoder/backbone candidates
 
-### `W09` — AST base384, current executable R0 variant
+### `W09` — AST base384, P1 first-batch package
 
 **Variant:** AudioSet `audioset_10_10_0.4593`, local legacy-canonical identity pinned; `input_fdim=128`, `input_tdim=798`, patch/stride `16×16 / 10×10`.
 
@@ -46,7 +49,7 @@
 | special tokens | prepend CLS + DIST | 2 tokens | `[B,948,768]` | `[B,950,768]` | specials have no acoustic time map | local AST code |
 | encoder | DeiT-Base block: MHA 12 heads; MLP `768→3072→768` | ×12 | `[B,950,768]` | `[B,950,768]` | no padding mask | timm/AST implementation |
 | pooling | LayerNorm; `(CLS+DIST)/2` | 1 | `[B,950,768]` | pooled `[B,768]` | acoustic tokens not returned | local AST wrapper; pooled-only |
-| native heads | LN + Linear | 3 heads | `[B,768]` | ICBHI 4; SPR 2 and 7 | dataset-routed | smoke verifies shapes only |
+| shared-window wrapper | run AST on each 2-s source window; stack pooled outputs; shared Linear `768→256` | 1 | `[B,N_w,32000]` | `[B,N_w,256]` | preserves window mask/time map; AST frontend internally pads to 798 frames | P1 code/CPU path ready; package-level reference; performance not run |
 
 ### `W10` — BEATs iter3+ AS2M
 
@@ -60,7 +63,7 @@
 | projection | LN(`E`), optional Linear `E→768` | 1 | `[B,L0,E]` | `[B,L0,768]` | padding mask downsampled again | official/local code |
 | position | grouped Conv1d position, kernel 128, groups 16 | 1 | `[B,L0,768]` | `[B,L0,768]` | no source-time map emitted | official/local code |
 | encoder | Transformer; MHA 12 heads; FFN `768→3072→768` | ×12 | `[B,L0,768]` | tokens `[B,L0,768]` | returns padding mask | code + local receipt |
-| local diagnostic pooling | mean over frames, then mean over 5-s windows for long recordings | — | `[B,L0,768]` | `[B,768]` | discards temporal alignment | completed frozen-feature extraction only |
+| P2 shared-window wrapper | masked token mean within each 2-s source window; stack; shared Linear `768→256` | 1 | `[B,N_w,32000]` | `[B,N_w,256]` | preserves window mask/time map; token-level time map not required | P2 code/CPU path ready; performance not run |
 
 Local sequence receipt confirms ICBHI frame tensors with `D=768` and variable lengths 10–800; it does not by itself supply a generic four-dataset `time_map`.
 
@@ -181,14 +184,14 @@ The `256×256` model grid is an internal reshaped spectrogram grid, not 256 freq
 
 ## 9. Interface closure summary
 
-| Candidate | `pooled` | `tokens` | `token_mask` | `time_map` | v2 capability |
-|---|---:|---:|---:|---:|---|
-| Current AST `W09` | `[B,768]` | not returned | no | no | `pooled_only` |
-| BEATs `W10` official/local code | mean can produce `[B,768]` | `[B,L,768]` | returned when provided | no | HOLD before `temporal_capable` |
-| OPERA-CT `W12` extractor | `[B,768]` | internal only | no exported contract | no | `pooled_only` in v2 |
-| HeAR `W13` | `[B,512]` | no public output | no | no | `pooled_only` |
-| PANNs Cnn14 `W11` | `[B,2048]` | no public output | no | no | `pooled_only` |
-| MVST `W07` | `[B,768]` | no | no | no | `pooled_only` |
-| DeepBreath `W21` | clip logits | task-specific frame sequence | source-specific | source-specific fixed grid | external temporal reference, not generic backbone |
+| Candidate | Per-window pooled output | Token output fact | P1–P5 window-level HF | P6 token-level HF |
+|---|---:|---|---|---|
+| AST `W09` | `[B,N_w,768]` | not returned by current wrapper | **legal / P1 ready** through `M_win/Q_win` | unsupported |
+| BEATs `W10` | `[B,N_w,768]` | `[B,L,768]` + mask; token `time_map` absent | **legal / P2 ready** through `M_win/Q_win` | HOLD until audited token time map |
+| OPERA-CT `W12` | `[B,N_w,768]` after input adapter | internal tokens not exported | shape-legal; P5 provenance/input-adapter HOLD | unsupported |
+| HeAR `W13` | `[B,N_w,512]` | no public token output | shape-legal; P4 gated asset/license HOLD | unsupported |
+| PANNs Cnn14 `W11` | `[B,N_w,2048]` | no public token output | shape-legal; P3 official asset/dependency HOLD | unsupported |
+| MVST `W07` | five pooled `[B,768]` | no generic token output | eligible non-HF fusion study only | unsupported |
+| DeepBreath `W21` | clip logits | task-specific frame sequence | external temporal reference only | not a generic backbone |
 
-No candidate currently closes the full generic `tokens + token_mask + time_map` interface without an additional audited adapter. Therefore the v2 HF generic temporal branch remains **HOLD**, while the paper-faithful `W02` fixed-grid branch remains a separate reference.
+P1/P2 close the four-dataset **window-level** interface without requiring token outputs. No candidate currently closes the separate generic `tokens + token_mask + token-level time_map` interface without an audited adapter; only P6 remains HOLD on that requirement. The paper-faithful `W02` fixed-grid branch remains an external reference and is not directly comparable to the lower-resolution shared-window HF output.

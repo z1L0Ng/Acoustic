@@ -1,18 +1,20 @@
 # Acoustic End-to-End Pipeline v2 — complete textual specification
 
-**Status:** reviewable design artifact; architecture alternatives remain unselected
-**Date:** 2026-08-03
+**Status:** canonical shared-window execution contract; performance remains `Not run`
+**Date:** 2026-08-12
 **Scope:** four audited datasets and their dataset-native tasks
 **Visual package:** one master topology plus three readable detail panels
+
+> **2026-08-12 alignment note.** P1/P2 now use one shared-window route for all four datasets, including HF. The older token-only rule “no encoder tokens/time map ⇒ no HF” is no longer a pipeline-level gate: a pooled encoder is called independently on source-time windows to produce a window sequence. Token-level capability remains a separate encoder fact and is needed only for the deferred P6 refinement. The current 2.0-s window / 1.0-s stride is an adjustable **Proposed Benchmark Policy**, not an optimality claim.
 
 ## 0. What v2 claims—and does not claim
 
 v2 is a complete **system contract and candidate map**. It traces four native data lanes from raw release objects through legal prediction units, candidate encoders/adapters/fusion modules, eligible native heads, training controls, and native metrics. It does **not** claim that a four-dataset end-to-end model has been trained.
 
-The phrase “four baselines” is ambiguous in the project materials. This specification resolves it as follows:
+The phrase “four baselines” is ambiguous in older project materials. This specification resolves it as follows:
 
 - **Four dataset-native input/baseline lanes:** ICBHI 2017, SPRSound BioCAS2022, HF_Lung_V1, and KAUH/Fraiwan v3. This is the requested v2 input topology.
-- **Operational recipes R0–R3 in the Pipeline Reproduction Matrix:** four experiment recipes, not four datasets and not a one-to-one mapping to the four lanes. They are shown only in a separate evidence inset.
+- **Current pipeline IDs P1–P13:** experiment combinations in the canonical Notion Pipeline 组合实验主表. P1/P2 are the first-batch four-dataset shared-window references; P3–P5 are encoder-package candidates; P6–P13 are deferred block studies. Legacy R0–R3 remain historical evidence only and are not execution keys.
 
 Evidence grammar:
 
@@ -41,13 +43,17 @@ Hard claim boundaries:
 ```text
 waveform       X      [B,T]            mono, padded only at collation
 waveform mask  M_wav  [B,T]            true/1 = valid source samples
+windows        X_win  [B,N_w,32000]    current 2-s windows at 16 kHz
+window mask    M_win  [B,N_w]          true/1 = valid source window
+window map     Q_win  [B,N_w,2]        source-time [start_s,end_s] per window
 spectrogram    F      [B,C,F_bin,tau]  C=1 unless a paper-faithful RGB/image path says otherwise
 tokens         Z      [B,L,D]          acoustic tokens only unless declared
 token mask     M_tok  [B,L]            true/1 = valid token
 time map       Q      [B,L,2]          source-time [start_s,end_s] for every token
 pooled         z      [B,D]
+window embed   Z_win  [B,N_w,D]        one pooled encoder output per source-time window
 flat logits           [B,K]
-temporal logits       [B,L,K] or paper-faithful fixed-grid output
+temporal logits       [B,N_w,K] or token/paper-faithful fixed-grid output
 ```
 
 Every selected backbone must return:
@@ -63,7 +69,9 @@ BackboneOutput(
 )
 ```
 
-`temporal_capable` is legal only when all of `tokens`, `token_mask`, and `time_map` are present. A tensor of frame embeddings alone is insufficient until its valid-mask and source-time mapping are declared.
+For the current P1–P5 route, the wrapper must additionally return `WindowEncoderOutput(embeddings=[B,N_w,D], window_mask=[B,N_w], time_map=[B,N_w,2])`. This window-level contract is sufficient for the HF native temporal head even when the underlying encoder is `pooled_only` per window.
+
+`temporal_capable` remains legal only when all of `tokens`, `token_mask`, and token-level `time_map` are present. This describes the **encoder's token-level capability**, not whether the full shared-window pipeline can serve HF. A tensor of frame embeddings alone is insufficient for P6 token-level refinement until its valid mask and source-time mapping are declared.
 
 ## 2. Four dataset-native lanes
 
@@ -101,10 +109,10 @@ BackboneOutput(
 - **Raw interval tokens:** `I`, `E`, `D`, `Wheeze`, `Rhonchi`, `Stridor`; there is no raw Normal/Negative token.
 - **Paper task semantics:** four separate one-vs-rest detection tasks: inhalation, exhalation, CAS=`Wheeze|Rhonchi|Stridor`, DAS=`D`.
 - **Paper-faithful preprocessing:** 10th-order 80-Hz high-pass; STFT Hanning 256 samples, hop 64, no extra zero padding; spectrogram `[938,129]`; concatenate 129 log-magnitude + 60 MFCC/delta/delta2 + 4 band-energy features → `[938,193]`; per-feature min-max normalization.
-- **Paper outputs:** RNN variants output `[B,938,1]` per task; CNN-RNN variants output `[B,469,1]` per task. Postprocessing maps frames to events. A generic v2 temporal head instead uses `[B,L,4]` only after a valid `token_mask/time_map` contract is built.
+- **Paper outputs:** RNN variants output `[B,938,1]` per task; CNN-RNN variants output `[B,469,1]` per task. Postprocessing maps frames to events. The current shared-window route instead produces per-window embeddings `[B,N_w,D]` and native temporal logits `[B,N_w,4]` with `M_win/Q_win`. P6 optionally refines this to token-level `[B,L,4]` after a valid `token_mask/time_map` contract is built.
 - **Grouping/split:** source folders 7,809/1,956 recordings; deidentified-date proxy has no folder overlap, but this does not prove patient independence.
 - **Metric:** segment accuracy/PPV/SE/SP/F1/AUROC; event F1 with Jaccard > 0.5 and event MAPE; proposed native reporting adds per-label AUPRC and annotated-duration coverage.
-- **Gate:** a pooled-only encoder cannot connect. Unlabeled or unclear gaps remain `not_annotated`, not negative.
+- **Gate:** a pooled-only encoder may connect through the audited shared-window wrapper; it may not claim token-level localization. Unlabeled or unclear gaps remain `not_annotated`, not negative. Any constructed negatives belong only to the declared paper-native rasterized one-vs-rest condition and are never reinterpreted as raw normal intervals or shared-label negatives.
 
 ### Lane 4 — KAUH/Fraiwan v3 (`W04`)
 
@@ -134,10 +142,11 @@ device/site/filter/quality/demographic metadata when provided
 
 `not_applicable`, `not_provided`, `unknown`, and `not_annotated` remain distinct. Adapter outputs do not fabricate metadata, harmonize labels, or encode trainable dataset identity.
 
-Two preprocessing paths must stay visibly separate:
+Three preprocessing paths must stay visibly separate:
 
-1. **R0 executable legacy AST:** ICBHI cycle/SPRSound event crop → mono → 16 kHz → fixed 8-s repeat/truncate → 128-bin fbank → resize `[B,1,798,128]`; no waveform/token padding mask.
-2. **v2 target contract:** native unit extraction → resample required by the selected encoder → variable/windowed waveform `[B,T]` + `M_wav` → frontend → tokens with `M_tok` and `time_map`, or pooled-only output for legal flat/recording tasks.
+1. **Current P1–P5 shared-window contract:** native unit extraction → mono 16 kHz → source-time 2.0-s windows / 1.0-s stride → `X_win`, `M_win`, `Q_win` → one frozen candidate encoder per window → shared projector → native head. Short units zero-pad; long units receive one unique end-aligned tail window. This geometry is adjustable after first-batch feasibility.
+2. **Deferred P6 token-level refinement:** BEATs tokens + `M_tok` + audited token-level `time_map`; it must preserve exact pooled parity with P2 on non-HF lanes or be downgraded to a package comparison.
+3. **Legacy R0 AST evidence:** ICBHI cycle/SPRSound event crop → mono → 16 kHz → fixed 8-s repeat/truncate → 128-bin fbank → resize `[B,1,798,128]`; historical engineering evidence only, not the current four-dataset path.
 
 ## 4. Parallel candidate architecture slots
 
@@ -151,8 +160,8 @@ The following are alternatives. Their placement in one panel does not mean they 
 
 ### 4.2 Encoder/backbone candidates
 
-- `W09 AST base384`: exact current executable reference is detailed in the shape table; pooled-only public local wrapper.
-- `W10 BEATs iter3+ AS2M`: 16-kHz waveform → 128-bin fbank → patch Conv2d → 12× Transformer, `D=768`; official code returns frame tokens and downsampled padding mask. Local four-dataset diagnostics mean-pool those tokens, so temporal use still needs `time_map`.
+- `W09 AST base384`: P1 first-batch package; each source-time window is encoded to pooled `D=768`, then stacked as `[B,N_w,768]`. The internal AST frontend pads each 2-s window to the audited 798-frame grid, so P1 is a package-level reference.
+- `W10 BEATs iter3+ AS2M`: P2 matched replacement; 16-kHz waveform → 128-bin fbank → patch Conv2d → 12× Transformer, `D=768`. P2 uses one pooled output per source-time window; the official token output and mask are reserved for P6, which still needs an audited token-level `time_map`.
 - `W12 OPERA-CT`: HTS-AT/Swin respiratory foundation candidate; `256×256` model grid, patch 4/stride 4, stages `[2,2,6,2]`, widths `96/192/384/768`, heads `4/8/16/32`, MLP ratio 4. Official feature example uses 8 s and 768-d OPERA-CT output.
 - `W13 HeAR 1.0.0`: 2-s 16-kHz waveform `[B,32000]` → gated ViT-L masked-autoencoder service → embedding `[B,512]`. The public serving/model card does not expose a token mask or time map; pooled-only in v2.
 - `W11 PANNs Cnn14`: waveform → 64-bin log-mel → six 2×Conv blocks `64/128/256/512/1024/2048` → global max+mean → FC 2048 → embedding `[B,2048]`; pooled-only Cnn14 contract.
@@ -191,9 +200,9 @@ The operational entry points remain `W05 RespireNet`, `W07 MVST`, `W12 OPERA`, `
 
 ## 5. Legal connection rules
 
-1. `pooled_only → ICBHI/SPRSound-event/SPRSound-recording/KAUH-recording` is structurally legal after task-specific projection and protocol approval.
-2. `pooled_only → HF temporal head` is illegal.
-3. `tokens without token_mask/time_map → HF temporal head` remains HOLD.
+1. `pooled_only per window → ICBHI/SPRSound-event/SPRSound-recording/KAUH-recording` is structurally legal after the declared shared projector, masked aggregation, and protocol approval.
+2. `pooled_only per window → HF window-level temporal head` is legal when `M_win` and `Q_win` are preserved; it supports window-level classification, not token/frame localization.
+3. `tokens without token_mask/time_map → P6 token-level HF head` remains HOLD. This does not block the P1–P5 window-level HF route.
 4. MVST view fusion requires five same-width pooled embeddings; it is not a generic temporal fusion.
 5. SG-SCL, PAFA, Metadata-SCL, BTS and Resp-Agent require explicit side-channel capability declarations.
 6. KAUH raw-9 is legal; a shared KAUH acoustic mapping remains HOLD.
@@ -218,16 +227,18 @@ L = sum_h lambda_h * masked_loss_h
 - inference bypasses sampling and loss controls;
 - task declaration can open a legal inference head but cannot read target labels.
 
-R0 uses naive source-proportional homogeneous batches and unweighted CE. Four-dataset D2 is a target-supervised frozen-feature diagnostic, not evidence that full-encoder source balancing works.
+P1/P2 use frozen encoders, source-proportional homogeneous batches, the same shared projector/native heads, and native objectives. The frozen training/selection/seed/update-budget contract must remain matched. Four-dataset D2 remains a target-supervised frozen-feature diagnostic, not evidence that the new shared-window joint training works.
 
-## 7. Evidence and operational recipe inset
+## 7. Current execution and historical evidence
 
-| Recipe/result | Exact status | Allowed placement |
+| Pipeline/result | Exact status | Allowed placement |
 |---|---|---|
-| `R0` ICBHI+SPRSound AST/native heads | executable protocol/smoke/profile; engineering only | green inset, not merged into HF/KAUH |
-| `R1` RespireNet | paper-faithful draft/reference | external/reference |
-| `R2` MVST | smoke/identity only; full run pending; paper score protocol caveat | external/reference |
-| `R3` PAFA | smoke/profile/checkpoint identity; official-test-selected checkpoint | external/reference/HOLD |
+| `P1` AST four-dataset shared-window | local code/assets/real-data CPU ready; CUDA/full/terminal score not run | first-batch reference; no performance claim |
+| `P2` BEATs four-dataset shared-window | local code/assets/real-data CPU ready; CUDA/full/terminal score not run | first-batch matched package replacement |
+| `P3/P4` PANNs/HeAR | code/synthetic CPU path only; official/gated assets HOLD | encoder-package candidates after asset closure |
+| `P5` OPERA-CT | provenance/pretraining-overlap and input-adapter HOLD | overlap-aware reference only |
+| `P6–P13` | deferred block studies; all results `Not run` | require shortlist and separate approval |
+| legacy `R0–R3` | historical protocol/smoke/profile or paper-faithful evidence | registry only; never current execution IDs |
 | shared-compatible head | 0 material improvements in corrected frozen-feature comparison | negative within scope; registry only |
 | support-aware cRT | 2 improvements but global regression guardrail failed | HOLD/negative; registry only |
 | shortcut diagnostic | 0/2 votes | not supported/inconclusive; no causal shortcut claim |
@@ -240,10 +251,11 @@ R0 uses naive source-proportional homogeneous batches and unweighted CE. Four-da
 
 ```text
 raw native releases
-  → dataset adapter → prediction-unit builder → encoder-specific preprocessing
-  → one selected candidate backbone
-  → optional eligible adapter/fusion
-  → native head → logits
+  → dataset adapter → prediction-unit builder
+  → shared 16-kHz source-time window collator
+  → one selected frozen candidate encoder per window
+  → shared projector → optional eligible block
+  → dataset-native head → logits
 
 task/source capability ─→ eligibility masks ─→ head + loss + evaluation
 source membership ──────→ sampler/weights ───→ masked loss
@@ -266,7 +278,7 @@ Predictions, targets, support masks, split/group receipts, checkpoint identity, 
 
 ## 9. Sources and traceability
 
-- Accepted project registries: [Pipeline Reproduction Matrix](https://app.notion.com/p/3b0309efda2981bd944edae34fb913e2), [Pipeline Module SOTA Map](https://app.notion.com/p/3b0309efda2981899476c6fcaca45d47).
+- Accepted project registries: [Pipeline 组合实验主表](https://app.notion.com/p/3ba309efda29816a8fe0d56424a18897), [Pipeline Module SOTA Map](https://app.notion.com/p/3b0309efda2981899476c6fcaca45d47).
 - Dataset anchors: [ICBHI](https://bhichallenge.med.auth.gr/ICBHI_2017_Challenge), [SPRSound](https://github.com/SJTU-YONGFU-RESEARCH-GRP/SPRSound), [HF_Lung_V1](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0254134), [KAUH/Fraiwan v3](https://data.mendeley.com/datasets/jwyy9np4gv/3).
 - Encoder sources: [AST](https://github.com/YuanGongND/ast), [BEATs](https://github.com/microsoft/unilm/tree/master/beats), [OPERA](https://github.com/evelyn0414/OPERA), [HeAR](https://huggingface.co/google/hear), [PANNs](https://github.com/qiuqiangkong/audioset_tagging_cnn).
 - Candidate sources: [RespireNet](https://github.com/microsoft/RespireNet), [MVST](https://github.com/wentaoheunnc/MVST), [SG-SCL](https://github.com/kaen2891/stethoscope-guided_supervised_contrastive_learning), [PAFA](https://github.com/wa976/pafaofficialpytorch), [BTS](https://github.com/kaen2891/bts), [DeepBreath](https://github.com/epfl-iglobalhealth/DeepBreath-NatMed23), [Patch-Mix](https://github.com/raymin0223/patch_mix_contrastive_learning), [ADD-RSC](https://github.com/deegy666/ADD-RSC), [Resp-Agent](https://github.com/zpforlove/Resp-Agent).
