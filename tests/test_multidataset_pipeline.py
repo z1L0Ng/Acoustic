@@ -280,8 +280,8 @@ class BEATsTemporalContractTest(unittest.TestCase):
 
     @unittest.skipUnless(torch.cuda.is_available(), "CUDA is not available")
     def test_adapter_requires_explicit_batch_device_move_on_cuda(self):
-        beats = FakeBEATs(self.small).to("cuda")
-        adapter = BEATsTemporalAdapter(beats, self.small)
+        beats = FakeBEATs(self.small)
+        adapter = BEATsTemporalAdapter(beats, self.small).to("cuda")
         batch = collate_waveforms([sample("ICBHI", "cycle", 880, "short")])
         with self.assertRaisesRegex(RuntimeError, r"batch\.to"):
             adapter(batch)

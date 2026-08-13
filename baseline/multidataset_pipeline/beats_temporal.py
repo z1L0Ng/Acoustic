@@ -672,6 +672,19 @@ class BEATsTemporalAdapter(nn.Module):
                 f"stride {actual_stride}/{expected_stride}"
             )
 
+    def _apply(self, fn):
+        module = super()._apply(fn)
+        model_devices = {
+            tensor.device
+            for tensor in (*tuple(self.beats.parameters()), *tuple(self.beats.buffers()))
+        }
+        if len(model_devices) != 1:
+            raise RuntimeError(
+                f"BEATs parameters/buffers must share one device, got {model_devices}"
+            )
+        self.model_device = next(iter(model_devices))
+        return module
+
     def forward(self, batch: WaveformBatch) -> TemporalEncoderOutput:
         batch.validate()
         if batch.device != self.model_device:
