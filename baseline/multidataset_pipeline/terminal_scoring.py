@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib
+import inspect
 import json
 import math
 from dataclasses import dataclass
@@ -227,7 +228,7 @@ class TerminalScoringInput:
                 raise ValueError(f"{task} expected prediction IDs contain missing/duplicates")
 
 
-TerminalInputProvider = Callable[[Path], TerminalScoringInput]
+TerminalInputProvider = Callable[..., TerminalScoringInput]
 
 
 def terminal_provider_identity_sha256(
@@ -508,7 +509,17 @@ class ProductionTerminalScorer:
             raise RuntimeError(
                 "terminal scorer requires a gate-verified HF threshold receipt"
             )
-        inputs = self.provider(selected_checkpoint)
+        signature = inspect.signature(self.provider)
+        if "verified_hf_threshold_receipt" in signature.parameters:
+            inputs = self.provider(
+                selected_checkpoint,
+                verified_hf_threshold_receipt=verified_hf_threshold_receipt,
+            )
+        else:
+            # Retain the narrow one-argument seam only for in-memory verifier
+            # fixtures.  The registered production provider must accept the
+            # gate-verified receipt and cannot discover thresholds elsewhere.
+            inputs = self.provider(selected_checkpoint)
         if not isinstance(inputs, TerminalScoringInput):
             raise TypeError("terminal input provider returned the wrong contract type")
         inputs.validate()
@@ -558,10 +569,17 @@ def load_terminal_input_provider(specification: str) -> TerminalInputProvider:
     if not module_name or not function_name:
         raise ValueError("terminal provider module and function must be non-empty")
 
-    def deferred(selected_checkpoint: Path) -> TerminalScoringInput:
+    def deferred(
+        selected_checkpoint: Path,
+        *,
+        verified_hf_threshold_receipt: VerifiedHFThresholdReceipt,
+    ) -> TerminalScoringInput:
         provider = getattr(importlib.import_module(module_name), function_name)
         if not callable(provider):
             raise TypeError("terminal provider target is not callable")
-        return provider(selected_checkpoint)
+        return provider(
+            selected_checkpoint,
+            verified_hf_threshold_receipt=verified_hf_threshold_receipt,
+        )
 
     return deferred
