@@ -404,6 +404,24 @@ class TerminalScoringTest(unittest.TestCase):
                 full_approval_receipt_sha256="4" * 64,
                 validation_selection_receipt_sha256="5" * 64,
                 selected_checkpoint_sha256="6" * 64,
+                validation_prediction_identity_sha256="7" * 64,
+                per_channel_selection=[
+                    {
+                        "channel": channel,
+                        "threshold": threshold,
+                        "max_f1": 1.0,
+                        "candidate_count": 1,
+                        "valid_count": 2,
+                        "positive_support": 1,
+                        "negative_support": 1,
+                        "tp": 1,
+                        "fp": 0,
+                        "fn": 0,
+                    }
+                    for channel, threshold in zip(
+                        ("I", "E", "CAS", "DAS"), (0.2, 0.3, 0.4, 0.5)
+                    )
+                ],
                 scorer_schema_version="shared_window_terminal_scorer_v1",
             )
             artifact = write_hf_threshold_receipt(path, payload)

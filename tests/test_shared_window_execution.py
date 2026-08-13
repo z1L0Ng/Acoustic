@@ -1088,6 +1088,22 @@ class TrainingAssemblyTest(unittest.TestCase):
                         "selection_receipt_artifact"
                     ]["sha256"],
                     selected_checkpoint_sha256=second["sha256"],
+                    validation_prediction_identity_sha256="4" * 64,
+                    per_channel_selection=[
+                        {
+                            "channel": channel,
+                            "threshold": 0.5,
+                            "max_f1": 1.0,
+                            "candidate_count": 1,
+                            "valid_count": 2,
+                            "positive_support": 1,
+                            "negative_support": 1,
+                            "tp": 1,
+                            "fp": 0,
+                            "fn": 0,
+                        }
+                        for channel in ("I", "E", "CAS", "DAS")
+                    ],
                     scorer_schema_version="shared_window_terminal_scorer_v1",
                 ),
             )

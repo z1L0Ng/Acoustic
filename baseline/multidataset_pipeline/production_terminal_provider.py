@@ -1,9 +1,9 @@
 """Registered terminal-only inference provider for the shared-window runner.
 
-This module is imported only by ``terminal_score_gate`` after the exact
-validation-selected checkpoint, terminal approval, provider registration, and
-HF threshold receipt have all passed.  It never participates in training or
-checkpoint selection.
+The checkpoint loader is also reused by the validation-only HF exporter without
+reading data.  Terminal rows are built only by ``provide_terminal_inputs`` after
+the exact checkpoint, approval, provider registration, and HF threshold gates.
+This module never participates in training or checkpoint selection.
 """
 
 from __future__ import annotations
@@ -223,9 +223,10 @@ def _load_terminal_waveform(unit: TerminalUnit, dataset_root: Path) -> WaveformS
     return sample
 
 
-def _load_exact_model(
+def load_exact_selected_model(
     selected_checkpoint: Path,
 ) -> tuple[TrainingRunnerConfig, torch.nn.Module, JointNativeProjector, Mapping[str, object]]:
+    """Load and verify one exact selected full checkpoint without reading data."""
     payload = torch.load(selected_checkpoint, map_location="cpu", weights_only=False)
     raw_config = payload.get("config")
     if not isinstance(raw_config, Mapping):
@@ -313,7 +314,11 @@ def provide_terminal_inputs(
 
     if not isinstance(verified_hf_threshold_receipt, VerifiedHFThresholdReceipt):
         raise TypeError("production provider requires the gate-verified HF threshold receipt")
-    config, adapter, model, payload = _load_exact_model(selected_checkpoint)
+    config, adapter, model, payload = load_exact_selected_model(selected_checkpoint)
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    adapter.to(device).eval()
+    adapter.backend.eval()
+    model.to(device).eval()
     index = build_terminal_index(
         config.dataset_root, kauh_outer_fold=config.kauh_outer_fold
     )
@@ -332,7 +337,7 @@ def provide_terminal_inputs(
                 current = units[start : start + TERMINAL_BATCH_SIZE]
                 windows = collate_sliding_windows(
                     [_load_terminal_waveform(unit, config.dataset_root) for unit in current]
-                )
+                ).to(device)
                 output = adapter(windows)
                 if lane == "HF":
                     logits = model(output.embeddings, "HF")["temporal4"]

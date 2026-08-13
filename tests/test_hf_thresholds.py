@@ -13,6 +13,11 @@ from baseline.multidataset_pipeline.hf_thresholds import (
     select_and_write_hf_threshold_receipt,
     select_hf_validation_thresholds,
 )
+from baseline.multidataset_pipeline.hf_validation_exporter import (
+    _load_prediction_artifact,
+    _pad_validation_rows,
+    _write_prediction_artifact,
+)
 
 
 def _sha256(path: Path) -> str:
@@ -31,11 +36,47 @@ def _batch(*, outer_test_accessed: bool = False) -> HFValidationThresholdBatch:
         window_mask=torch.ones((1, 6), dtype=torch.bool),
         annotation_mask=torch.ones((1, 6, 4), dtype=torch.bool),
         valid_mask=torch.ones((1, 6, 4), dtype=torch.bool),
+        time_map=torch.tensor(
+            [[[float(index), float(index + 1)] for index in range(6)]],
+            dtype=torch.float64,
+        ),
         outer_test_accessed=outer_test_accessed,
     )
 
 
 class HFThresholdToolchainTest(unittest.TestCase):
+    def test_validation_export_artifact_preserves_masks_time_map_and_isolation(self):
+        rows = []
+        for index, windows in enumerate((2, 1)):
+            rows.append(
+                (
+                    f"hf:train:validation-{index}",
+                    torch.full((windows, 4), 0.75, dtype=torch.float32),
+                    torch.tensor(
+                        [([1.0, 0.0, 1.0, 0.0] if index == 0 else [0.0, 1.0, 0.0, 1.0])]
+                        * windows
+                    ),
+                    torch.ones(windows, dtype=torch.bool),
+                    torch.ones(windows, 4, dtype=torch.bool),
+                    torch.ones(windows, 4, dtype=torch.bool),
+                    torch.tensor(
+                        [[float(step), float(step + 1)] for step in range(windows)],
+                        dtype=torch.float64,
+                    ),
+                )
+            )
+        batch = _pad_validation_rows(rows)
+        self.assertEqual(batch.probabilities.shape, (2, 2, 4))
+        self.assertFalse(batch.window_mask[1, 1])
+        self.assertEqual(batch.time_map[1, 1].tolist(), [0.0, 0.0])
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "predictions.pt"
+            artifact = _write_prediction_artifact(path, pipeline_id="P2", batch=batch)
+            loaded = _load_prediction_artifact(path, artifact["sha256"], "P2")
+        self.assertEqual(loaded.prediction_ids, batch.prediction_ids)
+        self.assertTrue(torch.equal(loaded.valid_mask, batch.valid_mask))
+        self.assertFalse(loaded.outer_test_accessed)
+
     def test_validation_max_f1_uses_highest_threshold_tie_break(self):
         selection = select_hf_validation_thresholds(_batch())
         self.assertEqual(selection.thresholds, (0.9, 0.9, 0.9, 0.9))

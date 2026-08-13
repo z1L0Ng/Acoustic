@@ -18,7 +18,7 @@ import torch
 from .beats_temporal import CHANNEL_ORDER
 
 
-HF_THRESHOLD_RECEIPT_SCHEMA_VERSION = "hf_temporal_threshold_receipt_v1"
+HF_THRESHOLD_RECEIPT_SCHEMA_VERSION = "hf_temporal_threshold_receipt_v2"
 HF_THRESHOLD_SELECTION_POLICY = (
     "validation_only_per_channel_max_f1;tie=highest_threshold;"
     "threshold_frozen_before_outer_test"
@@ -76,6 +76,7 @@ class HFValidationThresholdBatch:
     window_mask: torch.Tensor
     annotation_mask: torch.Tensor
     valid_mask: torch.Tensor
+    time_map: torch.Tensor
     partition: str = "validation"
     outer_test_accessed: bool = False
 
@@ -89,6 +90,7 @@ class HFValidationThresholdBatch:
         window_mask = self.window_mask.detach().cpu()
         annotation_mask = self.annotation_mask.detach().cpu()
         valid_mask = self.valid_mask.detach().cpu()
+        time_map = self.time_map.detach().cpu()
         if probabilities.ndim != 3 or probabilities.shape[-1] != len(CHANNEL_ORDER):
             raise ValueError("HF validation probabilities must be [B,Nw,4]")
         batch, windows, _ = probabilities.shape
@@ -108,6 +110,23 @@ class HFValidationThresholdBatch:
         ):
             if value.shape != probabilities.shape or value.dtype != torch.bool:
                 raise TypeError(f"HF validation {name} must be bool [B,Nw,4]")
+        if (
+            time_map.shape != (batch, windows, 2)
+            or time_map.dtype != torch.float64
+            or not bool(torch.isfinite(time_map).all())
+        ):
+            raise TypeError("HF validation time_map must be finite float64 [B,Nw,2]")
+        for row in range(batch):
+            count = int(window_mask[row].sum())
+            if count <= 0 or not bool(window_mask[row, :count].all()):
+                raise ValueError("HF validation window_mask must be a non-empty prefix")
+            valid_times = time_map[row, :count]
+            if bool((valid_times[:, 1] <= valid_times[:, 0]).any()) or (
+                count > 1 and bool((valid_times[1:, 0] < valid_times[:-1, 0]).any())
+            ):
+                raise ValueError("HF validation source-time windows are invalid")
+            if bool(torch.count_nonzero(time_map[row, count:])):
+                raise ValueError("HF validation padded time_map must be exact zero")
         if not probabilities.dtype.is_floating_point or not bool(
             torch.isfinite(probabilities).all()
         ):
@@ -244,6 +263,9 @@ def select_hf_validation_thresholds(
             "valid_mask_sha256": _tensor_identity_sha256(
                 valid_mask, dtype=torch.bool
             ),
+            "time_map_float64_sha256": _tensor_identity_sha256(
+                batch.time_map, dtype=torch.float64
+            ),
             "partition": "validation",
             "outer_test_accessed": False,
         }
@@ -256,6 +278,64 @@ def select_hf_validation_thresholds(
     )
 
 
+def _normalize_per_channel_selection(
+    values: object, thresholds: Sequence[float]
+) -> list[dict[str, object]]:
+    if not isinstance(values, (list, tuple)) or len(values) != len(CHANNEL_ORDER):
+        raise TypeError("HF threshold per-channel selection must contain four rows")
+    required = {
+        "channel",
+        "threshold",
+        "max_f1",
+        "candidate_count",
+        "valid_count",
+        "positive_support",
+        "negative_support",
+        "tp",
+        "fp",
+        "fn",
+    }
+    normalized: list[dict[str, object]] = []
+    for index, (raw, channel, threshold) in enumerate(
+        zip(values, CHANNEL_ORDER, thresholds)
+    ):
+        if not isinstance(raw, Mapping) or set(raw) != required:
+            raise ValueError("HF threshold per-channel selection fields changed")
+        row = dict(raw)
+        integers = {
+            key: row[key]
+            for key in (
+                "candidate_count",
+                "valid_count",
+                "positive_support",
+                "negative_support",
+                "tp",
+                "fp",
+                "fn",
+            )
+        }
+        if (
+            row["channel"] != channel
+            or float(row["threshold"]) != float(threshold)
+            or not isinstance(row["max_f1"], (int, float))
+            or not math.isfinite(float(row["max_f1"]))
+            or not 0.0 <= float(row["max_f1"]) <= 1.0
+            or any(not isinstance(value, int) or value < 0 for value in integers.values())
+            or integers["candidate_count"] <= 0
+            or integers["positive_support"] <= 0
+            or integers["negative_support"] <= 0
+            or integers["valid_count"]
+            != integers["positive_support"] + integers["negative_support"]
+            or integers["tp"] > integers["positive_support"]
+            or integers["fn"] > integers["positive_support"]
+            or integers["fp"] > integers["negative_support"]
+            or integers["tp"] + integers["fn"] != integers["positive_support"]
+        ):
+            raise RuntimeError(f"HF threshold per-channel support contract failed at {index}")
+        normalized.append(row)
+    return normalized
+
+
 def threshold_receipt_payload(
     *,
     thresholds: Sequence[float],
@@ -265,6 +345,8 @@ def threshold_receipt_payload(
     full_approval_receipt_sha256: str,
     validation_selection_receipt_sha256: str,
     selected_checkpoint_sha256: str,
+    validation_prediction_identity_sha256: str,
+    per_channel_selection: Sequence[Mapping[str, object]],
     scorer_schema_version: str,
 ) -> dict[str, object]:
     canonical, threshold_bytes_hex = _canonical_thresholds(thresholds)
@@ -275,10 +357,14 @@ def threshold_receipt_payload(
         ("full approval receipt", full_approval_receipt_sha256),
         ("validation selection receipt", validation_selection_receipt_sha256),
         ("selected checkpoint", selected_checkpoint_sha256),
+        ("validation prediction identity", validation_prediction_identity_sha256),
     ):
         _require_sha256(value, label)
     if not scorer_schema_version.strip():
         raise ValueError("terminal scorer schema version is empty")
+    normalized_per_channel = _normalize_per_channel_selection(
+        per_channel_selection, canonical
+    )
     return {
         "schema_version": HF_THRESHOLD_RECEIPT_SCHEMA_VERSION,
         "native_task": HF_THRESHOLD_NATIVE_TASK,
@@ -296,6 +382,8 @@ def threshold_receipt_payload(
         "full_approval_receipt_sha256": full_approval_receipt_sha256,
         "validation_selection_receipt_sha256": validation_selection_receipt_sha256,
         "selected_checkpoint_sha256": selected_checkpoint_sha256,
+        "validation_prediction_identity_sha256": validation_prediction_identity_sha256,
+        "per_channel_selection": normalized_per_channel,
         "negative_semantics": "source_task_constructed_not_raw_normal",
         "shared_label_eligible": False,
         "outer_test_accessed": False,
@@ -349,6 +437,8 @@ def _validate_payload(
         "full_approval_receipt_sha256",
         "validation_selection_receipt_sha256",
         "selected_checkpoint_sha256",
+        "validation_prediction_identity_sha256",
+        "per_channel_selection",
         "negative_semantics",
         "shared_label_eligible",
         "outer_test_accessed",
@@ -382,8 +472,10 @@ def _validate_payload(
         ("full approval receipt", "full_approval_receipt_sha256"),
         ("validation selection receipt", "validation_selection_receipt_sha256"),
         ("selected checkpoint", "selected_checkpoint_sha256"),
+        ("validation prediction identity", "validation_prediction_identity_sha256"),
     ):
         _require_sha256(payload[key], label)
+    _normalize_per_channel_selection(payload["per_channel_selection"], thresholds)
     return thresholds
 
 
@@ -627,6 +719,10 @@ def select_and_write_hf_threshold_receipt(
             "validation_selection_receipt_sha256"
         ],
         selected_checkpoint_sha256=chain["selected_checkpoint_sha256"],
+        validation_prediction_identity_sha256=(
+            selection.validation_prediction_identity_sha256
+        ),
+        per_channel_selection=selection.per_channel,
         scorer_schema_version=scorer_schema_version,
     )
     artifact = write_hf_threshold_receipt(output_path, payload)
