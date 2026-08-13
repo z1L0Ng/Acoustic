@@ -28,6 +28,10 @@ from .beats_temporal import (
     raw_intervals_to_token_supervision,
 )
 from .joint_native import JOINT_LANES, SEED, JointNativeProjector
+from .hf_thresholds import (
+    HF_THRESHOLD_SELECTION_POLICY,
+    load_and_verify_hf_threshold_receipt,
+)
 from .preflight import (
     FOUR_DATASET_SUBTRAIN_UNITS,
     P1_P5_BATCH_SIZE,
@@ -63,8 +67,10 @@ from .window_encoder import ProductionWindowEncoder
 
 
 RUNNER_SCHEMA_VERSION = "shared_window_training_v5"
-VALIDATION_SELECTION_SCHEMA_VERSION = "validation_selection_v1"
-PHASE_EXECUTION_ROOT_SCHEMA_VERSION = "phase_execution_root_v1"
+VALIDATION_SELECTION_SCHEMA_VERSION = "validation_selection_v2"
+PHASE_EXECUTION_ROOT_SCHEMA_VERSION = "phase_execution_root_v2"
+EXECUTION_CLAIM_FILE = ".execution_claim.json"
+EXECUTION_CONTRACT_COMPLETE_FILE = "execution_contract_complete.json"
 OPTIMIZER_POLICY_STATUS = "proposed_benchmark_policy"
 OPTIMIZER_POLICY_REFERENCE = "baseline/shared_encoder_native_heads/protocol.json"
 OPTIMIZER_NAME = "Adam"
@@ -343,6 +349,57 @@ def _last_jsonl_update(path: Path, label: str) -> int:
     return update
 
 
+def _execution_claim_payload(identity: Mapping[str, object]) -> dict[str, object]:
+    return {
+        "schema_version": PHASE_EXECUTION_ROOT_SCHEMA_VERSION,
+        "status": "claimed_incomplete",
+        "execution_root_identity_sha256": identity[
+            "execution_root_identity_sha256"
+        ],
+        "approval_receipt_sha256": identity["approval_receipt_sha256"],
+    }
+
+
+def _validate_execution_contract_complete(
+    execution_root: Path, identity: Mapping[str, object]
+) -> None:
+    claim = _read_json_mapping(
+        execution_root / EXECUTION_CLAIM_FILE, "execution claim"
+    )
+    if claim != _execution_claim_payload(identity):
+        raise RuntimeError("execution claim identity mismatch")
+    marker = _read_json_mapping(
+        execution_root / EXECUTION_CONTRACT_COMPLETE_FILE,
+        "execution contract completion marker",
+    )
+    artifact_sha256_by_name = marker.get("artifact_sha256_by_name")
+    if (
+        marker.get("schema_version") != PHASE_EXECUTION_ROOT_SCHEMA_VERSION
+        or marker.get("status") != "execution_contract_complete"
+        or marker.get("execution_root_identity_sha256")
+        != identity["execution_root_identity_sha256"]
+        or not isinstance(artifact_sha256_by_name, Mapping)
+        or set(artifact_sha256_by_name)
+        != {
+            "execution_identity.json",
+            "config.json",
+            "approval_receipt.json",
+            "trainable_scope_receipt.json",
+            "optimizer_receipt.json",
+            "embedding_cache_receipt.json",
+        }
+    ):
+        raise RuntimeError("execution contract completion marker is invalid")
+    for name, expected_sha256 in artifact_sha256_by_name.items():
+        path = execution_root / str(name)
+        if (
+            not path.is_file()
+            or sha256_path(path)
+            != _require_sha256(expected_sha256, f"execution contract artifact {name}")
+        ):
+            raise RuntimeError("execution contract artifact changed after completion")
+
+
 def prepare_phase_execution_root(
     config: TrainingRunnerConfig,
     approval: Mapping[str, object],
@@ -360,16 +417,24 @@ def prepare_phase_execution_root(
     )
     execution_root = Path(str(identity["execution_root"]))
     if resume is None:
-        if execution_root.exists() and any(execution_root.iterdir()):
+        execution_root.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            execution_root.mkdir(parents=False, exist_ok=False)
+        except FileExistsError as error:
             raise FileExistsError(
-                f"fresh phase execution root already contains artifacts: {execution_root}"
-            )
+                f"fresh phase execution root is already claimed: {execution_root}"
+            ) from error
+        _write_json(
+            execution_root / EXECUTION_CLAIM_FILE,
+            _execution_claim_payload(identity),
+        )
         return execution_root, identity
 
     if config.phase != "full":
         raise PermissionError("resume is permitted only for an approved full phase")
     if not execution_root.is_dir():
         raise RuntimeError("resume phase execution root is missing")
+    _validate_execution_contract_complete(execution_root, identity)
     resume_path = resume.resolve()
     if resume_path.parent != (execution_root / "checkpoints").resolve():
         raise RuntimeError("resume checkpoint is outside the approved execution root")
@@ -444,14 +509,33 @@ def initialize_or_validate_execution_contract(
         "embedding_cache_receipt.json": cache_receipt,
     }
     if not resume:
-        if execution_root.exists() and any(execution_root.iterdir()):
-            raise FileExistsError(
-                f"fresh phase execution root already contains artifacts: {execution_root}"
-            )
-        execution_root.mkdir(parents=True, exist_ok=True)
+        if not execution_root.is_dir():
+            raise RuntimeError("fresh execution root was not atomically claimed")
+        actual_names = {path.name for path in execution_root.iterdir()}
+        if actual_names != {EXECUTION_CLAIM_FILE}:
+            raise RuntimeError("fresh execution root is stale or partially initialized")
+        _require_exact_json_artifact(
+            execution_root / EXECUTION_CLAIM_FILE,
+            _execution_claim_payload(identity),
+            "execution claim",
+        )
         for name, payload in artifacts.items():
             _write_json(execution_root / name, payload)
+        completion = {
+            "schema_version": PHASE_EXECUTION_ROOT_SCHEMA_VERSION,
+            "status": "execution_contract_complete",
+            "execution_root_identity_sha256": identity[
+                "execution_root_identity_sha256"
+            ],
+            "artifact_sha256_by_name": {
+                name: sha256_path(execution_root / name) for name in artifacts
+            },
+        }
+        _write_json(
+            execution_root / EXECUTION_CONTRACT_COMPLETE_FILE, completion
+        )
         return
+    _validate_execution_contract_complete(execution_root, identity)
     for name, expected in artifacts.items():
         path = execution_root / name
         if name == "embedding_cache_receipt.json":
@@ -532,6 +616,39 @@ def combined_data_identity_sha256(
     return hashlib.sha256(
         json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
     ).hexdigest()
+
+
+def hf_validation_threshold_identity(
+    validation: FrozenProviderIndex,
+) -> dict[str, str]:
+    """Derive HF validation identities from the frozen provider, never terminal data."""
+
+    if validation.partition != "validation":
+        raise ValueError("HF threshold identity requires the validation partition")
+    data_identity = validation.receipt.get("data_identity")
+    if not isinstance(data_identity, Mapping):
+        raise RuntimeError("validation provider data identity is missing")
+    manifest_by_dataset = data_identity.get(
+        "manifest_ordered_id_sha256_by_dataset"
+    )
+    if not isinstance(manifest_by_dataset, Mapping) or "HF" not in manifest_by_dataset:
+        raise RuntimeError("HF validation manifest identity is missing")
+    ordered_ids = tuple(unit.sample.sample_id for unit in validation.lanes["HF"])
+    identity = {
+        "validation_data_identity_sha256": _require_sha256(
+            str(validation.receipt["data_identity_sha256"]),
+            "HF validation provider identity",
+        ),
+        "hf_validation_manifest_identity_sha256": _require_sha256(
+            str(manifest_by_dataset["HF"]), "HF validation manifest identity"
+        ),
+        "hf_validation_ordered_prediction_ids_sha256": hashlib.sha256(
+            _canonical_json({"ordered_prediction_ids": list(ordered_ids)}).encode(
+                "utf-8"
+            )
+        ).hexdigest(),
+    }
+    return identity
 
 
 class SourceProportionalBatchPlanner:
@@ -969,6 +1086,7 @@ def write_validation_selection_receipt(
     config: TrainingRunnerConfig,
     data_identity_sha256: str,
     full_approval_receipt_sha256: str,
+    hf_validation_identity: Mapping[str, str],
     candidates: Sequence[Mapping[str, object]],
 ) -> dict[str, object]:
     """Persist the exact validation-selected checkpoint artifact contract."""
@@ -979,6 +1097,17 @@ def write_validation_selection_receipt(
     full_approval_receipt_sha256 = _require_sha256(
         full_approval_receipt_sha256, "selection full approval"
     )
+    expected_hf_identity_fields = {
+        "validation_data_identity_sha256",
+        "hf_validation_manifest_identity_sha256",
+        "hf_validation_ordered_prediction_ids_sha256",
+    }
+    if set(hf_validation_identity) != expected_hf_identity_fields:
+        raise ValueError("HF validation threshold identity fields changed")
+    normalized_hf_identity = {
+        key: _require_sha256(value, key)
+        for key, value in hf_validation_identity.items()
+    }
     if not candidates:
         raise ValueError("validation selection requires checkpoint candidates")
     normalized = []
@@ -1049,6 +1178,7 @@ def write_validation_selection_receipt(
         "config_sha256": config.sha256(),
         "data_identity_sha256": data_identity_sha256,
         "full_approval_receipt_sha256": full_approval_receipt_sha256,
+        "hf_validation_threshold_identity": normalized_hf_identity,
         "selection_rule": config.selection_rule,
         "candidates": normalized,
         "selected_update": selected_update,
@@ -1113,7 +1243,7 @@ def preflight_receipt(config: TrainingRunnerConfig, repo_root: Path) -> dict[str
         },
         "adapter_assets": audit_local_adapter_assets(repo_root)[config.pipeline_id],
         "embedding_cache_readiness": {
-            "schema_version": "shared_window_runner_cache_set_v1",
+            "schema_version": "shared_window_runner_cache_set_v2",
             "policy": (
                 "full_requires_verified_subtrain_and_validation_all_four_lanes_before_update_1"
                 if config.pipeline_id in {"P1", "P2"}
@@ -1392,6 +1522,9 @@ def run_approved_training(
             config=config,
             data_identity_sha256=data_identity_sha256,
             full_approval_receipt_sha256=approval_receipt_sha256,
+            hf_validation_identity=hf_validation_threshold_identity(
+                validation_index
+            ),
             candidates=validation_checkpoint_receipts,
         )
     final_receipt = {
@@ -1431,6 +1564,8 @@ def terminal_score_gate(
     selection_receipt_path: Path,
     expected_selection_receipt_sha256: str,
     selected_checkpoint: Path,
+    hf_threshold_receipt_path: Path,
+    expected_hf_threshold_receipt_sha256: str,
     scorer: ProductionTerminalScorer | None = None,
 ) -> Mapping[str, object]:
     """Keep terminal scoring isolated behind the immutable production-scorer chain."""
@@ -1447,6 +1582,7 @@ def terminal_score_gate(
         "config_sha256",
         "data_identity_sha256",
         "full_approval_receipt_sha256",
+        "hf_validation_threshold_identity",
         "selection_rule",
         "candidates",
         "selected_update",
@@ -1465,6 +1601,7 @@ def terminal_score_gate(
     )
     candidates = selection["candidates"]
     selected = selection["selected_checkpoint"]
+    hf_validation_identity = selection["hf_validation_threshold_identity"]
     if (
         selection["schema_version"] != VALIDATION_SELECTION_SCHEMA_VERSION
         or selection["runner_schema_version"] != RUNNER_SCHEMA_VERSION
@@ -1476,8 +1613,19 @@ def terminal_score_gate(
         or not isinstance(candidates, list)
         or not candidates
         or not isinstance(selected, Mapping)
+        or not isinstance(hf_validation_identity, Mapping)
+        or set(hf_validation_identity)
+        != {
+            "validation_data_identity_sha256",
+            "hf_validation_manifest_identity_sha256",
+            "hf_validation_ordered_prediction_ids_sha256",
+        }
     ):
         raise RuntimeError("validation selection identity/rule/isolation gate failed")
+    hf_validation_identity = {
+        key: _require_sha256(value, f"selection {key}")
+        for key, value in hf_validation_identity.items()
+    }
     candidate_required = {
         "schema_version",
         "path",
@@ -1546,6 +1694,35 @@ def terminal_score_gate(
         raise PermissionError(
             "terminal approval is not bound to the exact validation selection receipt"
         )
+    threshold_approval_fields = {
+        "hf_threshold_receipt_sha256",
+        "hf_validation_data_identity_sha256",
+        "hf_validation_manifest_identity_sha256",
+        "hf_validation_ordered_prediction_ids_sha256",
+        "hf_threshold_selection_policy",
+    }
+    if threshold_approval_fields - set(terminal_approval):
+        raise PermissionError("terminal approval is missing HF threshold identity fields")
+    expected_hf_threshold_receipt_sha256 = _require_sha256(
+        expected_hf_threshold_receipt_sha256, "HF threshold receipt"
+    )
+    if (
+        terminal_approval["hf_threshold_receipt_sha256"]
+        != expected_hf_threshold_receipt_sha256
+        or terminal_approval["hf_threshold_selection_policy"]
+        != HF_THRESHOLD_SELECTION_POLICY
+        or terminal_approval["hf_validation_data_identity_sha256"]
+        != hf_validation_identity["validation_data_identity_sha256"]
+        or terminal_approval["hf_validation_manifest_identity_sha256"]
+        != hf_validation_identity["hf_validation_manifest_identity_sha256"]
+        or terminal_approval["hf_validation_ordered_prediction_ids_sha256"]
+        != hf_validation_identity[
+            "hf_validation_ordered_prediction_ids_sha256"
+        ]
+    ):
+        raise PermissionError(
+            "terminal approval is not bound to the exact HF threshold receipt/policy"
+        )
     if not isinstance(scorer, ProductionTerminalScorer):
         raise RuntimeError("terminal-score requires the production native-task scorer")
     provider_registration = audit_terminal_provider_registration(
@@ -1573,6 +1750,30 @@ def terminal_score_gate(
         raise PermissionError(
             "terminal approval is not bound to the production scorer/provider identity"
         )
+
+    verified_hf_threshold_receipt = load_and_verify_hf_threshold_receipt(
+        hf_threshold_receipt_path,
+        expected_hf_threshold_receipt_sha256,
+        expected_scorer_schema_version=TERMINAL_SCORER_SCHEMA_VERSION,
+        expected_validation_data_identity_sha256=hf_validation_identity[
+            "validation_data_identity_sha256"
+        ],
+        expected_hf_validation_manifest_identity_sha256=_require_sha256(
+            hf_validation_identity["hf_validation_manifest_identity_sha256"],
+            "approved HF validation manifest identity",
+        ),
+        expected_hf_validation_ordered_prediction_ids_sha256=_require_sha256(
+            hf_validation_identity[
+                "hf_validation_ordered_prediction_ids_sha256"
+            ],
+            "approved HF validation ordered prediction IDs",
+        ),
+        expected_full_approval_receipt_sha256=full_approval_receipt_sha256,
+        expected_validation_selection_receipt_sha256=str(
+            selection_artifact["sha256"]
+        ),
+        expected_selected_checkpoint_sha256=selected_sha256,
+    )
 
     payload = torch.load(selected_checkpoint, map_location="cpu", weights_only=False)
     update = payload.get("update")
@@ -1609,7 +1810,12 @@ def terminal_score_gate(
         or selected.get("component_state_sha256") != actual_components
     ):
         raise RuntimeError("selected checkpoint component state identity failed")
-    receipt = dict(scorer(selected_checkpoint))
+    receipt = dict(
+        scorer(
+            selected_checkpoint,
+            verified_hf_threshold_receipt=verified_hf_threshold_receipt,
+        )
+    )
     required_scorer_fields = {
         "schema_version",
         "status",
@@ -1652,6 +1858,12 @@ def terminal_score_gate(
             "approval_receipt_sha256"
         ],
         "terminal_provider_registration": provider_registration,
+        "hf_threshold_receipt_artifact": {
+            "path": str(verified_hf_threshold_receipt.path),
+            "size_bytes": verified_hf_threshold_receipt.size_bytes,
+            "sha256": verified_hf_threshold_receipt.artifact_sha256,
+            "identity": dict(verified_hf_threshold_receipt.payload),
+        },
         "native_metrics_by_dataset_task": receipt,
         "cross_dataset_pooled_performance": False,
     }
@@ -1674,6 +1886,8 @@ def main() -> None:
     parser.add_argument("--selection-sha256")
     parser.add_argument("--terminal-provider")
     parser.add_argument("--terminal-provider-sha256")
+    parser.add_argument("--hf-threshold-receipt", type=Path)
+    parser.add_argument("--hf-threshold-receipt-sha256")
     args = parser.parse_args()
     config = TrainingRunnerConfig.frozen(args.pipeline, args.repo_root, phase=args.phase)
     if args.phase == "preflight":
@@ -1710,6 +1924,8 @@ def main() -> None:
             "selected checkpoint SHA256": args.checkpoint_sha256,
             "terminal provider": args.terminal_provider,
             "terminal provider SHA256": args.terminal_provider_sha256,
+            "HF threshold receipt": args.hf_threshold_receipt,
+            "HF threshold receipt SHA256": args.hf_threshold_receipt_sha256,
         }
         missing = [name for name, value in required.items() if value is None]
         if missing:
@@ -1724,6 +1940,8 @@ def main() -> None:
             args.selection_receipt,
             args.selection_sha256,
             args.checkpoint,
+            args.hf_threshold_receipt,
+            args.hf_threshold_receipt_sha256,
             scorer=ProductionTerminalScorer(
                 load_terminal_input_provider(args.terminal_provider),
                 expected_provider_identity_sha256=args.terminal_provider_sha256,

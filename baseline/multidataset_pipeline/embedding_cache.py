@@ -18,7 +18,7 @@ from torch import nn
 from .asset_manifest import load_adapter_asset_manifest
 
 
-EMBEDDING_CACHE_SCHEMA_VERSION = "frozen_window_embedding_cache_v1"
+EMBEDDING_CACHE_SCHEMA_VERSION = "frozen_window_embedding_cache_v2"
 SERIALIZATION = "numpy_npy_little_endian_cpu_c_order"
 ALLOWED_PARTITIONS = {"subtrain", "validation"}
 FORBIDDEN_CACHE_PATH_PARTS = {"outer", "outer_test", "test", "terminal", "terminal-score"}
@@ -84,6 +84,7 @@ class EmbeddingCacheIdentity:
     frontend_adapter_identity: Mapping[str, object]
     output_dtype: str
     code_identity_sha256: str
+    code_dependency_sha256_by_path: Mapping[str, str]
     config_identity_sha256: str
     schema_identity_sha256: str = SCHEMA_IDENTITY_SHA256
     encoder_frozen: bool = True
@@ -107,6 +108,7 @@ class EmbeddingCacheIdentity:
         window_policy: Mapping[str, object],
         frontend_adapter_identity: Mapping[str, object],
         code_identity_sha256: str,
+        code_dependency_sha256_by_path: Mapping[str, str],
         config_identity_sha256: str,
     ) -> "EmbeddingCacheIdentity":
         manifest = load_adapter_asset_manifest(repo_root)
@@ -135,6 +137,7 @@ class EmbeddingCacheIdentity:
             frontend_adapter_identity=frontend_adapter_identity,
             output_dtype="float32",
             code_identity_sha256=code_identity_sha256,
+            code_dependency_sha256_by_path=code_dependency_sha256_by_path,
             config_identity_sha256=config_identity_sha256,
         )
 
@@ -151,6 +154,28 @@ class EmbeddingCacheIdentity:
             raise ValueError("cache ordered unit IDs contain duplicates")
         _require_sha256(self.data_identity_sha256, "cache data identity")
         _require_sha256(self.code_identity_sha256, "cache code identity")
+        if (
+            not self.code_dependency_sha256_by_path
+            or any(
+                not isinstance(path, str)
+                or not path.startswith(
+                    (
+                        "baseline/multidataset_pipeline/",
+                        "baseline/four_dataset_frozen_encoder/",
+                    )
+                )
+                or path.startswith(("tests/", "docs/"))
+                for path in self.code_dependency_sha256_by_path
+            )
+        ):
+            raise ValueError("cache production code dependency map is empty or invalid")
+        for path, digest in self.code_dependency_sha256_by_path.items():
+            _require_sha256(digest, f"cache code dependency {path}")
+        dependency_aggregate = hashlib.sha256(
+            _canonical_json(dict(self.code_dependency_sha256_by_path))
+        ).hexdigest()
+        if dependency_aggregate != self.code_identity_sha256:
+            raise RuntimeError("cache code aggregate does not match per-file dependency map")
         _require_sha256(self.config_identity_sha256, "cache config identity")
         if self.schema_identity_sha256 != SCHEMA_IDENTITY_SHA256:
             raise RuntimeError("cache schema identity changed")

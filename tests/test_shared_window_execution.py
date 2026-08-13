@@ -4,7 +4,9 @@ import json
 import copy
 import hashlib
 import shutil
+import threading
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -16,6 +18,11 @@ from baseline.multidataset_pipeline.beats_temporal import HFRawInterval
 from baseline.multidataset_pipeline.contracts import ObservationState, PREDICTION_UNITS, WaveformSample
 from baseline.multidataset_pipeline.hf_data import HFSampleRecord
 from baseline.multidataset_pipeline.joint_native import JointNativeProjector
+from baseline.multidataset_pipeline.hf_thresholds import (
+    HF_THRESHOLD_SELECTION_POLICY,
+    threshold_receipt_payload,
+    write_hf_threshold_receipt,
+)
 from baseline.multidataset_pipeline.l40_preflight import (
     _complete_state_snapshot,
     validate_pipeline_adapter_identity,
@@ -392,7 +399,9 @@ FIXTURE_PROVIDER_IDENTITY_SHA256 = terminal_provider_identity_sha256(
 )
 
 
-def _terminal_scorer(data_identity_sha256: str) -> ProductionTerminalScorer:
+def _terminal_scorer(
+    data_identity_sha256: str, threshold_receipt_sha256: str = "7" * 64
+) -> ProductionTerminalScorer:
     ids = {
         "ICBHI_flat4": ("icbhi-0", "icbhi-1"),
         "SPRSound_binary": ("spr-0", "spr-1"),
@@ -432,7 +441,7 @@ def _terminal_scorer(data_identity_sha256: str) -> ProductionTerminalScorer:
             dtype=torch.float64,
         ),
         thresholds=torch.full((4,), 0.5),
-        threshold_receipt_sha256="7" * 64,
+        threshold_receipt_sha256=threshold_receipt_sha256,
     )
 
     def provider(_checkpoint: Path) -> TerminalScoringInput:
@@ -828,7 +837,7 @@ class TrainingAssemblyTest(unittest.TestCase):
             )
             self.assertNotIn("smoke", (full_root / "train_log.jsonl").read_text())
             self.assertNotIn("full", (smoke_root / "train_log.jsonl").read_text())
-            with self.assertRaisesRegex(FileExistsError, "already contains artifacts"):
+            with self.assertRaisesRegex(FileExistsError, "already claimed"):
                 prepare_phase_execution_root(
                     full,
                     full_approval,
@@ -894,6 +903,54 @@ class TrainingAssemblyTest(unittest.TestCase):
                 derive_phase_execution_identity(full, full_approval, data_identity),
                 full_identity,
             )
+
+    def test_phase_execution_claim_is_atomic_and_partial_root_cannot_resume(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            config = TrainingRunnerConfig.frozen("P1", root, phase="full")
+            data_identity = "d" * 64
+            approval = {
+                "status": "approved",
+                "pipeline_id": "P1",
+                "phase": "full",
+                "config_sha256": config.sha256(),
+                "data_identity_sha256": data_identity,
+                "authorized_by": "management-fixture",
+                "outer_test_authorized": False,
+                "approval_receipt_sha256": "a" * 64,
+            }
+            barrier = threading.Barrier(2)
+
+            def claim() -> str:
+                barrier.wait()
+                try:
+                    execution_root, _ = prepare_phase_execution_root(
+                        config,
+                        approval,
+                        data_identity,
+                        resume=None,
+                        resume_sha256=None,
+                    )
+                    return f"winner:{execution_root}"
+                except FileExistsError:
+                    return "rejected"
+
+            with ThreadPoolExecutor(max_workers=2) as executor:
+                outcomes = list(executor.map(lambda _: claim(), range(2)))
+            self.assertEqual(sum(value.startswith("winner:") for value in outcomes), 1)
+            self.assertEqual(outcomes.count("rejected"), 1)
+            execution_root = Path(
+                next(value.split(":", 1)[1] for value in outcomes if value.startswith("winner:"))
+            )
+            checkpoint = execution_root / "checkpoints" / "update_001725.pt"
+            with self.assertRaisesRegex(RuntimeError, "completion marker"):
+                prepare_phase_execution_root(
+                    config,
+                    approval,
+                    data_identity,
+                    resume=checkpoint,
+                    resume_sha256="b" * 64,
+                )
 
     def test_engineering_one_step_native_and_hf_masks(self):
         torch.manual_seed(20260728)
@@ -991,6 +1048,11 @@ class TrainingAssemblyTest(unittest.TestCase):
                 config=full,
                 data_identity_sha256="c" * 64,
                 full_approval_receipt_sha256=full_approval_sha,
+                hf_validation_identity={
+                    "validation_data_identity_sha256": "3" * 64,
+                    "hf_validation_manifest_identity_sha256": "1" * 64,
+                    "hf_validation_ordered_prediction_ids_sha256": "2" * 64,
+                },
                 candidates=[first, second],
             )
             self.assertEqual(
@@ -999,6 +1061,22 @@ class TrainingAssemblyTest(unittest.TestCase):
             self.assertEqual(selection["selected_update"], 3_450)
 
             terminal = TrainingRunnerConfig.frozen("P2", root, phase="terminal-score")
+            threshold_path = root / "hf_threshold_receipt.json"
+            threshold_artifact = write_hf_threshold_receipt(
+                threshold_path,
+                threshold_receipt_payload(
+                    thresholds=(0.5, 0.5, 0.5, 0.5),
+                    validation_data_identity_sha256="3" * 64,
+                    hf_validation_manifest_identity_sha256="1" * 64,
+                    hf_validation_ordered_prediction_ids_sha256="2" * 64,
+                    full_approval_receipt_sha256=full_approval_sha,
+                    validation_selection_receipt_sha256=selection[
+                        "selection_receipt_artifact"
+                    ]["sha256"],
+                    selected_checkpoint_sha256=second["sha256"],
+                    scorer_schema_version="shared_window_terminal_scorer_v1",
+                ),
+            )
             approval.write_text(json.dumps({
                 "status": "approved",
                 "pipeline_id": "P2",
@@ -1008,6 +1086,11 @@ class TrainingAssemblyTest(unittest.TestCase):
                 "selection_receipt_sha256": selection["selection_receipt_artifact"]["sha256"],
                 "terminal_scorer_schema_version": "shared_window_terminal_scorer_v1",
                 "terminal_provider_identity_sha256": FIXTURE_PROVIDER_IDENTITY_SHA256,
+                "hf_threshold_receipt_sha256": threshold_artifact["sha256"],
+                "hf_validation_data_identity_sha256": "3" * 64,
+                "hf_validation_manifest_identity_sha256": "1" * 64,
+                "hf_validation_ordered_prediction_ids_sha256": "2" * 64,
+                "hf_threshold_selection_policy": HF_THRESHOLD_SELECTION_POLICY,
                 "authorized_by": "management-fixture",
                 "outer_test_authorized": True,
             }), encoding="utf-8")
@@ -1017,10 +1100,31 @@ class TrainingAssemblyTest(unittest.TestCase):
                 selection_path,
                 selection["selection_receipt_artifact"]["sha256"],
                 Path(second["path"]),
-                scorer=_terminal_scorer("c" * 64),
+                threshold_path,
+                threshold_artifact["sha256"],
+                scorer=_terminal_scorer(
+                    "c" * 64, threshold_artifact["sha256"]
+                ),
             )
             self.assertFalse(result["cross_dataset_pooled_performance"])
             approved_terminal = json.loads(approval.read_text())
+            wrong_threshold_approval = dict(approved_terminal)
+            wrong_threshold_approval["hf_threshold_receipt_sha256"] = "a" * 64
+            approval.write_text(json.dumps(wrong_threshold_approval), encoding="utf-8")
+            with self.assertRaisesRegex(PermissionError, "threshold receipt/policy"):
+                terminal_score_gate(
+                    terminal,
+                    approval,
+                    selection_path,
+                    selection["selection_receipt_artifact"]["sha256"],
+                    Path(second["path"]),
+                    threshold_path,
+                    threshold_artifact["sha256"],
+                    scorer=_terminal_scorer(
+                        "c" * 64, threshold_artifact["sha256"]
+                    ),
+                )
+            approval.write_text(json.dumps(approved_terminal), encoding="utf-8")
             wrong_provider = dict(approved_terminal)
             wrong_provider["terminal_provider_identity_sha256"] = "9" * 64
             approval.write_text(json.dumps(wrong_provider), encoding="utf-8")
@@ -1031,7 +1135,11 @@ class TrainingAssemblyTest(unittest.TestCase):
                     selection_path,
                     selection["selection_receipt_artifact"]["sha256"],
                     Path(second["path"]),
-                    scorer=_terminal_scorer("c" * 64),
+                    threshold_path,
+                    threshold_artifact["sha256"],
+                    scorer=_terminal_scorer(
+                        "c" * 64, threshold_artifact["sha256"]
+                    ),
                 )
             approval.write_text(json.dumps(approved_terminal), encoding="utf-8")
             with self.assertRaisesRegex(RuntimeError, "identity/task/isolation"):
@@ -1041,7 +1149,11 @@ class TrainingAssemblyTest(unittest.TestCase):
                     selection_path,
                     selection["selection_receipt_artifact"]["sha256"],
                     Path(second["path"]),
-                    scorer=_terminal_scorer("d" * 64),
+                    threshold_path,
+                    threshold_artifact["sha256"],
+                    scorer=_terminal_scorer(
+                        "d" * 64, threshold_artifact["sha256"]
+                    ),
                 )
             with self.assertRaisesRegex(RuntimeError, "production native-task scorer"):
                 terminal_score_gate(
@@ -1050,6 +1162,8 @@ class TrainingAssemblyTest(unittest.TestCase):
                     selection_path,
                     selection["selection_receipt_artifact"]["sha256"],
                     Path(second["path"]),
+                    threshold_path,
+                    threshold_artifact["sha256"],
                 )
             with self.assertRaisesRegex(RuntimeError, "production native-task scorer"):
                 terminal_score_gate(
@@ -1058,6 +1172,8 @@ class TrainingAssemblyTest(unittest.TestCase):
                     selection_path,
                     selection["selection_receipt_artifact"]["sha256"],
                     Path(second["path"]),
+                    threshold_path,
+                    threshold_artifact["sha256"],
                     scorer=lambda path: {
                         **_terminal_scorer("c" * 64)(path),
                         "pooled_score": 0.5,
@@ -1070,6 +1186,8 @@ class TrainingAssemblyTest(unittest.TestCase):
                     selection_path,
                     selection["selection_receipt_artifact"]["sha256"],
                     Path(first["path"]),
+                    threshold_path,
+                    threshold_artifact["sha256"],
                     scorer=lambda _: {},
                 )
 
@@ -1084,6 +1202,8 @@ class TrainingAssemblyTest(unittest.TestCase):
                     tampered_selection,
                     selection["selection_receipt_artifact"]["sha256"],
                     Path(second["path"]),
+                    threshold_path,
+                    threshold_artifact["sha256"],
                     scorer=lambda _: {},
                 )
             with self.assertRaisesRegex(RuntimeError, "identity/rule"):
@@ -1093,7 +1213,27 @@ class TrainingAssemblyTest(unittest.TestCase):
                     tampered_selection,
                     sha256_path(tampered_selection),
                     Path(second["path"]),
+                    threshold_path,
+                    threshold_artifact["sha256"],
                     scorer=lambda _: {},
+                )
+
+            tampered_threshold_path = root / "tampered_hf_threshold_receipt.json"
+            shutil.copy2(threshold_path, tampered_threshold_path)
+            with tampered_threshold_path.open("ab") as handle:
+                handle.write(b"tamper")
+            with self.assertRaisesRegex(RuntimeError, "threshold receipt byte SHA256"):
+                terminal_score_gate(
+                    terminal,
+                    approval,
+                    selection_path,
+                    selection["selection_receipt_artifact"]["sha256"],
+                    Path(second["path"]),
+                    tampered_threshold_path,
+                    threshold_artifact["sha256"],
+                    scorer=_terminal_scorer(
+                        "c" * 64, threshold_artifact["sha256"]
+                    ),
                 )
 
             wrong_data = json.loads(approval.read_text())
@@ -1106,6 +1246,8 @@ class TrainingAssemblyTest(unittest.TestCase):
                     selection_path,
                     selection["selection_receipt_artifact"]["sha256"],
                     Path(second["path"]),
+                    threshold_path,
+                    threshold_artifact["sha256"],
                     scorer=lambda _: {},
                 )
 

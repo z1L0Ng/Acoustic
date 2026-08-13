@@ -25,6 +25,7 @@ from baseline.four_dataset_frozen_encoder.verify import _multiclass_metrics
 from baseline.shared_encoder_native_heads.protocol import ICBHI_LABELS, SPR_LABELS
 
 from .beats_temporal import CHANNEL_ORDER
+from .hf_thresholds import VerifiedHFThresholdReceipt
 
 
 TERMINAL_SCORER_SCHEMA_VERSION = "shared_window_terminal_scorer_v1"
@@ -370,13 +371,16 @@ def _score_multiclass(
 
 
 def _score_hf(
-    batches: Sequence[HFTemporalTerminalBatch], expected_ids: tuple[str, ...]
+    batches: Sequence[HFTemporalTerminalBatch],
+    expected_ids: tuple[str, ...],
+    verified_threshold_receipt: VerifiedHFThresholdReceipt,
 ) -> dict[str, object]:
     actual_ids: list[str] = []
     values = [[] for _ in CHANNEL_ORDER]
     targets = [[] for _ in CHANNEL_ORDER]
-    threshold: torch.Tensor | None = None
-    threshold_receipt: str | None = None
+    threshold = torch.tensor(
+        verified_threshold_receipt.thresholds, dtype=torch.float64
+    )
     valid_window_count = 0
     for batch in batches:
         batch.validate()
@@ -389,19 +393,22 @@ def _score_hf(
             & batch.valid_mask.detach().cpu()
         )
         valid_window_count += int(batch.window_mask.sum())
-        current_threshold = batch.thresholds.detach().cpu()
-        if threshold is None:
-            threshold = current_threshold
-            threshold_receipt = batch.threshold_receipt_sha256
-        elif not torch.equal(threshold, current_threshold) or threshold_receipt != batch.threshold_receipt_sha256:
-            raise RuntimeError("HF validation-frozen thresholds changed between terminal batches")
+        current_threshold = batch.thresholds.detach().cpu().to(torch.float64)
+        if (
+            not torch.equal(threshold, current_threshold)
+            or batch.threshold_receipt_sha256
+            != verified_threshold_receipt.artifact_sha256
+        ):
+            raise RuntimeError(
+                "HF batch threshold reference differs from verified threshold artifact"
+            )
         for index in range(4):
             mask = effective[..., index]
             values[index].append(probabilities[..., index][mask])
             targets[index].append(labels[..., index][mask])
     if tuple(actual_ids) != expected_ids or len(set(actual_ids)) != len(actual_ids):
         raise RuntimeError("HF prediction IDs are missing, duplicated, or out of order")
-    if threshold is None or threshold_receipt is None:
+    if not batches:
         raise RuntimeError("HF terminal task has no batches")
     per_channel: dict[str, object] = {}
     total_denominator = 0
@@ -447,7 +454,12 @@ def _score_hf(
         "negative_semantics": HF_NEGATIVE_SEMANTICS,
         "raw_gap_missing_unknown_not_raw_negative": True,
         "shared_label_eligible": False,
-        "threshold_receipt_sha256": threshold_receipt,
+        "threshold_receipt_sha256": verified_threshold_receipt.artifact_sha256,
+        "threshold_receipt_path": str(verified_threshold_receipt.path),
+        "threshold_selection_policy": verified_threshold_receipt.payload[
+            "threshold_selection_policy"
+        ],
+        "thresholds_selected_on_outer_test": False,
         "per_channel": per_channel,
     }
 
@@ -484,7 +496,18 @@ class ProductionTerminalScorer:
             raise ValueError("production terminal provider must use module:function")
         self.provider_specification = provider_specification
 
-    def __call__(self, selected_checkpoint: Path) -> Mapping[str, object]:
+    def __call__(
+        self,
+        selected_checkpoint: Path,
+        *,
+        verified_hf_threshold_receipt: VerifiedHFThresholdReceipt | None = None,
+    ) -> Mapping[str, object]:
+        if not isinstance(
+            verified_hf_threshold_receipt, VerifiedHFThresholdReceipt
+        ):
+            raise RuntimeError(
+                "terminal scorer requires a gate-verified HF threshold receipt"
+            )
         inputs = self.provider(selected_checkpoint)
         if not isinstance(inputs, TerminalScoringInput):
             raise TypeError("terminal input provider returned the wrong contract type")
@@ -504,7 +527,9 @@ class ProductionTerminalScorer:
         for task in NATIVE_TASKS:
             expected = inputs.expected_prediction_ids_by_task[task]
             if task == "HF_temporal4":
-                tasks[task] = _score_hf(grouped[task], expected)
+                tasks[task] = _score_hf(
+                    grouped[task], expected, verified_hf_threshold_receipt
+                )
             else:
                 tasks[task] = _score_multiclass(task, grouped[task], expected)
         receipt = {

@@ -34,7 +34,7 @@ from .real_subtrain_provider import (
 from .window_encoder import ProductionWindowEncoder
 
 
-RUNNER_CACHE_SET_SCHEMA_VERSION = "shared_window_runner_cache_set_v1"
+RUNNER_CACHE_SET_SCHEMA_VERSION = "shared_window_runner_cache_set_v2"
 RUNNER_CACHE_PIPELINES = {"P1": "AST", "P2": "BEATs"}
 RUNNER_CACHE_PARTITIONS = ("subtrain", "validation")
 RUNNER_CACHE_LANES = ("ICBHI", "SPRSound", "HF", "KAUH")
@@ -46,27 +46,66 @@ def canonical_json_sha256(value: object) -> str:
     ).hexdigest()
 
 
-def _file_set_sha256(repo_root: Path, pipeline_id: str) -> str:
-    candidate = {
-        "P1": "ast_window_encoder.py",
-        "P2": "beats_window_encoder.py",
-    }[pipeline_id]
-    relatives = (
+COMMON_CODE_DEPENDENCIES = (
+    "baseline/four_dataset_frozen_encoder/data.py",
+    "baseline/multidataset_pipeline/adapter_assets.json",
+    "baseline/multidataset_pipeline/adapter_factory.py",
+    "baseline/multidataset_pipeline/asset_manifest.py",
+    "baseline/multidataset_pipeline/contracts.py",
+    "baseline/multidataset_pipeline/beats_temporal.py",
+    "baseline/multidataset_pipeline/embedding_cache.py",
+    "baseline/multidataset_pipeline/hf_data.py",
+    "baseline/multidataset_pipeline/joint_native.py",
+    "baseline/multidataset_pipeline/preflight.py",
+    "baseline/multidataset_pipeline/real_subtrain_provider.py",
+    "baseline/multidataset_pipeline/runner_embedding_cache.py",
+    "baseline/multidataset_pipeline/sliding_window.py",
+    "baseline/multidataset_pipeline/window_encoder.py",
+)
+PIPELINE_CODE_DEPENDENCIES = {
+    "P1": COMMON_CODE_DEPENDENCIES
+    + ("baseline/multidataset_pipeline/ast_window_encoder.py",),
+    "P2": COMMON_CODE_DEPENDENCIES
+    + ("baseline/multidataset_pipeline/beats_window_encoder.py",),
+}
+
+
+def _file_set_sha256(repo_root: Path, pipeline_id: str) -> dict[str, object]:
+    """Return the audited production dependency closure and its aggregate hash."""
+
+    if pipeline_id not in PIPELINE_CODE_DEPENDENCIES:
+        raise ValueError("cache code dependency closure supports only P1/P2")
+    relatives = PIPELINE_CODE_DEPENDENCIES[pipeline_id]
+    if len(relatives) != len(set(relatives)) or any(
+        relative.startswith(("tests/", "docs/")) for relative in relatives
+    ):
+        raise RuntimeError("cache production dependency allowlist audit failed")
+    mandatory = {
         "baseline/multidataset_pipeline/adapter_assets.json",
-        "baseline/multidataset_pipeline/asset_manifest.py",
-        "baseline/multidataset_pipeline/embedding_cache.py",
+        "baseline/multidataset_pipeline/preflight.py",
         "baseline/multidataset_pipeline/runner_embedding_cache.py",
-        "baseline/multidataset_pipeline/sliding_window.py",
-        "baseline/multidataset_pipeline/window_encoder.py",
-        f"baseline/multidataset_pipeline/{candidate}",
-    )
-    receipt: dict[str, str] = {}
+    }
+    candidate_mandatory = {
+        "P1": {"baseline/multidataset_pipeline/ast_window_encoder.py"},
+        "P2": {
+            "baseline/multidataset_pipeline/beats_temporal.py",
+            "baseline/multidataset_pipeline/beats_window_encoder.py",
+        },
+    }[pipeline_id]
+    if not (mandatory | candidate_mandatory) <= set(relatives):
+        raise RuntimeError("cache dependency closure omitted a mandatory production file")
+    per_file: dict[str, str] = {}
     for relative in relatives:
         path = repo_root.resolve() / relative
         if not path.is_file():
             raise FileNotFoundError(f"cache code identity file missing: {path}")
-        receipt[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
-    return canonical_json_sha256(receipt)
+        per_file[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return {
+        "pipeline_id": pipeline_id,
+        "allowlist_version": "shared_window_cache_dependencies_v1",
+        "files": per_file,
+        "aggregate_sha256": canonical_json_sha256(per_file),
+    }
 
 
 @dataclass(frozen=True)
@@ -250,6 +289,7 @@ def _identity_for_lane(
             ][lane],
         }
     )
+    code_dependencies = _file_set_sha256(repo_root, pipeline_id)
     return EmbeddingCacheIdentity.from_tracked_asset(
         repo_root=repo_root,
         pipeline_id=pipeline_id,
@@ -277,7 +317,8 @@ def _identity_for_lane(
             "adapter": json.dumps(frontend_adapter["adapter"], sort_keys=True),
             "identity_sha256": canonical_json_sha256(frontend_adapter),
         },
-        code_identity_sha256=_file_set_sha256(repo_root, pipeline_id),
+        code_identity_sha256=str(code_dependencies["aggregate_sha256"]),
+        code_dependency_sha256_by_path=code_dependencies["files"],
         config_identity_sha256=config_identity_sha256,
     )
 
@@ -392,6 +433,9 @@ def build_or_load_runner_embedding_caches(
                     "partition": identity.partition,
                     "dataset_release": identity.dataset_release,
                     "code_identity_sha256": identity.code_identity_sha256,
+                    "code_dependency_sha256_by_path": dict(
+                        identity.code_dependency_sha256_by_path
+                    ),
                     "config_identity_sha256": identity.config_identity_sha256,
                     "schema_identity_sha256": identity.schema_identity_sha256,
                     "asset_manifest_identity_sha256": identity.encoder_asset[
