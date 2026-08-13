@@ -14,9 +14,15 @@ from baseline.multidataset_pipeline.hf_thresholds import (
     select_hf_validation_thresholds,
 )
 from baseline.multidataset_pipeline.hf_validation_exporter import (
+    _load_hf_validation_cache,
     _load_prediction_artifact,
     _pad_validation_rows,
     _write_prediction_artifact,
+)
+from tests.test_shared_window_execution import (
+    _FakeAdapter,
+    _cache_fixture_batch_loader,
+    _cache_fixture_index,
 )
 
 
@@ -45,6 +51,34 @@ def _batch(*, outer_test_accessed: bool = False) -> HFValidationThresholdBatch:
 
 
 class HFThresholdToolchainTest(unittest.TestCase):
+    def test_p3_export_cache_reapplies_trainable_dimension_adapter(self):
+        repo_root = Path(__file__).resolve().parents[1]
+        adapter = _FakeAdapter("PANNs_Cnn14").eval()
+        validation = _cache_fixture_index("validation")
+        with TemporaryDirectory() as directory:
+            temporary_root = Path(directory)
+            (temporary_root / "baseline").symlink_to(repo_root / "baseline")
+            cached = _load_hf_validation_cache(
+                repo_root=temporary_root,
+                pipeline_id="P3",
+                config_identity_sha256="3" * 64,
+                adapter=adapter,
+                validation_index=validation,
+                device=torch.device("cpu"),
+                batch_loader=_cache_fixture_batch_loader,
+            )
+            self.assertEqual(cached.receipt["cache_boundary"], "pre_dimension_adapter")
+            self.assertEqual(cached.receipt["cached_embedding_dimension"], 2048)
+            with self.assertRaisesRegex(RuntimeError, "trainable dimension adapter"):
+                cached.batch((0,), device=torch.device("cpu"))
+            batch = cached.batch(
+                (0,),
+                device=torch.device("cpu"),
+                dimension_adapter=adapter.dimension_adapter,
+            )
+            self.assertEqual(batch.output.embeddings.shape[0], 1)
+            self.assertEqual(batch.output.embeddings.shape[-1], 768)
+
     def test_validation_export_artifact_preserves_masks_time_map_and_isolation(self):
         rows = []
         for index, windows in enumerate((2, 1)):

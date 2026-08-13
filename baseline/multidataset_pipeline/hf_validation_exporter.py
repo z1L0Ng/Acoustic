@@ -133,6 +133,7 @@ def _load_hf_validation_cache(
     adapter: torch.nn.Module,
     validation_index: object,
     device: torch.device,
+    batch_loader: object = load_native_window_batch,
 ) -> CachedLanePartition:
     units = validation_index.lanes["HF"]
     identity = _identity_for_lane(
@@ -146,15 +147,16 @@ def _load_hf_validation_cache(
     cache = FrozenEmbeddingCache(
         repo_root / ".cache" / "multidataset_pipeline" / "embeddings" / pipeline_id
     )
+    pre_dimension_adapter = pipeline_id == "P3"
     payload, cache_receipt = cache.get_or_compute(
         identity,
-        adapter,
+        adapter.backend if pre_dimension_adapter else adapter,
         lambda: _compute_lane_payload(
             adapter,
             units,
             device=device,
             batch_size=HF_VALIDATION_EXPORT_BATCH_SIZE,
-            batch_loader=load_native_window_batch,
+            batch_loader=batch_loader,
         ),
         frontend_deterministic=True,
         augmentation_enabled=False,
@@ -166,7 +168,17 @@ def _load_hf_validation_cache(
         lane="HF",
         units=units,
         payload=payload,
-        receipt={**cache_receipt, "encoder_identity": adapter.encoder_identity},
+        receipt={
+            **cache_receipt,
+            "encoder_identity": adapter.encoder_identity,
+            "cache_boundary": (
+                "pre_dimension_adapter"
+                if pre_dimension_adapter
+                else "post_dimension_adapter"
+            ),
+            "cached_embedding_dimension": payload.embeddings[0].shape[1],
+            "dimension_adapter_executed_after_cache_load": pre_dimension_adapter,
+        },
     )
 
 
@@ -396,7 +408,13 @@ def export_hf_validation_predictions(
             indices = tuple(
                 range(start, min(start + HF_VALIDATION_EXPORT_BATCH_SIZE, len(cached.units)))
             )
-            batch = cached.batch(indices, device=torch_device)
+            batch = cached.batch(
+                indices,
+                device=torch_device,
+                dimension_adapter=(
+                    adapter.dimension_adapter if config.pipeline_id == "P3" else None
+                ),
+            )
             logits = model(batch.output.embeddings, "HF")["temporal4"]
             supervision = raw_intervals_to_token_supervision(
                 batch.output.time_map,
