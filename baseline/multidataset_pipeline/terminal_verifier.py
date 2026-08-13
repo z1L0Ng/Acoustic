@@ -201,6 +201,7 @@ def verify_terminal_result(
     threshold_path: Path,
     *,
     subject_code_commit: str,
+    verifier_code_commit: str,
 ) -> dict[str, object]:
     terminal = json.loads(terminal_receipt_path.read_text())
     approval = json.loads(approval_path.read_text())
@@ -208,6 +209,10 @@ def verify_terminal_result(
     threshold = json.loads(threshold_path.read_text())
     _reject_forbidden_keys(terminal)
     scorer = terminal["native_metrics_by_dataset_task"]
+    selection_artifact = _artifact(selection_path)
+    checkpoint_artifact = _artifact(Path(selection["selected_checkpoint"]["path"]))
+    threshold_artifact = _artifact(threshold_path)
+    approval_artifact = _artifact(approval_path)
     if (
         terminal["status"] != "terminal_native_task_scoring_complete"
         or scorer["outer_test_accessed"] is not True
@@ -218,6 +223,24 @@ def verify_terminal_result(
         or set(scorer["native_tasks"]) != set(NATIVE_TASKS)
     ):
         raise RuntimeError("terminal task/isolation schema failed independent readback")
+    if (
+        terminal["selection_receipt_artifact"] != selection_artifact
+        or terminal["selected_checkpoint"]["path"] != checkpoint_artifact["path"]
+        or terminal["selected_checkpoint"]["size_bytes"] != checkpoint_artifact["size_bytes"]
+        or terminal["selected_checkpoint"]["sha256"] != checkpoint_artifact["sha256"]
+        or terminal["hf_threshold_receipt_artifact"]["path"] != threshold_artifact["path"]
+        or terminal["hf_threshold_receipt_artifact"]["size_bytes"] != threshold_artifact["size_bytes"]
+        or terminal["hf_threshold_receipt_artifact"]["sha256"] != threshold_artifact["sha256"]
+        or terminal["terminal_approval_receipt_sha256"] != approval_artifact["sha256"]
+        or approval["selection_receipt_sha256"] != selection_artifact["sha256"]
+        or approval["selected_checkpoint_path"] != checkpoint_artifact["path"]
+        or approval["selected_checkpoint_size_bytes"] != checkpoint_artifact["size_bytes"]
+        or approval["selected_checkpoint_sha256"] != checkpoint_artifact["sha256"]
+        or approval["hf_threshold_receipt_sha256"] != threshold_artifact["sha256"]
+        or threshold["validation_selection_receipt_sha256"] != selection_artifact["sha256"]
+        or threshold["selected_checkpoint_sha256"] != checkpoint_artifact["sha256"]
+    ):
+        raise RuntimeError("approval/selection/checkpoint/threshold identity binding failed")
     joined_receipt = scorer["prediction_artifacts"]["terminal_joined_predictions"]
     joined_path = Path(joined_receipt["path"])
     if _artifact(joined_path) != joined_receipt:
@@ -330,13 +353,13 @@ def verify_terminal_result(
         "status": "verified_terminal_native_tasks",
         "pipeline_id": pipeline,
         "verifier_identity": "independent_persisted_prediction_recompute",
-        "verifier_code_commit": subject_code_commit,
+        "verifier_code_commit": verifier_code_commit,
         "subject_code_commit": subject_code_commit,
         "terminal_receipt": _artifact(terminal_receipt_path),
-        "terminal_approval": _artifact(approval_path),
-        "validation_selection_receipt": _artifact(selection_path),
-        "selected_checkpoint": _artifact(Path(selection["selected_checkpoint"]["path"])),
-        "hf_threshold_receipt": _artifact(threshold_path),
+        "terminal_approval": approval_artifact,
+        "validation_selection_receipt": selection_artifact,
+        "selected_checkpoint": checkpoint_artifact,
+        "hf_threshold_receipt": threshold_artifact,
         "provider_identity_sha256": scorer["provider_identity_sha256"],
         "scorer_schema_version": scorer["schema_version"],
         "prediction_artifacts": scorer["prediction_artifacts"],
@@ -373,6 +396,7 @@ def main() -> None:
     parser.add_argument("--selection-receipt", type=Path, required=True)
     parser.add_argument("--hf-threshold-receipt", type=Path, required=True)
     parser.add_argument("--subject-code-commit", required=True)
+    parser.add_argument("--verifier-code-commit", required=True)
     parser.add_argument("--verifier-receipt", type=Path, required=True)
     parser.add_argument("--decision-receipt", type=Path, required=True)
     args = parser.parse_args()
@@ -383,6 +407,7 @@ def main() -> None:
         args.selection_receipt,
         args.hf_threshold_receipt,
         subject_code_commit=args.subject_code_commit,
+        verifier_code_commit=args.verifier_code_commit,
     )
     verifier_artifact = _write_json_no_replace(args.verifier_receipt, verified)
     decision = {
