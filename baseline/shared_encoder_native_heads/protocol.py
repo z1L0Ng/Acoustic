@@ -159,7 +159,9 @@ def discover_icbhi_audio_dir(dataset_root: Path) -> Path:
     return valid[0]
 
 
-def load_icbhi_rows(dataset_root: Path) -> tuple[list[dict[str, object]], dict[str, object]]:
+def load_icbhi_rows(
+    dataset_root: Path, *, include_checksums: bool = True
+) -> tuple[list[dict[str, object]], dict[str, object]]:
     frame = pd.read_csv(ICBHI_MANIFEST, dtype={"patient_id": str, "cycle_id": str})
     if (
         len(frame) != 6898
@@ -202,7 +204,6 @@ def load_icbhi_rows(dataset_root: Path) -> tuple[list[dict[str, object]], dict[s
     receipt = {
         "prediction_unit": "annotated respiratory cycle",
         "manifest": str(ICBHI_MANIFEST),
-        "manifest_sha256": sha256_file(ICBHI_MANIFEST),
         "rows": len(rows),
         "unique_cycle_ids": int(frame["cycle_id"].nunique()),
         "official_split": dict(sorted(frame["official_split"].value_counts().items())),
@@ -215,6 +216,8 @@ def load_icbhi_rows(dataset_root: Path) -> tuple[list[dict[str, object]], dict[s
         "split_caveat": "official recording split is literature-comparable but not patient-independent",
         "validation": "StratifiedGroupKFold fold 0 inside official train; patient_id; seed 20260712",
     }
+    if include_checksums:
+        receipt["manifest_sha256"] = sha256_file(ICBHI_MANIFEST)
     return rows, receipt
 
 

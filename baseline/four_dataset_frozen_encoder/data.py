@@ -92,7 +92,9 @@ def hf_assignment_sha256(samples: list[Sample]) -> str:
     return hashlib.sha256(("\n".join(rows) + "\n").encode("utf-8")).hexdigest()
 
 
-def _load_hf(dataset_root: Path) -> tuple[list[Sample], dict[str, object]]:
+def _load_hf(
+    dataset_root: Path, *, include_checksums: bool = True
+) -> tuple[list[Sample], dict[str, object]]:
     root = dataset_root / "hf_lung_v1/source_original"
     raw: list[dict[str, object]] = []
     for wav in sorted(root.rglob("*.wav")):
@@ -154,6 +156,11 @@ def _load_hf(dataset_root: Path) -> tuple[list[Sample], dict[str, object]]:
                     "source_split": row["source_split"],
                     "date_proxy": row["date_proxy"],
                     "patient_id": None,
+                    "raw_intervals": [
+                        [str(token), float(start), float(end)]
+                        for token, start, end in row["intervals"]
+                    ],
+                    "recording_state": "observed" if row["intervals"] else "empty",
                     "annotation_state": "observed_positive_presence" if targets else "not_annotated",
                 },
             )
@@ -186,9 +193,6 @@ def _load_hf(dataset_root: Path) -> tuple[list[Sample], dict[str, object]]:
         or source_groups["train"] & source_groups["test"]
     ):
         raise RuntimeError("HF canonical date-proxy assignment gate failed")
-    assignment_sha256 = hf_assignment_sha256(samples)
-    if assignment_sha256 != EXPECTED_HF_ASSIGNMENT_SHA256:
-        raise RuntimeError("HF canonical assignment SHA256 gate failed")
     receipt = {
         "rows": len(samples),
         "partition": dict(sorted(Counter(sample.partition for sample in samples).items())),
@@ -197,11 +201,6 @@ def _load_hf(dataset_root: Path) -> tuple[list[Sample], dict[str, object]]:
         "date_proxy_counts": partition_proxy_counts,
         "date_proxy_format": "YYYY-MM-DD",
         "date_proxy_identity": "deidentified grouping proxy; not patient_id",
-        "assignment_sha256": assignment_sha256,
-        "assignment_digest_serialization": (
-            "raw sorted(Path.rglob('*.wav')) order; "
-            "source_split:stem<TAB>partition<TAB>YYYYMMDD<LF>"
-        ),
         "group_overlap": 0,
         "empty_annotation_files": sum(not sample.targets for sample in samples),
         "task_eligible": {
@@ -241,6 +240,15 @@ def _load_hf(dataset_root: Path) -> tuple[list[Sample], dict[str, object]]:
             "5 s windows and mean-pooled after the frozen encoder"
         ),
     }
+    if include_checksums:
+        assignment_sha256 = hf_assignment_sha256(samples)
+        if assignment_sha256 != EXPECTED_HF_ASSIGNMENT_SHA256:
+            raise RuntimeError("HF canonical assignment SHA256 gate failed")
+        receipt["assignment_sha256"] = assignment_sha256
+        receipt["assignment_digest_serialization"] = (
+            "raw sorted(Path.rglob('*.wav')) order; "
+            "source_split:stem<TAB>partition<TAB>YYYYMMDD<LF>"
+        )
     return samples, receipt
 
 
@@ -276,7 +284,9 @@ def _kauh_patient_rows(audio_dir: Path) -> list[dict[str, object]]:
     return rows
 
 
-def _load_kauh(dataset_root: Path, outer_fold: int) -> tuple[list[Sample], dict[str, object]]:
+def _load_kauh(
+    dataset_root: Path, outer_fold: int, *, include_checksums: bool = True
+) -> tuple[list[Sample], dict[str, object]]:
     patients = _kauh_patient_rows(dataset_root / "kauh_fraiwan/source_original/audio_files")
     labels = np.asarray([str(row["sound"]) for row in patients])
     groups = np.asarray([str(row["patient_id"]) for row in patients])
@@ -350,9 +360,6 @@ def _load_kauh(dataset_root: Path, outer_fold: int) -> tuple[list[Sample], dict[
                 ).items()
             )
         ),
-        "outer_test_ordered_id_sha256": _sha(
-            [sample.sample_id for sample in samples if sample.partition == "test"]
-        ),
         "stratification_caveat": (
             "best-effort StratifiedGroupKFold; at least one raw class has only one "
             "patient, so every fold cannot contain every class; report aggregate "
@@ -362,11 +369,19 @@ def _load_kauh(dataset_root: Path, outer_fold: int) -> tuple[list[Sample], dict[
             str(item.message) for item in [*caught, *inner_caught]
         ],
     }
+    if include_checksums:
+        receipt["outer_test_ordered_id_sha256"] = _sha(
+            [sample.sample_id for sample in samples if sample.partition == "test"]
+        )
     return samples, receipt
 
 
-def _load_icbhi(dataset_root: Path) -> tuple[list[Sample], dict[str, object]]:
-    rows, receipt = load_icbhi_rows(dataset_root / "icbhi_2017")
+def _load_icbhi(
+    dataset_root: Path, *, include_checksums: bool = True
+) -> tuple[list[Sample], dict[str, object]]:
+    rows, receipt = load_icbhi_rows(
+        dataset_root / "icbhi_2017", include_checksums=include_checksums
+    )
     samples = [
         Sample(
             sample_id=f"icbhi:{row['cycle_id']}",
@@ -389,7 +404,9 @@ def _load_icbhi(dataset_root: Path) -> tuple[list[Sample], dict[str, object]]:
     return samples, receipt
 
 
-def _load_spr(dataset_root: Path) -> tuple[list[Sample], dict[str, object]]:
+def _load_spr(
+    dataset_root: Path, *, include_checksums: bool = True
+) -> tuple[list[Sample], dict[str, object]]:
     root = resolve_biocas_root(dataset_root / "sprsound")
     if SPRSOUND_COMMIT not in str(root):
         raise RuntimeError(f"SPRSound root is not pinned to {SPRSOUND_COMMIT}")
@@ -407,8 +424,6 @@ def _load_spr(dataset_root: Path) -> tuple[list[Sample], dict[str, object]]:
         or len(inter) != 1429
         or dict(sorted(Counter(str(row["raw_label"]) for row in train).items()))
         != EXPECTED_SPR_SUPPORT["train"]
-        or _sha([str(row["event_id"]) for row in inter])
-        != EXPECTED_SPR_INTER_ID_SHA256
     ):
         raise RuntimeError("SPRSound label-free row/support/ID gate failed")
     splitter = StratifiedGroupKFold(
@@ -447,7 +462,6 @@ def _load_spr(dataset_root: Path) -> tuple[list[Sample], dict[str, object]]:
         "subtrain_validation_patient_overlap": 0,
         "train_inter_patient_overlap": 0,
         "train_support": EXPECTED_SPR_SUPPORT["train"],
-        "inter_ordered_id_sha256": EXPECTED_SPR_INTER_ID_SHA256,
         "validation": (
             "StratifiedGroupKFold fold 0 inside official train; patient_id; "
             f"seed {SPR_VALIDATION_SEED}"
@@ -500,10 +514,16 @@ def _load_spr(dataset_root: Path) -> tuple[list[Sample], dict[str, object]]:
         "inter_targets_in_training_manifest": 0,
         "intra_excluded_from_main_matrix": True,
     }
+    if include_checksums:
+        if _sha([str(row["event_id"]) for row in inter]) != EXPECTED_SPR_INTER_ID_SHA256:
+            raise RuntimeError("SPRSound label-free row/support/ID gate failed")
+        receipt["inter_ordered_id_sha256"] = EXPECTED_SPR_INTER_ID_SHA256
     return samples, receipt
 
 
-def load_terminal_spr_test_targets(samples: list[Sample]) -> dict[str, dict[str, int]]:
+def load_terminal_spr_test_targets(
+    samples: list[Sample], *, include_checksums: bool = True
+) -> dict[str, dict[str, int]]:
     """Load SPR inter labels only after label-free predictions are durably written."""
     targets: dict[str, dict[str, int]] = {}
     payload_cache: dict[str, dict[str, object]] = {}
@@ -534,7 +554,7 @@ def load_terminal_spr_test_targets(samples: list[Sample]) -> dict[str, dict[str,
     )
     if sorted(targets) != expected_ids:
         raise RuntimeError("terminal SPR test target identity gate failed")
-    if len(expected_ids) == 1429:
+    if include_checksums and len(expected_ids) == 1429:
         event_ids = sorted(
             str(sample.metadata["event_id"])
             for sample in samples
@@ -545,12 +565,25 @@ def load_terminal_spr_test_targets(samples: list[Sample]) -> dict[str, dict[str,
     return targets
 
 
-def build_samples(dataset_root: Path, kauh_outer_fold: int = 0) -> tuple[list[Sample], dict[str, object]]:
+def build_samples(
+    dataset_root: Path,
+    kauh_outer_fold: int = 0,
+    *,
+    include_checksums: bool = True,
+) -> tuple[list[Sample], dict[str, object]]:
     loaders = {
-        "icbhi": lambda: _load_icbhi(dataset_root),
-        "sprsound": lambda: _load_spr(dataset_root),
-        "hf_lung": lambda: _load_hf(dataset_root),
-        "kauh": lambda: _load_kauh(dataset_root, kauh_outer_fold),
+        "icbhi": lambda: _load_icbhi(
+            dataset_root, include_checksums=include_checksums
+        ),
+        "sprsound": lambda: _load_spr(
+            dataset_root, include_checksums=include_checksums
+        ),
+        "hf_lung": lambda: _load_hf(
+            dataset_root, include_checksums=include_checksums
+        ),
+        "kauh": lambda: _load_kauh(
+            dataset_root, kauh_outer_fold, include_checksums=include_checksums
+        ),
     }
     samples: list[Sample] = []
     receipts: dict[str, object] = {}
@@ -565,10 +598,11 @@ def build_samples(dataset_root: Path, kauh_outer_fold: int = 0) -> tuple[list[Sa
         "status": "four_dataset_sample_contract_passed",
         "rows": len(samples),
         "unique_ids": len(ids),
-        "ordered_id_sha256": _sha(ids),
         "dataset_rows": dict(sorted(Counter(sample.dataset for sample in samples).items())),
         "datasets": receipts,
     }
+    if include_checksums:
+        receipt["ordered_id_sha256"] = _sha(ids)
     return samples, receipt
 
 

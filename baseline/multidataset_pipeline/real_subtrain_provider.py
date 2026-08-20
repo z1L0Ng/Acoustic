@@ -434,14 +434,22 @@ def build_frozen_provider_index(
     return FrozenProviderIndex(partition, frozen_lanes, receipt)
 
 
-def _load_non_hf_waveform(unit: FrozenNativeUnit) -> tuple[WaveformSample, dict[str, object]]:
+def load_sample_waveform(
+    sample: Sample,
+    lane: str,
+    *,
+    outer_test_accessed: bool = False,
+) -> tuple[WaveformSample, dict[str, object]]:
+    """Decode one canonical native unit for the unified experiment."""
+
     try:
         import torchaudio
     except (ImportError, OSError) as error:
         raise RuntimeError(
             "torchaudio is required for real waveform loading; inventory remains dependency-lazy"
         ) from error
-    sample = unit.sample
+    if lane not in PREDICTION_UNITS:
+        raise ValueError(f"unknown native lane: {lane}")
     waveform, source_rate = torchaudio.load(sample.audio_path)
     if waveform.ndim != 2 or waveform.shape[0] != 1:
         raise RuntimeError(f"source audio must be mono: {sample.audio_path}")
@@ -463,7 +471,7 @@ def _load_non_hf_waveform(unit: FrozenNativeUnit) -> tuple[WaveformSample, dict[
     source_end_s = source_start_s + waveform.numel() / SAMPLE_RATE
     lineage = {
         "partition": sample.partition,
-        "outer_test_accessed": "false",
+        "outer_test_accessed": str(outer_test_accessed).lower(),
         "sample_id": sample.sample_id,
         "group_id": sample.group_id,
         "source_id": str(
@@ -481,21 +489,25 @@ def _load_non_hf_waveform(unit: FrozenNativeUnit) -> tuple[WaveformSample, dict[
     output = WaveformSample(
         waveform=waveform,
         sample_id=sample.sample_id,
-        dataset_id=unit.lane,
-        prediction_unit=PREDICTION_UNITS[unit.lane],
+        dataset_id=lane,
+        prediction_unit=PREDICTION_UNITS[lane],
         source_start_s=source_start_s,
         source_end_s=source_end_s,
         lineage=lineage,
     )
     return output, {
         "sample_id": sample.sample_id,
-        "lane": unit.lane,
+        "lane": lane,
         "source_sample_rate": source_rate,
         "output_samples": waveform.numel(),
         "output_sample_rate": SAMPLE_RATE,
         "repeat_pad": False,
         "truncate": False,
     }
+
+
+def _load_non_hf_waveform(unit: FrozenNativeUnit) -> tuple[WaveformSample, dict[str, object]]:
+    return load_sample_waveform(unit.sample, unit.lane)
 
 
 def load_frozen_waveform(unit: FrozenNativeUnit) -> tuple[WaveformSample, dict[str, object]]:

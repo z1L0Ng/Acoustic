@@ -75,13 +75,22 @@ class BEATsWindowBackend(FrozenWindowBackend):
         return self.temporal(batch).pooled.to(torch.float32)
 
 
-def _load_beats(source_repo: Path, checkpoint: Path, device: torch.device) -> nn.Module:
-    require_clean_source_revision(source_repo, BEATS_SOURCE_REVISION)
-    require_file_identity(
-        checkpoint,
-        BEATS_CHECKPOINT_SHA256,
-        expected_size_bytes=BEATS_CHECKPOINT_SIZE_BYTES,
-    )
+def _load_beats(
+    source_repo: Path,
+    checkpoint: Path,
+    device: torch.device,
+    *,
+    verify_historical_identity: bool = True,
+) -> nn.Module:
+    if verify_historical_identity:
+        require_clean_source_revision(source_repo, BEATS_SOURCE_REVISION)
+        require_file_identity(
+            checkpoint,
+            BEATS_CHECKPOINT_SHA256,
+            expected_size_bytes=BEATS_CHECKPOINT_SIZE_BYTES,
+        )
+    elif not source_repo.is_dir() or not checkpoint.is_file():
+        raise FileNotFoundError("local BEATs source repo or checkpoint is missing")
     source = str(source_repo.resolve())
     if source not in sys.path:
         sys.path.insert(0, source)
@@ -127,3 +136,21 @@ def build_beats_window_encoder(
         provenance,
         dimension_adapter=CandidateDimensionAdapter(BEATS_IDENTITY).to(target),
     )
+
+
+def load_local_beats_window_backend(
+    source_repo: Path,
+    checkpoint: Path,
+    *,
+    device: torch.device | str = "cpu",
+) -> BEATsWindowBackend:
+    """Load local AudioSet BEATs for M-Unified without checksum gates."""
+
+    target = torch.device(device)
+    model = _load_beats(
+        source_repo,
+        checkpoint,
+        target,
+        verify_historical_identity=False,
+    )
+    return BEATsWindowBackend(model).to(target).eval()

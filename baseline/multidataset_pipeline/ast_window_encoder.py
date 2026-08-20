@@ -28,6 +28,7 @@ AST_CHECKPOINT_REVISION = "f826b80d28226b62986cc218e5cec390b1096902"
 AST_CHECKPOINT_SHA256 = "bc9fe72b1a38b7071db8b606c63f8f2e41bf2cccaf3e80fc0ba5c33094877cb1"
 AST_CHECKPOINT_SIZE_BYTES = 346_425_476
 AST_INPUT_FRAMES = 798
+AST_TWO_SECOND_INPUT_FRAMES = 198
 AST_MEL_BINS = 128
 AST_WINDOW_SAMPLES = 32_000
 
@@ -89,13 +90,51 @@ class ASTWindowBackend(FrozenWindowBackend):
         return values.to(torch.float32)
 
 
-def _load_ast_model(source_repo: Path, checkpoint: Path, device: torch.device) -> nn.Module:
-    require_clean_source_revision(source_repo, AST_SOURCE_REVISION)
-    require_file_identity(
-        checkpoint,
-        AST_CHECKPOINT_SHA256,
-        expected_size_bytes=AST_CHECKPOINT_SIZE_BYTES,
-    )
+class ASTTwoSecondWindowBackend(ASTWindowBackend):
+    """AST frontend on the native two-second fbank grid used by M-Unified."""
+
+    @staticmethod
+    def frontend(waveforms: torch.Tensor) -> torch.Tensor:
+        if waveforms.ndim != 2 or waveforms.shape[1] != AST_WINDOW_SAMPLES:
+            raise ValueError("AST frontend requires [N,32000] source windows at 16 kHz")
+        import torchaudio.compliance.kaldi as ta_kaldi
+
+        rows = []
+        for waveform in waveforms:
+            fbank = ta_kaldi.fbank(
+                waveform.unsqueeze(0),
+                htk_compat=True,
+                sample_frequency=16_000,
+                use_energy=False,
+                window_type="hanning",
+                num_mel_bins=AST_MEL_BINS,
+                dither=0.0,
+                frame_shift=10,
+            )
+            fbank = (fbank - (-4.2677393)) / (4.5689974 * 2)
+            if fbank.shape[0] != AST_TWO_SECOND_INPUT_FRAMES:
+                raise RuntimeError("two-second AST fbank grid must contain 198 frames")
+            rows.append(fbank)
+        return torch.stack(rows).unsqueeze(1).to(torch.float32)
+
+
+def _load_ast_model(
+    source_repo: Path,
+    checkpoint: Path,
+    device: torch.device,
+    *,
+    verify_historical_identity: bool = True,
+    input_frames: int = AST_INPUT_FRAMES,
+) -> nn.Module:
+    if verify_historical_identity:
+        require_clean_source_revision(source_repo, AST_SOURCE_REVISION)
+        require_file_identity(
+            checkpoint,
+            AST_CHECKPOINT_SHA256,
+            expected_size_bytes=AST_CHECKPOINT_SIZE_BYTES,
+        )
+    elif not source_repo.is_dir() or not checkpoint.is_file():
+        raise FileNotFoundError("local AST source repo or checkpoint is missing")
     source = str(source_repo.resolve())
     if source not in sys.path:
         sys.path.insert(0, source)
@@ -130,7 +169,7 @@ def _load_ast_model(source_repo: Path, checkpoint: Path, device: torch.device) -
     source_positions = model.v.pos_embed[:, 2:, :].detach()
     if source_positions.shape != (1, 1212, 768):
         raise RuntimeError("AST AudioSet positional grid mismatch")
-    time_patches = (AST_INPUT_FRAMES - 16) // 10 + 1
+    time_patches = (input_frames - 16) // 10 + 1
     positions = source_positions.transpose(1, 2).reshape(1, 768, 12, 101)
     start = 50 - time_patches // 2
     positions = positions[:, :, :, start : start + time_patches]
@@ -172,3 +211,22 @@ def build_ast_window_encoder(
     return ProductionWindowEncoder(
         AST_IDENTITY, backend, provenance, dimension_adapter=dimension
     )
+
+
+def load_local_ast_window_backend(
+    source_repo: Path,
+    checkpoint: Path,
+    *,
+    device: torch.device | str = "cpu",
+) -> ASTWindowBackend:
+    """Load the local AudioSet AST for M-Unified without checksum gates."""
+
+    target = torch.device(device)
+    model = _load_ast_model(
+        source_repo,
+        checkpoint,
+        target,
+        verify_historical_identity=False,
+        input_frames=AST_TWO_SECOND_INPUT_FRAMES,
+    )
+    return ASTTwoSecondWindowBackend(model).to(target).eval()
