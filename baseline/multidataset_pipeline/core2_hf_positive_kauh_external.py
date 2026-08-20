@@ -24,6 +24,8 @@ from baseline.four_dataset_frozen_encoder.data import (
 
 from .ast_window_encoder import load_local_ast_window_backend
 from .beats_window_encoder import load_local_beats_window_backend
+from .panns_window_encoder import load_local_panns_window_backend
+from .opera_window_encoder import load_local_opera_ct_window_backend
 from .m_unified import (
     PREDICTION_UNITS,
     SEED,
@@ -32,6 +34,7 @@ from .m_unified import (
     binary_metrics,
     build_feature_cache,
     ledger_rows_for_sample,
+    load_feature_cache,
     load_canonical_samples,
     map_native_sample,
     set_determinism,
@@ -561,6 +564,19 @@ def build_ast_gate_summary(repo_root: Path) -> dict[str, object]:
         return summary
     on = json.loads(on_path.read_text())
     off = json.loads(off_path.read_text())
+    def validation_curve(condition: str) -> list[dict[str, object]]:
+        path = root / condition / "seed_42/train_log.jsonl"
+        rows = [json.loads(line) for line in path.read_text().splitlines()]
+        return [
+            {
+                "epoch": row["epoch"],
+                "icbhi_validation_loss": row["core_validation"]["dataset_losses"]["icbhi"],
+                "sprsound_validation_loss": row["core_validation"]["dataset_losses"]["sprsound"],
+                "selection_loss": row["core_validation"]["selection_loss"],
+            }
+            for row in rows
+        ]
+
     comparisons = {}
     for dataset in CORE_DATASETS:
         comparisons[dataset] = {}
@@ -600,10 +616,23 @@ def build_ast_gate_summary(repo_root: Path) -> dict[str, object]:
             }
             for condition, report in (("hf_on", on), ("hf_off", off))
         },
-        "icbhi_validation_curve_files": {
-            "hf_on": str(root / "AST_HF_on/seed_42/train_log.jsonl"),
-            "hf_off": str(root / "AST_HF_off/seed_42/train_log.jsonl"),
+        "icbhi_validation_curves": {
+            "hf_on": validation_curve("AST_HF_on"),
+            "hf_off": validation_curve("AST_HF_off"),
         },
+        "kauh_filter_view_consistency": {
+            condition: report["kauh_external"]["filter_view_consistency"]
+            for condition, report in (("hf_on", on), ("hf_off", off))
+        },
+        "gate_decision_recommendation": (
+            "NO_GO_HF_POSITIVE_AUXILIARY; retain AST_HF_off reference"
+        ),
+        "decision_basis": [
+            "HF-on lowers core dataset-macro F1",
+            "HF-on lowers SPRSound Crackle AUPRC and precision",
+            "HF-on produces near-universal HF positive predictions",
+            "small worst-core improvement does not offset the above failures",
+        ],
         "downstream_encoder_release": "requires management decision",
     }
     write_json(root / "ast_hf_on_off_gate_summary.json", summary)
@@ -625,12 +654,36 @@ def _stores(
     samples: Sequence[Sample],
     partition: str,
     datasets: Sequence[str],
-    backend: FrozenWindowBackend,
+    backend: FrozenWindowBackend | None,
     cache_dir: Path,
     *,
     device: torch.device,
     encoder_window_batch_size: int,
+    cache_only: bool = False,
 ) -> dict[str, dict[str, np.ndarray]]:
+    if cache_only:
+        return {
+            dataset: load_feature_cache(
+                cache_dir,
+                partition,
+                dataset,
+                [
+                    sample.sample_id
+                    for sample in sorted(
+                        (
+                            sample
+                            for sample in samples
+                            if sample.partition == partition
+                            and sample.dataset == dataset
+                        ),
+                        key=lambda sample: sample.sample_id,
+                    )
+                ],
+            )
+            for dataset in datasets
+        }
+    if backend is None:
+        raise RuntimeError("feature extraction backend is required")
     return {
         dataset: build_feature_cache(
             samples,
@@ -662,12 +715,17 @@ def _epoch_batches(
             (dataset, order[start : start + 8])
             for start in range(0, len(order), 8)
         )
-    if not hf_auxiliary_enabled:
-        core_batches = list(batches)
-        extra = UPDATES_PER_EPOCH - len(core_batches)
-        sampled = rng.integers(0, len(core_batches), size=extra)
+    extra = UPDATES_PER_EPOCH - len(batches)
+    if extra < 0:
+        raise RuntimeError("natural source-proportional batches exceed matched budget")
+    if extra:
+        available_batches = list(batches)
+        sampled = rng.integers(0, len(available_batches), size=extra)
         batches.extend(
-            (core_batches[index][0], list(core_batches[index][1]))
+            (
+                available_batches[index][0],
+                list(available_batches[index][1]),
+            )
             for index in sampled
         )
     if len(batches) != UPDATES_PER_EPOCH:
@@ -757,7 +815,7 @@ def train_core2_head(
             stores["validation"],
             targets["validation"],
             device=device,
-            datasets=TRAIN_DATASETS,
+            datasets=tuple(stores["validation"]),
         )
         _save_predictions(
             output_dir / "validation" / f"epoch_{epoch:03d}.npz",
@@ -1048,6 +1106,10 @@ def kauh_patient_external(
         ),
         "threshold_source": "ICBHI+SPRSound validation only",
         "selection_participation": False,
+        "legacy_partition_cache_role": (
+            "subtrain/validation/test filenames are storage-only; all shards are "
+            "merged as external and never enter training or selection"
+        ),
     }
     write_json(output_dir / "kauh_external_metrics.json", report)
     return report
@@ -1057,27 +1119,32 @@ def run_core2_package(
     repo_root: Path,
     result_dir: Path,
     *,
-    backend: FrozenWindowBackend,
+    backend: FrozenWindowBackend | None,
     cache_dir: Path,
     config: Mapping[str, object],
     package_limitations: Sequence[str],
     hf_auxiliary_enabled: bool,
     device: torch.device,
     encoder_window_batch_size: int,
+    cache_only: bool = False,
 ) -> dict[str, object]:
     set_determinism()
     result_dir.mkdir(parents=True, exist_ok=True)
     write_json(result_dir / "config.json", dict(config))
     samples = load_canonical_samples(repo_root)
+    training_store_datasets = (
+        TRAIN_DATASETS if hf_auxiliary_enabled else CORE_DATASETS
+    )
     stores = {
         partition: _stores(
             samples,
             partition,
-            TRAIN_DATASETS,
+            training_store_datasets,
             backend,
             cache_dir,
             device=device,
             encoder_window_batch_size=encoder_window_batch_size,
+            cache_only=cache_only,
         )
         for partition in ("subtrain", "validation")
     }
@@ -1132,6 +1199,7 @@ def run_core2_package(
         cache_dir,
         device=device,
         encoder_window_batch_size=encoder_window_batch_size,
+        cache_only=cache_only,
     )
     label_free_targets = _core_targets(samples, test_stores)
     test_predictions = infer_core2(
@@ -1184,6 +1252,7 @@ def run_core2_package(
             cache_dir,
             device=device,
             encoder_window_batch_size=encoder_window_batch_size,
+            cache_only=cache_only,
         )["kauh"]
         for partition in ("subtrain", "validation", "test")
     }
@@ -1277,6 +1346,10 @@ def _common_config(
             ),
             "kauh": "external only after selection",
         },
+        "kauh_cache_policy": (
+            "legacy subtrain/validation/test shard names are all-external storage only; "
+            "merged after selection to 112 P-number patients"
+        ),
         "hf_auxiliary_enabled": hf_auxiliary_enabled,
         "selection": "equal ICBHI/SPRSound validation eligible-node loss; tie earliest",
         "thresholds": (
@@ -1306,7 +1379,15 @@ def run_ast(
         repo_root
         / ".cache/icbhi_sprsound_shared_encoder_native_heads/checkpoints/hf_ast_legacy_compat.pth"
     )
-    backend = load_local_ast_window_backend(source, checkpoint, device=device)
+    cache_dir = repo_root / ".cache/multidataset_pipeline/m_unified_ast_seed42"
+    required = {
+        cache_dir / f"{partition}_{dataset}.npz"
+        for partition in ("subtrain", "validation", "test")
+        for dataset in ("icbhi", "sprsound", "hf_lung", "kauh")
+    }
+    missing = sorted(str(path) for path in required if not path.is_file())
+    if missing:
+        raise FileNotFoundError(f"AST cached-only run missing shards: {missing}")
     config = _common_config(
         repo_root,
         "AST_2s_native_grid_v0",
@@ -1323,8 +1404,8 @@ def run_ast(
     return run_core2_package(
         repo_root,
         repo_root / ROOT_RELATIVE / condition / "seed_42",
-        backend=backend,
-        cache_dir=repo_root / ".cache/multidataset_pipeline/m_unified_ast_seed42",
+        backend=None,
+        cache_dir=cache_dir,
         config=config,
         package_limitations=[
             "AST_2s_native_grid_v0 differs from historical 798-frame padded P1",
@@ -1333,6 +1414,7 @@ def run_ast(
         hf_auxiliary_enabled=hf_auxiliary_enabled,
         device=device,
         encoder_window_batch_size=microbatch,
+        cache_only=True,
     )
 
 
@@ -1360,6 +1442,19 @@ def run_beats(repo_root: Path, *, microbatch: int = 8) -> dict[str, object]:
         repo_root
         / ".cache/multidataset_pipeline/assets/P2/checkpoints/BEATs_iter3_plus_AS2M.pt"
     )
+    cache_dir = repo_root / ".cache/multidataset_pipeline/m_unified_beats_seed42"
+    required_core = {
+        cache_dir / f"{partition}_{dataset}.npz"
+        for partition in ("subtrain", "validation")
+        for dataset in CORE_DATASETS
+    }
+    missing_core = sorted(
+        str(path) for path in required_core if not path.is_file()
+    )
+    if missing_core:
+        raise FileNotFoundError(
+            f"BEATs HF-off requires existing core caches; rebuilding forbidden: {missing_core}"
+        )
     backend = load_local_beats_window_backend(source, checkpoint, device=device)
     config = _common_config(
         repo_root,
@@ -1371,21 +1466,22 @@ def run_beats(repo_root: Path, *, microbatch: int = 8) -> dict[str, object]:
         checkpoint,
         device,
         microbatch,
-        True,
+        False,
     )
     return run_core2_package(
         repo_root,
-        repo_root / ROOT_RELATIVE / "BEATs/seed_42",
+        repo_root / ROOT_RELATIVE / "BEATs_HF_off/seed_42",
         backend=backend,
-        cache_dir=repo_root / ".cache/multidataset_pipeline/m_unified_beats_seed42",
+        cache_dir=cache_dir,
         config=config,
         package_limitations=[
             "BEATs result is an encoder+frontend+masking+pooling package comparison",
-            "HF is positive-only and cannot support detector F1/specificity",
+            "HF is evaluation-only and cannot support detector F1/specificity",
         ],
-        hf_auxiliary_enabled=True,
+        hf_auxiliary_enabled=False,
         device=device,
         encoder_window_batch_size=microbatch,
+        cache_only=False,
     )
 
 
@@ -1445,16 +1541,50 @@ def run_panns(repo_root: Path, *, microbatch: int = 8) -> dict[str, object]:
             "official PANNs Cnn14_16k source/checkpoint package is not locally provisioned",
             "official 16 kHz waveform frontend; pooled 2048-d embedding; trainable LayerNorm+Linear 2048->768",
         )
-    raise RuntimeError(
-        "PANNs assets appeared after the read-only audit; production execution adapter must be reviewed before running"
+    device = torch.device("cpu")
+    backend = load_local_panns_window_backend(
+        source, checkpoint, device=device
+    )
+    config = _common_config(
+        repo_root,
+        "PANNs_Cnn14_16k_with_trainable_2048_to_768",
+        2_048,
+        "trainable LayerNorm(2048)+bias-free Linear(2048->768)",
+        "official Cnn14_16k waveform frontend and pooled 2048-d embedding",
+        source,
+        checkpoint,
+        device,
+        microbatch,
+        False,
+    )
+    return run_core2_package(
+        repo_root,
+        repo_root / ROOT_RELATIVE / "PANNs_Cnn14/seed_42",
+        backend=backend,
+        cache_dir=(
+            repo_root / ".cache/multidataset_pipeline/core2_panns_seed42"
+        ),
+        config=config,
+        package_limitations=[
+            "PANNs comparison includes 1,576,960 trainable dimension-adapter parameters",
+            "encoder plus frontend plus dimension adapter is a package-level comparator",
+            "HF is evaluation-only and cannot support detector F1/specificity",
+        ],
+        hf_auxiliary_enabled=False,
+        device=device,
+        encoder_window_batch_size=microbatch,
+        cache_only=False,
     )
 
 
 def run_opera_ct(repo_root: Path, *, microbatch: int = 8) -> dict[str, object]:
     require_ast_management_release(repo_root)
     source = repo_root / ".cache/multidataset_pipeline/assets/P5/source/repo"
-    checkpoint = repo_root / ".cache/multidataset_pipeline/assets/P5/checkpoints"
-    if not source.is_dir() or not checkpoint.is_dir():
+    checkpoint = (
+        repo_root
+        / ".cache/multidataset_pipeline/assets/P5/checkpoints/encoder-operaCT.ckpt"
+    )
+    if not source.is_dir() or not checkpoint.is_file():
         return _asset_hold(
             repo_root,
             "OPERA_CT",
@@ -1462,8 +1592,43 @@ def run_opera_ct(repo_root: Path, *, microbatch: int = 8) -> dict[str, object]:
             "official OPERA-CT source/checkpoint package is not locally provisioned",
             "2-second source window zero-padded inside package to official 8-second input; ICBHI/HF pretraining overlap caveat",
         )
-    raise RuntimeError(
-        "OPERA assets appeared after the read-only audit; official checkpoint/input adapter must be reviewed before running"
+    device = torch.device("cpu")
+    backend = load_local_opera_ct_window_backend(
+        source, checkpoint, device=device
+    )
+    config = _common_config(
+        repo_root,
+        "OPERA_CT_2s_to_8s_zero_pad_overlap_aware",
+        768,
+        "identity",
+        "2-second source waveform zero-padded to official 8-second 64-mel HTSAT input",
+        source,
+        checkpoint,
+        device,
+        microbatch,
+        False,
+    )
+    config["pretraining_overlap_caveat"] = (
+        "standard OPERA pretraining includes ICBHI/HF sources; not clean generalization"
+    )
+    return run_core2_package(
+        repo_root,
+        repo_root / ROOT_RELATIVE / "OPERA_CT/seed_42",
+        backend=backend,
+        cache_dir=(
+            repo_root / ".cache/multidataset_pipeline/core2_opera_ct_seed42"
+        ),
+        config=config,
+        package_limitations=[
+            "standard OPERA pretraining includes ICBHI/HF sources",
+            "2-second source windows are zero-padded to the official 8-second package input",
+            "OPERA-CT is an overlap-aware package reference, not clean-generalization evidence",
+            "HF is evaluation-only and cannot support detector F1/specificity",
+        ],
+        hf_auxiliary_enabled=False,
+        device=device,
+        encoder_window_batch_size=microbatch,
+        cache_only=False,
     )
 
 

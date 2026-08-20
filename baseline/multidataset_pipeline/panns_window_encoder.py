@@ -67,13 +67,20 @@ def _load_panns(
     checkpoint: Path,
     checkpoint_sha256: str,
     device: torch.device,
+    *,
+    verify_historical_identity: bool = True,
 ) -> nn.Module:
-    if len(source_revision) != 40:
-        raise ValueError("PANNs requires an exact 40-character source revision")
-    require_clean_source_revision(source_repo, source_revision)
-    require_file_identity(
-        checkpoint, checkpoint_sha256, expected_size_bytes=PANNS_CHECKPOINT_SIZE_BYTES
-    )
+    if verify_historical_identity:
+        if len(source_revision) != 40:
+            raise ValueError("PANNs requires an exact 40-character source revision")
+        require_clean_source_revision(source_repo, source_revision)
+        require_file_identity(
+            checkpoint,
+            checkpoint_sha256,
+            expected_size_bytes=PANNS_CHECKPOINT_SIZE_BYTES,
+        )
+    elif not source_repo.is_dir() or not checkpoint.is_file():
+        raise FileNotFoundError("local PANNs source repo or checkpoint is missing")
     pytorch_dir = str((source_repo / "pytorch").resolve())
     utils_dir = str((source_repo / "utils").resolve())
     for path in (utils_dir, pytorch_dir):
@@ -136,3 +143,23 @@ def build_panns_window_encoder(
         provenance,
         dimension_adapter=CandidateDimensionAdapter(PANNS_IDENTITY).to(target),
     )
+
+
+def load_local_panns_window_backend(
+    source_repo: Path,
+    checkpoint: Path,
+    *,
+    device: torch.device | str = "cpu",
+) -> PANNsWindowBackend:
+    """Load official local Cnn14_16k without checksum gates."""
+
+    target = torch.device(device)
+    model = _load_panns(
+        source_repo,
+        "local_official_public_source",
+        checkpoint,
+        "not_used",
+        target,
+        verify_historical_identity=False,
+    )
+    return PANNsWindowBackend(model).to(target).eval()

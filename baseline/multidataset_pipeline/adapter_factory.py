@@ -44,15 +44,6 @@ from .panns_window_encoder import (
     PANNS_SOURCE_URL,
     build_panns_window_encoder,
 )
-from .opera_window_encoder import (
-    OPERA_CHECKPOINT_NAME,
-    OPERA_CHECKPOINT_SHA256,
-    OPERA_CHECKPOINT_SIZE_BYTES,
-    OPERA_SOURCE_LICENSE,
-    OPERA_SOURCE_REVISION,
-    OPERA_SOURCE_URL,
-    build_opera_window_encoder,
-)
 from .window_encoder import (
     ProductionWindowEncoder,
     missing_asset_receipt,
@@ -120,6 +111,11 @@ def _p3_manifest_bound_paths(config: AdapterFactoryConfig) -> tuple[Path, Path, 
 
 
 def _p5_manifest_bound_paths(config: AdapterFactoryConfig) -> tuple[Path, Path, Mapping[str, object]]:
+    from .opera_window_encoder import (
+        OPERA_CHECKPOINT_SHA256,
+        OPERA_CHECKPOINT_SIZE_BYTES,
+        OPERA_SOURCE_REVISION,
+    )
     source, checkpoint, asset = p5_manifest_asset_paths(config.repo_root)
     if (
         asset["source_revision"] != OPERA_SOURCE_REVISION
@@ -187,6 +183,8 @@ def build_production_adapter(config: AdapterFactoryConfig) -> ProductionWindowEn
             device=config.device,
         )
     if config.pipeline_id == "P5":
+        from .opera_window_encoder import build_opera_window_encoder
+
         source, checkpoint, asset = _p5_manifest_bound_paths(config)
         return build_opera_window_encoder(
             source,
@@ -296,6 +294,15 @@ def audit_local_adapter_assets(repo_root: Path) -> dict[str, Mapping[str, object
         license_name=f"code={HEAR_CODE_LICENSE}; model={HEAR_MODEL_LICENSE}",
     )
     try:
+        from .opera_window_encoder import (
+            OPERA_CHECKPOINT_NAME,
+            OPERA_CHECKPOINT_SHA256,
+            OPERA_CHECKPOINT_SIZE_BYTES,
+            OPERA_SOURCE_LICENSE,
+            OPERA_SOURCE_REVISION,
+            OPERA_SOURCE_URL,
+        )
+
         source, checkpoint, asset = p5_manifest_asset_paths(root)
         source_receipt = require_clean_source_revision(source, OPERA_SOURCE_REVISION)
         checkpoint_receipt = require_file_identity(
