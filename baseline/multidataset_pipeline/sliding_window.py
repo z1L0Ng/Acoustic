@@ -75,13 +75,14 @@ class SlidingWindowBatch:
 
     def to(self, device: torch.device | str) -> "SlidingWindowBatch":
         target = torch.device(device)
+        time_map_dtype = torch.float32 if target.type == "mps" else torch.float64
         moved = replace(
             self,
             waveform_windows=self.waveform_windows.to(target),
             waveform_padding_mask=self.waveform_padding_mask.to(target),
             valid_samples=self.valid_samples.to(target),
             window_mask=self.window_mask.to(target),
-            time_map=self.time_map.to(target),
+            time_map=self.time_map.to(target, dtype=time_map_dtype),
         )
         moved.validate()
         return moved
@@ -103,8 +104,16 @@ class SlidingWindowBatch:
             raise TypeError("valid_samples must be int64 [B,K]")
         if self.window_mask.shape != (batch, windows) or self.window_mask.dtype != torch.bool:
             raise TypeError("window_mask must be bool [B,K] with True=valid")
-        if self.time_map.shape != (batch, windows, 2) or self.time_map.dtype != torch.float64:
-            raise TypeError("time_map must be float64 [B,K,2] source seconds")
+        expected_time_map_dtype = (
+            torch.float32 if self.waveform_windows.device.type == "mps" else torch.float64
+        )
+        if (
+            self.time_map.shape != (batch, windows, 2)
+            or self.time_map.dtype != expected_time_map_dtype
+        ):
+            raise TypeError(
+                f"time_map must be {expected_time_map_dtype} [B,K,2] source seconds"
+            )
         devices = {
             self.waveform_windows.device,
             self.waveform_padding_mask.device,

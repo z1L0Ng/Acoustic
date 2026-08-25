@@ -6,6 +6,7 @@ docs/datasets/four_dataset_task_contract_review_2026-07-28.md, sections 5.2-5.3.
 
 from __future__ import annotations
 
+from contextlib import nullcontext
 from dataclasses import dataclass, replace
 from enum import Enum
 from typing import Mapping, Sequence
@@ -629,20 +630,27 @@ def verify_non_hf_pooled_parity(
 
 
 class BEATsTemporalAdapter(nn.Module):
-    """Frozen BEATs wrapper that supplies an exact flattened patch mask."""
+    """BEATs wrapper that supplies an exact flattened patch mask."""
 
     def __init__(
         self,
         beats: nn.Module,
         geometry: BEATsGeometry | None = None,
+        *,
+        trainable: bool = False,
     ) -> None:
         super().__init__()
-        trainable = [
+        trainable_names = [
             name for name, parameter in beats.named_parameters() if parameter.requires_grad
         ]
-        if trainable:
-            raise RuntimeError(f"BEATs must be frozen before wrapping: {trainable}")
-        self.beats = beats.eval()
+        if trainable and not trainable_names:
+            raise RuntimeError("trainable BEATs adapter received a frozen model")
+        if not trainable and trainable_names:
+            raise RuntimeError(
+                f"BEATs must be frozen before wrapping: {trainable_names}"
+            )
+        self.encoder_trainable = trainable
+        self.beats = beats if trainable else beats.eval()
         self.geometry = geometry or BEATsGeometry.from_checkpoint_config(beats.cfg)
         model_devices = {
             tensor.device
@@ -685,6 +693,12 @@ class BEATsTemporalAdapter(nn.Module):
         self.model_device = next(iter(model_devices))
         return module
 
+    def train(self, mode: bool = True):
+        module = super().train(mode)
+        if not self.encoder_trainable:
+            self.beats.eval()
+        return module
+
     def forward(self, batch: WaveformBatch) -> TemporalEncoderOutput:
         batch.validate()
         if batch.device != self.model_device:
@@ -692,7 +706,8 @@ class BEATsTemporalAdapter(nn.Module):
                 f"WaveformBatch is on {batch.device}, BEATs is on "
                 f"{self.model_device}; call batch.to({self.model_device!s}) explicitly"
             )
-        with torch.no_grad():
+        gradient_context = nullcontext() if self.encoder_trainable else torch.no_grad()
+        with gradient_context:
             fbank = self.beats.preprocess(batch.waveform)
             if fbank.ndim != 3 or fbank.shape[2] != self.geometry.mel_bins:
                 raise RuntimeError("BEATs preprocess returned unexpected fbank geometry")

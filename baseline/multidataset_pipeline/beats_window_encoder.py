@@ -81,6 +81,7 @@ def _load_beats(
     device: torch.device,
     *,
     verify_historical_identity: bool = True,
+    trainable: bool = False,
 ) -> nn.Module:
     if verify_historical_identity:
         require_clean_source_revision(source_repo, BEATS_SOURCE_REVISION)
@@ -104,8 +105,9 @@ def _load_beats(
     if loaded.missing_keys or loaded.unexpected_keys:
         raise RuntimeError(f"BEATs checkpoint state mismatch: {loaded}")
     for parameter in model.parameters():
-        parameter.requires_grad_(False)
-    return model.to(device).eval()
+        parameter.requires_grad_(trainable)
+    model = model.to(device)
+    return model.train() if trainable else model.eval()
 
 
 def build_beats_window_encoder(
@@ -154,3 +156,21 @@ def load_local_beats_window_backend(
         verify_historical_identity=False,
     )
     return BEATsWindowBackend(model).to(target).eval()
+
+
+def load_local_beats_model(
+    source_repo: Path,
+    checkpoint: Path,
+    *,
+    device: torch.device | str = "cpu",
+    trainable: bool = False,
+) -> nn.Module:
+    """Load local AudioSet BEATs without historical checksum gates."""
+
+    return _load_beats(
+        source_repo,
+        checkpoint,
+        torch.device(device),
+        verify_historical_identity=False,
+        trainable=trainable,
+    )
