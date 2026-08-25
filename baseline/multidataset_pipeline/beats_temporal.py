@@ -161,19 +161,21 @@ def exact_patch_masks(
     valid_samples: torch.Tensor,
     total_samples: int,
     geometry: BEATsGeometry,
+    *,
+    deep: bool = True,
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Return temporal-valid and flattened Transformer padding masks."""
 
     if valid_samples.ndim != 1 or valid_samples.dtype != torch.long:
         raise TypeError("valid_samples must be int64 [B]")
-    if total_samples < int(valid_samples.max()):
+    if deep and total_samples < int(valid_samples.max()):
         raise ValueError("total_samples is shorter than a valid waveform")
     total_time_patches = int(geometry.time_patches(total_samples))
     frequency_patches = geometry.frequency_patches()
     if total_time_patches <= 0 or frequency_patches <= 0:
         raise RuntimeError("BEATs patch grid is empty")
     valid_time_counts = geometry.time_patches(valid_samples)
-    if bool((valid_time_counts <= 0).any()):
+    if deep and bool((valid_time_counts <= 0).any()):
         raise RuntimeError(
             "complete-valid-patch policy rejects a sample shorter than one patch"
         )
@@ -216,13 +218,18 @@ def restore_patch_grid(
     )
 
 
-def masked_temporal_mean(tokens: torch.Tensor, token_mask: torch.Tensor) -> torch.Tensor:
+def masked_temporal_mean(
+    tokens: torch.Tensor,
+    token_mask: torch.Tensor,
+    *,
+    deep: bool = True,
+) -> torch.Tensor:
     if tokens.ndim != 3 or token_mask.shape != tokens.shape[:2]:
         raise ValueError("tokens/token_mask shape mismatch")
     if token_mask.dtype != torch.bool:
         raise TypeError("token_mask must be bool with True=valid")
     denominator = token_mask.sum(dim=1, keepdim=True)
-    if bool((denominator == 0).any()):
+    if deep and bool((denominator == 0).any()):
         raise RuntimeError("cannot pool a sample with zero valid temporal tokens")
     return (tokens * token_mask.unsqueeze(-1)).sum(dim=1) / denominator.to(
         tokens.dtype
@@ -268,7 +275,7 @@ class TemporalEncoderOutput:
     observation_mask: torch.Tensor
     valid_mask: torch.Tensor
 
-    def validate(self) -> None:
+    def validate(self, *, deep: bool = True) -> None:
         if self.tokens.ndim != 3 or not self.tokens.dtype.is_floating_point:
             raise TypeError("tokens must be floating [B,L,D]")
         batch, length, dimension = self.tokens.shape
@@ -288,6 +295,18 @@ class TemporalEncoderOutput:
             or self.valid_mask.dtype != torch.bool
         ):
             raise TypeError("observation_mask/valid_mask must be bool [B,L,4]")
+        devices = {
+            self.tokens.device,
+            self.token_mask.device,
+            self.time_map.device,
+            self.pooled.device,
+            self.observation_mask.device,
+            self.valid_mask.device,
+        }
+        if len(devices) != 1:
+            raise RuntimeError(f"temporal output tensors must share one device: {devices}")
+        if not deep:
+            return
         if bool((self.valid_mask & ~self.observation_mask).any()):
             raise ValueError("valid supervision must also be observed")
         if bool((self.valid_mask & ~self.token_mask.unsqueeze(-1)).any()):
@@ -556,6 +575,7 @@ def temporalize_transformer_output(
     source_start_s: torch.Tensor,
     geometry: BEATsGeometry,
     transformer_padding_mask: torch.Tensor | None = None,
+    token_mask: torch.Tensor | None = None,
 ) -> TemporalEncoderOutput:
     """Restore Transformer tokens, aggregate frequency patches, and map time."""
 
@@ -566,15 +586,23 @@ def temporalize_transformer_output(
     }
     if transformer_padding_mask is not None:
         devices.add(transformer_padding_mask.device)
+    if token_mask is not None:
+        devices.add(token_mask.device)
     if len(devices) != 1:
         raise RuntimeError(f"temporal tensors must share one device, got {devices}")
-    token_mask, exact_padding = exact_patch_masks(
-        valid_samples, total_samples, geometry
-    )
-    if transformer_padding_mask is not None and not torch.equal(
-        transformer_padding_mask, exact_padding
-    ):
-        raise RuntimeError("Transformer padding mask is not the exact patch mask")
+    if token_mask is None:
+        token_mask, exact_padding = exact_patch_masks(
+            valid_samples,
+            total_samples,
+            geometry,
+            deep=flattened_tokens.device.type == "cpu",
+        )
+        if transformer_padding_mask is not None and not torch.equal(
+            transformer_padding_mask, exact_padding
+        ):
+            raise RuntimeError("Transformer padding mask is not the exact patch mask")
+    elif token_mask.ndim != 2 or token_mask.dtype != torch.bool:
+        raise TypeError("token_mask must be bool [B,L]")
     time_patches = token_mask.shape[1]
     frequency_patches = geometry.frequency_patches()
     grid = restore_patch_grid(
@@ -587,7 +615,7 @@ def temporalize_transformer_output(
         torch.zeros_like(temporal_tokens),
     )
     time_map = build_time_map(token_mask, source_start_s, geometry)
-    pooled = masked_temporal_mean(temporal_tokens, token_mask)
+    pooled = masked_temporal_mean(temporal_tokens, token_mask, deep=False)
     empty_masks = torch.zeros(
         (*token_mask.shape, len(CHANNEL_ORDER)),
         dtype=torch.bool,
@@ -602,7 +630,7 @@ def temporalize_transformer_output(
         observation_mask=empty_masks,
         valid_mask=empty_masks.clone(),
     )
-    output.validate()
+    output.validate(deep=False)
     return output
 
 
@@ -700,7 +728,7 @@ class BEATsTemporalAdapter(nn.Module):
         return module
 
     def forward(self, batch: WaveformBatch) -> TemporalEncoderOutput:
-        batch.validate()
+        batch.validate(deep=False)
         if batch.device != self.model_device:
             raise RuntimeError(
                 f"WaveformBatch is on {batch.device}, BEATs is on "
@@ -722,6 +750,7 @@ class BEATsTemporalAdapter(nn.Module):
                 batch.valid_samples,
                 batch.waveform.shape[1],
                 self.geometry,
+                deep=False,
             )
             expected_grid = (
                 temporal_valid.shape[1],
@@ -746,4 +775,5 @@ class BEATsTemporalAdapter(nn.Module):
             batch.source_start_s,
             self.geometry,
             transformer_padding_mask=flat_padding,
+            token_mask=temporal_valid,
         )

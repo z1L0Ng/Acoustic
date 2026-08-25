@@ -105,6 +105,7 @@ class BEATsNALConfig:
     stride_seconds: float = 2.0
     batch_size: int = 8
     epochs: int = 50
+    cpu_threads: int = 4
     encoder_scope: str = "full"
     backbone_learning_rate: float = 1e-5
     head_learning_rate: float = 5e-5
@@ -120,6 +121,8 @@ class BEATsNALConfig:
             raise ValueError("the Core-2 input contract is 16 kHz, 4 s / 2 s")
         if self.batch_size != 8 or self.epochs != 50:
             raise ValueError("the frozen comparison budget is batch 8 for 50 epochs")
+        if self.cpu_threads <= 0:
+            raise ValueError("cpu_threads must be positive")
         if self.encoder_scope not in ENCODER_SCOPES:
             raise ValueError(f"unknown encoder scope: {self.encoder_scope}")
         self.normalization.validate()
@@ -154,6 +157,10 @@ class BEATsNALConfig:
             "equal mean of ICBHI and SPRSound validation eligible-node loss"
         )
         value["test_access"] = "not part of this training entry"
+        value["training_batch_execution"] = "true_native_unit_batch"
+        value["decoded_waveform_cache"] = (
+            "in_process_post_normalization_pre_augmentation"
+        )
         return value
 
 
@@ -275,15 +282,22 @@ def hierarchical_loss(
     eligible: torch.Tensor,
     config: HierarchicalLossConfig,
     class_weights: Mapping[str, torch.Tensor] | None = None,
+    *,
+    active_nodes: Sequence[str] | None = None,
+    collect_named: bool = True,
 ) -> tuple[torch.Tensor, dict[str, float]]:
     """Equal-node masked loss for Level1, Crackle, and Wheeze."""
 
     config.validate()
     losses: list[torch.Tensor] = []
     named: dict[str, float] = {}
+    active = set(active_nodes) if active_nodes is not None else None
     for index, node in enumerate(CORE_NODES):
         mask = eligible[:, index]
-        if not bool(mask.any()):
+        if active is not None:
+            if node not in active:
+                continue
+        elif not bool(mask.any()):
             continue
         target = targets[mask, index]
         value = _node_loss_values(
@@ -295,7 +309,8 @@ def hierarchical_loss(
         )
         node_loss = value.mean()
         losses.append(node_loss)
-        named[node] = float(node_loss.detach())
+        if collect_named:
+            named[node] = float(node_loss.detach())
     return torch.stack(losses).mean(), named
 
 
@@ -376,11 +391,9 @@ class BEATsCore2Model(nn.Module):
             torch.float32 if waveforms.device.type == "mps" else torch.float64
         )
         starts = torch.zeros(count, dtype=source_time_dtype, device=waveforms.device)
-        flat_dataset_ids = tuple(
-            dataset
-            for row, dataset in enumerate(windows.dataset_ids)
-            for _ in range(int(windows.window_mask[row].sum()))
-        )
+        if len(set(windows.dataset_ids)) != 1:
+            raise RuntimeError("Core-2 batches must contain one dataset lane")
+        flat_dataset_ids = (windows.dataset_ids[0],) * count
         batch = WaveformBatch(
             waveform=waveforms,
             waveform_padding_mask=(
@@ -407,7 +420,11 @@ class BEATsCore2Model(nn.Module):
         )
         restored[flat_valid] = pooled
         restored = restored.reshape(*windows.window_mask.shape, pooled.shape[-1])
-        return masked_mean_window_embeddings(restored, windows.window_mask)
+        return masked_mean_window_embeddings(
+            restored,
+            windows.window_mask,
+            deep=False,
+        )
 
     def forward(self, windows: SlidingWindowBatch) -> dict[str, torch.Tensor]:
         return self.head(self.encode_units(windows))
@@ -418,23 +435,40 @@ def _load_transformed_batch(
     config: BEATsNALConfig,
     *,
     training: bool,
-    generator: torch.Generator,
+    generators: Sequence[torch.Generator],
+    waveform_cache: dict[str, WaveformSample],
 ) -> SlidingWindowBatch:
+    if len(generators) != len(samples):
+        raise ValueError("one waveform generator is required per sample")
     waveforms: list[WaveformSample] = []
-    for sample in samples:
+    for sample, generator in zip(samples, generators):
         if sample.partition not in {"subtrain", "validation"}:
             raise RuntimeError("this training entry does not decode terminal/test rows")
-        lane = LANE_BY_CANONICAL_DATASET[sample.dataset]
-        decoded = load_sample_waveform(sample, lane, outer_test_accessed=False)[0]
-        waveforms.append(
-            transform_sample(
-                decoded,
-                config.normalization,
-                config.augmentation,
-                training=training,
-                generator=generator,
+        prepared = waveform_cache.get(sample.sample_id)
+        if prepared is None:
+            lane = LANE_BY_CANONICAL_DATASET[sample.dataset]
+            decoded = load_sample_waveform(sample, lane, outer_test_accessed=False)[0]
+            if config.normalization.mode == "none":
+                prepared = decoded
+            else:
+                prepared = replace(
+                    decoded,
+                    waveform=normalize_waveform(
+                        decoded.waveform,
+                        config.normalization,
+                    ).contiguous(),
+                )
+            waveform_cache[sample.sample_id] = prepared
+        if training and config.augmentation.mode != "none":
+            prepared = replace(
+                prepared,
+                waveform=augment_waveform(
+                    prepared.waveform,
+                    config.augmentation,
+                    generator,
+                ).contiguous(),
             )
-        )
+        waveforms.append(prepared)
     return collate_sliding_windows(
         waveforms,
         window_samples=config.window_samples,
@@ -471,6 +505,7 @@ def infer_validation(
     model: BEATsCore2Model,
     samples_by_dataset: Mapping[str, Sequence[Sample]],
     config: BEATsNALConfig,
+    waveform_cache: dict[str, WaveformSample],
 ) -> dict[str, np.ndarray]:
     fields: dict[str, list[np.ndarray]] = {
         "prediction_ids": [],
@@ -498,7 +533,8 @@ def infer_validation(
                     current,
                     config,
                     training=False,
-                    generator=generator,
+                    generators=[generator] * len(current),
+                    waveform_cache=waveform_cache,
                 ).to(config.device)
                 output = model(windows)
                 targets, eligible, raw_labels = mapped_targets(current)
@@ -557,6 +593,7 @@ def load_core_samples(repo_root: Path) -> list[Sample]:
 
 def run_training(config: BEATsNALConfig) -> dict[str, object]:
     config.validate()
+    torch.set_num_threads(config.cpu_threads)
     set_determinism(config.seed)
     all_samples = load_core_samples(config.repo_root)
     partitions = {
@@ -585,6 +622,9 @@ def run_training(config: BEATsNALConfig) -> dict[str, object]:
         beta=config.loss.effective_number_beta,
     )
     target_device = torch.device(config.device)
+    device_class_weights = {
+        node: values.to(target_device) for node, values in class_weights.items()
+    }
     beats = load_local_beats_model(
         config.source_repo,
         config.checkpoint,
@@ -627,13 +667,19 @@ def run_training(config: BEATsNALConfig) -> dict[str, object]:
         + "\n"
     )
     log_path = config.output_dir / "train_log.jsonl"
+    progress_path = config.output_dir / "progress.jsonl"
     best_loss = math.inf
     best_epoch = 0
     update = 0
     started = time.perf_counter()
+    waveform_cache: dict[str, WaveformSample] = {}
     for epoch in range(1, config.epochs + 1):
         model.train()
         train_losses: dict[str, list[float]] = {dataset: [] for dataset in CORE_DATASETS}
+        epoch_data_seconds = 0.0
+        epoch_step_seconds = 0.0
+        epoch_units = 0
+        epoch_windows = 0
         for dataset, indices in _epoch_batches(
             partitions["subtrain"],
             epoch,
@@ -642,34 +688,73 @@ def run_training(config: BEATsNALConfig) -> dict[str, object]:
         ):
             samples = [partitions["subtrain"][dataset][index] for index in indices]
             batch_targets, batch_eligible, _ = mapped_targets(samples)
-            eligible_denominators = batch_eligible.sum(dim=0).to(target_device)
-            optimizer.zero_grad(set_to_none=True)
-            batch_loss = 0.0
-            for offset, sample in enumerate(samples):
-                generator = torch.Generator().manual_seed(
+            active_nodes = tuple(
+                node
+                for index, node in enumerate(CORE_NODES)
+                if bool(batch_eligible[:, index].any())
+            )
+            generators = [
+                torch.Generator().manual_seed(
                     config.seed + epoch * 1_000_000 + update * config.batch_size + offset
                 )
-                windows = _load_transformed_batch(
-                    [sample],
-                    config,
-                    training=True,
-                    generator=generator,
-                ).to(target_device)
-                contribution = hierarchical_loss_contribution(
-                    model(windows),
-                    batch_targets[offset : offset + 1].to(target_device),
-                    batch_eligible[offset : offset + 1].to(target_device),
-                    config.loss,
-                    class_weights,
-                    eligible_denominators,
-                )
-                contribution.backward()
-                batch_loss += float(contribution.detach())
+                for offset in range(len(samples))
+            ]
+            data_started = time.perf_counter()
+            windows = _load_transformed_batch(
+                samples,
+                config,
+                training=True,
+                generators=generators,
+                waveform_cache=waveform_cache,
+            )
+            epoch_units += len(samples)
+            epoch_windows += int(windows.window_mask.sum())
+            windows = windows.to(target_device)
+            batch_targets = batch_targets.to(target_device)
+            batch_eligible = batch_eligible.to(target_device)
+            epoch_data_seconds += time.perf_counter() - data_started
+            step_started = time.perf_counter()
+            optimizer.zero_grad(set_to_none=True)
+            loss, _ = hierarchical_loss(
+                model(windows),
+                batch_targets,
+                batch_eligible,
+                config.loss,
+                device_class_weights,
+                active_nodes=active_nodes,
+                collect_named=False,
+            )
+            loss.backward()
             optimizer.step()
             scheduler.step()
             update += 1
+            batch_loss = float(loss.detach())
+            epoch_step_seconds += time.perf_counter() - step_started
             train_losses[dataset].append(batch_loss)
-        predictions = infer_validation(model, partitions["validation"], config)
+            if update % 100 == 0:
+                with progress_path.open("a", encoding="utf-8") as handle:
+                    handle.write(
+                        json.dumps(
+                            {
+                                "epoch": epoch,
+                                "update": update,
+                                "epoch_updates": sum(len(values) for values in train_losses.values()),
+                                "epoch_units": epoch_units,
+                                "epoch_windows": epoch_windows,
+                                "elapsed_minutes": (time.perf_counter() - started) / 60.0,
+                            },
+                            sort_keys=True,
+                        )
+                        + "\n"
+                    )
+        validation_started = time.perf_counter()
+        predictions = infer_validation(
+            model,
+            partitions["validation"],
+            config,
+            waveform_cache,
+        )
+        validation_seconds = time.perf_counter() - validation_started
         _save_predictions(
             config.output_dir / "validation" / f"epoch_{epoch:03d}.npz",
             predictions,
@@ -684,6 +769,14 @@ def run_training(config: BEATsNALConfig) -> dict[str, object]:
             },
             "validation": selection,
             "learning_rates": [float(group["lr"]) for group in optimizer.param_groups],
+            "runtime": {
+                "train_batch_prepare_seconds": epoch_data_seconds,
+                "train_step_wall_seconds": epoch_step_seconds,
+                "validation_wall_seconds": validation_seconds,
+                "native_units": epoch_units,
+                "windows": epoch_windows,
+                "decoded_waveform_cache_entries": len(waveform_cache),
+            },
             "elapsed_minutes": (time.perf_counter() - started) / 60.0,
         }
         with log_path.open("a", encoding="utf-8") as handle:
@@ -769,6 +862,7 @@ def main() -> None:
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--window-seconds", type=float, default=4.0)
     parser.add_argument("--stride-seconds", type=float, default=2.0)
+    parser.add_argument("--cpu-threads", type=int, default=4)
     parser.add_argument("--encoder-scope", choices=ENCODER_SCOPES, default="full")
     parser.add_argument("--normalization", choices=NORMALIZATION_MODES, default="none")
     parser.add_argument("--rms-target-dbfs", type=float)
@@ -792,6 +886,7 @@ def main() -> None:
         device=args.device,
         window_seconds=args.window_seconds,
         stride_seconds=args.stride_seconds,
+        cpu_threads=args.cpu_threads,
         encoder_scope=args.encoder_scope,
         normalization=WaveformNormalizationConfig(
             mode=args.normalization,

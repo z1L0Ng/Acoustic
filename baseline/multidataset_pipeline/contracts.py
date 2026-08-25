@@ -100,10 +100,10 @@ class WaveformBatch:
             source_start_s=self.source_start_s.to(target),
             source_end_s=self.source_end_s.to(target),
         )
-        moved.validate()
+        moved.validate(deep=False)
         return moved
 
-    def validate(self) -> None:
+    def validate(self, *, deep: bool = True) -> None:
         if self.waveform.ndim != 2 or self.waveform.dtype != torch.float32:
             raise TypeError("waveform must be float32 [B,Tmax]")
         if (
@@ -141,6 +141,8 @@ class WaveformBatch:
             )
         ):
             raise ValueError("lineage length mismatch")
+        if not deep:
+            return
         for index, valid in enumerate(self.valid_samples.tolist()):
             if not 0 < valid <= max_samples:
                 raise ValueError("invalid valid_samples entry")

@@ -84,10 +84,10 @@ class SlidingWindowBatch:
             window_mask=self.window_mask.to(target),
             time_map=self.time_map.to(target, dtype=time_map_dtype),
         )
-        moved.validate()
+        moved.validate(deep=False)
         return moved
 
-    def validate(self) -> None:
+    def validate(self, *, deep: bool = True) -> None:
         if self.waveform_windows.ndim != 3 or self.waveform_windows.dtype != torch.float32:
             raise TypeError("waveform_windows must be float32 [B,K,W]")
         batch, windows, width = self.waveform_windows.shape
@@ -133,6 +133,8 @@ class SlidingWindowBatch:
             )
         ):
             raise ValueError("window lineage length mismatch")
+        if not deep:
+            return
         for row in range(batch):
             valid_count = int(self.window_mask[row].sum())
             if valid_count <= 0 or not bool(self.window_mask[row, :valid_count].all()):
@@ -248,6 +250,7 @@ def masked_mean_window_embeddings(
     window_mask: torch.Tensor,
     *,
     expected_dim: int = 768,
+    deep: bool = True,
 ) -> torch.Tensor:
     """Aggregate non-HF windows without allowing padded slots to contribute."""
 
@@ -257,11 +260,12 @@ def masked_mean_window_embeddings(
         raise TypeError("window_mask must be bool [B,K]")
     if embeddings.device != window_mask.device:
         raise RuntimeError("embeddings and window_mask must share one device")
-    if not torch.isfinite(embeddings).all():
-        raise ValueError("window embeddings must be finite")
     denominator = window_mask.sum(dim=1, keepdim=True)
-    if bool((denominator == 0).any()):
-        raise RuntimeError("cannot aggregate a native unit without valid windows")
+    if deep:
+        if not torch.isfinite(embeddings).all():
+            raise ValueError("window embeddings must be finite")
+        if bool((denominator == 0).any()):
+            raise RuntimeError("cannot aggregate a native unit without valid windows")
     masked = torch.where(
         window_mask.unsqueeze(-1), embeddings, torch.zeros_like(embeddings)
     )
