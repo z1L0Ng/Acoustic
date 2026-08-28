@@ -22,6 +22,7 @@ from baseline.multidataset_pipeline.beats_nal_protocol import (
     WaveformAugmentationConfig,
     WaveformNormalizationConfig,
     decode_icbhi_flat4,
+    decode_icbhi_hierarchical_flat4,
     load_core_samples,
     normalize_waveform,
 )
@@ -205,7 +206,8 @@ def _score(
         [ICBHI_LABELS.index(str(value)) for value in predictions["raw_ground_truth"][icbhi]],
         dtype=np.int64,
     )
-    icbhi_prediction = decode_icbhi_flat4(
+    icbhi_prediction = decode_icbhi_hierarchical_flat4(
+        predictions["level1_predictions"][icbhi],
         predictions["attribute_probabilities"][icbhi],
         thresholds,
     )
@@ -214,9 +216,34 @@ def _score(
         {
             "task": "ICBHI official-test flat4",
             "protocol": "official recording split 60/40; 2756 respiratory cycles",
-            "decoder": "Crackle/Wheeze bits only: 00 Normal, 10 Crackle, 01 Wheeze, 11 Both",
+            "decoder": (
+                "Level1 Normal->Normal; Level1 Abnormal->Crackle/Wheeze/Both "
+                "from shared validation thresholds; neither attribute over "
+                "threshold->larger probability-minus-threshold margin; "
+                "Crackle wins ties"
+            ),
             "thresholds": dict(thresholds),
             "official_score": icbhi_metrics["icbhi_score"],
+        }
+    )
+    bits_only_prediction = decode_icbhi_flat4(
+        predictions["attribute_probabilities"][icbhi],
+        thresholds,
+    )
+    bits_only_metrics = native_metrics(
+        icbhi_target,
+        bits_only_prediction,
+        ICBHI_LABELS,
+    )
+    bits_only_metrics.update(
+        {
+            "task": "ICBHI official-test flat4 diagnostic ablation",
+            "decoder": (
+                "Crackle/Wheeze bits only: 00 Normal, 10 Crackle, "
+                "01 Wheeze, 11 Both"
+            ),
+            "thresholds": dict(thresholds),
+            "official_score": bits_only_metrics["icbhi_score"],
         }
     )
 
@@ -243,6 +270,7 @@ def _score(
     )
     return {
         "icbhi_flat4": icbhi_metrics,
+        "icbhi_flat4_bits_only_ablation": bits_only_metrics,
         "sprsound_inter_task1_1": spr_metrics,
     }
 

@@ -12,6 +12,7 @@ from baseline.multidataset_pipeline.beats_nal_protocol import (
     WaveformNormalizationConfig,
     augment_waveform,
     decode_icbhi_flat4,
+    decode_icbhi_hierarchical_flat4,
     hierarchical_loss,
     hierarchical_loss_contribution,
     normalize_waveform,
@@ -229,6 +230,24 @@ class BEATsNALProtocolTest(unittest.TestCase):
             {"crackle": 0.5, "wheeze": 0.5},
         )
         self.assertEqual(labels.tolist(), [0, 1, 2, 3])
+
+    def test_icbhi_hierarchical_flat4_uses_level1_gate_and_margin_fallback(self):
+        level1 = np.asarray([0, 1, 1, 1, 1])
+        probabilities = np.asarray(
+            [
+                [0.9, 0.9],
+                [0.8, 0.2],
+                [0.2, 0.8],
+                [0.8, 0.8],
+                [0.4, 0.3],
+            ]
+        )
+        labels = decode_icbhi_hierarchical_flat4(
+            level1,
+            probabilities,
+            {"crackle": 0.5, "wheeze": 0.5},
+        )
+        self.assertEqual(labels.tolist(), [0, 1, 2, 3, 1])
 
 
 if __name__ == "__main__":

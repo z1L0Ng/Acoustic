@@ -567,11 +567,39 @@ def decode_icbhi_flat4(
     attribute_probabilities: np.ndarray,
     thresholds: Mapping[str, float],
 ) -> np.ndarray:
-    """Reconstruct Normal/Crackle/Wheeze/Both from the two atomic bits."""
+    """Bits-only flat4 reconstruction retained as a diagnostic ablation."""
 
     crackle = attribute_probabilities[:, 0] >= thresholds["crackle"]
     wheeze = attribute_probabilities[:, 1] >= thresholds["wheeze"]
     return crackle.astype(np.int64) + 2 * wheeze.astype(np.int64)
+
+
+def decode_icbhi_hierarchical_flat4(
+    level1_predictions: np.ndarray,
+    attribute_probabilities: np.ndarray,
+    thresholds: Mapping[str, float],
+) -> np.ndarray:
+    """Apply the shared hierarchy to the ICBHI Normal/Crackle/Wheeze/Both task."""
+
+    output = np.zeros(len(level1_predictions), dtype=np.int64)
+    for index in np.flatnonzero(level1_predictions == 1):
+        crackle = attribute_probabilities[index, 0] >= thresholds["crackle"]
+        wheeze = attribute_probabilities[index, 1] >= thresholds["wheeze"]
+        if crackle and wheeze:
+            output[index] = 3
+        elif crackle:
+            output[index] = 1
+        elif wheeze:
+            output[index] = 2
+        else:
+            crackle_margin = (
+                attribute_probabilities[index, 0] - thresholds["crackle"]
+            )
+            wheeze_margin = (
+                attribute_probabilities[index, 1] - thresholds["wheeze"]
+            )
+            output[index] = 1 if crackle_margin >= wheeze_margin else 2
+    return output
 
 
 def _save_predictions(path: Path, predictions: Mapping[str, np.ndarray]) -> None:
@@ -819,8 +847,14 @@ def run_training(config: BEATsNALConfig) -> dict[str, object]:
         "shared_attribute_thresholds": thresholds,
         "threshold_details": threshold_details,
         "icbhi_flat4_decoder": (
+            "Level1 Normal->Normal; Level1 Abnormal->Crackle/Wheeze/Both from "
+            "shared validation thresholds; if neither attribute crosses its "
+            "threshold, choose the larger probability-minus-threshold margin "
+            "with Crackle winning ties"
+        ),
+        "icbhi_bits_only_flat4_ablation": (
             "Crackle/Wheeze bits: 00 Normal, 10 Crackle, 01 Wheeze, 11 Both; "
-            "Level1 is reported separately and does not override flat4"
+            "Level1 does not override the ablation"
         ),
         "outer_test_accessed": False,
     }
