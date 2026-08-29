@@ -130,11 +130,10 @@ def source_contract() -> dict[str, object]:
             ),
         },
         "checkpoint_storage": {
-            "policy": "one model+classifier selection checkpoint per epoch; no optimizer state",
-            "epochs": 100,
-            "estimated_gb_per_epoch": 0.36,
-            "recommended_free_gb_per_mode": 45,
-            "resume": "per-epoch checkpoints are not optimizer-resumable",
+            "policy": "overwrite one best model+classifier checkpoint when selection Score improves",
+            "estimated_best_checkpoint_gb": 0.36,
+            "recommended_free_gb_per_mode": 2,
+            "resume": "best checkpoint is not optimizer-resumable",
         },
     }
 
@@ -554,23 +553,23 @@ def run(
             "metrics": predictions["metrics"],
         }
         _append_jsonl(mode_root / "selection_log.jsonl", selection_record)
-        checkpoint_path = mode_root / "checkpoints" / f"epoch_{epoch:03d}.pt"
-        torch.save(
-            {
-                "epoch": epoch,
-                "model": model.state_dict(),
-                "classifier": classifier.state_dict(),
-                "config": config_payload,
-                "selection_score": score,
-            },
-            checkpoint_path,
-        )
         if score > best_score:
+            checkpoint_path = mode_root / "checkpoints" / "best_checkpoint.pt"
+            torch.save(
+                {
+                    "epoch": epoch,
+                    "model": model.state_dict(),
+                    "classifier": classifier.state_dict(),
+                    "config": config_payload,
+                    "selection_score": score,
+                },
+                checkpoint_path,
+            )
             best_score = score
             best_epoch = epoch
             best_metrics = predictions["metrics"]
 
-    selected_checkpoint = mode_root / "checkpoints" / f"epoch_{best_epoch:03d}.pt"
+    selected_checkpoint = mode_root / "checkpoints" / "best_checkpoint.pt"
     selected_state = torch.load(selected_checkpoint, map_location=device)
     model.load_state_dict(selected_state["model"])
     classifier.load_state_dict(selected_state["classifier"])
@@ -640,8 +639,8 @@ def run(
         "official_test_access": (
             "every_epoch" if config.mode == AUTHOR_TEST_SELECTED else "once_after_selection"
         ),
-        "checkpoint_role": "epoch reselection and terminal evaluation",
-        "optimizer_resume": "not available from per-epoch checkpoints",
+        "checkpoint_role": "best-only selection checkpoint and terminal evaluation",
+        "optimizer_resume": "not available from the best-only checkpoint",
         "terminal_partition_summary": terminal_partition_summary,
         "elapsed_seconds": time.time() - started,
     }

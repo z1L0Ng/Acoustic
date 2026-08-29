@@ -384,7 +384,9 @@ technical pages plus an optional fifth page containing references only.
    paper/local/delta comparator。
 2. 再运行 `author_test_selected`, seed 42，只形成作者忠实复现收据。
 3. 两个 mode 使用独立目录；每 epoch 保存 model+classifier checkpoint 与
-   prediction，不保存 Adam state。每个 mode 需至少 45 GB 可用空间。
+   prediction；完整 BEATs 权重仅在 selection Score 改善时覆盖保存为
+   `best_checkpoint.pt`，不保存 Adam state。每个 mode 建议预留 2 GB，
+   代码、数据和 pretrained checkpoint 均直接复用。
 4. 单 seed 结果审阅后，才决定是否扩展作者 seeds 1–5 或进入 PAFA loss。
 
 ### Immediate decision after overnight results
