@@ -124,6 +124,46 @@ checkpoints and select a fully available GPU without interfering with other
 users. The first local seed is 42; future multi-seed expansion is a separate
 decision after the single-seed paper/local/delta row is reviewed.
 
+## 2026-08-29 proposed mainline: PAFA-JH1 joint hierarchy
+
+The earlier full PAFA single-seed reproduction reached Sp 76.88, Se 51.40 and
+ICBHI Score 64.14 at its official-test-selected epoch 27. This verifies the
+local PAFA execution path within its stated test-selection caveat. The newer
+BEATs+CE receipts remain separate: the clean validation-selected terminal Score
+is 54.83, while the author-faithful test-selected receipt is 59.86. These rows
+motivate the following joint experiment but do not constitute evidence for it.
+
+`PAFA-JH1` is a proposed method experiment, not a PAFA paper reproduction. It
+keeps the PAFA input, optimization and patient-aware representation recipe while
+replacing the direct flat-four classifier with the project's shared hierarchy.
+
+| Field | Frozen PAFA-JH1 contract |
+|---|---|
+| Training datasets | ICBHI official-train respiratory cycles and SPRSound BioCAS2022 training events only; HF and KAUH excluded |
+| Input | Mono 16 kHz; one 5 s input per native unit; short units repeat-padded and long units front-truncated using the PAFA waveform path; no SpecAugment |
+| Encoder | BEATs iter3+ AS2M, full end-to-end fine-tuning |
+| Prediction head | Shared `Level1` Normal/Abnormal softmax plus Abnormal attributes `Crackle` and `Wheeze`; no `Other`; ICBHI flat four reconstructed as Normal/Crackle/Wheeze/Both |
+| PAFA auxiliary path | Author projection head plus PCSL/GPAL on dataset-valid patient IDs; patient identifiers remain dataset-scoped and are never shared across ICBHI and SPRSound |
+| Batching | Native-unit batch 32, dataset-homogeneous batches, equal dataset contribution per epoch; no cross-dataset patient centroid |
+| Optimization | 50 epochs; Adam, learning rate 5e-5, weight decay 1e-6, cosine schedule and EMA beta 0.5 |
+| Loss | Classification weight 1.0 with equal-node eligible loss over Level1, Crackle and Wheeze; PAFA auxiliary weight 0.5 with lambda-PCSL 50 and lambda-GPAL 0.0005; unavailable SPRSound attributes remain unknown/masked, never negative |
+| Checkpoint selection | Equal mean of ICBHI and SPRSound validation eligible-node loss; official/outer test absent during training and selection |
+| Thresholds/readout | After selecting the epoch, fit one shared Crackle threshold and one shared Wheeze threshold on core validation only; Level1 Normal overrides attributes; freeze before terminal evaluation |
+| Terminal evaluation | One access after selection: ICBHI official 2,756-cycle Sp/Se/Score plus Macro-F1/UAR/per-class recall; SPRSound BioCAS2022 inter Task1-1 native Score plus Macro-F1/UAR/support |
+| Storage | Best checkpoint only, plus validation/terminal predictions and summaries; no per-epoch checkpoint archive |
+
+The single-seed go/no-go gate is ICBHI Score at least 59.0 and SPRSound
+Task1-1 Score at least 90.0, with no unexplained class collapse. Passing this
+gate promotes PAFA-JH1 to the candidate paper mainline and authorizes a separate
+multi-seed confirmation decision. Failing either threshold keeps it as a
+diagnostic and does not replace the current Core-2 evidence.
+
+Implementation and execution remain `READY_FOR_USER_START`. The runner must be
+prepared and directly checked before a formal run. Server execution requires a
+fresh all-GPU occupancy read and a completely available card; otherwise the
+experiment remains on HOLD rather than sharing or preempting another user's
+GPU.
+
 ## ICASSP 2027 deadline plan
 
 The official full-paper deadline is 2026-09-16. As of 2026-08-27, the project
