@@ -146,7 +146,7 @@ replacing the direct flat-four classifier with the project's shared hierarchy.
 | PAFA auxiliary path | Author projection head plus PCSL/GPAL on dataset-valid patient IDs; patient identifiers remain dataset-scoped and are never shared across ICBHI and SPRSound |
 | Batching | Native-unit batch 32, dataset-homogeneous batches, equal dataset contribution per epoch; no cross-dataset patient centroid |
 | Optimization | 50 epochs; Adam, learning rate 5e-5, weight decay 1e-6, cosine schedule and EMA beta 0.5 |
-| Loss | Classification weight 1.0 with equal-node eligible loss over Level1, Crackle and Wheeze; PAFA auxiliary weight 0.5 with lambda-PCSL 50 and lambda-GPAL 0.0005; unavailable SPRSound attributes remain unknown/masked, never negative |
+| Loss | Classification weight 1.0 with equal-node eligible loss over Level1, Crackle and Wheeze; PAFA auxiliary weight 1.0 with lambda-PCSL 50 and lambda-GPAL 0.0005; unavailable SPRSound attributes remain unknown/masked, never negative |
 | Checkpoint selection | Equal mean of ICBHI and SPRSound validation eligible-node loss; official/outer test absent during training and selection |
 | Thresholds/readout | After selecting the epoch, fit one shared Crackle threshold and one shared Wheeze threshold on core validation only; Level1 Normal overrides attributes; freeze before terminal evaluation |
 | Terminal evaluation | One access after selection: ICBHI official 2,756-cycle Sp/Se/Score plus Macro-F1/UAR/per-class recall; SPRSound BioCAS2022 inter Task1-1 native Score plus Macro-F1/UAR/support |
