@@ -356,4 +356,46 @@ technical pages plus an optional fifth page containing references only.
 - Paper numbers from prior work remain Paper Claims.
 - No result in this report constitutes an absolute SOTA claim.
 
+## 14. 2026-08-29 Overnight Preparation Addendum
+
+### Completed preparation
+
+- 建立 ICASSP 2027 四页英文 paper skeleton；当前主叙事是 cross-dataset
+  inconsistency 与 ontology/readout analysis，不是 uniform improvement 或 SOTA。
+- 完成 BEATs、PAFA BEATs+CE、PAFA、fixed-BEATs、SPA、Resp-Agent 与 OPERA
+  的 primary-source comparison/crosswalk。PAFA BEATs+CE 是 deadline-critical
+  direct comparator。
+- 完成 PAFA BEATs+CE 双证据入口：`clean_validation_only` 只用 official-train
+  内 patient-grouped validation 选 checkpoint，selected checkpoint 后才首次读
+  official test；`author_test_selected` 保留作者每 epoch official-test Score 选模，
+  永久标为 test-selected reproduction receipt。
+- 完成 Core-2 checkpoint-selection sensitivity。现有五条均保留原 selected
+  checkpoint；epoch-1-normalized mean/worst 仅为 design diagnostic，缺失
+  alternative checkpoint 时保持 `HOLD`。
+- 批准并完成 Audacity 20-selection panel 的 native-rate quantitative script
+  measurement 与 import/label plan；`.aup3` GUI projects 仍为 `HOLD`。HF empty
+  annotation 只表示 `not_annotated`，不表示 Normal/Negative。
+- Wade/Hanlin 澄清消息已形成草稿但未发送。两人的状态仍是
+  `PARTIALLY_ALIGNED`，不能把计划或澄清问题记为数值交付。
+
+### Authorized server queue
+
+1. 先运行 PAFA BEATs+CE `clean_validation_only`, seed 42，形成主要
+   paper/local/delta comparator。
+2. 再运行 `author_test_selected`, seed 42，只形成作者忠实复现收据。
+3. 两个 mode 使用独立目录；每 epoch 保存 model+classifier checkpoint 与
+   prediction，不保存 Adam state。每个 mode 需至少 45 GB 可用空间。
+4. 单 seed 结果审阅后，才决定是否扩展作者 seeds 1–5 或进入 PAFA loss。
+
+### Immediate decision after overnight results
+
+- 如果 clean BEATs+CE 接近论文 63.49，则当前 Core-2 ICBHI gap 主要优先归因于
+  direct flat4 objective、5 s cycle geometry 与 joint hierarchy/readout contract；
+  不需要先加入 PAFA loss。
+- 如果 author-faithful receipt 接近论文而 clean track 明显更低，则必须把
+  test-selection optimism 与 inner-validation sample reduction 作为主要 protocol
+  gap 单列，不能把差值归因于模型方法。
+- 如果两条都明显偏低，先检查 paper/local protocol parity；不启动新的 broad
+  encoder/loss/window sweep。
+
 Official deadline source: [ICASSP 2027 Call for Papers](https://2027.ieeeicassp.org/call-for-papers/).

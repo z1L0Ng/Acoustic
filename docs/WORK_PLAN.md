@@ -1,6 +1,6 @@
 # Work Plan
 
-Updated: 2026-08-27
+Updated: 2026-08-29
 
 ## Objective
 
@@ -99,8 +99,30 @@ sensitivity. R0 has the highest posthoc hierarchical ICBHI Score; N1 has the
 highest SPRSound Score; L1 remains the ICBHI-recall-oriented ablation. The
 posthoc result is test-informed and is not promoted to a new primary result.
 Existing terminal results remain historical bits-only Local Results and are not
-overwritten. No new training or terminal evaluation is authorized by this plan
-update.
+overwritten. No additional Core-2 training or terminal evaluation is authorized
+by this plan update. A separate PAFA BEATs+CE reproduction line was authorized
+on 2026-08-29, subject to code review, server resource checks, and the evidence
+separation below.
+
+## 2026-08-29 overnight execution queue
+
+The overnight queue advances paper-critical work without retrospectively
+changing the accepted five-run Core-2 results.
+
+| Lane | Overnight output | Evidence/decision boundary |
+|---|---|---|
+| PAFA BEATs+CE | ICBHI direct flat4 reproduction entry and notebook; 16 kHz, 5 s repeat-pad/front-truncate, full BEATs iter3+ AS2M fine-tuning, batch 32, Adam 5e-5, weight decay 1e-6, 100 epochs, EMA 0.5, no SpecAugment | Run the clean patient-grouped validation-selected track as the main local comparator. Keep the author-faithful official-test-selected track as a separately labeled reproduction receipt. Never merge the two result directories or evidence labels. |
+| Checkpoint selection | Read-only R0/N1/A1/L1/L2 loss-criterion sensitivity plus a prospective native-composite design | Existing selected checkpoints remain unchanged. Epoch-1-normalized and worst-dataset views are design diagnostics only; missing alternative checkpoints remain `HOLD`. |
+| Audacity/acoustic evidence | Approved 20-selection panel, native-rate RMS/power/dBFS, Welch PSD, band power, spectral centroid/bandwidth, silence and SNR proxies | Representative visual/mechanism evidence only. HF empty annotation is `not_annotated`, never Normal/Negative. `.aup3` GUI projects remain separate from the quantitative script artifact until the interactive import is completed. |
+| Paper preparation | Four-page English skeleton and primary-source BEATs/PAFA/follow-up comparison audit | Keep Paper Claim, Verified Local Result, Posthoc Diagnostic/Test-Informed, Proposed Method and HOLD separate. The current story is cross-dataset inconsistency and ontology/readout analysis, not uniform improvement or SOTA. |
+| Student coordination | Natural Chinese clarification drafts for Wade and Hanlin | Draft-only and unsent. Wade must return numeric window/separability evidence; Hanlin must return paper score, local score and delta for an original-benchmark reproduction. |
+
+PAFA server execution starts only after the clean track proves that official-test
+annotations and audio are not read before validation checkpoint selection. The
+server must also confirm sufficient free storage for 100 complete epoch
+checkpoints and select a fully available GPU without interfering with other
+users. The first local seed is 42; future multi-seed expansion is a separate
+decision after the single-seed paper/local/delta row is reviewed.
 
 ## ICASSP 2027 deadline plan
 
