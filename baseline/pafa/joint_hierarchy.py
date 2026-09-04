@@ -55,6 +55,8 @@ from baseline.pafa.beats_ce_reproduction import (
 
 CONDITION = "PAFA_JH1_joint_hierarchy_seed42"
 LABEL_ORDER = ("normal", "crackle", "wheeze", "both")
+EARLY_STOPPING_PATIENCE = 10
+EARLY_STOPPING_MONITOR = "validation_selection_loss"
 
 
 @dataclass(frozen=True)
@@ -135,6 +137,12 @@ class PAFAJointHierarchyConfig:
                 "terminal_policy": "one access after validation selection and threshold freeze",
                 "checkpoint_policy": "best only; no optimizer resume state",
                 "evidence_label": "proposed_method_single_seed",
+                "early_stopping_patience": EARLY_STOPPING_PATIENCE,
+                "early_stopping_monitor": EARLY_STOPPING_MONITOR,
+                "early_stopping_policy": (
+                    "epoch boundary; strict improvement only; exact ties retain the earlier epoch; "
+                    "max epochs remains the upper bound"
+                ),
             }
         )
         return payload
@@ -546,6 +554,9 @@ def run(config: PAFAJointHierarchyConfig) -> dict[str, object]:
     )
     best_loss = math.inf
     best_epoch = 0
+    no_improvement_epochs = 0
+    completed_epochs = 0
+    early_stopped = False
     global_update = 0
     started = time.perf_counter()
     progress_path = config.output_dir / "progress.jsonl"
@@ -652,10 +663,21 @@ def run(config: PAFAJointHierarchyConfig) -> dict[str, object]:
             "validation": selection,
             "elapsed_minutes": (time.perf_counter() - started) / 60.0,
         }
+        selection_loss = float(selection["selection_loss"])
+        improved = selection_loss < best_loss
+        next_no_improvement_epochs = 0 if improved else no_improvement_epochs + 1
+        record["early_stopping"] = {
+            "monitor": EARLY_STOPPING_MONITOR,
+            "monitor_value": selection_loss,
+            "strict_improvement": improved,
+            "no_improvement_epochs": next_no_improvement_epochs,
+            "patience": EARLY_STOPPING_PATIENCE,
+        }
         _append_jsonl(train_log_path, record)
-        if float(selection["selection_loss"]) < best_loss:
-            best_loss = float(selection["selection_loss"])
+        if improved:
+            best_loss = selection_loss
             best_epoch = epoch
+            no_improvement_epochs = 0
             torch.save(
                 {
                     "epoch": epoch,
@@ -666,6 +688,12 @@ def run(config: PAFAJointHierarchyConfig) -> dict[str, object]:
                 },
                 config.output_dir / "best_checkpoint.pt",
             )
+        else:
+            no_improvement_epochs = next_no_improvement_epochs
+        completed_epochs = epoch
+        if no_improvement_epochs >= EARLY_STOPPING_PATIENCE:
+            early_stopped = True
+            break
 
     checkpoint = torch.load(
         config.output_dir / "best_checkpoint.pt",
@@ -685,6 +713,10 @@ def run(config: PAFAJointHierarchyConfig) -> dict[str, object]:
         "shared_attribute_thresholds": thresholds,
         "threshold_details": threshold_details,
         "outer_test_accessed": False,
+        "early_stopping_patience": EARLY_STOPPING_PATIENCE,
+        "early_stopping_monitor": EARLY_STOPPING_MONITOR,
+        "early_stopped": early_stopped,
+        "completed_training_epochs": completed_epochs,
         "decoder": (
             "Level1 Normal->Normal; Level1 Abnormal->Crackle/Wheeze/Both; "
             "if neither attribute crosses its shared validation threshold, use "
@@ -732,6 +764,10 @@ def run(config: PAFAJointHierarchyConfig) -> dict[str, object]:
         "outer_test_accessed": True,
         "terminal_targets_loaded_after_label_free_prediction_write": True,
         "prediction_support": {"icbhi": 2756, "sprsound": 1429},
+        "early_stopping_patience": EARLY_STOPPING_PATIENCE,
+        "early_stopping_monitor": EARLY_STOPPING_MONITOR,
+        "early_stopped": early_stopped,
+        "completed_training_epochs": completed_epochs,
         **metrics,
     }
     _write_json(terminal_dir / "native_metrics.json", terminal_payload)
@@ -740,12 +776,18 @@ def run(config: PAFAJointHierarchyConfig) -> dict[str, object]:
         terminal_payload["sprsound_inter_task1_1"]["official_score"]
     )
     summary = {
-        "status": "complete",
+        "status": "early_stopped" if early_stopped else "complete",
         "condition": CONDITION,
+        "max_epochs": config.epochs,
+        "completed_training_epochs": completed_epochs,
         "selected_epoch": best_epoch,
         "selection_loss": best_loss,
         "updates": global_update,
         "outer_test_accessed": True,
+        "early_stopping_patience": EARLY_STOPPING_PATIENCE,
+        "early_stopping_monitor": EARLY_STOPPING_MONITOR,
+        "early_stopped": early_stopped,
+        "no_improvement_epochs_at_stop": no_improvement_epochs,
         "icbhi_official_score": icbhi_score,
         "sprsound_task1_1_official_score": spr_score,
         "mainline_gate": {

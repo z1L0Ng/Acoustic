@@ -1,0 +1,59 @@
+\section{Data Preparation and Task Alignment}
+\label{sec:data_preparation}
+
+\subsection{Dataset Roles}
+\begin{itemize}
+    \item Introduce ICBHI and SPRSound as the two core supervised datasets.
+    \item Introduce HF Lung as the positive-only auxiliary dataset.
+    \item Introduce KAUH as the external evaluation dataset.
+    \item Clarify which datasets participate in training, model selection,
+    and terminal evaluation.
+    \item \textit{Citation placeholder: original publications of the four datasets.}
+\end{itemize}
+
+\subsection{Native Units and Evaluation Boundaries}
+\begin{itemize}
+    \item Define the native prediction unit of each dataset.
+    \item Record the split and patient-grouping requirements.
+    \item Distinguish cycle-level, event-level, interval-level,
+    recording-level, and patient-level evaluation.
+    \item Preserve dataset-specific metrics and prevent pooled
+    cross-dataset reporting.
+    \item \textit{Protocol placeholder: official and external evaluation boundaries.}
+\end{itemize}
+
+\subsection{Hierarchical Label Alignment}
+\begin{itemize}
+    \item Define the first-level Normal/Abnormal target.
+    \item Define the second-level Crackle and Wheeze attributes.
+    \item Specify how concurrent Crackle and Wheeze observations are represented.
+    \item Describe which prediction nodes are supported by each dataset.
+    \item Introduce eligibility masks for unavailable labels.
+    \item Clarify that unannotated HF Lung regions are not treated as negative labels.
+\end{itemize}
+
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=\textwidth]{Figure/figure1_dataset_composition_acoustic.pdf}
+    \caption{Dataset scale, acoustic overlap, and feature distributions across
+    four respiratory-sound datasets. (a) Counts use each dataset's native
+    annotated unit---cycles for ICBHI, events for SPRSound, and recordings for
+    HF Lung and KAUH---and colors show mapped respiratory classes. (b) PCA of
+    recording-level acoustic descriptors uses 112 balanced recording groups
+    per dataset; ellipses enclose 80\% covariance regions. (c) Acoustic
+    descriptors are standardized across the balanced groups; circles show
+    medians, thick bars show interquartile ranges, and thin capped lines show
+    the 5th--95th percentiles.}
+    \label{fig:dataset_composition_acoustic}
+\end{figure*}
+
+\subsection{Audio Preparation}
+\begin{itemize}
+    \item Report the common sampling-rate contract.
+    \item Describe native-unit waveform extraction.
+    \item Describe the fixed-duration input construction.
+    \item Specify padding, repetition, truncation, and window boundaries.
+    \item Distinguish waveform-level processing from the internal
+    BEATs filterbank frontend.
+    \item \textit{Configuration placeholder: input duration and preprocessing.}
+\end{itemize}
