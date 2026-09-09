@@ -3,85 +3,82 @@
 
 \subsection{Overall Framework}
 \begin{itemize}
-    \item Define the core model and the HF-augmented extension.
-    \item Describe the flow from native-unit waveform input to
-    dataset-specific predictions.
-    \item Identify the shared components and dataset-dependent supervision.
-    \item Separate the training architecture from dataset-native evaluation.
-    \item \textit{Figure 2 placeholder: Main Method---native-unit waveform
-    inputs, the BEATs encoder, shared representation, hierarchical prediction
-    heads, patient-aware training objectives, and the separate ICBHI and
-    SPRSound readouts.}
+    \item Follow the high-level path from native ICBHI cycles and SPRSound
+    events through task alignment, shared encoding, hierarchical prediction,
+    and separate native outputs.
+    \item Separate shared representation learning from dataset-native
+    evaluation.
 \end{itemize}
 
-\subsection{Pretrained Acoustic Encoder}
+\begin{figure*}[t]
+    \centering
+    \fbox{\parbox[c][1.20in][c]{0.96\textwidth}{
+        \centering
+        \textit{Figure 2 placeholder: native inputs $\rightarrow$ task
+        alignment $\rightarrow$ shared BEATs representation $\rightarrow$
+        eligibility-aware hierarchy $\rightarrow$ ICBHI flat-four and
+        SPRSound binary outputs.}
+    }}
+    \caption{\textit{Figure 2 caption placeholder: high-level method flow;
+    exclude optimizer details, auxiliary experiment branches, supporting
+    datasets, and experiment identifiers.}}
+    \label{fig:method_overview}
+\end{figure*}
+
+\subsection{Shared Acoustic Representation}
 \begin{itemize}
-    \item Introduce the pretrained BEATs encoder.
-    \item Describe the internal filterbank frontend and acoustic representation.
-    \item Define the temporal aggregation of encoder outputs.
-    \item Introduce the shared projection layer.
-    \item State which encoder and projection parameters are optimized
-    during downstream training.
-    \item \textit{Equation placeholder: waveform-to-representation mapping.}
-    \item \textit{Citation placeholder: BEATs architecture and pretraining.}
+    \item Introduce the pretrained BEATs encoder and its acoustic-tokenizer
+    pretraining source.
+    \item Describe the waveform-to-filterbank frontend, temporal aggregation,
+    and shared projection used by both core tasks.
+    \item State the downstream optimization scope of the encoder and shared
+    projection.
+    \item \textit{Equation placeholder: waveform-to-shared-representation
+    mapping.}
+    \item \textit{Citation placeholder: BEATs.}
 \end{itemize}
 
-\subsection{Hierarchical Prediction Heads}
+\subsection{Hierarchical Prediction Nodes}
 \begin{itemize}
-    \item Define the first-level Normal/Abnormal classifier.
-    \item Define the second-level Crackle and Wheeze attribute classifiers.
-    \item Describe the dependency between the first- and second-level outputs.
-    \item Define the representation of concurrent Crackle and Wheeze predictions.
-    \item Specify the hierarchical decoding rule used at inference.
-    \item Specify how validation-derived attribute thresholds are frozen.
-    \item \textit{Equation placeholder: Level-1 and Level-2 probabilities.}
-    \item \textit{Equation placeholder: hierarchical flat-class decoding.}
+    \item Define the Level-1 Normal/Abnormal probability.
+    \item Define eligible Crackle and Wheeze attribute probabilities and their
+    possible co-occurrence.
+    \item Define the dependency between Level-1 and attribute predictions.
+    \item \textit{Equation placeholder: Level-1 and attribute-node
+    probabilities.}
 \end{itemize}
 
-\subsection{Eligibility-Aware Core Objective}
+\subsection{Eligibility-Aware Objective}
 \begin{itemize}
-    \item Define sample-level and node-level label eligibility.
-    \item Compute each node loss only from samples with supported annotations.
-    \item Prevent unavailable annotations from being converted into negatives.
-    \item Define the aggregation of Level-1, Crackle, and Wheeze losses.
-    \item Define the aggregation of the ICBHI and SPRSound objectives.
-    \item \textit{Equation placeholder: eligibility-masked node loss.}
-    \item \textit{Equation placeholder: combined Core-2 classification loss.}
+    \item Define the node-availability indicator from the source annotation.
+    \item Compute each node loss only on samples with an available target.
+    \item Aggregate node losses without converting unavailable targets into
+    negative labels.
+    \item Aggregate ICBHI and SPRSound task losses under the fixed joint
+    training contract.
+    \item \textit{Equation placeholder: availability-masked node loss.}
+    \item \textit{Equation placeholder: combined core classification
+    objective.}
 \end{itemize}
 
-\subsection{Patient-Aware Representation Learning}
+\subsection{Inherited Patient-Aware Objectives}
 \begin{itemize}
-    \item Introduce the patient-aware auxiliary representation objective.
-    \item Define the relationship between patient identity and
-    respiratory-class supervision.
-    \item Describe the projection branch used only during training.
-    \item Separate the classification objective from the
-    patient-aware auxiliary objectives.
-    \item Clarify which auxiliary components are removed at inference.
-    \item \textit{Equation placeholder: patient-aware contrastive objective.}
-    \item \textit{Equation placeholder: patient-aware alignment objective.}
+    \item Introduce PAFA's patient cohesion-separation and global alignment
+    objectives as inherited training components.
+    \item Define their relationship to the shared representation and the
+    training-only projection branch.
+    \item State that the projection branch is removed at inference.
+    \item \textit{Equation placeholder: inherited PAFA objective and total
+    training objective.}
     \item \textit{Citation placeholder: PAFA.}
 \end{itemize}
 
-\subsection{Positive-Only HF Auxiliary Supervision}
+\subsection{Dataset-Native Readouts}
 \begin{itemize}
-    \item Introduce the HF-augmented extension of the core model.
-    \item Define the HF Lung samples eligible for Crackle or Wheeze supervision.
-    \item Exclude unannotated intervals from negative supervision.
-    \item Add the HF auxiliary objective without changing the
-    core hierarchical output space.
-    \item Clarify that the HF branch supplies training supervision
-    but does not redefine the core model-selection task.
-    \item \textit{Equation placeholder: positive-only HF auxiliary loss.}
-    \item \textit{Equation placeholder: complete training objective.}
-\end{itemize}
-
-\subsection{Dataset-Native Readout}
-\begin{itemize}
-    \item Map the hierarchical outputs to the ICBHI flat four-class task.
-    \item Map the first-level output to the SPRSound binary task.
-    \item Retain attribute probabilities for HF Lung evaluation.
-    \item Aggregate recording predictions for KAUH patient-level evaluation.
-    \item Keep all dataset-native outputs separate rather than constructing
-    a pooled cross-dataset score.
+    \item Reconstruct ICBHI Normal, Crackle, Wheeze, and Both predictions from
+    the hierarchy using frozen validation-derived thresholds.
+    \item Use the Level-1 output for SPRSound Normal/Adventitious prediction.
+    \item Report the two native tasks with their own units and metrics.
+    \item \textit{Equation placeholder: ICBHI flat-four decoding and
+    SPRSound binary readout.}
 \end{itemize}

@@ -3,84 +3,106 @@
 
 \subsection{Experimental Setup}
 \begin{itemize}
-    \item Report the pretrained checkpoint and encoder optimization scope.
-    \item Specify the input construction and audio frontend.
-    \item Report the optimizer, learning-rate schedule, batch construction,
-    and maximum training duration.
-    \item State the random seeds used for the principal experiments.
-    \item Distinguish multi-seed principal results from single-seed ablations.
-    \item Describe the early-stopping rule.
-    \item \textit{Configuration placeholder: shared experimental settings.}
+    \item Report the pretrained checkpoint, encoder optimization scope, input
+    construction, optimizer, learning-rate schedule, batch construction,
+    maximum epochs, and early stopping.
+    \item Report the three seeds used for the literature-facing joint-hierarchy
+    benchmark and the single seed used for the prospective clean controls.
+    \item Define all metric abbreviations at first use.
+    \item \textit{Configuration placeholder: shared and stream-specific
+    experimental settings.}
 \end{itemize}
 
-\subsection{Model Selection and Evaluation Protocol}
+\subsection{Two Evidence Streams and Selection Protocols}
 \begin{itemize}
-    \item State the checkpoint-selection source for every reported system.
-    \item Distinguish validation-selected results from
-    official-test-selected benchmark results.
-    \item Describe how attribute thresholds are fitted and frozen.
-    \item State how frequently each terminal test set is accessed.
-    \item Define the ICBHI specificity, sensitivity, and official score.
-    \item Define the SPRSound Task1-1 metrics and official score.
-    \item Define the HF Lung attribute metrics.
-    \item Define the KAUH recording-level and patient-level metrics.
-    \item Prevent construction of a pooled metric across datasets.
-    \item \textit{Equation placeholder: dataset-native evaluation metrics.}
+    \item Define the literature-facing benchmark stream: task-compatible
+    published ICBHI rows, verified zero-target transfer rows, and the
+    three-seed joint-hierarchy result.
+    \item Disclose that the three-seed joint-hierarchy checkpoints are selected
+    by ICBHI official-test Score under the PAFA-style benchmark protocol;
+    SPRSound inter is evaluated after each checkpoint is selected.
+    \item Define the prospective clean stream: group-safe internal calibration
+    and selection, validation-only checkpoint and threshold choice, and one
+    official-test evaluation after freezing.
+    \item Use one preregistered joint validation criterion for the two joint
+    clean controls while keeping native task metrics separate.
+    \item Do not combine or relabel the benchmark and prospective clean rows.
 \end{itemize}
 
-\subsection{Comparison Systems}
+\subsection{Literature-Facing Benchmark and Transfer Motivation}
 \begin{itemize}
-    \item Introduce task-compatible published ICBHI references.
-    \item Introduce the paper-faithful BEATs and PAFA references.
-    \item Distinguish published results from locally reproduced results.
-    \item Introduce the core hierarchical model.
-    \item Introduce the HF-augmented hierarchical model.
-    \item Identify which comparisons are direct and which are contextual.
-    \item \textit{Citation placeholder: ICBHI and BEATs comparison systems.}
+    \item Include task-compatible published ICBHI references with their task,
+    unit, split, seed count, and selection disclosure.
+    \item Include verified zero-target SPRSound transfer of fixed
+    ICBHI-specialized PAFA, SG-SCL, and Patch-Mix checkpoints as motivation.
+    \item Identify the all-Normal floor used to interpret zero-target transfer.
+    \item Include the three-seed ICBHI and SPRSound native-task results for the
+    proposed joint hierarchy.
 \end{itemize}
 
-\subsection{Core-Dataset Results}
+\begin{table*}[t]
+    \centering
+    \fbox{\parbox[c][1.05in][c]{0.96\textwidth}{
+        \centering
+        \textit{Table I placeholder: test-selected task-compatible ICBHI
+        references; fixed-checkpoint zero-target SPRSound transfer motivation;
+        and the three-seed joint-hierarchy ICBHI/SPRSound benchmark with
+        selection disclosure.}
+    }}
+    \caption{\textit{Table I caption placeholder: literature-facing benchmark
+    and zero-target transfer motivation. Keep task, unit, split, seed count,
+    metric, and model-selection source explicit.}}
+    \label{tab:benchmark_results}
+\end{table*}
+
+\subsection{Prospective Clean Controls}
 \begin{itemize}
-    \item Compare the core and HF-augmented models on ICBHI.
-    \item Compare the same models on SPRSound.
-    \item Report specificity and sensitivity separately from aggregate scores.
-    \item Report mean and standard deviation for the formal multi-seed runs.
-    \item Analyze whether performance is retained across the two native tasks.
-    \item \textit{Table I placeholder: Main Results---three-seed ICBHI and
-    SPRSound results for the proposed joint hierarchy together with
-    task-compatible published references.}
+    \item Compare joint eligibility-aware hierarchy with joint independent
+    ICBHI-flat4 and SPRSound-binary heads.
+    \item Compare the joint hierarchy with ICBHI-only hierarchy training and a
+    frozen-checkpoint SPRSound transfer.
+    \item Compare the joint hierarchy with SPRSound-only hierarchy training and
+    a frozen-checkpoint ICBHI transfer.
+    \item Report seed42 validation-selected native metrics and the exact
+    checkpoint-selection criterion for every row.
+    \item Keep the hierarchy-versus-independent-head claim conditional until
+    all four rows are complete.
 \end{itemize}
 
-\subsection{Ablation Studies}
+\begin{table*}[t]
+    \centering
+    \fbox{\parbox[c][0.95in][c]{0.96\textwidth}{
+        \centering
+        \textit{Table II placeholder: prospective clean seed42 joint
+        hierarchy, joint independent heads, ICBHI-only hierarchy, and
+        SPRSound-only hierarchy under one frozen validation protocol.}
+    }}
+    \caption{\textit{Table II caption placeholder: validation-selected clean
+    controls. Report separate ICBHI and SPRSound native metrics; do not compare
+    them through a pooled score.}}
+    \label{tab:clean_controls}
+\end{table*}
+
+\subsection{Specificity, Sensitivity, and Per-Class Errors}
 \begin{itemize}
-    \item Compare hierarchical and alternative output coupling strategies.
-    \item Compare the investigated checkpoint-selection criteria.
-    \item Evaluate the effect of mean--variance normalization.
-    \item Evaluate the contribution of positive-only HF supervision.
-    \item Separate matched ablations from diagnostic comparisons.
-    \item Mark single-seed ablations explicitly.
-    \item \textit{Table II placeholder: Baselines and Ablations---matched
-    single-dataset baselines, a shared-encoder model with independent task
-    heads, and controlled hierarchy and annotation-handling ablations.}
+    \item Report ICBHI specificity and sensitivity separately from aggregate
+    Score.
+    \item Report Normal, Crackle, Wheeze, and Both recall and class support.
+    \item Identify the dominant confusion directions for the joint hierarchy
+    and matched clean controls.
+    \item Compare SPRSound Normal and Adventitious behavior using its native
+    binary metrics.
+    \item \textit{Analysis placeholder: determine whether retention or loss is
+    concentrated in a dataset, hierarchy level, or low-support class.}
 \end{itemize}
 
-\subsection{HF Lung and KAUH Evaluation}
+\subsection{Supporting Diagnostics and Discussion}
 \begin{itemize}
-    \item Evaluate Crackle and Wheeze detection on HF Lung.
-    \item Report discrimination metrics separately for the two attributes.
-    \item Evaluate the same checkpoints on the complete KAUH evaluation set.
-    \item Report both recording-level and patient-level KAUH results.
-    \item Compare the core model with the HF-augmented model.
-    \item Analyze retained performance and dataset-specific trade-offs.
-\end{itemize}
-
-\subsection{Operating-Point and Error Analysis}
-\begin{itemize}
-    \item Analyze the ICBHI specificity--sensitivity trade-off.
-    \item Examine per-class recall for Normal, Crackle, Wheeze, and Both.
-    \item Identify which classes account for changes in the aggregate score.
-    \item Examine how HF supervision changes abnormal detection behavior.
-    \item Discuss differences between native-task retention and
-    external-dataset transfer.
-    \item Identify acquisition, annotation, and class-support limitations.
+    \item \textit{Bounded supporting-diagnostic placeholder: summarize fixed
+    joint-hierarchy checkpoint behavior on HF Lung attributes and patient-grouped
+    KAUH without presenting either as a native reproduction, main table, or
+    principal contribution.}
+    \item Discuss dataset-dependent retention and trade-offs using Figure~1,
+    Table~I, Table~II, and the per-class analysis.
+    \item Separate observed associations from causal explanations.
 \end{itemize}

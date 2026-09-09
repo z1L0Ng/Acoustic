@@ -1,59 +1,70 @@
-\section{Data Preparation and Task Alignment}
-\label{sec:data_preparation}
+\section{Data and Task Alignment}
+\label{sec:data_alignment}
 
-\subsection{Dataset Roles}
+\subsection{Core Datasets and Native Tasks}
 \begin{itemize}
-    \item Introduce ICBHI and SPRSound as the two core supervised datasets.
-    \item Introduce HF Lung as the positive-only auxiliary dataset.
-    \item Introduce KAUH as the external evaluation dataset.
-    \item Clarify which datasets participate in training, model selection,
-    and terminal evaluation.
-    \item \textit{Citation placeholder: original publications of the four datasets.}
+    \item Define ICBHI respiratory cycles and the native Normal, Crackle,
+    Wheeze, and Both four-class task.
+    \item Define SPRSound respiratory events and the native Task1-1
+    Normal/Adventitious binary task.
+    \item Report dataset scale, prediction unit, class support, and the exact
+    train/evaluation partitions used by the paper.
+    \item \textit{Citation placeholder: primary ICBHI and SPRSound dataset
+    papers.}
 \end{itemize}
 
-\subsection{Native Units and Evaluation Boundaries}
+\subsection{Label Availability and Hierarchical Alignment}
 \begin{itemize}
-    \item Define the native prediction unit of each dataset.
-    \item Record the split and patient-grouping requirements.
-    \item Distinguish cycle-level, event-level, interval-level,
-    recording-level, and patient-level evaluation.
-    \item Preserve dataset-specific metrics and prevent pooled
-    cross-dataset reporting.
-    \item \textit{Protocol placeholder: official and external evaluation boundaries.}
+    \item Define the shared Level-1 Normal/Abnormal node and the Crackle and
+    Wheeze attribute nodes.
+    \item Map ICBHI four-class labels to the three nodes while retaining the
+    native flat-four readout.
+    \item Map only supported SPRSound event labels to Crackle and Wheeze while
+    retaining the native binary readout.
+    \item Define an unavailable label as a target without source annotation;
+    it contributes no positive or negative supervision.
+    \item Distinguish unavailable labels from observed negative labels.
+    \item \textit{Matrix placeholder: dataset, native unit, native task, node
+    availability, and native metric.}
 \end{itemize}
 
-\subsection{Hierarchical Label Alignment}
+\subsection{Splits, Grouping, and Native Metrics}
 \begin{itemize}
-    \item Define the first-level Normal/Abnormal target.
-    \item Define the second-level Crackle and Wheeze attributes.
-    \item Specify how concurrent Crackle and Wheeze observations are represented.
-    \item Describe which prediction nodes are supported by each dataset.
-    \item Introduce eligibility masks for unavailable labels.
-    \item Clarify that unannotated HF Lung regions are not treated as negative labels.
+    \item Describe the ICBHI official recording split and its cycle-level
+    evaluation unit.
+    \item Describe the SPRSound official inter-subject event evaluation and
+    keep the intra-subject partition outside the primary result.
+    \item State the patient/group constraints used for internal calibration
+    and selection partitions.
+    \item Define ICBHI specificity, sensitivity, and Score, and separately
+    define SPRSound AS, HS, and official Score.
+    \item Do not construct a pooled score across the two datasets.
+\end{itemize}
+
+\subsection{Input Preparation and Acoustic Separability}
+\begin{itemize}
+    \item Specify mono conversion, 16-kHz resampling, native-unit extraction,
+    and 5-s repeat-padding or front-truncation.
+    \item Define the acoustic descriptors and grouping unit used for the
+    cross-dataset analysis.
+    \item Compare global group-aware separability with a class-matched
+    Normal/Abnormal analysis so dataset and class composition are not
+    conflated.
+    \item Include a quantitative separability measure in addition to PCA.
+    \item Present acoustic association as an observed dataset property, not a
+    causal explanation of model performance.
 \end{itemize}
 
 \begin{figure*}[t]
     \centering
-    \includegraphics[width=\textwidth]{Figure/figure1_dataset_composition_acoustic.pdf}
-    \caption{Dataset scale, acoustic overlap, and feature distributions across
-    four respiratory-sound datasets. (a) Counts use each dataset's native
-    annotated unit---cycles for ICBHI, events for SPRSound, and recordings for
-    HF Lung and KAUH---and colors show mapped respiratory classes. (b) PCA of
-    recording-level acoustic descriptors uses 112 balanced recording groups
-    per dataset; ellipses enclose 80\% covariance regions. (c) Acoustic
-    descriptors are standardized across the balanced groups; circles show
-    medians, thick bars show interquartile ranges, and thin capped lines show
-    the 5th--95th percentiles.}
-    \label{fig:dataset_composition_acoustic}
+    \fbox{\parbox[c][1.35in][c]{0.96\textwidth}{
+        \centering
+        \textit{Figure 1 placeholder: native-task and label-availability
+        matrix, followed by global and class-matched group-aware acoustic
+        separability.}
+    }}
+    \caption{\textit{Figure 1 caption placeholder: define native units,
+    available and unavailable labels, grouping, acoustic features, PCA, and
+    the quantitative global versus class-matched separability comparison.}}
+    \label{fig:task_alignment_separability}
 \end{figure*}
-
-\subsection{Audio Preparation}
-\begin{itemize}
-    \item Report the common sampling-rate contract.
-    \item Describe native-unit waveform extraction.
-    \item Describe the fixed-duration input construction.
-    \item Specify padding, repetition, truncation, and window boundaries.
-    \item Distinguish waveform-level processing from the internal
-    BEATs filterbank frontend.
-    \item \textit{Configuration placeholder: input duration and preprocessing.}
-\end{itemize}

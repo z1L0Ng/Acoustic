@@ -1,31 +1,57 @@
 \section{Introduction}
 \label{sec:introduction}
 
-\subsection{Background and Motivation}
+\subsection{Observed Cross-Dataset Limitation}
 \begin{itemize}
-    \item Establish the respiratory-sound classification context.
-    \item Introduce the motivation for learning across heterogeneous datasets.
-    \item \textit{Citation placeholder: respiratory sound classification.}
+    \item Establish the clinical and technical role of respiratory-sound
+    classification without opening with a method component.
+    \item Introduce ICBHI cycle-level and SPRSound event-level tasks as the two
+    core settings considered in this paper.
+    \item Report the verified observation that ICBHI-specialized PAFA, SG-SCL,
+    and Patch-Mix checkpoints transfer to SPRSound near the all-Normal floor.
+    \item Define zero-target-tuning evaluation as applying a fixed source model
+    without target-dataset training, calibration, or threshold fitting.
+    \item \textit{Citation placeholder: ICBHI methods, SPRSound, and
+    cross-dataset respiratory learning.}
 \end{itemize}
 
-\subsection{Research Gap}
+\subsection{Concrete Gap and Research Question}
 \begin{itemize}
-    \item Summarize the limitation of single-dataset formulations.
-    \item Identify differences in labels, units, and annotation availability.
-    \item Define the unresolved cross-dataset problem.
-    \item \textit{Citation placeholder: cross-dataset learning.}
+    \item State that the two datasets share only part of their respiratory
+    attribute semantics while retaining different prediction units and native
+    metrics.
+    \item Explain the two failure modes of direct pooling: treating unavailable
+    labels as negatives and discarding the meaning of each native task.
+    \item \textit{Gap statement placeholder: share partially overlapping
+    respiratory attributes without converting unavailable labels into
+    negatives or discarding dataset-native units and metrics.}
+    \item \textit{Research question placeholder: Does label-availability-aware
+    hierarchical task alignment provide value beyond matched independent-head
+    and single-dataset training while preserving native evaluation?}
 \end{itemize}
 
-\subsection{Proposed Framework}
+\subsection{Method Response and Related Work}
 \begin{itemize}
-    \item Introduce the roles of the four datasets.
-    \item Introduce the hierarchical prediction structure.
-    \item Introduce eligibility-aware and positive-only supervision.
+    \item Position single-dataset ICBHI classification, audio foundation
+    models, cross-dataset respiratory learning, and partial-label learning as
+    four compact related-work clusters.
+    \item Introduce the method response: a shared BEATs representation, a
+    Normal/Abnormal--Crackle/Wheeze hierarchy, label-availability-aware losses,
+    and dataset-native readouts.
+    \item Identify PAFA objectives as an inherited patient-aware training
+    component rather than a new contribution.
+    \item Avoid experimental chronology and implementation-level method names.
 \end{itemize}
 
 \subsection{Contributions}
 \begin{itemize}
-    \item \textit{Contribution 1 placeholder.}
-    \item \textit{Contribution 2 placeholder.}
-    \item \textit{Contribution 3 placeholder.}
+    \item \textit{Contribution 1 placeholder: formulate native-task-preserving
+    joint learning across heterogeneous prediction units and partially
+    observed label spaces.}
+    \item \textit{Conditional Contribution 2 placeholder: evaluate an
+    eligibility-aware hierarchy against matched independent-head learning;
+    finalize this claim only after Table~II is complete.}
+    \item \textit{Contribution 3 placeholder: characterize dataset-dependent
+    retention using protocol-matched multi-seed native metrics, specificity,
+    sensitivity, and per-class recall rather than a pooled score.}
 \end{itemize}

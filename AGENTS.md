@@ -29,7 +29,7 @@ This file applies to every agent and every subdirectory in the Acoustic project.
 ## Mandatory management handoff
 
 - Every Acoustic project task must report to the project-management task when its assigned work completes, reaches a decision gate, or becomes blocked. Do not finish silently inside a specialist task.
-- The management destination is the task titled `Acoustic项目管理` (thread ID `019fb42d-0edd-7aa1-aecf-9c6669109279`).
+- The management destination is the task titled `接管 Acoustic 项目管理` (thread ID `01a06de3-f57c-7bf3-a7b2-2a6bd7c33aae`).
 - A completion handoff must state: execution status; completed scope; changed files or external pages; Verified Results; Interpretation; Issues/HOLD; actions not performed; and the next decision required from management or the user.
 - Report planning, code readiness, partial cache, validation-only evidence, and completed experimental results as different statuses. Never upgrade one into another.
 - Send routine progress only when requested. Completion, blockers, approval requests, and scientifically material deviations must always be returned to management.
