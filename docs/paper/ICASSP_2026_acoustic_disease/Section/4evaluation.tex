@@ -1,86 +1,169 @@
 \section{Evaluation}
 \label{sec:evaluation}
+The evaluation addresses three questions: whether a shared model supports
+both native tasks; whether attribute information transfers when annotation
+coverage changes; and how much the final classification design contributes.
+The current results answer the first at the level of a joint operating
+point. The latter two require the specified ablations.
 
-\subsection{Experimental Setup}
-\begin{itemize}
-    \item Report the pretrained checkpoint and encoder optimization scope.
-    \item Specify the input construction and audio frontend.
-    \item Report the optimizer, learning-rate schedule, batch construction,
-    and maximum training duration.
-    \item State the random seeds used for the principal experiments.
-    \item Distinguish multi-seed principal results from single-seed ablations.
-    \item Describe the early-stopping rule.
-    \item \textit{Configuration placeholder: shared experimental settings.}
-\end{itemize}
+\subsection{Protocol and Comparison Sources}
+\label{sec:protocol}
+The joint model uses full BEATs fine-tuning, batch size 32, Adam with
+learning rate $5\times10^{-5}$ and weight decay $10^{-6}$, a 50-epoch cosine
+schedule with minimum learning-rate ratio 0.001, and parameter EMA 0.5.
+Each epoch has 326 updates, divided equally between the sources. SpecAugment,
+mean-variance normalization, and HF auxiliary supervision are disabled.
 
-\subsection{Model Selection and Evaluation Protocol}
-\begin{itemize}
-    \item State the checkpoint-selection source for every reported system.
-    \item Distinguish validation-selected results from
-    official-test-selected benchmark results.
-    \item Describe how attribute thresholds are fitted and frozen.
-    \item State how frequently each terminal test set is accessed.
-    \item Define the ICBHI specificity, sensitivity, and official score.
-    \item Define the SPRSound Task1-1 metrics and official score.
-    \item Define the HF Lung attribute metrics.
-    \item Define the KAUH recording-level and patient-level metrics.
-    \item Prevent construction of a pooled metric across datasets.
-    \item \textit{Equation placeholder: dataset-native evaluation metrics.}
-\end{itemize}
+Internal ICBHI validation uses the first fold of a shuffled five-fold
+stratified patient-group split, controlled by the run seed. SPRSound's
+6,656 official training events are divided into 5,219 fitting and 1,437
+validation events, with 194 and 49 patient groups. These data set attribute
+thresholds. In the existing runs, checkpoint selection and patience-10 early
+stopping instead use ICBHI official-test Score. The formal seeds 0, 1, and
+fresh 42 select epochs 15, 11, and 17; SPRSound official inter is evaluated
+once per selected checkpoint. The resulting mean and sample standard
+deviation describe a test-selected benchmark. New matched comparisons will
+use a common validation-based selection protocol, with its split, criterion,
+and training budget fixed before execution.
 
-\subsection{Comparison Systems}
-\begin{itemize}
-    \item Introduce task-compatible published ICBHI references.
-    \item Introduce the paper-faithful BEATs and PAFA references.
-    \item Distinguish published results from locally reproduced results.
-    \item Introduce the core hierarchical model.
-    \item Introduce the HF-augmented hierarchical model.
-    \item Identify which comparisons are direct and which are contextual.
-    \item \textit{Citation placeholder: ICBHI and BEATs comparison systems.}
-\end{itemize}
+For ICBHI, $Sp$ is Normal recall and $Se$ is the fraction of abnormal cycles
+assigned to their correct abnormal subclass. Its Score is $(Sp+Se)/2$;
+confusing Crackle with Wheeze therefore reduces $Se$. For SPRSound Task1-1,
+$Se$ and $Sp$ are Adventitious and Normal recall. Its official Score is
+$(AS+HS)/2$, where $AS=(Se+Sp)/2$ and $HS=2SeSp/(Se+Sp)$.
 
-\subsection{Core-Dataset Results}
-\begin{itemize}
-    \item Compare the core and HF-augmented models on ICBHI.
-    \item Compare the same models on SPRSound.
-    \item Report specificity and sensitivity separately from aggregate scores.
-    \item Report mean and standard deviation for the formal multi-seed runs.
-    \item Analyze whether performance is retained across the two native tasks.
-    \item \textit{Table I placeholder: Main Results---three-seed ICBHI and
-    SPRSound results for the proposed joint hierarchy together with
-    task-compatible published references.}
-\end{itemize}
+\begin{table}[t]
+\caption{Existing native-task results, in percent. Single-dataset rows use
+separately trained models for the two columns; the joint row uses one model
+per seed. Frozen-encoder values are reported single-run references. Recipes
+and selection procedures differ, so the rows are not matched ablations.}
+\label{tab:native_results}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lrr}
+\toprule
+& ICBHI & SPRSound inter\\
+Model / training setting & Score & Official Score\\
+\midrule
+\multicolumn{3}{l}{\textit{Single-dataset frozen encoders: seed 42}}\\
+AST & 51.22 & 89.99\\
+BEATs & 51.37 & 92.00\\
+PANNs & 51.97 & 91.31\\
+OPERA-CT & 38.61 & 79.45\\
+HeAR & 48.98 & 88.12\\
+\midrule
+\multicolumn{3}{l}{\textit{ICBHI source checkpoint references}}\\
+PAFA\cite{jeong2025pafa} & 64.14 & --\\
+SG-SCL\cite{kim2024sgscl} & 60.98 & --\\
+Patch-Mix\cite{bae2023patchmix} & 62.17 & --\\
+\midrule
+\multicolumn{3}{l}{\textit{Joint full fine-tuning: three runs}}\\
+Shared attributes & $61.17\pm0.31$ & $90.70\pm0.34$\\
+\bottomrule
+\end{tabular}
+\end{table}
+% Frozen-encoder rows: supplied forward_material/latex/foundation_tables_content.tex,
+% lines 75--90; settings: forward_material/comparison_notes.md.
+% Source checkpoint rows: result/icbhi_strong_method_reproduction/metrics.json.
+% Joint row: PAFA_JH2_main_multiseed/multiseed_summary.md, formal 0/1/fresh42 only.
 
-\subsection{Ablation Studies}
-\begin{itemize}
-    \item Compare hierarchical and alternative output coupling strategies.
-    \item Compare the investigated checkpoint-selection criteria.
-    \item Evaluate the effect of mean--variance normalization.
-    \item Evaluate the contribution of positive-only HF supervision.
-    \item Separate matched ablations from diagnostic comparisons.
-    \item Mark single-seed ablations explicitly.
-    \item \textit{Table II placeholder: Baselines and Ablations---matched
-    single-dataset baselines, a shared-encoder model with independent task
-    heads, and controlled hierarchy and annotation-handling ablations.}
-\end{itemize}
+The frozen-encoder references in Table~\ref{tab:native_results} come from the
+single-dataset baseline report. They use 16-kHz audio, 2-s windows with
+1-s hop and tail coverage, zero-padding, a 256-dimensional projector and
+native head, batch size 8, 50 epochs, and seed 42. ICBHI uses official-test
+Score selection; SPRSound intra/inter runs are selected separately. The
+source checkpoint rows are local evaluations of ICBHI-specialized models,
+not the corresponding published multi-run means. These references provide
+context for the native tasks, with training and input differences made explicit.
 
-\subsection{HF Lung and KAUH Evaluation}
-\begin{itemize}
-    \item Evaluate Crackle and Wheeze detection on HF Lung.
-    \item Report discrimination metrics separately for the two attributes.
-    \item Evaluate the same checkpoints on the complete KAUH evaluation set.
-    \item Report both recording-level and patient-level KAUH results.
-    \item Compare the core model with the HF-augmented model.
-    \item Analyze retained performance and dataset-specific trade-offs.
-\end{itemize}
+\subsection{Native-Task Performance with a Shared Model}
+The joint model obtains ICBHI Score $61.17\pm0.31\%$ and SPRSound official
+Score $90.70\pm0.34\%$. Its ICBHI $Sp$ and $Se$ are $74.98\pm5.69\%$ and
+$47.35\pm5.35\%$. Class recall is $60.20\pm8.48\%$ for Crackle,
+$29.61\pm2.08\%$ for Wheeze, and $36.83\pm11.37\%$ for Both.
+SPRSound Normal and Adventitious recall are $84.29\pm1.36\%$ and
+$97.60\pm1.21\%$, respectively. Thus the shared model supplies both
+requested outputs, with uneven recognition of the fine ICBHI categories.
+The small ICBHI Score variation does not imply equally stable class behavior.
 
-\subsection{Operating-Point and Error Analysis}
-\begin{itemize}
-    \item Analyze the ICBHI specificity--sensitivity trade-off.
-    \item Examine per-class recall for Normal, Crackle, Wheeze, and Both.
-    \item Identify which classes account for changes in the aggregate score.
-    \item Examine how HF supervision changes abnormal detection behavior.
-    \item Discuss differences between native-task retention and
-    external-dataset transfer.
-    \item Identify acquisition, annotation, and class-support limitations.
-\end{itemize}
+The frozen BEATs references obtain 51.37\% on ICBHI and 92.00\% on SPRSound,
+whereas the single-source PAFA checkpoint reaches 64.14\% on ICBHI.
+These different reference points do not establish a sharing gain or cost:
+they also differ in fine-tuning, inputs, losses, and selection. A matched
+joint-versus-single-source comparison is needed to assess performance
+retention and the value of adding another source's supervision.
+
+\subsection{Attribute Reuse under Annotation Changes}
+\label{sec:attribute_study}
+To test what shared supervision contributes, the proposed annotation study
+keeps the joint audio and architecture fixed while withholding SPRSound C/W training
+targets, retaining its native abnormality supervision. Evaluation then asks
+whether ICBHI attribute supervision supports C/W recognition on compatible
+SPRSound labels, alongside its native binary task. Source-only attribute
+learning and the complete-label joint model provide references for transfer
+and available supervision, respectively. Attribute metrics use only samples
+whose annotations support the corresponding target.
+
+This setting varies the information available for training, rather than the
+native evaluation labels. The target source still participates in coarse-task
+training. To isolate attribute information, the weights of retained losses
+must remain fixed: deleting C/W from the active-node average in
+(\ref{eq:classification_loss}) would otherwise also increase the relative
+weight of abnormality supervision. The exact validation-based selection rule
+and attribute evaluation protocol remain to be fixed for these runs.
+\draftnote{Annotation-ablation results are pending. The current draft does
+not establish compensation for missing fine labels or cross-source attribute
+reuse under reduced annotation coverage.}
+
+\subsection{Separating Classification and Supervision Effects}
+\label{sec:design_study}
+Two comparisons address the two-level design. First, a shared encoder with
+native ICBHI-four-class and SPRSound-binary heads should have access to the
+same fine attribute annotations, for example through matched auxiliary
+attribute supervision. Comparing this model with the shared-attribute model
+assesses the classification interface at matched information content. A
+binary-only SPRSound head without attribute supervision would change both
+the available information and the classification design.
+
+Second, fixing the shared model's attribute scores allows a direct readout
+comparison. C/W-only four-class conversion maps two negative attributes to
+Normal, two positive attributes to Both, and a single positive attribute to
+its class. Comparing this rule with the abnormality-gated rule isolates
+changes in the final decisions. Both rules require validation-based threshold
+selection. Since the encoder and scores stay fixed, this comparison cannot
+be interpreted as a change in learned acoustic features.
+
+\begin{table}[t]
+\caption{Ablations required by the storyline. Results are pending; the
+existing joint benchmark does not fill these comparison rows.}
+\label{tab:proposed_ablations}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{p{0.46\columnwidth}p{0.47\columnwidth}}
+\toprule
+Comparison & Question answered\\
+\midrule
+Joint vs. each single source & Value of additional source supervision\\
+Full vs. coarse SPR supervision & Value and reuse of fine attributes\\
+Shared attributes vs. native heads, same labels & Effect of classification interface\\
+Two-level vs. C/W-only readout, fixed scores & Effect of the final decision rule\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\draftnote{The comparisons in Table~\ref{tab:proposed_ablations} specify
+questions and controls, not completed findings. Their results will determine
+whether two-level decoding improves a task, changes its operating point,
+or adds little beyond the shared supervision.}
+
+\subsection{Scope of Additional Dataset Evidence}
+Existing HF Lung and KAUH evaluations use fixed selected checkpoints and
+compatible post-hoc readouts\cite{hsu2021hflung,fraiwan2021kauh}. The baseline
+report instead uses HF temporal multi-label prediction and KAUH recording-level
+nine-class classification. These are different tasks. They motivate broader
+study but do not demonstrate that the present three-attribute model restores
+those datasets' full native targets. The main argument therefore remains
+centered on the two specified native tasks and the annotation/readout
+comparisons above.

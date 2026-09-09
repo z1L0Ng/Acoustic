@@ -1,87 +1,74 @@
 \section{Method}
 \label{sec:method}
+\subsection{Shared Acoustic Representation and Attributes}
+Figure~\ref{fig:method_overview} separates the acoustic input path from the
+annotation path. We initialize the encoder with BEATs iter3+ AS2M
+\cite{chen2023beats} and fine-tune it jointly on the two datasets.
+Its 768-dimensional token features are mean-pooled and linearly projected to
+$h_i\in\mathbb{R}^{256}$. Three parallel linear predictors produce
+\begin{equation}
+\begin{aligned}
+ p_{ia}&=\operatorname{softmax}(W_a h_i+b_a)_{\rm Abnormal},\\
+ p_{ic}&=\sigma(W_c h_i+b_c),\qquad
+ p_{iw}=\sigma(W_w h_i+b_w).
+\end{aligned}
+\end{equation}
+The abnormality predictor has two logits; each attribute predictor has one.
+All three update the shared representation. The two-level structure is used
+for task decisions: the C/W probabilities are marginal predictions, with
+no explicit parent--child probability-consistency constraint.
 
-\subsection{Overall Framework}
-\begin{itemize}
-    \item Define the core model and the HF-augmented extension.
-    \item Describe the flow from native-unit waveform input to
-    dataset-specific predictions.
-    \item Identify the shared components and dataset-dependent supervision.
-    \item Separate the training architecture from dataset-native evaluation.
-    \item \textit{Figure 2 placeholder: Main Method---native-unit waveform
-    inputs, the BEATs encoder, shared representation, hierarchical prediction
-    heads, patient-aware training objectives, and the separate ICBHI and
-    SPRSound readouts.}
-\end{itemize}
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{Figure/figure2_method.pdf}
+\caption{Shared attributes with native task readouts. Audio from each native
+unit enters the same encoder and three parallel predictors. Labels and
+availability masks enter the training losses. SPRSound uses the abnormality
+decision; ICBHI combines abnormality and C/W decisions. The semantic decision
+hierarchy does not imply that the C/W predictors take the abnormality output
+as their input.}
+\label{fig:method_overview}
+\end{figure*}
 
-\subsection{Pretrained Acoustic Encoder}
-\begin{itemize}
-    \item Introduce the pretrained BEATs encoder.
-    \item Describe the internal filterbank frontend and acoustic representation.
-    \item Define the temporal aggregation of encoder outputs.
-    \item Introduce the shared projection layer.
-    \item State which encoder and projection parameters are optimized
-    during downstream training.
-    \item \textit{Equation placeholder: waveform-to-representation mapping.}
-    \item \textit{Citation placeholder: BEATs architecture and pretraining.}
-\end{itemize}
+\subsection{Learning from Available Supervision}
+For sample $i$ and node $k\in\{a,c,w\}$, $m_{ik}=1$ when its source
+annotation supports target $y_{ik}$. For batch $B$, let
+$B_k=\{i\in B:m_{ik}=1\}$ and $K_B=\{k:|B_k|>0\}$. The implemented
+classification objective averages over available samples within each node:
+\begin{equation}
+\mathcal L_{\rm cls}(B)=\frac{1}{|K_B|}\sum_{k\in K_B}
+\frac{1}{|B_k|}\sum_{i\in B_k}\ell_k(p_{ik},y_{ik}),
+\label{eq:classification_loss}
+\end{equation}
+where $\ell_a$ is two-class cross-entropy and $\ell_c,\ell_w$ are binary
+cross-entropy. Dataset-homogeneous batches contribute equally many updates
+per epoch. Thus supported labels from either source train the shared
+attributes without requiring every sample to supervise every node.
 
-\subsection{Hierarchical Prediction Heads}
-\begin{itemize}
-    \item Define the first-level Normal/Abnormal classifier.
-    \item Define the second-level Crackle and Wheeze attribute classifiers.
-    \item Describe the dependency between the first- and second-level outputs.
-    \item Define the representation of concurrent Crackle and Wheeze predictions.
-    \item Specify the hierarchical decoding rule used at inference.
-    \item Specify how validation-derived attribute thresholds are frozen.
-    \item \textit{Equation placeholder: Level-1 and Level-2 probabilities.}
-    \item \textit{Equation placeholder: hierarchical flat-class decoding.}
-\end{itemize}
+We retain PAFA's patient cohesion-separation and global patient alignment
+objectives\cite{jeong2025pafa}:
+\begin{equation}
+\mathcal L=\mathcal L_{\rm cls}+50\mathcal L_{\rm PCSL}
+                       +0.0005\mathcal L_{\rm GPAL}.
+\end{equation}
+An auxiliary attention-based projection supplies their features, with patient
+identifiers qualified by dataset. This auxiliary projection is used during
+training and does not enter the native classification readouts.
 
-\subsection{Eligibility-Aware Core Objective}
-\begin{itemize}
-    \item Define sample-level and node-level label eligibility.
-    \item Compute each node loss only from samples with supported annotations.
-    \item Prevent unavailable annotations from being converted into negatives.
-    \item Define the aggregation of Level-1, Crackle, and Wheeze losses.
-    \item Define the aggregation of the ICBHI and SPRSound objectives.
-    \item \textit{Equation placeholder: eligibility-masked node loss.}
-    \item \textit{Equation placeholder: combined Core-2 classification loss.}
-\end{itemize}
+\subsection{Two-Level Native Task Decisions}
+The Normal/Abnormal argmax defines $\hat a$; its ties select Normal.
+Attribute decisions are $\hat c=\mathbb{I}[p_c\geq\tau_c]$ and
+$\hat w=\mathbb{I}[p_w\geq\tau_w]$. SPRSound directly uses $\hat a$ for
+Normal/Adventitious classification. ICBHI assigns Normal if $\hat a=0$.
+For an abnormal decision, two positive attributes yield Both and one
+positive attribute yields its corresponding class. If neither is positive,
+the larger $p_k-\tau_k$ margin selects Crackle or Wheeze, with ties assigned
+to Crackle.
 
-\subsection{Patient-Aware Representation Learning}
-\begin{itemize}
-    \item Introduce the patient-aware auxiliary representation objective.
-    \item Define the relationship between patient identity and
-    respiratory-class supervision.
-    \item Describe the projection branch used only during training.
-    \item Separate the classification objective from the
-    patient-aware auxiliary objectives.
-    \item Clarify which auxiliary components are removed at inference.
-    \item \textit{Equation placeholder: patient-aware contrastive objective.}
-    \item \textit{Equation placeholder: patient-aware alignment objective.}
-    \item \textit{Citation placeholder: PAFA.}
-\end{itemize}
-
-\subsection{Positive-Only HF Auxiliary Supervision}
-\begin{itemize}
-    \item Introduce the HF-augmented extension of the core model.
-    \item Define the HF Lung samples eligible for Crackle or Wheeze supervision.
-    \item Exclude unannotated intervals from negative supervision.
-    \item Add the HF auxiliary objective without changing the
-    core hierarchical output space.
-    \item Clarify that the HF branch supplies training supervision
-    but does not redefine the core model-selection task.
-    \item \textit{Equation placeholder: positive-only HF auxiliary loss.}
-    \item \textit{Equation placeholder: complete training objective.}
-\end{itemize}
-
-\subsection{Dataset-Native Readout}
-\begin{itemize}
-    \item Map the hierarchical outputs to the ICBHI flat four-class task.
-    \item Map the first-level output to the SPRSound binary task.
-    \item Retain attribute probabilities for HF Lung evaluation.
-    \item Aggregate recording predictions for KAUH patient-level evaluation.
-    \item Keep all dataset-native outputs separate rather than constructing
-    a pooled cross-dataset score.
-\end{itemize}
+For the reported runs, the shared C/W thresholds independently maximize the
+equal-dataset mean of eligible-node binary F1 on internal validation data.
+Candidates are the observed probabilities together with 0 and 1; exact ties
+select the larger threshold. This readout returns task labels from the same
+attribute scores. Its contribution can therefore be studied separately from
+representation learning by fixing the scores and changing only the decision
+rule.

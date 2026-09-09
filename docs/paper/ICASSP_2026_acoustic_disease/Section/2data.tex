@@ -1,59 +1,63 @@
-\section{Data Preparation and Task Alignment}
-\label{sec:data_preparation}
+\section{Data and Shared Supervision}
+\label{sec:data_alignment}
+\subsection{Native Prediction Units and Targets}
+The core study uses two presegmented classification tasks. ICBHI provides
+respiratory cycles labeled Normal, Crackle, Wheeze, or Both
+\cite{rocha2019icbhi}; Both denotes the presence of the two attributes within
+the cycle. SPRSound provides event annotations, with Task1-1 asking whether
+an event is Normal or Adventitious\cite{zhang2022sprsound}. Each native unit
+receives one prediction. This task definition preserves cycle and event
+labels without introducing a new temporal-localization objective.
 
-\subsection{Dataset Roles}
-\begin{itemize}
-    \item Introduce ICBHI and SPRSound as the two core supervised datasets.
-    \item Introduce HF Lung as the positive-only auxiliary dataset.
-    \item Introduce KAUH as the external evaluation dataset.
-    \item Clarify which datasets participate in training, model selection,
-    and terminal evaluation.
-    \item \textit{Citation placeholder: original publications of the four datasets.}
-\end{itemize}
+We use the ICBHI official recording split: 4,142 training and 2,756 test
+cycles. The test supports are 1,579 Normal, 649 Crackle, 385 Wheeze, and
+143 Both. This official split is not strictly patient-held-out.
+SPRSound evaluation uses the BioCAS2022 official inter-subject partition:
+1,429 events, comprising 1,040 Normal and 389 Adventitious examples.
+Its intra-subject test and seven-class Task1-2 are separate endpoints.
 
-\subsection{Native Units and Evaluation Boundaries}
-\begin{itemize}
-    \item Define the native prediction unit of each dataset.
-    \item Record the split and patient-grouping requirements.
-    \item Distinguish cycle-level, event-level, interval-level,
-    recording-level, and patient-level evaluation.
-    \item Preserve dataset-specific metrics and prevent pooled
-    cross-dataset reporting.
-    \item \textit{Protocol placeholder: official and external evaluation boundaries.}
-\end{itemize}
+\subsection{Shared Attributes and Annotation Coverage}
+Let $a$, $c$, and $w$ denote abnormality, Crackle, and Wheeze.
+ICBHI labels determine all three targets. Compatible SPRSound event labels
+supply the same targets, with Coarse and Fine Crackle merged at the attribute
+level. Rhonchi and Stridor supervise abnormality; their C/W targets are
+left unavailable in our mapping. An unavailable target supplies neither
+positive nor negative classification supervision.
+Figure~\ref{fig:attribute_supervision} shows the shared target space.
 
-\subsection{Hierarchical Label Alignment}
-\begin{itemize}
-    \item Define the first-level Normal/Abnormal target.
-    \item Define the second-level Crackle and Wheeze attributes.
-    \item Specify how concurrent Crackle and Wheeze observations are represented.
-    \item Describe which prediction nodes are supported by each dataset.
-    \item Introduce eligibility masks for unavailable labels.
-    \item Clarify that unannotated HF Lung regions are not treated as negative labels.
-\end{itemize}
+\begin{figure}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lccc}
+\toprule
+Native annotation & $a$ & $c$ & $w$\\
+\midrule
+Normal (ICBHI / SPRSound) & 0 & 0 & 0\\
+Crackle / Coarse or Fine Crackle & 1 & 1 & 0\\
+Wheeze (ICBHI / SPRSound) & 1 & 0 & 1\\
+Both / Wheeze+Crackle & 1 & 1 & 1\\
+Rhonchi or Stridor (SPRSound) & 1 & -- & --\\
+\bottomrule
+\end{tabular}
+\caption{Shared supervision from native labels. A dash marks an unavailable
+target. Fine SPRSound event labels contribute attributes even though its
+primary evaluation target is binary.}
+\label{fig:attribute_supervision}
+\end{figure}
 
-\begin{figure*}[t]
-    \centering
-    \includegraphics[width=\textwidth]{Figure/figure1_dataset_composition_acoustic.pdf}
-    \caption{Dataset scale, acoustic overlap, and feature distributions across
-    four respiratory-sound datasets. (a) Counts use each dataset's native
-    annotated unit---cycles for ICBHI, events for SPRSound, and recordings for
-    HF Lung and KAUH---and colors show mapped respiratory classes. (b) PCA of
-    recording-level acoustic descriptors uses 112 balanced recording groups
-    per dataset; ellipses enclose 80\% covariance regions. (c) Acoustic
-    descriptors are standardized across the balanced groups; circles show
-    medians, thick bars show interquartile ranges, and thin capped lines show
-    the 5th--95th percentiles.}
-    \label{fig:dataset_composition_acoustic}
-\end{figure*}
+The retained attributes must be sufficient to express the selected task.
+They express ICBHI's four categories and SPRSound's binary target, but do
+not retain the Coarse/Fine Crackle distinction required for SPRSound
+seven-class classification. Native-task preservation here refers to the
+specified units and category definitions; performance retention is assessed
+against single-task references.
 
-\subsection{Audio Preparation}
-\begin{itemize}
-    \item Report the common sampling-rate contract.
-    \item Describe native-unit waveform extraction.
-    \item Describe the fixed-duration input construction.
-    \item Specify padding, repetition, truncation, and window boundaries.
-    \item Distinguish waveform-level processing from the internal
-    BEATs filterbank frontend.
-    \item \textit{Configuration placeholder: input duration and preprocessing.}
-\end{itemize}
+\subsection{Input Construction}
+Recordings are converted to mono and resampled to 16~kHz. The inherited
+pipeline applies a 1/16-s linear fade at recording boundaries before
+extracting each annotated unit. Units longer than 5~s retain their first
+5~s; shorter units are repeated to 5~s and receive an end fade.
+The two datasets therefore share an input format while retaining their
+original supervision units. This preprocessing does not establish that every
+long unit's acoustic events are retained.

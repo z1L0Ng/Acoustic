@@ -1,44 +1,43 @@
+\RequirePackage[T1]{fontenc}
 \documentclass[conference]{IEEEtran}
-
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage{algorithmic}
 \usepackage{graphicx}
+\usepackage{booktabs}
 \usepackage{textcomp}
 \usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
 
+% Chapter-review draft, 2026-09-08, following the user-approved storyline.
+% Empirical contributions 2 and 3 are explicitly pending; no new results.
+\newcommand{\draftnote}[1]{\par\smallskip\noindent{\footnotesize
+\textbf{Draft note.} #1}\par\smallskip}
 \begin{document}
-
-\title{Paper Title Placeholder}
-
-\author{
-\IEEEauthorblockN{
-Author 1,
-Author 2,
-Author 3,
-and Author 4
-}
-\IEEEauthorblockA{
-Affiliation Placeholder\\
-Department and Institution Placeholder\\
-City, Country\\
-Email Placeholder
-}
-}
-
+\bstctlcite{paperreviewstyle}
+\title{Shared Attribute Supervision for Respiratory Sound Learning Across Native Tasks}
+\author{}
 \maketitle
 
 \begin{abstract}
-\textit{[Background and motivation placeholder.]}
-\textit{[Cross-dataset research gap placeholder.]}
-\textit{[Proposed hierarchical framework placeholder.]}
-\textit{[Core ICBHI and SPRSound result placeholder.]}
-\textit{[HF Lung and KAUH evaluation result placeholder.]}
-\textit{[Principal conclusion and implication placeholder.]}
+Respiratory-sound datasets annotate related acoustic phenomena using different
+units, category granularities, and annotation coverage. We investigate whether
+compatible supervision from these datasets can support shared sound attributes
+while retaining their native classification targets. A shared BEATs encoder
+learns abnormality, Crackle, and Wheeze predictions from annotation-supported
+targets. A two-level decision scheme uses these predictions for ICBHI
+cycle-level four-class classification and SPRSound event-level
+Normal/Adventitious classification. The study distinguishes the reuse of
+attribute information across annotation conditions from the effect of the
+final task readout. Preliminary results from three ICBHI-test-selected runs
+achieve an ICBHI Score of $61.17\pm0.31\%$ and a SPRSound official Score of
+$90.70\pm0.34\%$ with one joint model per run. These results establish a
+native-task operating point. Whether cross-source supervision compensates for
+missing fine-grained labels, and how much the two-level decision contributes,
+remain to be determined by the specified matched ablations.
 \end{abstract}
 
 \begin{IEEEkeywords}
-\textit{Keyword 1, Keyword 2, Keyword 3, Keyword 4, Keyword 5}
+respiratory sounds, shared supervision, heterogeneous annotations, acoustic attributes, hierarchical decoding
 \end{IEEEkeywords}
 
 \input{Section/1introduction}
@@ -46,8 +45,6 @@ Email Placeholder
 \input{Section/3method}
 \input{Section/4evaluation}
 \input{Section/5conclusion}
-
 \bibliographystyle{IEEEtran}
 \bibliography{citation}
-
 \end{document}
