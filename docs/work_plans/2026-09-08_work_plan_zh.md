@@ -9,6 +9,7 @@ Notion：[周二 Working Plan](https://app.notion.com/p/3d4309efda29819aa175ddb2
 
 ## 1. 用户最新决定
 
+- 用户09-08要求论文写作任务直接使用主目录`/Users/zilongzeng/Research/Acoustic`和`main`分支。最新正文、图表、调研稿与审阅PDF已合入该目录，后续章节修改以此为准。
 - 用户将剩余paper写作与审阅工作安排到09-08（周二）完成；本计划只顺延现有任务，保留已核对的9项工作稿交付。
 - 前期各任务已并行准备工作稿。用户09-08进一步要求按“共享属性监督—标注条件—两层原生任务读出”主线重写整稿，再从Introduction开始逐章审阅；本轮重写与编译已完成，逐章确认尚未完成。
 - 并行产物都先是工作稿，不自动成为用户认可的最终contribution或科学结论。
@@ -31,7 +32,7 @@ Notion：[周二 Working Plan](https://app.notion.com/p/3d4309efda29819aa175ddb2
 - [x] 09-08五页审阅PDF已编译；技术正文位于前4页、参考文献延续第5页。写作任务已逐页视觉检查并确认14条引用解析；管理核对新源文件、PDF和编译日志。当前仍是IEEEtran章节审阅稿，正式ICASSP模板与作者信息尚未完成。
 - [x] 集中审阅包已汇总，今日Work Plan与Notion已同步；Hanlin补seed0/1的用户指令已记录并同步本科生任务。
 
-当前逐章审阅入口：[09-08五页审阅PDF](/Users/zilongzeng/.codex/worktrees/8ad2/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/review_2026-09-08.pdf)。[09-07集中审阅包](../paper/ICASSP_2026_acoustic_disease/SPRINT_REVIEW_2026-09-07_zh.md)保留为先前证据汇总，不代表当前稿件版本。
+当前逐章审阅入口：[09-08五页审阅PDF](/Users/zilongzeng/Research/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/review_2026-09-08.pdf)。[09-07集中审阅包](../paper/ICASSP_2026_acoustic_disease/SPRINT_REVIEW_2026-09-07_zh.md)保留为先前证据汇总，不代表当前稿件版本。
 
 ## 3. 周二协作方式
 
@@ -81,10 +82,10 @@ Notion：[周二 Working Plan](https://app.notion.com/p/3d4309efda29819aa175ddb2
 - [ ] 汇总周二稿件版本与剩余问题，交用户集中确认；确认后更新验收状态，再进入对外沟通环节。
 
 当前输入：
-- 写作工作区：/Users/zilongzeng/.codex/worktrees/8ad2/Acoustic。
-- [09-08研究定位与贡献深度调研稿](/Users/zilongzeng/.codex/worktrees/8ad2/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/DEEP_NOVELTY_GAP_REVIEW_2026-09-08_zh.md)：已完成的文献与代码分析，作为重写及审阅输入；没有新增实验结果。
-- [09-08共享属性主线与贡献讨论稿](/Users/zilongzeng/.codex/worktrees/8ad2/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/SHARED_ATTRIBUTE_STORY_NOVELTY_CONTRIBUTIONS_2026-09-08_zh.md)。
-- [当前09-08五页章节审阅PDF](/Users/zilongzeng/.codex/worktrees/8ad2/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/review_2026-09-08.pdf)；09-07四页稿保留为旧版。
+- 写作工作区：/Users/zilongzeng/Research/Acoustic。
+- [09-08研究定位与贡献深度调研稿](/Users/zilongzeng/Research/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/DEEP_NOVELTY_GAP_REVIEW_2026-09-08_zh.md)：已完成的文献与代码分析，作为重写及审阅输入；没有新增实验结果。
+- [09-08共享属性主线与贡献讨论稿](/Users/zilongzeng/Research/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/SHARED_ATTRIBUTE_STORY_NOVELTY_CONTRIBUTIONS_2026-09-08_zh.md)。
+- [当前09-08五页章节审阅PDF](/Users/zilongzeng/Research/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/review_2026-09-08.pdf)；09-07四页稿保留为旧版。
 - [ICASSP2027官方Paper Kit](https://cmsworkshops.com/ICASSP2027/papers/paper_kit.php)。
 
 本区保留尚未完成的逐章确认、模板、作者信息与最终审阅。09-08整稿重写、方法图更新和编译由写作任务按用户要求完成；本次管理只核对交付并同步计划，没有新增实验或外发。
@@ -109,7 +110,7 @@ Notion：[周二 Working Plan](https://app.notion.com/p/3d4309efda29819aa175ddb2
 - 本科生对接：019ff4a1-9b11-7d83-b370-0772f41d5163。
 
 计划：/Users/zilongzeng/Research/Acoustic/docs/work_plans/2026-09-08_work_plan_zh.md。  
-结果讨论底稿：/Users/zilongzeng/.codex/worktrees/8ad2/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/RESULT_FINDINGS_DISCUSSION_2026-09-06_zh.md。
+结果讨论底稿：/Users/zilongzeng/Research/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/RESULT_FINDINGS_DISCUSSION_2026-09-06_zh.md。
 
 所有回报区分草稿、用户验收和实验结果。不使用hash/checksum，不跑smoke/probe/preflight，不干预GPU用户，不因本计划启动新实验或服务器监控，不自动发送消息或Git提交。
 

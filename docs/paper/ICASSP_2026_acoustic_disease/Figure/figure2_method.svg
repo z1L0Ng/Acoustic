@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1140" height="385" viewBox="0 0 1140 385">
+<title>Shared attribute supervision and two-level native task decisions</title>
+<desc>Native audio units enter a shared encoder and three parallel predictors. Source labels and availability masks enter classification losses, not encoder inputs. SPRSound uses abnormality; ICBHI combines abnormality and Crackle/Wheeze decisions.</desc>
+<defs>
+<marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0 0 L8 4 L0 8 Z" fill="#333"/></marker>
+<style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #202020; }
+.stage { font-size:17px; font-weight:700; }
+.main { font-size:20px; font-weight:700; }
+.body { font-size:19px; }
+.small { font-size:17px; }
+.box { fill:#fafafa; stroke:#777; stroke-width:1.5; }
+.head { fill:#fff; stroke:#666; stroke-width:1.4; }
+.flow { fill:none; stroke:#333; stroke-width:1.8; marker-end:url(#arrow); }
+.supervision { fill:none; stroke:#555; stroke-width:1.8; stroke-dasharray:6 4; marker-end:url(#arrow); }
+</style>
+</defs>
+<rect width="1140" height="385" fill="white"/>
+<text x="15" y="29" class="stage">NATIVE AUDIO UNITS</text>
+<text x="285" y="29" class="stage">SHARED ENCODER</text>
+<text x="550" y="29" class="stage">PARALLEL PREDICTORS</text>
+<text x="860" y="29" class="stage">NATIVE TASK READOUTS</text>
+<rect x="15" y="52" width="210" height="185" class="box"/>
+<text x="120" y="83" text-anchor="middle" class="main">ICBHI cycles</text>
+<text x="120" y="117" text-anchor="middle" class="main">SPRSound events</text>
+<line x1="35" y1="134" x2="205" y2="134" stroke="#bbb"/>
+<text x="120" y="165" text-anchor="middle" class="body">Mono, 16 kHz</text>
+<text x="120" y="195" text-anchor="middle" class="body">5 s per native unit</text>
+<text x="120" y="223" text-anchor="middle" class="small">One unit, one prediction</text>
+<rect x="285" y="77" width="195" height="139" class="box"/>
+<text x="382.5" y="109" text-anchor="middle" class="main">BEATs</text>
+<text x="382.5" y="140" text-anchor="middle" class="body">Mean pooling</text>
+<text x="382.5" y="170" text-anchor="middle" class="body">Linear projection</text>
+<text x="382.5" y="199" text-anchor="middle" class="small">Shared representation h</text>
+<path d="M225 146 H283" class="flow"/>
+<rect x="550" y="52" width="235" height="199" class="box"/>
+<rect x="570" y="70" width="195" height="48" class="head"/>
+<text x="667.5" y="100" text-anchor="middle" class="body">A: Normal / Abnormal</text>
+<rect x="570" y="136" width="91" height="48" class="head"/>
+<text x="615.5" y="166" text-anchor="middle" class="small">C: Crackle</text>
+<rect x="674" y="136" width="91" height="48" class="head"/>
+<text x="719.5" y="166" text-anchor="middle" class="small">W: Wheeze</text>
+<text x="667.5" y="216" text-anchor="middle" class="small">Shared h; parallel outputs</text>
+<text x="667.5" y="240" text-anchor="middle" class="small">Marginal C/W probabilities</text>
+<path d="M480 146 H520 V94 H568" class="flow"/>
+<path d="M520 146 V124 H615 V134" class="flow"/>
+<path d="M615 124 H719 V134" class="flow"/>
+<circle cx="520" cy="146" r="3" fill="#333"/>
+<circle cx="615" cy="124" r="3" fill="#333"/>
+<rect x="860" y="61" width="265" height="76" class="box"/>
+<text x="992.5" y="91" text-anchor="middle" class="main">SPRSound events</text>
+<text x="992.5" y="119" text-anchor="middle" class="body">Normal / Adventitious</text>
+<path d="M765 94 H858" class="flow"/>
+<text x="808" y="79" text-anchor="middle" class="small">A only</text>
+<rect x="860" y="174" width="265" height="110" class="box"/>
+<text x="992.5" y="204" text-anchor="middle" class="main">ICBHI cycles</text>
+<text x="992.5" y="231" text-anchor="middle" class="body">A gate + C/W decisions</text>
+<text x="992.5" y="256" text-anchor="middle" class="small">Normal / Crackle / Wheeze / Both</text>
+<path d="M785 227 H858" class="flow"/>
+<text x="820" y="211" text-anchor="middle" class="small">A, C, W</text>
+<rect x="15" y="301" width="465" height="59" class="box"/>
+<text x="247.5" y="326" text-anchor="middle" class="main">Native labels + annotation availability</text>
+<text x="247.5" y="350" text-anchor="middle" class="small">Map supported A/C/W targets; omit unavailable targets</text>
+<rect x="550" y="301" width="235" height="59" class="box"/>
+<text x="667.5" y="326" text-anchor="middle" class="main">Classification losses</text>
+<text x="667.5" y="350" text-anchor="middle" class="small">Available-node supervision</text>
+<path d="M480 331 H548" class="supervision"/>
+<path d="M667.5 251 V299" class="flow"/>
+<text x="862" y="327" class="small">Two levels organize decisions;</text>
+<text x="862" y="350" class="small">they are not cascaded predictors.</text>
+</svg>

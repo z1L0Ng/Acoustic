@@ -1,21 +1,12 @@
 \section{Conclusion}
 \label{sec:conclusion}
-
-\begin{itemize}
-    \item \textit{Core-answer placeholder: answer whether eligibility-aware
-    hierarchical task alignment adds value beyond matched independent-head and
-    single-dataset controls while preserving native evaluation.}
-    \item \textit{Retention placeholder: summarize ICBHI and SPRSound behavior
-    using separate native metrics and the observed specificity--sensitivity and
-    per-class trade-offs.}
-    \item \textit{Limitation placeholder: distinguish the current
-    literature-facing test-selected benchmark from the prospective
-    validation-selected clean controls.}
-    \item \textit{Limitation placeholder: do not claim a hierarchy advantage
-    until the matched independent-head result is complete.}
-    \item \textit{Limitation placeholder: the main evidence covers two core
-    datasets; HF Lung and KAUH remain bounded supporting diagnostics.}
-    \item \textit{Future-work placeholder: identify one targeted extension
-    motivated by the remaining error analysis, without introducing a new
-    architecture family.}
-\end{itemize}
+We study shared respiratory-sound attribute supervision as a link between
+heterogeneous annotations and native classification tasks. The framework
+uses supported abnormality and C/W targets to train one acoustic model,
+then returns ICBHI cycle-four-class and SPRSound event-binary predictions
+through a two-level decision scheme. Existing results demonstrate this
+joint prediction capability and identify uneven fine-category recognition.
+The remaining empirical questions concern how attribute information transfers
+when fine labels are unavailable and what the decision hierarchy adds at
+matched supervision. The specified ablations will determine these effects
+and the resulting scope of the empirical contributions.

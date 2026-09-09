@@ -137,7 +137,7 @@ SPRSound Task1-1 中 `AS=(Se+Sp)/2`，`HS` 是 Se 与 Sp 的调和平均，offic
 
 - 最新计划：`docs/work_plans/2026-09-07_work_plan_zh.md`
 - 09-04短会：`docs/meeting_records/2026-09-04_paper_story_short_meeting_record_zh.md`
-- 结果讨论稿：`/Users/zilongzeng/.codex/worktrees/8ad2/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/RESULT_FINDINGS_DISCUSSION_2026-09-06_zh.md`
+- 结果讨论稿：`/Users/zilongzeng/Research/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/RESULT_FINDINGS_DISCUSSION_2026-09-06_zh.md`
 - 文献定位工作稿：`/Users/zilongzeng/.codex/worktrees/4e78/Acoustic/docs/literature/PAPER_NOVELTY_POSITIONING_2026-09-07_zh.md`
 - JH2三种子：`result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/multiseed_summary.md`
 - JH2 HF/KAUH supporting：`result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed_external_HF_KAUH/external_multiseed_summary.md`

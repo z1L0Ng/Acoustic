@@ -4,12 +4,12 @@
 
 ## 1. 产物入口
 
-- [Story / contribution / skeleton 工作稿](/Users/zilongzeng/.codex/worktrees/8ad2/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/STORY_CONTRIBUTIONS_DRAFT_2026-09-07_zh.md)
-- [论文源码入口](/Users/zilongzeng/.codex/worktrees/8ad2/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/main.tex)
+- [Story / contribution / skeleton 工作稿](/Users/zilongzeng/Research/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/STORY_CONTRIBUTIONS_DRAFT_2026-09-07_zh.md)
+- [论文源码入口](/Users/zilongzeng/Research/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/main.tex)
 - [最接近文献定位](/Users/zilongzeng/.codex/worktrees/4e78/Acoustic/docs/literature/PAPER_NOVELTY_POSITIONING_2026-09-07_zh.md)
 - [15项缺失数据与证据清单](/Users/zilongzeng/Research/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/PAPER_MISSING_EVIDENCE_2026-09-07_zh.md)
-- [Figure 2 可编辑矢量源图](/Users/zilongzeng/.codex/worktrees/8ad2/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/Figure/figure2_method.svg)
-- [四页审阅 PDF](/Users/zilongzeng/.codex/worktrees/8ad2/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/review_2026-09-07.pdf)
+- [Figure 2 可编辑矢量源图](/Users/zilongzeng/Research/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/Figure/figure2_method.svg)
+- [四页审阅 PDF](/Users/zilongzeng/Research/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/review_2026-09-07.pdf)
 
 编译采用临时目录中的便携Tectonic，未安装完整系统TeX环境。已核对4页输出、Figure2及页面显示，未见文字/表格裁切、重叠或未解析引用。作者信息尚未设置；TableII明确保留未完成对照状态，因此这是review draft而不是submission-ready paper。
 

@@ -1,84 +1,74 @@
 \section{Method}
 \label{sec:method}
-
-\subsection{Overall Framework}
-\begin{itemize}
-    \item Follow the high-level path from native ICBHI cycles and SPRSound
-    events through task alignment, shared encoding, hierarchical prediction,
-    and separate native outputs.
-    \item Separate shared representation learning from dataset-native
-    evaluation.
-\end{itemize}
+\subsection{Shared Acoustic Representation and Attributes}
+Figure~\ref{fig:method_overview} separates the acoustic input path from the
+annotation path. We initialize the encoder with BEATs iter3+ AS2M
+\cite{chen2023beats} and fine-tune it jointly on the two datasets.
+Its 768-dimensional token features are mean-pooled and linearly projected to
+$h_i\in\mathbb{R}^{256}$. Three parallel linear predictors produce
+\begin{equation}
+\begin{aligned}
+ p_{ia}&=\operatorname{softmax}(W_a h_i+b_a)_{\rm Abnormal},\\
+ p_{ic}&=\sigma(W_c h_i+b_c),\qquad
+ p_{iw}=\sigma(W_w h_i+b_w).
+\end{aligned}
+\end{equation}
+The abnormality predictor has two logits; each attribute predictor has one.
+All three update the shared representation. The two-level structure is used
+for task decisions: the C/W probabilities are marginal predictions, with
+no explicit parent--child probability-consistency constraint.
 
 \begin{figure*}[t]
-    \centering
-    \fbox{\parbox[c][1.20in][c]{0.96\textwidth}{
-        \centering
-        \textit{Figure 2 placeholder: native inputs $\rightarrow$ task
-        alignment $\rightarrow$ shared BEATs representation $\rightarrow$
-        eligibility-aware hierarchy $\rightarrow$ ICBHI flat-four and
-        SPRSound binary outputs.}
-    }}
-    \caption{\textit{Figure 2 caption placeholder: high-level method flow;
-    exclude optimizer details, auxiliary experiment branches, supporting
-    datasets, and experiment identifiers.}}
-    \label{fig:method_overview}
+\centering
+\includegraphics[width=\textwidth]{Figure/figure2_method.pdf}
+\caption{Shared attributes with native task readouts. Audio from each native
+unit enters the same encoder and three parallel predictors. Labels and
+availability masks enter the training losses. SPRSound uses the abnormality
+decision; ICBHI combines abnormality and C/W decisions. The semantic decision
+hierarchy does not imply that the C/W predictors take the abnormality output
+as their input.}
+\label{fig:method_overview}
 \end{figure*}
 
-\subsection{Shared Acoustic Representation}
-\begin{itemize}
-    \item Introduce the pretrained BEATs encoder and its acoustic-tokenizer
-    pretraining source.
-    \item Describe the waveform-to-filterbank frontend, temporal aggregation,
-    and shared projection used by both core tasks.
-    \item State the downstream optimization scope of the encoder and shared
-    projection.
-    \item \textit{Equation placeholder: waveform-to-shared-representation
-    mapping.}
-    \item \textit{Citation placeholder: BEATs.}
-\end{itemize}
+\subsection{Learning from Available Supervision}
+For sample $i$ and node $k\in\{a,c,w\}$, $m_{ik}=1$ when its source
+annotation supports target $y_{ik}$. For batch $B$, let
+$B_k=\{i\in B:m_{ik}=1\}$ and $K_B=\{k:|B_k|>0\}$. The implemented
+classification objective averages over available samples within each node:
+\begin{equation}
+\mathcal L_{\rm cls}(B)=\frac{1}{|K_B|}\sum_{k\in K_B}
+\frac{1}{|B_k|}\sum_{i\in B_k}\ell_k(p_{ik},y_{ik}),
+\label{eq:classification_loss}
+\end{equation}
+where $\ell_a$ is two-class cross-entropy and $\ell_c,\ell_w$ are binary
+cross-entropy. Dataset-homogeneous batches contribute equally many updates
+per epoch. Thus supported labels from either source train the shared
+attributes without requiring every sample to supervise every node.
 
-\subsection{Hierarchical Prediction Nodes}
-\begin{itemize}
-    \item Define the Level-1 Normal/Abnormal probability.
-    \item Define eligible Crackle and Wheeze attribute probabilities and their
-    possible co-occurrence.
-    \item Define the dependency between Level-1 and attribute predictions.
-    \item \textit{Equation placeholder: Level-1 and attribute-node
-    probabilities.}
-\end{itemize}
+We retain PAFA's patient cohesion-separation and global patient alignment
+objectives\cite{jeong2025pafa}:
+\begin{equation}
+\mathcal L=\mathcal L_{\rm cls}+50\mathcal L_{\rm PCSL}
+                       +0.0005\mathcal L_{\rm GPAL}.
+\end{equation}
+An auxiliary attention-based projection supplies their features, with patient
+identifiers qualified by dataset. This auxiliary projection is used during
+training and does not enter the native classification readouts.
 
-\subsection{Eligibility-Aware Objective}
-\begin{itemize}
-    \item Define the node-availability indicator from the source annotation.
-    \item Compute each node loss only on samples with an available target.
-    \item Aggregate node losses without converting unavailable targets into
-    negative labels.
-    \item Aggregate ICBHI and SPRSound task losses under the fixed joint
-    training contract.
-    \item \textit{Equation placeholder: availability-masked node loss.}
-    \item \textit{Equation placeholder: combined core classification
-    objective.}
-\end{itemize}
+\subsection{Two-Level Native Task Decisions}
+The Normal/Abnormal argmax defines $\hat a$; its ties select Normal.
+Attribute decisions are $\hat c=\mathbb{I}[p_c\geq\tau_c]$ and
+$\hat w=\mathbb{I}[p_w\geq\tau_w]$. SPRSound directly uses $\hat a$ for
+Normal/Adventitious classification. ICBHI assigns Normal if $\hat a=0$.
+For an abnormal decision, two positive attributes yield Both and one
+positive attribute yields its corresponding class. If neither is positive,
+the larger $p_k-\tau_k$ margin selects Crackle or Wheeze, with ties assigned
+to Crackle.
 
-\subsection{Inherited Patient-Aware Objectives}
-\begin{itemize}
-    \item Introduce PAFA's patient cohesion-separation and global alignment
-    objectives as inherited training components.
-    \item Define their relationship to the shared representation and the
-    training-only projection branch.
-    \item State that the projection branch is removed at inference.
-    \item \textit{Equation placeholder: inherited PAFA objective and total
-    training objective.}
-    \item \textit{Citation placeholder: PAFA.}
-\end{itemize}
-
-\subsection{Dataset-Native Readouts}
-\begin{itemize}
-    \item Reconstruct ICBHI Normal, Crackle, Wheeze, and Both predictions from
-    the hierarchy using frozen validation-derived thresholds.
-    \item Use the Level-1 output for SPRSound Normal/Adventitious prediction.
-    \item Report the two native tasks with their own units and metrics.
-    \item \textit{Equation placeholder: ICBHI flat-four decoding and
-    SPRSound binary readout.}
-\end{itemize}
+For the reported runs, the shared C/W thresholds independently maximize the
+equal-dataset mean of eligible-node binary F1 on internal validation data.
+Candidates are the observed probabilities together with 0 and 1; exact ties
+select the larger threshold. This readout returns task labels from the same
+attribute scores. Its contribution can therefore be studied separately from
+representation learning by fixing the scores and changing only the decision
+rule.

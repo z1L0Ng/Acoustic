@@ -1,57 +1,62 @@
 \section{Introduction}
 \label{sec:introduction}
+Respiratory-sound datasets provide complementary observations of related
+acoustic events, but their annotations answer different questions.
+ICBHI assigns Normal, Crackle, Wheeze, or Both to complete respiratory
+cycles. SPRSound annotates individual sound events and defines both coarse
+Normal/Adventitious classification and finer event categories
+\cite{rocha2019icbhi,zhang2022sprsound}. Differences in annotation units,
+category granularity, and coverage therefore accompany the acoustic
+variation across data sources. Using these datasets together requires deciding
+which supervision can be shared and which distinctions each task must retain.
 
-\subsection{Observed Cross-Dataset Limitation}
-\begin{itemize}
-    \item Establish the clinical and technical role of respiratory-sound
-    classification without opening with a method component.
-    \item Introduce ICBHI cycle-level and SPRSound event-level tasks as the two
-    core settings considered in this paper.
-    \item Report the verified observation that ICBHI-specialized PAFA, SG-SCL,
-    and Patch-Mix checkpoints transfer to SPRSound near the all-Normal floor.
-    \item Define zero-target-tuning evaluation as applying a fixed source model
-    without target-dataset training, calibration, or threshold fitting.
-    \item \textit{Citation placeholder: ICBHI methods, SPRSound, and
-    cross-dataset respiratory learning.}
-\end{itemize}
+A shared acoustic representation offers a way to connect these tasks.
+Crackle and Wheeze annotations can supervise the same attributes across
+sources, while an abnormality label supplies a coarser distinction.
+However, these training signals carry different amounts of information.
+An abnormality label alone does not specify a fine sound attribute, and
+merging fine categories can remove distinctions required by another task.
+The central question is whether compatible attribute supervision can preserve
+useful acoustic information across these annotation conditions and support
+the original classification targets through a common model.
 
-\subsection{Concrete Gap and Research Question}
-\begin{itemize}
-    \item State that the two datasets share only part of their respiratory
-    attribute semantics while retaining different prediction units and native
-    metrics.
-    \item Explain the two failure modes of direct pooling: treating unavailable
-    labels as negatives and discarding the meaning of each native task.
-    \item \textit{Gap statement placeholder: share partially overlapping
-    respiratory attributes without converting unavailable labels into
-    negatives or discarding dataset-native units and metrics.}
-    \item \textit{Research question placeholder: Does label-availability-aware
-    hierarchical task alignment provide value beyond matched independent-head
-    and single-dataset training while preserving native evaluation?}
-\end{itemize}
+Several lines of work provide the foundations for this question.
+SPRSound includes an ICBHI/SPRSound data-fusion benchmark
+\cite{zhang2022sprsound}, and LungMix unifies respiratory labels into a common
+four-class space for single-source generalization\cite{ge2025lungmix}.
+OPERA learns shared respiratory representations and evaluates them with
+separate downstream predictors\cite{zhang2024opera}.
+In heterogeneous supervised learning, universal taxonomies map shared
+predictions back to dataset-specific labels\cite{bevandic2022overlapping},
+and DCASE~2024 combines audio datasets with label mapping and missing-target
+masking\cite{cornell2024dcase}. Respiratory attribute classification also has
+close precedents: PC-MCL uses explicit multi-label targets and deterministic
+four-class conversion\cite{jeong2026pcmcl}, while OCAD develops event factors
+and structured compositional decoding\cite{zhang2026ocad}.
+Our focus is the specific relationship between shared attribute supervision,
+annotation conditions, and native respiratory-task readouts.
 
-\subsection{Method Response and Related Work}
-\begin{itemize}
-    \item Position single-dataset ICBHI classification, audio foundation
-    models, cross-dataset respiratory learning, and partial-label learning as
-    four compact related-work clusters.
-    \item Introduce the method response: a shared BEATs representation, a
-    Normal/Abnormal--Crackle/Wheeze hierarchy, label-availability-aware losses,
-    and dataset-native readouts.
-    \item Identify PAFA objectives as an inherited patient-aware training
-    component rather than a new contribution.
-    \item Avoid experimental chronology and implementation-level method names.
-\end{itemize}
+We study joint ICBHI cycle-four-class and SPRSound event-binary learning.
+The model shares abnormality, Crackle, and Wheeze predictions, supervises each
+only where the source annotation supports a target, and applies a two-level
+decision scheme. SPRSound reads abnormality directly; ICBHI combines it with
+the two attributes. This separates the supervision available during learning
+from the output requested by a task. In particular, a binary endpoint can
+still use fine labels available in its training data.
 
-\subsection{Contributions}
-\begin{itemize}
-    \item \textit{Contribution 1 placeholder: formulate native-task-preserving
-    joint learning across heterogeneous prediction units and partially
-    observed label spaces.}
-    \item \textit{Conditional Contribution 2 placeholder: evaluate an
-    eligibility-aware hierarchy against matched independent-head learning;
-    finalize this claim only after Table~II is complete.}
-    \item \textit{Contribution 3 placeholder: characterize dataset-dependent
-    retention using protocol-matched multi-seed native metrics, specificity,
-    sensitivity, and per-class recall rather than a pooled score.}
-\end{itemize}
+The draft is organized around three contributions:
+\begin{enumerate}
+\item An annotation-aware joint learning framework that shares respiratory
+attributes across cycle and event annotations and returns their native
+classification targets through a two-level decision scheme.
+\item A characterization of cross-source attribute reuse under coarse and
+partially available annotations, examining whether another source's
+supervision supports fine-grained recognition.
+\item A supervision-matched analysis of the separate effects of attribute
+information and task decoding on native-task performance and class-specific
+trade-offs.
+\end{enumerate}
+\draftnote{Contributions 2 and 3 are intended empirical contributions.
+Their findings await the annotation and classification ablations in
+Sections~\ref{sec:attribute_study} and~\ref{sec:design_study}.
+The present numerical results support the joint prediction capability.}

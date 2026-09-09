@@ -26,6 +26,11 @@ This file applies to every agent and every subdirectory in the Acoustic project.
 - Do not start experiments, server runs, Notion writes, or Git commits/pushes without the authorization required by the management task.
 - The current Working Plan permits contract and implementation preparation, but Model Design training remains paused at `READY_FOR_USER_START`. No experiment, feature extraction, cache build, validation, test, or server run may start until the user gives an explicit start instruction.
 
+## Paper-writing workspace
+
+- The paper-writing task (`01a06df4-2663-7971-9b8e-ad8b6276b2f8`) works directly in `/Users/zilongzeng/Research/Acoustic` on the `main` branch, as requested by the user on 2026-09-08.
+- Keep manuscript sources, discussion drafts, figures, and review PDFs in `docs/paper/ICASSP_2026_acoustic_disease/` under this main checkout.
+
 ## Mandatory management handoff
 
 - Every Acoustic project task must report to the project-management task when its assigned work completes, reaches a decision gate, or becomes blocked. Do not finish silently inside a specialist task.
