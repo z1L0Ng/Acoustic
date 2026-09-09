@@ -28,7 +28,7 @@ This file applies to every agent and every subdirectory in the Acoustic project.
 
 ## Paper-writing workspace
 
-- The paper-writing task (`01a06df4-2663-7971-9b8e-ad8b6276b2f8`) works directly in `/Users/zilongzeng/Research/Acoustic` on the `main` branch, as requested by the user on 2026-09-08.
+- The paper-writing task (`01a08442-92e6-7110-8399-e42eca520ea8`) works directly in `/Users/zilongzeng/Research/Acoustic` on the `main` branch, as requested by the user on 2026-09-08.
 - Keep manuscript sources, discussion drafts, figures, and review PDFs in `docs/paper/ICASSP_2026_acoustic_disease/` under this main checkout.
 
 ## Mandatory management handoff

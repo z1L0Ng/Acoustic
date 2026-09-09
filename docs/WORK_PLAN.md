@@ -17,6 +17,6 @@ Notion：[周二 Working Plan](https://app.notion.com/p/3d4309efda29819aa175ddb2
 - Hanlin已被用户要求补seed0/1；完成结果尚未收到，不能把请求当作已执行。学生不设具体期限。
 - 项目侧新训练、validation/test、缓存和服务器任务仍需明确start，不因今天的写作冲刺自动执行。
 - 邮件和联系Jingping放在今天研究、写作工作完成及集中讨论后；现在不发送、不联系。
-- 管理：01a06de3-f57c-7bf3-a7b2-2a6bd7c33aae。写作：01a06df4-2663-7971-9b8e-ad8b6276b2f8。文献：01a01d5b-0631-7981-a5b3-8ee4be98d98f。模型设计：019fb42d-11d9-7b53-a6ae-d0ab010609c5。
+- 管理：01a06de3-f57c-7bf3-a7b2-2a6bd7c33aae。写作（迁移到主目录后）：01a08442-92e6-7110-8399-e42eca520ea8。文献：01a01d5b-0631-7981-a5b3-8ee4be98d98f。模型设计：019fb42d-11d9-7b53-a6ae-d0ab010609c5。
 
 Structured：复用「Acoustic写作」，顺延至09-08 21:00–23:00（America/Chicago），加入6项写作子任务。原9项完成勾选保留，新实验和邮件仍按依赖与授权执行。
