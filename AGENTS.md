@@ -29,7 +29,9 @@ This file applies to every agent and every subdirectory in the Acoustic project.
 ## Paper-writing workspace and workflow
 
 - The paper-writing task (`01a08442-92e6-7110-8399-e42eca520ea8`) works directly in `/Users/zilongzeng/Research/Acoustic` on the `main` branch, as requested by the user on 2026-09-08.
-- Keep manuscript sources, discussion drafts, figures, and review PDFs in `docs/paper/ICASSP_2026_acoustic_disease/` under this main checkout.
+- The sole manuscript directory synchronized with Overleaf is `docs/paper/Overleaf_Sync_final/` under this main checkout. Use this exact path and capitalization for all subsequent paper edits and figure integration.
+- `docs/paper/ICASSP_2026_acoustic_disease/` and previous manuscript directories are historical assets. Read them for reference only; do not resume editing them or automatically overwrite the active Overleaf copy with their content.
+- Keep manuscript sources, figures, bibliography, and required template files in the active Overleaf directory. Keep internal discussion, provenance, management notes, and drafting comments outside the synchronized manuscript files. Hanlin Liu and his author email have been removed from the active author block at the user's request.
 - Routine manuscript edits do not trigger local LaTeX compilation, review-PDF generation, or PDF rendering/visual inspection. The user compiles in Overleaf; compile locally only when the user explicitly requests it.
 - Send writing progress or a handoff to management only when the user explicitly permits synchronization. This also applies to completion, blockers, decision points, and scientific findings: discuss them with the user in the writing task, and wait for permission before syncing to management. Do not generate an automatic management receipt after each edit.
 - Management-side collection of writing progress and its Work Plan/Notion synchronization follow the same user-authorized synchronization rule.

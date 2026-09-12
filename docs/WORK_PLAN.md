@@ -2,7 +2,18 @@
 
 更新日期：2026-09-11
 
-当前优先级：用户要求先完整提交并同步main仓库，保存当前本地状态；用户随后会提供Overleaf当前稿件的副本，再围绕副本精修。管理已通知写作任务暂停对main的追加修改，保留已落盘内容。本次Git快照不把尚未落稿的Section2、Abstract/Conclusion及全文收尾标记完成；这些工作在收到副本后按新范围继续。图1的完整图包已在main，后续是否接入、采用哪份正文以用户提供的副本为准。
+当前优先级：历史4个提交和当前状态快照`e0bdf3e`均已推送。用户随后提供了[Overleaf最新副本](paper/Overleaf_Sync_final/main.tex)，并指定`docs/paper/Overleaf_Sync_final/`为今后唯一与Overleaf同步、精修的稿件目录；`docs/paper/ICASSP_2026_acoustic_disease/`及此前稿件目录仅作历史资产，不自动回写或覆盖新副本。
+
+新副本首轮整理：清理作者自写TeX/BibTeX中的内部注释、旧占位和draftnote，删除作者Hanlin Liu及其作者邮箱；模板文件中的第三方版权说明和宏定义保持原样。新副本已经接入Figure1/2并包含Abstract和Conclusion，但Section2.2原先仍为内部占位，清理后正文待补。写作任务已收到新目录规则；本轮不自动续写旧任务、不编译或推送Git。
+
+当前精修状态：
+
+- [x] 明确唯一Overleaf同步目录，旧稿保留为历史资产。
+- [x] 清理新副本TeX/BibTeX中的134行内部注释、未使用的draftnote和Section2.2内部占位；删除Hanlin Liu及其作者邮箱。作者自写源码未残留注释，26个实际引用键、交叉引用和全部本地图文资源静态检查通过；2图、2表、Abstract和Conclusion均存在，未编译。
+- [ ] 围绕新副本补齐Section2.2，随后按用户逐步确定的范围精修全文。
+- [ ] 补充已确认的作者单位和Wade邮箱；当前作者为Zilong Zeng、Wade Wu、Arian Azarang、Stephen Xia、Jingping Nie。
+
+以下为之前主稿的工作记录，状态以用户提供的新副本及本页顶部盘点为准。
 
 当前状态（09-11 11:10核对）：4/4条件全部完成。恢复队列已于今天03:14（芝加哥）正常退出，QUEUE_EXIT=0；实时检查无Acoustic训练进程。Coarse采用seed_42_attempt2完整结果，原中断目录保留且不计入结果；没有启动额外实验。
 

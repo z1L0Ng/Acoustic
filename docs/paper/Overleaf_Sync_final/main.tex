@@ -1,0 +1,79 @@
+\documentclass[10pt,letterpaper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{spconf}
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{textcomp}
+\usepackage{placeins}
+\usepackage[hidelinks]{hyperref}
+
+\setcounter{dbltopnumber}{1}
+
+\title{Shared Attribute Supervision Across Native Respiratory Sound Tasks}
+\name{Zilong Zeng, Wade Wu, Arian Azarang, Stephen Xia, Jingping Nie}
+\address{{\small \texttt{zilongzeng2030@u.northwestern.edu}}\\
+{\small \texttt{arian\_azarang@med.unc.edu},
+\texttt{stephen.xia@northwestern.edu}, \texttt{jingping@unc.edu}}
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Respiratory sound datasets annotate related events at different granularities.
+We study whether shared fine-attribute supervision helps native tasks and
+whether its benefits depend on the classification interface. A shared BEATs
+encoder learns abnormality, crackle, and wheeze from ICBHI cycles and SPRSound
+events. HF supports a separate auxiliary-supervision study and attribute
+evaluation; KAUH provides external evaluation. Within-class acoustic
+differences persist between ICBHI and SPRSound after common 5-s preparation.
+We report a three-seed benchmark and seed-42 controls using official-test-based
+checkpoint selection. Retaining SPRSound fine annotations raises ICBHI Score
+by 4.46 percentage points and SPRSound C/W macro AUROC by 3.50 points relative
+to coarse supervision. Native heads with matched C/W auxiliary supervision
+score higher than the two-level reference in the single-seed comparison.
+These observations support reusing fine annotations while assessing native
+readout choices and task-specific costs separately.
+\end{abstract}
+
+\begin{keywords}
+respiratory sounds, shared supervision, heterogeneous annotations, acoustic attributes, hierarchical decoding
+\end{keywords}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{Figure/figure1_dataset_characteristics.pdf}
+\caption{Acoustic summaries of 5-s inputs. (a) Group-level centroids for
+ICBHI, SPRSound train+inter, HF source-test, and KAUH. Counts are patient
+groups except HF recording-date proxies. Boxes show medians/IQRs and
+1.5-IQR whiskers; outlier markers are omitted. (b,c) ICBHI/SPRSound
+class-matched patient medians and 95\% group-bootstrap intervals.
+Patient counts for Normal/Crackle/Wheeze/Both are 124/274, 74/89, 63/63,
+and 35/10. Descriptors aggregate within recording then group. Level is
+uncalibrated dBFS; centroids use 80--2000~Hz power after global centering.}
+\label{fig:dataset_characteristics}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{Figure/figure2_method.pdf}
+\caption{Shared attribute learning and native task readouts. (a) ICBHI and
+SPRSound annotations supervise available A/C/W targets, while their audio
+trains a common encoder and three parallel heads. (b) The same scores support
+binary and two-level four-class decisions. HF source-train supplies a
+separate C/W auxiliary-supervision condition; HF source-test and KAUH
+evaluate fixed models.}
+\label{fig:method_overview}
+\end{figure*}
+
+\input{Section/1introduction}
+\input{Section/2data}
+\input{Section/3method}
+\input{Section/4evaluation}
+\input{Section/5conclusion}
+\FloatBarrier
+\bibliographystyle{IEEEbib}
+\bibliography{citation}
+\end{document}

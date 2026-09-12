@@ -11,3 +11,5 @@ recoverable from Git history but are not duplicated in the active tree.
 - `MODEL.md`: project-model hypotheses, completed negative results, and entry gate.
 - `tables/`: compact machine-readable comparison tables.
 - `source_materials/`: externally supplied source material retained for provenance.
+- `paper/Overleaf_Sync_final/`: the sole active manuscript synchronized with Overleaf; all future paper edits target this directory.
+- `paper/ICASSP_2026_acoustic_disease/`: historical manuscript assets, retained for reference rather than synchronization.

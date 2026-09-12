@@ -1,0 +1,264 @@
+\begin{table*}[t]
+\caption{Native-task benchmark results and frozen-encoder context (\%).
+Published ICBHI-only rows retain their reported mean $\pm$ SD; our joint
+model uses three runs with ICBHI-test-based checkpoint selection.
+The lower block reports single-dataset frozen-encoder references with
+the same 5-s waveform preparation as our method (seeds 0, 1, and 42;
+mean $\pm$ sample SD). Dashes denote unreported endpoints.}
+\label{tab:native_results}
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcccccc@{}}
+\toprule
+& \multicolumn{3}{c}{ICBHI four-class\cite{rocha2019icbhi}}
+& \multicolumn{3}{c}{SPRSound inter binary\cite{zhang2022sprsound}}\\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Model & $Sp$ & $Se$ & Score & $AS$ & $HS$ & Official Score\\
+\midrule
+\multicolumn{7}{l}{\textit{Published ICBHI-only benchmarks}}\\
+Patch-Mix CL\cite{bae2023patchmix}
+& $81.66\pm3.83$ & $43.07\pm2.80$ & $62.37\pm0.61$
+& --- & --- & ---\\
+SG-SCL\cite{kim2024sgscl}
+& $79.87\pm8.89$ & $43.55\pm5.93$ & $61.71\pm1.61$
+& --- & --- & ---\\
+PAFA\cite{jeong2025pafa}
+& $82.05\pm1.95$ & $47.63\pm2.23$ & $64.84\pm0.60$
+& --- & --- & ---\\
+PC-MCL\cite{jeong2026pcmcl}
+& $79.04\pm1.90$ & $51.71\pm2.98$ & $65.37\pm0.73$
+& --- & --- & ---\\
+\midrule
+\textbf{Ours}
+& $74.98\pm5.69$ & $47.35\pm5.35$ & $61.17\pm0.31$
+& $90.95\pm0.31$ & $90.45\pm0.39$ & $90.70\pm0.34$\\
+\midrule
+\multicolumn{7}{l}{\textit{Single-dataset frozen-encoder references: three seeds}}\\
+AST\cite{gong2021ast}
+& $55.41\pm0.55$ & $47.38\pm1.50$ & $51.40\pm0.48$
+& $90.28\pm0.12$ & $90.11\pm0.24$ & $90.20\pm0.18$\\
+BEATs\cite{chen2023beats}
+& $61.01\pm5.72$ & $42.34\pm3.98$ & $51.68\pm1.19$
+& $92.43\pm0.34$ & $92.30\pm0.36$ & $92.37\pm0.35$\\
+PANNs\cite{kong2020panns}
+& $59.38\pm3.75$ & $44.77\pm3.84$ & $52.08\pm0.16$
+& $91.26\pm0.54$ & $91.18\pm0.57$ & $91.23\pm0.55$\\
+OPERA-CT\cite{zhang2024opera}
+& $41.61\pm5.42$ & $38.32\pm2.78$ & $39.96\pm1.68$
+& $79.55\pm0.06$ & $79.36\pm0.05$ & $79.45\pm0.00$\\
+HeAR\cite{baur2024hear}
+& $71.84\pm4.60$ & $27.16\pm3.57$ & $49.50\pm0.62$
+& $87.92\pm0.31$ & $87.87\pm0.30$ & $87.89\pm0.31$\\
+\bottomrule
+\end{tabular*}
+\end{table*}
+
+\section{Evaluation}
+\label{sec:evaluation}
+
+We evaluate whether shared attribute supervision supports both native
+classification tasks, how additional HF supervision changes performance,
+and which effects arise from supervision information or classification
+design. Tables~\ref{tab:native_results}--\ref{tab:ablations} address these
+questions while retaining the four dataset roles in Section~\ref{sec:data_alignment}.
+
+\subsection{Experimental Protocol and Metrics}
+\label{sec:protocol}
+The benchmark model uses the 5-s inputs and losses in Section~\ref{sec:method},
+batch size 32, Adam with learning rate $5\times10^{-5}$ and weight decay
+$10^{-6}$, a 50-epoch cosine schedule, and parameter EMA 0.5. Each joint
+training epoch contains 326 updates, equally divided between ICBHI and SPRSound.
+
+For our benchmark in Table~\ref{tab:native_results}, checkpoints and
+patience-10 early stopping use ICBHI official-test Score. This follows the
+test-based selection approach in the released PAFA, SG-SCL, and Patch-Mix
+implementations\cite{jeong2025pafa,kim2024sgscl,bae2023patchmix}.
+C/W thresholds use internal validation data; SPRSound inter is evaluated
+once per selected checkpoint. We report three completed runs with seeds
+0, 1, and 42, using their mean and sample standard deviation.
+
+Table~\ref{tab:ablations} uses seed 42 throughout and reuses the
+corresponding Full model from Table~\ref{tab:native_results}. Four new
+conditions start from the same pretrained BEATs initialization.
+They retain its patient-grouped subtraining/validation splits:
+3,174/968 ICBHI cycles from 63/16 patients, and 5,219/1,437 SPRSound
+events from 194/49 patients.
+
+At each epoch, C/W thresholds are fit to eligible annotations in the
+training sources' validation data before test scoring.
+Full, ICBHI-only, Coarse SPR, and Native + attributes select checkpoints
+using ICBHI official-test Score; SPRSound-only uses its own official
+inter-subject Score. The same criterion drives patience-10 early stopping,
+with strict improvement and earlier-epoch tie-breaking.
+Single-source models evaluate the other dataset only after the source-selected
+checkpoint and thresholds are frozen; that target supplies no training,
+calibration, or selection information.
+
+All conditions allow 50 epochs of 326 updates, using the original
+epoch-wise cosine schedule with a constant learning rate within each epoch.
+Joint training assigns 163 updates to each source, whereas single-source
+training assigns all 326 to its source. Thus, maximum total updates match,
+but each source receives twice as many updates per epoch in single-source
+training. These are single-run benchmark controls; their selection objectives
+and source exposure must be considered when interpreting differences.
+
+ICBHI Score is $(Sp+Se)/2$, where $Sp$ is Normal recall and $Se$ counts
+abnormal cycles assigned to the correct abnormal subclass.
+SPRSound Task1-1 uses the official inter-subject test and
+Score $=(AS+HS)/2$, with $AS=(Se+Sp)/2$ and $HS=2SeSp/(Se+Sp)$;
+here $Se$ and $Sp$ are Adventitious and Normal recall.
+Macro-F1 averages the class-wise F1 values.
+C/W macro AUROC is the mean of the two attribute AUROCs, each computed
+on SPRSound inter events eligible for that target. AUPRC denotes the area
+under the precision--recall curve.
+On the HF source-test partition, interval recall counts a labeled D/W
+interval when any overlapping 5-s window reaches the fixed attribute
+threshold, over 1,812 D and 1,430 Wheeze intervals.
+Recording AUROC uses maximum scores across the three windows
+on the 957 recordings with at least one D/W/R/S annotation; absent target
+annotations supply derived negatives. KAUH averages B/D/E probabilities
+within patient before reporting binary balanced accuracy (BA), four-class
+Macro-F1, and unweighted average recall (UAR) on the 86 compatible patients.
+
+\subsection{Benchmark Results and Comparison}
+\label{sec:native_results}
+Table~\ref{tab:native_results} compares our joint model with published
+ICBHI-only methods. Our model achieves ICBHI Score $61.17\pm0.31\%$ and
+SPRSound official Score $90.70\pm0.34\%$.
+Relative to PAFA, our mean $Se$ differs by only 0.28 percentage points (pp)
+($47.35\%$ versus $47.63\%$), whereas $Sp$ is 7.07 pp lower
+($74.98\%$ versus $82.05\%$). The ICBHI Score difference is therefore
+concentrated in specificity. Our ICBHI Score is 3.67 pp below PAFA and
+4.20 pp below PC-MCL. Table~\ref{tab:ablations} examines native-task
+trade-offs with single-source benchmark controls.
+
+Niizumi et al.\cite{niizumi2025foundationeval} evaluated frozen audio
+encoders with trainable task networks, reporting performance differences
+across tasks and head architectures. The lower block of
+Table~\ref{tab:native_results} reports single-dataset frozen-encoder
+references with the same 5-s waveform preparation as our method.
+Values are mean $\pm$ sample SD over seeds 0, 1, and 42.
+Frozen BEATs reaches $51.68\pm1.19\%$ ICBHI Score and
+$92.37\pm0.35\%$ SPRSound inter Score.
+These references use ICBHI official-test selection and separate checkpoint
+selection for SPRSound intra/inter evaluation. Their frozen, single-dataset
+training differs from our joint full fine-tuning.
+
+\textit{Fixed readout analysis.}
+Using the three ICBHI-test-selected benchmark checkpoints, Direct C/W
+thresholding replaces the ICBHI two-level rule with decoding from C/W
+presence alone, keeping scores and thresholds fixed. Neither attribute gives
+Normal, one gives its class, and two give Both. PC-MCL adds an explicit
+Normal target during multi-cycle training but also uses C/W-based class
+conversion at inference\cite{jeong2026pcmcl}.
+ICBHI Score becomes $60.29\pm1.81\%$, a paired change of
+$-0.88\pm1.60$ pp; $Sp$ decreases by 6.80 pp and $Se$ increases by
+5.04 pp. The Score differences for seeds 0/1/42 are
+$-0.60/-2.60/+0.56$ pp, while Both recall is unchanged in these runs.
+
+\textit{Attribute prediction.}
+The same checkpoints achieve Crackle/Wheeze AUROCs of
+$96.08\pm0.41\%$/$98.56\pm0.11\%$ and AUPRCs of
+$60.32\pm3.86\%$/$94.51\pm0.56\%$ on all 1,429 SPRSound inter events.
+The C/W macro AUROC is $97.32\pm0.15\%$, averaging attributes within
+each run before computing the mean and sample SD across runs.
+
+\textit{External evaluation.}
+These same three models, with core-validation thresholds frozen, attain
+HF D/Wheeze recording AUROCs of $67.82\pm4.42\%$/$86.36\pm1.38\%$
+and interval recalls of $58.28\pm12.63\%$/$85.43\pm1.07\%$.
+On KAUH, patient-level binary BA is $72.17\pm1.64\%$, four-class
+Macro-F1 is $33.83\pm3.17\%$, and UAR is $50.24\pm6.10\%$.
+
+\textit{HF supervision in an independent seed 42 pair.}
+A separate HF-off/on pair uses ICBHI-test-based checkpoint selection
+and core-validation thresholds. HF-on includes the auxiliary objective
+in Section~\ref{sec:hf_method}; its own HF-off model supplies the reference.
+ICBHI Score changes from 60.05\% to 59.71\%, while SPRSound Score changes
+from 89.20\% to 91.81\%; ICBHI $Se$ falls from 45.37\% to 39.25\%.
+SPRSound C/W macro AUROC changes from 96.81\% to 96.95\%,
+while macro AUPRC changes from 76.24\% to 75.12\%.
+HF D/Wheeze recording AUROCs change from 50.81\%/85.50\% to
+69.80\%/89.83\%. D interval recall rises from 52.65\% to 93.10\%,
+whereas Wheeze interval recall falls from 93.78\% to 76.92\%.
+On KAUH, patient-level binary BA falls from 74.76\% to 70.14\%,
+four-class Macro-F1 from 51.47\% to 36.65\%, and UAR from 62.33\% to
+38.39\%. This pair shows gains on HF recording discrimination alongside
+costs in native subclass recall and external classification.
+The additional HF batches also increase computation.
+
+\subsection{Benchmark Controls}
+\label{sec:ablations}
+Table~\ref{tab:ablations} compares training sources, available annotations,
+and classification interfaces against the reused Full seed-42 reference.
+The four controls retain its input processing, pretrained
+encoder, PAFA regularization, optimizer, and maximum update budget.
+
+Every training batch of the reused Full model contains eligible A/C/W
+targets, so Equation~\ref{eq:classification_loss} gives each node weight
+$1/3$. The hierarchy controls explicitly use $(L_A+L_C+L_W)/3$.
+Each $L_k$ averages eligible rows and is zero for an empty node; missing
+terms do not redistribute their weights. Coarse SPR retains its audio
+and binary A supervision but withholds SPR C/W annotations from training,
+calibration, selection, and early stopping. Its SPR batches therefore
+use $L_A/3$, with PAFA unchanged; C/W thresholds use ICBHI validation only.
+Withheld SPR attributes are read only for terminal inter-set AUROC evaluation.
+
+\begin{table}[!htbp]
+\caption{Benchmark controls (\%, one run per condition, seed 42).
+Full reuses the seed-42 run from Table~\ref{tab:native_results}.
+SPRSound-only$^\dagger$ selects on SPR inter Score;
+other rows use ICBHI test Score. SPR Score denotes official Score.
+Differences are computed before rounding.}
+\label{tab:ablations}
+\centering
+\small
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lccc@{}}
+\toprule
+Variant & ICBHI & SPR & SPR C/W\\
+& Score & Score & AUROC\\
+\midrule
+Full (HF-off) & 61.17 & 90.37 & 97.17\\
+ICBHI only & 56.17 & 56.86 & 81.23\\
+SPRSound only$^\dagger$ & 47.93 & 92.32 & 97.86\\
+\midrule
+Coarse SPR labels & 56.71 & 90.22 & 93.67\\
+Native + attributes & 62.30 & 91.94 & 97.41\\
+\bottomrule
+\end{tabular*}
+\end{table}
+
+\textit{Source sharing.}
+Full scores 5.00 pp above ICBHI-only on ICBHI:
+$Sp$ increases from 67.13\% to 80.37\%, while $Se$ decreases from
+45.20\% to 41.97\%. On SPRSound, Full scores 1.95 pp below SPRSound-only,
+with C/W macro AUROC 0.69 pp lower.
+Fixed transfer gives 56.86\% SPR Score from ICBHI-only and
+47.93\% ICBHI Score from SPRSound-only.
+The SPRSound-only contrast also changes the selection objective;
+both single-source conditions change source exposure. These differences
+therefore cannot be attributed entirely to source sharing.
+
+\textit{Annotation information.}
+At seed 42, withholding SPR C/W targets while retaining its audio and
+abnormality labels lowers SPR C/W macro AUROC by 3.50 pp, ICBHI Score by
+4.46 pp, and SPRSound Score by 0.15 pp relative to Full.
+The retained loss weights remain fixed, and withheld fine labels are used
+only for evaluation. Full therefore has stronger attribute discrimination
+and a higher ICBHI Score than Coarse SPR in this single-seed benchmark.
+
+\textit{Classification design.}
+Native + attributes uses linear $256\!\to\!4$ ICBHI and $256\!\to\!2$
+SPRSound heads, plus two shared linear $256\!\to\!1$ C/W heads,
+with no separate A head. On a source-homogeneous batch, its classification loss is
+$(L_{\rm native}+L_C+L_W)/3$: $L_{\rm native}$ is the source's softmax CE,
+and C/W targets, masks, eligible-row averaging, and coefficients match Full.
+PAFA is unchanged. Native-head argmax drives selection and native-task
+prediction; C/W scores are retained for attribute AUROC, without entering
+native decisions. This comparison changes the native objective and head
+capacity while matching C/W supervision. Relative to Full at seed 42,
+Native + attributes increases ICBHI/SPRSound Scores by 1.13/1.58 pp
+and SPR C/W macro AUROC by 0.24 pp. It is higher than Full on all three metrics
+in this single-seed benchmark.

@@ -1,0 +1,86 @@
+\section{Method}
+\label{sec:method}
+Our method connects heterogeneous annotations through shared acoustic
+attributes, then recovers native task labels from their predictions
+(Figure~\ref{fig:method_overview}). This separates the information used to
+learn the representation from the rules used to make task decisions.
+
+\subsection{Shared Acoustic Attribute Predictors}
+For waveform $x_i$, a BEATs iter3+ AS2M encoder\cite{chen2023beats}
+pretrained on AudioSet\cite{gemmeke2017audioset} produces
+768-dimensional token features. Mean pooling followed by a
+linear projection gives $h_i\in\mathbb{R}^{256}$. Three parallel linear
+heads predict abnormality (A), Crackle (C), and Wheeze (W):
+\begin{equation}
+\begin{aligned}
+ p_{ia}&=\operatorname{softmax}(W_a h_i+b_a)_{\rm Abnormal},\\
+ p_{ic}&=\sigma(W_c h_i+b_c),\qquad
+ p_{iw}=\sigma(W_w h_i+b_w).
+\end{aligned}
+\end{equation}
+A uses two logits, whereas C/W each use one. All heads jointly fine-tune
+the encoder on ICBHI and SPRSound. C/W are marginal attribute probabilities;
+the two-level hierarchy is applied in the decision readout.
+
+\subsection{Learning from Available Annotations}
+Partial-label learning distinguishes unobserved targets from observed
+negatives\cite{shi2021marginal,zhou2022unknown}.
+The alignment in Section~\ref{sec:annotation_alignment} supplies targets
+$y_{ik}$ and availability masks $m_{ik}$ for $k\in\{a,c,w\}$.
+A mask is one only when the source annotation supports that target.
+For batch $B$, let
+$B_k=\{i\in B:m_{ik}=1\}$ and $K_B=\{k:|B_k|>0\}$. The
+classification objective averages available supervision within each node:
+\begin{equation}
+\mathcal L_{\rm cls}(B)=\frac{1}{|K_B|}\sum_{k\in K_B}
+\frac{1}{|B_k|}\sum_{i\in B_k}\ell_k(p_{ik},y_{ik}),
+\label{eq:classification_loss}
+\end{equation}
+where $\ell_a$ is two-class cross-entropy and $\ell_c,\ell_w$ are binary
+cross-entropy. This lets compatible labels share a predictor while masking
+unsupported targets. Dataset-homogeneous batches contribute equal numbers
+of updates per epoch.
+
+To regularize patient-specific variation, we retain PAFA's patient
+cohesion-separation and global patient alignment objectives\cite{jeong2025pafa}:
+\begin{equation}
+\mathcal L_{\rm core}=\mathcal L_{\rm cls}+50\mathcal L_{\rm PCSL}
+                                  +0.0005\mathcal L_{\rm GPAL}.
+\end{equation}
+A separate attention-based projection of encoder tokens supplies their
+features during training; patient identifiers are qualified by dataset.
+
+\subsection{Two-Level Native Task Readouts}
+The Normal/Abnormal argmax defines $\hat a$ (ties select Normal), and
+$\hat c=\mathbb{I}[p_c\geq\tau_c]$,
+$\hat w=\mathbb{I}[p_w\geq\tau_w]$ define attribute decisions.
+SPRSound uses $\hat a$ for Normal/Adventitious classification.
+ICBHI first assigns Normal when $\hat a=0$; otherwise, two positive
+attributes yield Both and a single positive attribute yields its class.
+If neither is positive, the larger $p_k-\tau_k$ margin selects Crackle
+or Wheeze, with ties assigned to Crackle.
+
+Shared thresholds independently maximize the equal-source mean of
+available-target binary F1 on core validation data. Candidates are the
+observed probabilities plus 0 and 1; ties select the larger threshold.
+Changing the readout while fixing the encoder and attribute scores isolates
+decision-rule effects from changes in the learned representation.
+
+\subsection{HF Auxiliary-Supervision Condition}
+\label{sec:hf_method}
+To examine additional attribute supervision, we retain the architecture
+and add HF source-training windows:
+\begin{equation}
+\mathcal L_{\rm HF\mbox{-}on}=\mathcal L_{\rm core}+0.25\mathcal L_{\rm HF},
+\end{equation}
+using one batch of 32 HF windows per core update. A window overlapping
+D, Wheeze, Rhonchi, or Stridor supplies both C/W targets: each is one
+when the corresponding D or Wheeze annotation overlaps, and zero otherwise.
+$\mathcal L_{\rm HF}$ averages their node-wise BCE losses.
+Gap, empty, and phase-only windows are masked; HF supplies no A target.
+The derived negatives assume that an absent attribute annotation denotes
+absence within these eligible windows, although uncertain events may be
+omitted in the source annotations\cite{hsu2021hflung}.
+HF is excluded from threshold fitting, checkpoint selection, and early
+stopping; its source-test partition is reserved for evaluation.
+
