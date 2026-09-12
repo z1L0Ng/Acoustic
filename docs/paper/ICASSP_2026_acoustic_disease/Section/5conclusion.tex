@@ -1,12 +1,12 @@
 \section{Conclusion}
 \label{sec:conclusion}
-We study shared respiratory-sound attribute supervision as a link between
-heterogeneous annotations and native classification tasks. The framework
-uses supported abnormality and C/W targets to train one acoustic model,
-then returns ICBHI cycle-four-class and SPRSound event-binary predictions
-through a two-level decision scheme. Existing results demonstrate this
-joint prediction capability and identify uneven fine-category recognition.
-The remaining empirical questions concern how attribute information transfers
-when fine labels are unavailable and what the decision hierarchy adds at
-matched supervision. The specified ablations will determine these effects
-and the resulting scope of the empirical contributions.
+We studied shared respiratory attributes while retaining dataset-native
+tasks. Acoustic differences persisted within compatible labels after common
+input preparation. In the benchmark controls, retaining fine SPRSound
+annotations improved attribute discrimination and ICBHI Score. Source
+comparisons and the HF-supervision case showed task-dependent gains and
+costs. Native heads with matched C/W auxiliary supervision exceeded the
+two-level reference in the single-seed comparison. The evidence supports
+using available fine annotations while evaluating classification interfaces
+separately, with conclusions bounded by the studied corpora, selection
+protocols, and number of runs.

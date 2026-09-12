@@ -1,0 +1,96 @@
+{"kind":"deck","id":"pr/0tq8ee","name":"Deck"}
+{"kind":"layout","layoutId":"97ae4e2b-cf61-47d6-a99f-bf00a5b6f241","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"393baed5-1e4d-47d4-a86f-8702dbbe1f10","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/66zxgp","slide":1,"title":"Paper story: controlled alignment across native tasks","textShapes":18}
+{"kind":"shape","id":"sh/lwfut0bq","slide":1,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/yt4vi5sf","slide":1,"text":"Paper story: controlled alignment across native tasks","textPreview":"Paper story: controlled alignment across native tasks","textChars":53,"textLines":1,"bbox":[64,38,1110,54]}
+{"kind":"textbox","id":"sh/zuxcrat0","slide":1,"text":"ICASSP 2027 direction after the 3 September advisor review","textPreview":"ICASSP 2027 direction after the 3 September advisor review","textChars":58,"textLines":1,"bbox":[66,98,1050,28]}
+{"kind":"textbox","id":"sh/c7mdgva9","slide":1,"text":"1/3","textPreview":"1/3","textChars":3,"textLines":1,"bbox":[1180,45,44,24]}
+{"kind":"shape","id":"sh/x8vup0bu","slide":1,"bbox":[60,174,270,330]}
+{"kind":"shape","id":"sh/a54vels3","slide":1,"bbox":[60,174,8,330]}
+{"kind":"textbox","id":"sh/b6dcnqto","slide":1,"text":"Observed problem","textPreview":"Observed problem","textChars":16,"textLines":1,"bbox":[82,192,232,30]}
+{"kind":"textbox","id":"sh/o3mtcvad","slide":1,"text":"ICBHI-specialized checkpoints retain their source result but approach the 50% floor on SPRSound transfer.","textPreview":"ICBHI-specialized checkpoints retain their source result but approach the 50% floor on SPRSound transfer.","textChars":105,"textLines":1,"bbox":[82,230,232,85]}
+{"kind":"textbox","id":"sh/p4vulgbi","slide":1,"text":"PAFA 64.14 / 55.82\nSG-SCL 60.98 / 59.98\nPatch-Mix 62.17 / 59.38","textPreview":"PAFA 64.14 / 55.82 | SG-SCL 60.98 / 59.98 | Patch-Mix 62.17 / 59.38","textChars":63,"textLines":3,"bbox":[82,446,232,42]}
+{"kind":"shape","id":"sh/5wr6l0zi","slide":1,"bbox":[362,174,270,330]}
+{"kind":"shape","id":"sh/kvi5svix","slide":1,"bbox":[362,174,8,330]}
+{"kind":"textbox","id":"sh/ju9ojqhc","slide":1,"text":"Concrete gap","textPreview":"Concrete gap","textChars":12,"textLines":1,"bbox":[384,192,232,30]}
+{"kind":"textbox","id":"sh/it0nql0r","slide":1,"text":"Labels overlap only partially. Cycles and events use different outputs and metrics. Unavailable labels cannot be treated as negatives.","textPreview":"Labels overlap only partially. Cycles and events use different outputs and metrics. Unavailable labels cannot be treated as negatives.","textChars":134,"textLines":1,"bbox":[384,230,232,85]}
+{"kind":"textbox","id":"sh/xsrmhgz6","slide":1,"text":"Need semantic sharing without erasing native tasks","textPreview":"Need semantic sharing without erasing native tasks","textChars":50,"textLines":1,"bbox":[384,446,232,42]}
+{"kind":"shape","id":"sh/wri5obil","slide":1,"bbox":[664,174,270,330]}
+{"kind":"shape","id":"sh/vq94f6h0","slide":1,"bbox":[664,174,8,330]}
+{"kind":"textbox","id":"sh/apgnml0f","slide":1,"text":"Method response","textPreview":"Method response","textChars":15,"textLines":1,"bbox":[686,192,232,30]}
+{"kind":"textbox","id":"sh/9o7mdgza","slide":1,"text":"Shared BEATs representation with a Normal/Abnormal hierarchy, eligible Crackle/Wheeze losses, and dataset-native readouts.","textPreview":"Shared BEATs representation with a Normal/Abnormal hierarchy, eligible Crackle/Wheeze losses, and dataset-native readouts.","textChars":122,"textLines":1,"bbox":[686,230,232,85]}
+{"kind":"textbox","id":"sh/83y5kbip","slide":1,"text":"Key phrase: label-availability-aware task alignment","textPreview":"Key phrase: label-availability-aware task alignment","textChars":51,"textLines":1,"bbox":[686,446,232,42]}
+{"kind":"shape","id":"sh/07250bql","slide":1,"bbox":[966,174,270,330]}
+{"kind":"shape","id":"sh/18b69g76","slide":1,"bbox":[966,174,8,330]}
+{"kind":"textbox","id":"sh/e5kny18f","slide":1,"text":"Evidence and question","textPreview":"Evidence and question","textChars":21,"textLines":1,"bbox":[988,192,232,30]}
+{"kind":"textbox","id":"sh/z6to76p0","slide":1,"text":"JH2 reaches ICBHI 61.17±0.31 and SPRSound 90.70±0.34 across three seeds.","textPreview":"JH2 reaches ICBHI 61.17±0.31 and SPRSound 90.70±0.34 across three seeds.","textChars":72,"textLines":1,"bbox":[988,230,232,85]}
+{"kind":"textbox","id":"sh/cji5wrq9","slide":1,"text":"Still missing matched independent heads and source-only controls","textPreview":"Still missing matched independent heads and source-only controls","textChars":64,"textLines":1,"bbox":[988,446,232,42]}
+{"kind":"shape","id":"sh/d4b65w7u","slide":1,"bbox":[335,322,22,32]}
+{"kind":"shape","id":"sh/qh0nu183","slide":1,"bbox":[637,322,22,32]}
+{"kind":"shape","id":"sh/ri94369o","slide":1,"bbox":[939,322,22,32]}
+{"kind":"shape","id":"sh/wfm58vqt","slide":1,"bbox":[60,552,1160,92]}
+{"kind":"textbox","id":"sh/x0v6h07y","slide":1,"text":"Recommended scope","textPreview":"Recommended scope","textChars":17,"textLines":1,"bbox":[82,570,220,28]}
+{"kind":"textbox","id":"sh/76h0nydc","slide":1,"text":"ICBHI + SPRSound core paper. HF Lung and KAUH remain bounded supporting diagnostics.","textPreview":"ICBHI + SPRSound core paper. HF Lung and KAUH remain bounded supporting diagnostics.","textChars":84,"textLines":1,"bbox":[320,566,870,42]}
+{"kind":"textbox","id":"sh/658zutw7","slide":1,"text":"Claim target: controlled retention across native tasks, not SOTA or universal generalization.","textPreview":"Claim target: controlled retention across native tasks, not SOTA or universal generalization.","textChars":93,"textLines":1,"bbox":[320,610,870,24]}
+{"kind":"notes","id":"nt/66zxgp","slide":1,"text":"Sources: docs/paper/ICASSP_2026_acoustic_disease/STORY_REVIEW_2026-09-04_zh.md; result/icbhi_strong_method_reproduction/metrics.json; result/pafa_sprsound_transfer_20260722_235659/metrics.json; result/sg_scl_sprsound_transfer_20260722_235659/metrics.json; result/sprsound_patchmix_frozen_transfer/metrics.json; result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/multiseed_summary.md. Transfer rows are zero-target-tuning diagnostics, not matched joint-training gains."}
+{"kind":"slide","id":"sl/49bpa5","slide":2,"title":"Three contributions, each tied to evidence","textShapes":17}
+{"kind":"shape","id":"sh/bahcfu1c","slide":2,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/cbqd8zix","slide":2,"text":"Three contributions, each tied to evidence","textPreview":"Three contributions, each tied to evidence","textChars":42,"textLines":1,"bbox":[64,38,1110,54]}
+{"kind":"textbox","id":"sh/dczuh4j2","slide":2,"text":"The method claim remains conditional until the matched control is complete","textPreview":"The method claim remains conditional until the matched control is complete","textChars":74,"textLines":1,"bbox":[66,98,1050,28]}
+{"kind":"textbox","id":"sh/2lob2p0f","slide":2,"text":"2/3","textPreview":"2/3","textChars":3,"textLines":1,"bbox":[1180,45,44,24]}
+{"kind":"textbox","id":"sh/3mxcbu10","slide":2,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[72,174,72,54]}
+{"kind":"textbox","id":"sh/on6t4zil","slide":2,"text":"Native-task-preserving formulation","textPreview":"Native-task-preserving formulation","textChars":34,"textLines":1,"bbox":[168,171,480,34]}
+{"kind":"textbox","id":"sh/pozudkj6","slide":2,"text":"Align partially observed respiratory labels while retaining cycle-level ICBHI and event-level SPRSound outputs and metrics.","textPreview":"Align partially observed respiratory labels while retaining cycle-level ICBHI and event-level SPRSound outputs and metrics.","textChars":123,"textLines":1,"bbox":[168,214,720,64]}
+{"kind":"textbox","id":"sh/mhsve90z","slide":2,"text":"Figure 1 + task/label contract","textPreview":"Figure 1 + task/label contract","textChars":30,"textLines":1,"bbox":[930,189,278,56]}
+{"kind":"shape","id":"sh/ni1cne1k","slide":2,"bbox":[72,294,1136,0]}
+{"kind":"textbox","id":"sh/naxgv6pw","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[72,316,72,54]}
+{"kind":"textbox","id":"sh/m9ofm1or","slide":2,"text":"Eligibility-aware hierarchical alignment","textPreview":"Eligibility-aware hierarchical alignment","textChars":40,"textLines":1,"bbox":[168,313,480,34]}
+{"kind":"textbox","id":"sh/9wfyxgn2","slide":2,"text":"Share Normal/Abnormal, Crackle, and Wheeze semantics without converting unavailable targets into negative supervision.","textPreview":"Share Normal/Abnormal, Crackle, and Wheeze semantics without converting unavailable targets into negative supervision.","textChars":118,"textLines":1,"bbox":[168,356,720,64]}
+{"kind":"textbox","id":"sh/ob6xob6h","slide":2,"text":"Figure 2 + independent-head control needed","textPreview":"Figure 2 + independent-head control needed","textChars":42,"textLines":1,"bbox":[930,331,278,56]}
+{"kind":"shape","id":"sh/byxgzq58","slide":2,"bbox":[72,436,1136,0]}
+{"kind":"textbox","id":"sh/axofqlon","slide":2,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[72,458,72,54]}
+{"kind":"textbox","id":"sh/x0zy10ne","slide":2,"text":"Dataset-dependent retention analysis","textPreview":"Dataset-dependent retention analysis","textChars":36,"textLines":1,"bbox":[168,455,480,34]}
+{"kind":"textbox","id":"sh/wzqxsv6t","slide":2,"text":"Report native scores, specificity, sensitivity, and class recall across three seeds instead of constructing one pooled score.","textPreview":"Report native scores, specificity, sensitivity, and class recall across three seeds instead of constructing one pooled score.","textChars":125,"textLines":1,"bbox":[168,498,720,64]}
+{"kind":"textbox","id":"sh/j2hg3q54","slide":2,"text":"Table I + Table II + per-class analysis","textPreview":"Table I + Table II + per-class analysis","textChars":39,"textLines":1,"bbox":[930,473,278,56]}
+{"kind":"shape","id":"sh/y18fuloj","slide":2,"bbox":[72,604,1136,62]}
+{"kind":"textbox","id":"sh/uxsjmp8r","slide":2,"text":"Claim boundary","textPreview":"Claim boundary","textChars":14,"textLines":1,"bbox":[92,622,160,24]}
+{"kind":"textbox","id":"sh/vyl0vupc","slide":2,"text":"ICBHI is test-selected; no pooled score; no SOTA claim; HF/KAUH remain diagnostics.","textPreview":"ICBHI is test-selected; no pooled score; no SOTA claim; HF/KAUH remain diagnostics.","textChars":83,"textLines":1,"bbox":[254,619,920,28]}
+{"kind":"notes","id":"nt/49bpa5","slide":2,"text":"Contribution wording follows the independent Claude and GPT-5.6 Pro reviews. Contribution 2 cannot claim superiority until a matched independent-head comparison is complete. Main evidence: JH2 ICBHI Score 0.611681 plus/minus 0.003139 and SPRSound official Score 0.906986 plus/minus 0.003424, n=3."}
+{"kind":"slide","id":"sl/wbnwpi","slide":3,"title":"Evidence needed before the method claim is credible","textShapes":29}
+{"kind":"shape","id":"sh/tgna9of2","slide":3,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/6dcre9wb","slide":3,"text":"Evidence needed before the method claim is credible","textPreview":"Evidence needed before the method claim is credible","textChars":51,"textLines":1,"bbox":[64,38,1110,54]}
+{"kind":"textbox","id":"sh/7e5s7exw","slide":3,"text":"Run only work that fills Figure 1, Figure 2, Table I, or Table II","textPreview":"Run only work that fills Figure 1, Figure 2, Table I, or Table II","textChars":65,"textLines":1,"bbox":[66,98,1050,28]}
+{"kind":"textbox","id":"sh/gje9kjed","slide":3,"text":"3/3","textPreview":"3/3","textChars":3,"textLines":1,"bbox":[1180,45,44,24]}
+{"kind":"textbox","id":"sh/hknadofy","slide":3,"text":"Priority","textPreview":"Priority","textChars":8,"textLines":1,"bbox":[68,150,90,30]}
+{"kind":"textbox","id":"sh/uhwri9wn","slide":3,"text":"Deliverable","textPreview":"Deliverable","textChars":11,"textLines":1,"bbox":[170,150,310,30]}
+{"kind":"textbox","id":"sh/fi5sbexs","slide":3,"text":"Question answered","textPreview":"Question answered","textChars":17,"textLines":1,"bbox":[500,150,470,30]}
+{"kind":"textbox","id":"sh/47yto3ep","slide":3,"text":"Owner","textPreview":"Owner","textChars":5,"textLines":1,"bbox":[990,150,220,30]}
+{"kind":"shape","id":"sh/p87ah8fa","slide":3,"bbox":[64,184,1152,0]}
+{"kind":"shape","id":"sh/90belw3q","slide":3,"bbox":[64,196,1152,74]}
+{"kind":"textbox","id":"sh/8z2dsrm5","slide":3,"text":"P0","textPreview":"P0","textChars":2,"textLines":1,"bbox":[76,214,70,30]}
+{"kind":"textbox","id":"sh/netwjmlk","slide":3,"text":"Joint independent heads","textPreview":"Joint independent heads","textChars":23,"textLines":1,"bbox":[170,210,300,42]}
+{"kind":"textbox","id":"sh/mdkvqh4z","slide":3,"text":"Does the hierarchy add value beyond a shared encoder?","textPreview":"Does the hierarchy add value beyond a shared encoder?","textChars":53,"textLines":1,"bbox":[500,206,450,50]}
+{"kind":"textbox","id":"sh/x4bepw3m","slide":3,"text":"Zilong / model design","textPreview":"Zilong / model design","textChars":21,"textLines":1,"bbox":[990,210,210,42]}
+{"kind":"textbox","id":"sh/w32dwbm1","slide":3,"text":"P0","textPreview":"P0","textChars":2,"textLines":1,"bbox":[76,290,70,30]}
+{"kind":"textbox","id":"sh/v2twn6lg","slide":3,"text":"ICBHI-only + SPR-only controls","textPreview":"ICBHI-only + SPR-only controls","textChars":30,"textLines":1,"bbox":[170,286,300,42]}
+{"kind":"textbox","id":"sh/a1kvu14b","slide":3,"text":"Does joint learning help, hurt, or retain each native task?","textPreview":"Does joint learning help, hurt, or retain each native task?","textChars":59,"textLines":1,"bbox":[500,282,450,50]}
+{"kind":"textbox","id":"sh/d8redc3i","slide":3,"text":"Zilong / model design","textPreview":"Zilong / model design","textChars":21,"textLines":1,"bbox":[990,286,210,42]}
+{"kind":"shape","id":"sh/c7idk7mx","slide":3,"bbox":[64,348,1152,74]}
+{"kind":"textbox","id":"sh/o3m5gby5","slide":3,"text":"P0","textPreview":"P0","textChars":2,"textLines":1,"bbox":[76,366,70,30]}
+{"kind":"textbox","id":"sh/p4fmpgfa","slide":3,"text":"Prospective clean seed42 suite","textPreview":"Prospective clean seed42 suite","textChars":30,"textLines":1,"bbox":[170,362,300,42]}
+{"kind":"textbox","id":"sh/214ne1gz","slide":3,"text":"Do conclusions survive validation-only selection and one test access?","textPreview":"Do conclusions survive validation-only selection and one test access?","textChars":69,"textLines":1,"bbox":[500,358,450,50]}
+{"kind":"textbox","id":"sh/32d4n6xk","slide":3,"text":"Zilong / model design","textPreview":"Zilong / model design","textChars":21,"textLines":1,"bbox":[990,362,210,42]}
+{"kind":"textbox","id":"sh/cr65kby1","slide":3,"text":"P0","textPreview":"P0","textChars":2,"textLines":1,"bbox":[76,442,70,30]}
+{"kind":"textbox","id":"sh/dsf6tgfm","slide":3,"text":"Class-matched acoustic analysis","textPreview":"Class-matched acoustic analysis","textChars":31,"textLines":1,"bbox":[170,438,300,42]}
+{"kind":"textbox","id":"sh/q5oni1gv","slide":3,"text":"Which domain differences remain after controlling label composition?","textPreview":"Which domain differences remain after controlling label composition?","textChars":68,"textLines":1,"bbox":[500,434,450,50]}
+{"kind":"textbox","id":"sh/bqxor6xg","slide":3,"text":"Wade","textPreview":"Wade","textChars":4,"textLines":1,"bbox":[990,438,210,42]}
+{"kind":"shape","id":"sh/0v65ovyx","slide":3,"bbox":[64,500,1152,74]}
+{"kind":"textbox","id":"sh/lwz6x0fi","slide":3,"text":"P1","textPreview":"P1","textChars":2,"textLines":1,"bbox":[76,518,70,30]}
+{"kind":"textbox","id":"sh/vq18nuh0","slide":3,"text":"Baseline provenance registry","textPreview":"Baseline provenance registry","textChars":28,"textLines":1,"bbox":[170,514,300,42]}
+{"kind":"textbox","id":"sh/aps7ep0f","slide":3,"text":"Which published and local rows are truly comparable?","textPreview":"Which published and local rows are truly comparable?","textChars":52,"textLines":1,"bbox":[500,510,450,50]}
+{"kind":"textbox","id":"sh/xsjqp4zq","slide":3,"text":"Hanlin","textPreview":"Hanlin","textChars":6,"textLines":1,"bbox":[990,514,210,42]}
+{"kind":"shape","id":"sh/wrapgzi5","slide":3,"bbox":[64,604,1152,70]}
+{"kind":"textbox","id":"sh/nmh8jaho","slide":3,"text":"Sunday 9/6","textPreview":"Sunday 9/6","textChars":10,"textLines":1,"bbox":[86,624,150,28]}
+{"kind":"textbox","id":"sh/ml87a503","slide":3,"text":"Data/Method v1, Figure 2, fixed Table I/II contracts, and one submission-blocker list","textPreview":"Data/Method v1, Figure 2, fixed Table I/II contracts, and one submission-blocker list","textChars":85,"textLines":1,"bbox":[244,619,930,34]}
+{"kind":"notes","id":"nt/wbnwpi","slide":3,"text":"The clean suite should contain joint hierarchy, joint independent heads, ICBHI-only hierarchy, and SPRSound-only hierarchy under one pre-registered seed42 protocol. Hanlin owns only the baseline registry and Table I source rows. HF/KAUH and JH3/JH4 expansions are outside the core queue."}

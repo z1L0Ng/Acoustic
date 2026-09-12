@@ -1,71 +1,156 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1140" height="385" viewBox="0 0 1140 385">
-<title>Shared attribute supervision and two-level native task decisions</title>
-<desc>Native audio units enter a shared encoder and three parallel predictors. Source labels and availability masks enter classification losses, not encoder inputs. SPRSound uses abnormality; ICBHI combines abnormality and Crackle/Wheeze decisions.</desc>
-<defs>
-<marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0 0 L8 4 L0 8 Z" fill="#333"/></marker>
-<style>
-text { font-family: Arial, Helvetica, sans-serif; fill: #202020; }
-.stage { font-size:17px; font-weight:700; }
-.main { font-size:20px; font-weight:700; }
-.body { font-size:19px; }
-.small { font-size:17px; }
-.box { fill:#fafafa; stroke:#777; stroke-width:1.5; }
-.head { fill:#fff; stroke:#666; stroke-width:1.4; }
-.flow { fill:none; stroke:#333; stroke-width:1.8; marker-end:url(#arrow); }
-.supervision { fill:none; stroke:#555; stroke-width:1.8; stroke-dasharray:6 4; marker-end:url(#arrow); }
-</style>
-</defs>
-<rect width="1140" height="385" fill="white"/>
-<text x="15" y="29" class="stage">NATIVE AUDIO UNITS</text>
-<text x="285" y="29" class="stage">SHARED ENCODER</text>
-<text x="550" y="29" class="stage">PARALLEL PREDICTORS</text>
-<text x="860" y="29" class="stage">NATIVE TASK READOUTS</text>
-<rect x="15" y="52" width="210" height="185" class="box"/>
-<text x="120" y="83" text-anchor="middle" class="main">ICBHI cycles</text>
-<text x="120" y="117" text-anchor="middle" class="main">SPRSound events</text>
-<line x1="35" y1="134" x2="205" y2="134" stroke="#bbb"/>
-<text x="120" y="165" text-anchor="middle" class="body">Mono, 16 kHz</text>
-<text x="120" y="195" text-anchor="middle" class="body">5 s per native unit</text>
-<text x="120" y="223" text-anchor="middle" class="small">One unit, one prediction</text>
-<rect x="285" y="77" width="195" height="139" class="box"/>
-<text x="382.5" y="109" text-anchor="middle" class="main">BEATs</text>
-<text x="382.5" y="140" text-anchor="middle" class="body">Mean pooling</text>
-<text x="382.5" y="170" text-anchor="middle" class="body">Linear projection</text>
-<text x="382.5" y="199" text-anchor="middle" class="small">Shared representation h</text>
-<path d="M225 146 H283" class="flow"/>
-<rect x="550" y="52" width="235" height="199" class="box"/>
-<rect x="570" y="70" width="195" height="48" class="head"/>
-<text x="667.5" y="100" text-anchor="middle" class="body">A: Normal / Abnormal</text>
-<rect x="570" y="136" width="91" height="48" class="head"/>
-<text x="615.5" y="166" text-anchor="middle" class="small">C: Crackle</text>
-<rect x="674" y="136" width="91" height="48" class="head"/>
-<text x="719.5" y="166" text-anchor="middle" class="small">W: Wheeze</text>
-<text x="667.5" y="216" text-anchor="middle" class="small">Shared h; parallel outputs</text>
-<text x="667.5" y="240" text-anchor="middle" class="small">Marginal C/W probabilities</text>
-<path d="M480 146 H520 V94 H568" class="flow"/>
-<path d="M520 146 V124 H615 V134" class="flow"/>
-<path d="M615 124 H719 V134" class="flow"/>
-<circle cx="520" cy="146" r="3" fill="#333"/>
-<circle cx="615" cy="124" r="3" fill="#333"/>
-<rect x="860" y="61" width="265" height="76" class="box"/>
-<text x="992.5" y="91" text-anchor="middle" class="main">SPRSound events</text>
-<text x="992.5" y="119" text-anchor="middle" class="body">Normal / Adventitious</text>
-<path d="M765 94 H858" class="flow"/>
-<text x="808" y="79" text-anchor="middle" class="small">A only</text>
-<rect x="860" y="174" width="265" height="110" class="box"/>
-<text x="992.5" y="204" text-anchor="middle" class="main">ICBHI cycles</text>
-<text x="992.5" y="231" text-anchor="middle" class="body">A gate + C/W decisions</text>
-<text x="992.5" y="256" text-anchor="middle" class="small">Normal / Crackle / Wheeze / Both</text>
-<path d="M785 227 H858" class="flow"/>
-<text x="820" y="211" text-anchor="middle" class="small">A, C, W</text>
-<rect x="15" y="301" width="465" height="59" class="box"/>
-<text x="247.5" y="326" text-anchor="middle" class="main">Native labels + annotation availability</text>
-<text x="247.5" y="350" text-anchor="middle" class="small">Map supported A/C/W targets; omit unavailable targets</text>
-<rect x="550" y="301" width="235" height="59" class="box"/>
-<text x="667.5" y="326" text-anchor="middle" class="main">Classification losses</text>
-<text x="667.5" y="350" text-anchor="middle" class="small">Available-node supervision</text>
-<path d="M480 331 H548" class="supervision"/>
-<path d="M667.5 251 V299" class="flow"/>
-<text x="862" y="327" class="small">Two levels organize decisions;</text>
-<text x="862" y="350" class="small">they are not cascaded predictors.</text>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+     width="178mm" height="70mm" viewBox="0 0 504.566929 198.425197">
+  <title>Shared acoustic attribute learning and native task readouts</title>
+  <desc>ICBHI cycles and SPRSound events supply core training audio to one BEATs encoder, token mean pooling, a linear projection, and three parallel A, C, and W predictors. A separate annotation path produces targets and availability masks for the classification loss. SPRSound uses A for a binary readout. ICBHI applies an A gate and then C/W decisions for four classes; the prediction heads are parallel, not cascaded. A separate HF source-train auxiliary condition supplies C/W supervision only. HF source-test and KAUH pass through the same shared model with fixed selected parameters and core-validation thresholds. HF readouts are annotated-interval coverage and recording-level presence; KAUH averages patient B/D/E probabilities before decoding. Architectural parameters, boundary rules, PAFA regularization, and the HF annotation-derived-negative convention are described in Section 3.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="5" markerHeight="5" refX="4.5" refY="2.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L5 2.5 L0 5 Z" fill="#34485a"/>
+    </marker>
+    <marker id="label-arrow" markerWidth="5" markerHeight="5" refX="4.5" refY="2.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L5 2.5 L0 5 Z" fill="#806494"/>
+    </marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; font-size: 9px; fill: #213343; }
+      .panel { font-size: 10.5px; font-weight: 700; }
+      .label { font-size: 9px; font-weight: 700; }
+      .model-title { font-size: 11px; font-weight: 700; }
+      .node-letter { font-size: 10px; font-weight: 700; }
+      .subtle { fill: #4e6172; }
+      .core { fill: #f0f5fa; stroke: #6b849d; stroke-width: .8; }
+      .shared { fill: #eef7f3; stroke: #548271; stroke-width: .85; }
+      .head { fill: #fff; stroke: #548271; stroke-width: .8; }
+      .supervision { fill: #f6f1f9; stroke: #947ba4; stroke-width: .8; }
+      .readout { fill: #faf8f1; stroke: #a29578; stroke-width: .8; }
+      .decision { fill: #fff; stroke: #8d8269; stroke-width: .8; }
+      .eval { fill: #f5f6f7; stroke: #89949e; stroke-width: .8; }
+      .flow { fill: none; stroke: #34485a; stroke-width: .9; stroke-linejoin: round; marker-end: url(#arrow); }
+      .bus { fill: none; stroke: #34485a; stroke-width: .9; stroke-linejoin: round; }
+      .labels { fill: none; stroke: #806494; stroke-width: .95; stroke-dasharray: 3 2; stroke-linejoin: round; marker-end: url(#label-arrow); }
+      .rule { stroke: #d4dce3; stroke-width: .65; }
+    </style>
+  </defs>
+  <rect width="504.566929" height="198.425197" fill="#fff"/>
+
+  <g id="core-learning" inkscape:groupmode="layer" inkscape:label="Core learning">
+    <text x="5" y="11.5" class="panel">(a) Shared attribute learning</text>
+    <text x="5" y="26" class="label">Core training</text>
+    <text x="129" y="26" class="label">Shared model</text>
+    <text x="239" y="26" class="label">Parallel heads</text>
+
+    <g id="core-sources">
+      <rect x="5" y="33" width="98" height="102" rx="3" class="core"/>
+      <text x="13" y="45.5" class="label">ICBHI cycles</text>
+      <text x="13" y="58" class="label">SPRSound events</text>
+      <path d="M13 66 H95" class="rule"/>
+      <path d="M14 80 H18 L20 75 L23 87 L26 73 L29 84 L32 78 L34 80 H39" fill="none" stroke="#58768f" stroke-width=".9"/>
+      <text x="47" y="83">Audio</text>
+      <text x="13" y="106" class="label">Annotations</text>
+      <text x="13" y="120">SPR R/S: A only</text>
+      <text x="13" y="131">C/W unavailable</text>
+    </g>
+
+    <path d="M103 80 H116 V70.5 H127" class="flow"/>
+    <g id="shared-representation">
+      <rect x="129" y="36" width="87" height="61" rx="3" class="shared"/>
+      <text x="172.5" y="52" text-anchor="middle" class="model-title">BEATs</text>
+      <text x="172.5" y="69" text-anchor="middle">Token mean</text>
+      <text x="172.5" y="85" text-anchor="middle">Linear projection</text>
+    </g>
+
+    <path d="M216 70.5 H229" class="bus"/>
+    <path d="M229 70.5 V46.5 H237" class="flow"/>
+    <path d="M229 70.5 H237" class="flow"/>
+    <path d="M229 70.5 V94.5 H237" class="flow"/>
+    <circle cx="229" cy="70.5" r="1.45" fill="#34485a"/>
+    <text x="221" y="64" font-style="italic">h</text>
+
+    <g id="parallel-predictors">
+      <rect x="239" y="37" width="70" height="19" rx="2" class="head"/>
+      <text x="245" y="50" class="node-letter">A</text>
+      <text x="257" y="49.6">Abnormality</text>
+      <rect x="239" y="61" width="70" height="19" rx="2" class="head"/>
+      <text x="245" y="74" class="node-letter">C</text>
+      <text x="257" y="73.6">Crackle</text>
+      <rect x="239" y="85" width="70" height="19" rx="2" class="head"/>
+      <text x="244" y="98" class="node-letter">W</text>
+      <text x="257" y="97.6">Wheeze</text>
+    </g>
+
+    <g id="annotation-supervision">
+      <path d="M103 117.5 H113" class="labels"/>
+      <rect x="115" y="101" width="101" height="34" rx="3" class="supervision"/>
+      <text x="165.5" y="114.5" text-anchor="middle">A/C/W targets</text>
+      <text x="165.5" y="127.5" text-anchor="middle">+ availability masks</text>
+      <path d="M216 118 H230" class="labels"/>
+      <rect x="232" y="109" width="77" height="26" rx="3" class="supervision"/>
+      <text x="270.5" y="120" text-anchor="middle" class="label">Masked loss</text>
+      <text x="270.5" y="131" text-anchor="middle">CE / BCE</text>
+    </g>
+  </g>
+
+  <g id="shared-scores" inkscape:groupmode="layer" inkscape:label="Shared prediction scores">
+    <path d="M309 46.5 H318 V123 H311" class="flow"/>
+    <path d="M309 70.5 H328" class="bus"/>
+    <path d="M309 94.5 H318" class="bus"/>
+    <circle cx="318" cy="70.5" r="1.45" fill="#34485a"/>
+    <circle cx="318" cy="94.5" r="1.45" fill="#34485a"/>
+  </g>
+
+  <g id="native-readouts" inkscape:groupmode="layer" inkscape:label="Native task readouts">
+    <text x="339" y="11.5" class="panel">(b) Native task readouts</text>
+    <path d="M328 70.5 V50.5 H337" class="flow"/>
+    <path d="M328 70.5 V97.5 H339" class="bus"/>
+    <g id="sprsound-readout">
+      <rect x="339" y="35" width="160" height="31" rx="3" class="readout"/>
+      <text x="347" y="47" class="label">SPRSound: A argmax</text>
+      <text x="347" y="59">Normal / Adventitious</text>
+    </g>
+    <g id="icbhi-two-level-readout">
+      <rect x="339" y="72" width="160" height="65" rx="3" class="readout"/>
+      <path d="M339 97.5 H343" class="flow"/>
+      <text x="347" y="83" class="label">ICBHI: two-level readout</text>
+      <rect x="345" y="89" width="42" height="17" rx="2" class="decision"/>
+      <text x="366" y="100.5" text-anchor="middle">A gate</text>
+      <path d="M387 97.5 H437" class="flow"/>
+      <text x="442" y="100.5">Normal</text>
+      <path d="M366 106 V116" class="flow"/>
+      <text x="375" y="115.5">Abnormal</text>
+      <rect x="345" y="118" width="42" height="18" rx="2" class="decision"/>
+      <text x="366" y="130" text-anchor="middle">C/W</text>
+      <path d="M387 127 H404" class="flow"/>
+      <text x="410" y="123">Crackle / Wheeze</text>
+      <text x="410" y="134">Both</text>
+    </g>
+  </g>
+
+  <g id="study-conditions" inkscape:groupmode="layer" inkscape:label="Auxiliary condition and fixed-model evaluation">
+    <path d="M5 141 H499" class="rule"/>
+    <g id="hf-auxiliary-condition">
+      <text x="5" y="155" class="label">HF auxiliary</text>
+      <text x="5" y="166">condition</text>
+      <rect x="83" y="145" width="116" height="23" rx="2.5" class="core"/>
+      <text x="141" y="160" text-anchor="middle">HF source-train</text>
+      <path d="M199 156.5 H211" class="flow"/>
+      <rect x="213" y="145" width="105" height="23" rx="2.5" class="shared"/>
+      <text x="265.5" y="160" text-anchor="middle">Same shared model</text>
+      <path d="M318 156.5 H330" class="flow"/>
+      <rect x="332" y="145" width="167" height="23" rx="2.5" class="supervision"/>
+      <text x="415.5" y="160" text-anchor="middle">+ C/W auxiliary loss</text>
+    </g>
+    <g id="fixed-model-evaluation">
+      <text x="5" y="182" class="label">Fixed-model</text>
+      <text x="5" y="193">evaluation</text>
+      <rect x="83" y="173" width="116" height="23" rx="2.5" class="eval"/>
+      <text x="141" y="188" text-anchor="middle">HF source-test / KAUH</text>
+      <path d="M199 184.5 H211" class="flow"/>
+      <rect x="213" y="173" width="105" height="23" rx="2.5" class="shared"/>
+      <text x="265.5" y="188" text-anchor="middle">Same shared model</text>
+      <path d="M318 184.5 H330" class="flow"/>
+      <rect x="332" y="173" width="167" height="23" rx="2.5" class="eval"/>
+      <text x="339" y="182.5">HF: coverage / presence</text>
+      <text x="339" y="192.5">KAUH: B/D/E mean &#x2192; decoding</text>
+    </g>
+  </g>
 </svg>

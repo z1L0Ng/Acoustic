@@ -1,11 +1,16 @@
 \section{Method}
 \label{sec:method}
-\subsection{Shared Acoustic Representation and Attributes}
-Figure~\ref{fig:method_overview} separates the acoustic input path from the
-annotation path. We initialize the encoder with BEATs iter3+ AS2M
-\cite{chen2023beats} and fine-tune it jointly on the two datasets.
-Its 768-dimensional token features are mean-pooled and linearly projected to
-$h_i\in\mathbb{R}^{256}$. Three parallel linear predictors produce
+Our method connects heterogeneous annotations through shared acoustic
+attributes, then recovers native task labels from their predictions
+(Figure~\ref{fig:method_overview}). This separates the information used to
+learn the representation from the rules used to make task decisions.
+
+\subsection{Shared Acoustic Attribute Predictors}
+For waveform $x_i$, a BEATs iter3+ AS2M encoder\cite{chen2023beats}
+pretrained on AudioSet\cite{gemmeke2017audioset} produces
+768-dimensional token features. Mean pooling followed by a
+linear projection gives $h_i\in\mathbb{R}^{256}$. Three parallel linear
+heads predict abnormality (A), Crackle (C), and Wheeze (W):
 \begin{equation}
 \begin{aligned}
  p_{ia}&=\operatorname{softmax}(W_a h_i+b_a)_{\rm Abnormal},\\
@@ -13,62 +18,86 @@ $h_i\in\mathbb{R}^{256}$. Three parallel linear predictors produce
  p_{iw}=\sigma(W_w h_i+b_w).
 \end{aligned}
 \end{equation}
-The abnormality predictor has two logits; each attribute predictor has one.
-All three update the shared representation. The two-level structure is used
-for task decisions: the C/W probabilities are marginal predictions, with
-no explicit parent--child probability-consistency constraint.
+A uses two logits, whereas C/W each use one. All heads jointly fine-tune
+the encoder on ICBHI and SPRSound. C/W are marginal attribute probabilities;
+the two-level hierarchy is applied in the decision readout.
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{Figure/figure2_method.pdf}
-\caption{Shared attributes with native task readouts. Audio from each native
-unit enters the same encoder and three parallel predictors. Labels and
-availability masks enter the training losses. SPRSound uses the abnormality
-decision; ICBHI combines abnormality and C/W decisions. The semantic decision
-hierarchy does not imply that the C/W predictors take the abnormality output
-as their input.}
-\label{fig:method_overview}
-\end{figure*}
+% Figure 2 is declared in main.tex so it can float to page 3.
 
-\subsection{Learning from Available Supervision}
-For sample $i$ and node $k\in\{a,c,w\}$, $m_{ik}=1$ when its source
-annotation supports target $y_{ik}$. For batch $B$, let
-$B_k=\{i\in B:m_{ik}=1\}$ and $K_B=\{k:|B_k|>0\}$. The implemented
-classification objective averages over available samples within each node:
+\subsection{Learning from Available Annotations}
+Partial-label learning distinguishes unobserved targets from observed
+negatives\cite{shi2021marginal,zhou2022unknown}.
+The alignment in Section~\ref{sec:annotation_alignment} supplies targets
+$y_{ik}$ and availability masks $m_{ik}$ for $k\in\{a,c,w\}$.
+A mask is one only when the source annotation supports that target.
+For batch $B$, let
+$B_k=\{i\in B:m_{ik}=1\}$ and $K_B=\{k:|B_k|>0\}$. The
+classification objective averages available supervision within each node:
 \begin{equation}
 \mathcal L_{\rm cls}(B)=\frac{1}{|K_B|}\sum_{k\in K_B}
 \frac{1}{|B_k|}\sum_{i\in B_k}\ell_k(p_{ik},y_{ik}),
 \label{eq:classification_loss}
 \end{equation}
 where $\ell_a$ is two-class cross-entropy and $\ell_c,\ell_w$ are binary
-cross-entropy. Dataset-homogeneous batches contribute equally many updates
-per epoch. Thus supported labels from either source train the shared
-attributes without requiring every sample to supervise every node.
+cross-entropy. This lets compatible labels share a predictor while masking
+unsupported targets. Equation~\ref{eq:classification_loss} describes the
+benchmark loss in Table~\ref{tab:native_results}; the controlled study fixes
+node coefficients as specified in Section~\ref{sec:ablations}.
+Joint training uses equal numbers of dataset-homogeneous updates.
 
-We retain PAFA's patient cohesion-separation and global patient alignment
-objectives\cite{jeong2025pafa}:
+To regularize patient-specific variation, we retain PAFA's patient
+cohesion-separation and global patient alignment objectives\cite{jeong2025pafa}:
 \begin{equation}
-\mathcal L=\mathcal L_{\rm cls}+50\mathcal L_{\rm PCSL}
-                       +0.0005\mathcal L_{\rm GPAL}.
+\mathcal L_{\rm core}=\mathcal L_{\rm cls}+50\mathcal L_{\rm PCSL}
+                                  +0.0005\mathcal L_{\rm GPAL}.
 \end{equation}
-An auxiliary attention-based projection supplies their features, with patient
-identifiers qualified by dataset. This auxiliary projection is used during
-training and does not enter the native classification readouts.
+A separate attention-based projection of encoder tokens supplies their
+features during training; patient identifiers are qualified by dataset.
 
-\subsection{Two-Level Native Task Decisions}
-The Normal/Abnormal argmax defines $\hat a$; its ties select Normal.
-Attribute decisions are $\hat c=\mathbb{I}[p_c\geq\tau_c]$ and
-$\hat w=\mathbb{I}[p_w\geq\tau_w]$. SPRSound directly uses $\hat a$ for
-Normal/Adventitious classification. ICBHI assigns Normal if $\hat a=0$.
-For an abnormal decision, two positive attributes yield Both and one
-positive attribute yields its corresponding class. If neither is positive,
-the larger $p_k-\tau_k$ margin selects Crackle or Wheeze, with ties assigned
-to Crackle.
+\subsection{Two-Level Native Task Readouts}
+The Normal/Abnormal argmax defines $\hat a$ (ties select Normal), and
+$\hat c=\mathbb{I}[p_c\geq\tau_c]$,
+$\hat w=\mathbb{I}[p_w\geq\tau_w]$ define attribute decisions.
+SPRSound uses $\hat a$ for Normal/Adventitious classification.
+ICBHI first assigns Normal when $\hat a=0$; otherwise, two positive
+attributes yield Both and a single positive attribute yields its class.
+If neither is positive, the larger $p_k-\tau_k$ margin selects Crackle
+or Wheeze, with ties assigned to Crackle.
 
-For the reported runs, the shared C/W thresholds independently maximize the
-equal-dataset mean of eligible-node binary F1 on internal validation data.
-Candidates are the observed probabilities together with 0 and 1; exact ties
-select the larger threshold. This readout returns task labels from the same
-attribute scores. Its contribution can therefore be studied separately from
-representation learning by fixing the scores and changing only the decision
-rule.
+Shared thresholds independently maximize the equal-source mean of
+available-target binary F1 on core validation data. Candidates are the
+observed probabilities plus 0 and 1; ties select the larger threshold.
+Changing the readout while fixing the encoder and attribute scores isolates
+decision-rule effects from changes in the learned representation.
+
+\subsection{HF Auxiliary-Supervision Condition}
+\label{sec:hf_method}
+To examine additional attribute supervision, we retain the architecture
+and add HF source-training windows:
+\begin{equation}
+\mathcal L_{\rm HF\mbox{-}on}=\mathcal L_{\rm core}+0.25\mathcal L_{\rm HF},
+\end{equation}
+using one batch of 32 HF windows per core update. A window overlapping
+D, Wheeze, Rhonchi, or Stridor supplies both C/W targets: each is one
+when the corresponding D or Wheeze annotation overlaps, and zero otherwise.
+$\mathcal L_{\rm HF}$ averages their node-wise BCE losses.
+Gap, empty, and phase-only windows are masked; HF supplies no A target.
+The derived negatives assume that an absent attribute annotation denotes
+absence within these eligible windows, although uncertain events may be
+omitted in the source annotations\cite{hsu2021hflung}.
+HF is excluded from threshold fitting, checkpoint selection, and early
+stopping; its source-test partition is reserved for evaluation.
+
+% \subsection{HF and KAUH Evaluation Readouts}
+% \label{sec:external_readouts}
+% HF interval coverage counts a labeled D or Wheeze interval when any
+% overlapping 5-s window reaches its fixed attribute threshold.
+% Recording-level presence uses the maximum score across the three windows.
+% This presence evaluation uses recordings with at least one D/W/R/S
+% annotation and the same derived-negative convention. It therefore measures
+% attribute discrimination within annotated abnormal recordings; interval
+% coverage measures recognition at the window scale.
+%
+% For KAUH, probabilities are averaged across each patient's B/D/E files
+% before binary or compatible four-class decoding. Both external evaluations
+% reuse the selected models and core-validation thresholds.

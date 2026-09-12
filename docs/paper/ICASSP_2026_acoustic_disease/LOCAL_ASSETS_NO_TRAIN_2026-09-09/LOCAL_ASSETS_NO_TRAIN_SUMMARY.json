@@ -1,0 +1,2176 @@
+{
+  "benchmark_controls_seed42": {
+    "actions_not_performed": [
+      "No new seed",
+      "No Full retraining",
+      "No HF external evaluation",
+      "No Native external evaluation",
+      "No server task, Git commit/push, Notion change, compilation, hash/checksum, or extra variant"
+    ],
+    "boundary": "Five rows are seed42 official-test-selected benchmark controls. Full is an existing fresh42 reference only; these are not clean estimates or pure causal ablations.",
+    "completed": {
+      "Coarse_SPR": {
+        "completed_epochs": 30,
+        "elapsed_minutes": 294.8762045451333,
+        "evidence_boundary": "seed42 official-test-selected benchmark control; not clean causal evidence",
+        "label": "Coarse_SPR",
+        "native": {
+          "icbhi": {
+            "confusion": [
+              [
+                1175,
+                247,
+                61,
+                96
+              ],
+              [
+                314,
+                289,
+                3,
+                43
+              ],
+              [
+                101,
+                44,
+                86,
+                154
+              ],
+              [
+                26,
+                16,
+                17,
+                84
+              ]
+            ],
+            "macro_f1": 0.4586131026847352,
+            "per_class": {
+              "both": {
+                "f1": 0.3230769230769231,
+                "precision": 0.22281167108753316,
+                "recall": 0.5874125874125874,
+                "support": 143
+              },
+              "crackle": {
+                "f1": 0.4642570281124498,
+                "precision": 0.4848993288590604,
+                "recall": 0.4453004622496148,
+                "support": 649
+              },
+              "normal": {
+                "f1": 0.7355242566510172,
+                "precision": 0.7271039603960396,
+                "recall": 0.7441418619379354,
+                "support": 1579
+              },
+              "wheeze": {
+                "f1": 0.3115942028985507,
+                "precision": 0.5149700598802395,
+                "recall": 0.22337662337662337,
+                "support": 385
+              }
+            },
+            "rows": 2756,
+            "sensitivity": 0.3899745114698386,
+            "specificity": 0.7441418619379354,
+            "uar": 0.5000578837441902
+          },
+          "sprsound": {
+            "confusion": [
+              [
+                862,
+                178
+              ],
+              [
+                7,
+                382
+              ]
+            ],
+            "macro_f1": 0.8540742895529523,
+            "per_class": {
+              "abnormal": {
+                "f1": 0.8050579557428873,
+                "precision": 0.6821428571428572,
+                "recall": 0.9820051413881749,
+                "support": 389
+              },
+              "normal": {
+                "f1": 0.9030906233630173,
+                "precision": 0.9919447640966629,
+                "recall": 0.8288461538461539,
+                "support": 1040
+              }
+            },
+            "rows": 1429,
+            "sensitivity": 0.9820051413881749,
+            "specificity": 0.8288461538461539,
+            "uar": 0.9054256476171644
+          }
+        },
+        "native_delta_vs_full": {
+          "icbhi": {
+            "macro_f1": -0.02647714920105637,
+            "per_class_recall": {
+              "both": 0.3426573426573426,
+              "crackle": -0.07395993836671805,
+              "normal": -0.05953134895503487,
+              "wheeze": -0.09350649350649351
+            },
+            "sensitivity": -0.02973661852166526,
+            "specificity": -0.05953134895503487,
+            "uar": 0.02891489045727408
+          },
+          "sprsound": {
+            "macro_f1": -0.0050963790067837245,
+            "per_class_recall": {
+              "abnormal": 0.010282776349614386,
+              "normal": -0.011538461538461497
+            },
+            "sensitivity": 0.010282776349614386,
+            "specificity": -0.011538461538461497,
+            "uar": -0.000627842594423611
+          }
+        },
+        "primary": {
+          "icbhi_score": 0.567058186703887,
+          "spr_cw_mean_auroc": 0.9367140299399346,
+          "sprsound_official_score": 0.9021871603478575
+        },
+        "primary_delta_vs_full": {
+          "icbhi_score": -0.04463398373835015,
+          "spr_cw_mean_auroc": -0.03500492513678033,
+          "sprsound_official_score": -0.0014865580469287654
+        },
+        "run_summary": "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/coarse_spr/seed_42_attempt2/run_summary.json",
+        "seed": 42,
+        "selected_epoch": 20,
+        "selection_dataset": "icbhi",
+        "selection_score": 0.567058186703887,
+        "source_run": "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/coarse_spr/seed_42_attempt2",
+        "spr_cw": {
+          "crackle": {
+            "auprc": 0.33476987016073184,
+            "auroc": 0.9091255089396354,
+            "eligible": 1429,
+            "negative": 1345,
+            "positive": 84
+          },
+          "mean": {
+            "auprc": 0.5930497957043066,
+            "auroc": 0.9367140299399346
+          },
+          "wheeze": {
+            "auprc": 0.8513297212478813,
+            "auroc": 0.9643025509402336,
+            "eligible": 1429,
+            "negative": 1123,
+            "positive": 306
+          }
+        },
+        "spr_cw_delta_vs_full": {
+          "crackle_auprc": -0.22831187707742467,
+          "crackle_auroc": -0.047902283590015915,
+          "mean_auprc": -0.15883177100403922,
+          "mean_auroc": -0.03500492513678033,
+          "wheeze_auprc": -0.08935166493065394,
+          "wheeze_auroc": -0.022107566683544966
+        },
+        "terminal_metrics": "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/coarse_spr/seed_42_attempt2/terminal/native_metrics.json",
+        "thresholds": {
+          "crackle": 0.24814091622829437,
+          "wheeze": 0.12677700817584991
+        },
+        "updates": 9780
+      },
+      "ICBHI_only": {
+        "completed_epochs": 28,
+        "elapsed_minutes": 256.86890056804987,
+        "evidence_boundary": "seed42 official-test-selected benchmark control; not clean causal evidence",
+        "label": "ICBHI_only",
+        "native": {
+          "icbhi": {
+            "confusion": [
+              [
+                1060,
+                380,
+                60,
+                79
+              ],
+              [
+                239,
+                393,
+                2,
+                15
+              ],
+              [
+                117,
+                76,
+                70,
+                122
+              ],
+              [
+                19,
+                38,
+                17,
+                69
+              ]
+            ],
+            "macro_f1": 0.44992628705502324,
+            "per_class": {
+              "both": {
+                "f1": 0.32242990654205606,
+                "precision": 0.24210526315789474,
+                "recall": 0.4825174825174825,
+                "support": 143
+              },
+              "crackle": {
+                "f1": 0.51171875,
+                "precision": 0.44306651634723787,
+                "recall": 0.6055469953775039,
+                "support": 649
+              },
+              "normal": {
+                "f1": 0.7033842070338421,
+                "precision": 0.7386759581881533,
+                "recall": 0.6713109563014567,
+                "support": 1579
+              },
+              "wheeze": {
+                "f1": 0.26217228464419473,
+                "precision": 0.4697986577181208,
+                "recall": 0.18181818181818182,
+                "support": 385
+              }
+            },
+            "rows": 2756,
+            "sensitivity": 0.4519966015293118,
+            "specificity": 0.6713109563014567,
+            "uar": 0.48529840400365626
+          },
+          "sprsound": {
+            "confusion": [
+              [
+                664,
+                376
+              ],
+              [
+                192,
+                197
+              ]
+            ],
+            "macro_f1": 0.5549926752458398,
+            "per_class": {
+              "abnormal": {
+                "f1": 0.4095634095634096,
+                "precision": 0.343804537521815,
+                "recall": 0.506426735218509,
+                "support": 389
+              },
+              "normal": {
+                "f1": 0.70042194092827,
+                "precision": 0.7757009345794392,
+                "recall": 0.6384615384615384,
+                "support": 1040
+              }
+            },
+            "rows": 1429,
+            "sensitivity": 0.506426735218509,
+            "specificity": 0.6384615384615384,
+            "uar": 0.5724441368400237
+          }
+        },
+        "native_delta_vs_full": {
+          "icbhi": {
+            "macro_f1": -0.035163964830768335,
+            "per_class_recall": {
+              "both": 0.23776223776223773,
+              "crackle": 0.08628659476117106,
+              "normal": -0.13236225459151363,
+              "wheeze": -0.13506493506493505
+            },
+            "sensitivity": 0.032285471537807975,
+            "specificity": -0.13236225459151363,
+            "uar": 0.014155410716740091
+          },
+          "sprsound": {
+            "macro_f1": -0.30417799331389617,
+            "per_class_recall": {
+              "abnormal": -0.46529562982005146,
+              "normal": -0.20192307692307698
+            },
+            "sensitivity": -0.46529562982005146,
+            "specificity": -0.20192307692307698,
+            "uar": -0.3336093533715643
+          }
+        },
+        "primary": {
+          "icbhi_score": 0.5616537789153843,
+          "spr_cw_mean_auroc": 0.812306159370114,
+          "sprsound_official_score": 0.5686373921846284
+        },
+        "primary_delta_vs_full": {
+          "icbhi_score": -0.050038391526852855,
+          "spr_cw_mean_auroc": -0.15941279570660094,
+          "sprsound_official_score": -0.3350363262101579
+        },
+        "run_summary": "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/icbhi_only/seed_42/run_summary.json",
+        "seed": 42,
+        "selected_epoch": 18,
+        "selection_dataset": "icbhi",
+        "selection_score": 0.5616537789153843,
+        "source_run": "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/icbhi_only/seed_42",
+        "spr_cw": {
+          "crackle": {
+            "auprc": 0.1974647444143883,
+            "auroc": 0.8040715170826696,
+            "eligible": 1429,
+            "negative": 1345,
+            "positive": 84
+          },
+          "mean": {
+            "auprc": 0.38627515431885917,
+            "auroc": 0.812306159370114
+          },
+          "wheeze": {
+            "auprc": 0.57508556422333,
+            "auroc": 0.8205408016575583,
+            "eligible": 1429,
+            "negative": 1123,
+            "positive": 306
+          }
+        },
+        "spr_cw_delta_vs_full": {
+          "crackle_auprc": -0.3656170028237682,
+          "crackle_auroc": -0.15295627544698176,
+          "mean_auprc": -0.36560641238948666,
+          "mean_auroc": -0.15941279570660094,
+          "wheeze_auprc": -0.36559582195520524,
+          "wheeze_auroc": -0.16586931596622034
+        },
+        "terminal_metrics": "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/icbhi_only/seed_42/terminal/native_metrics.json",
+        "thresholds": {
+          "crackle": 0.013291899114847183,
+          "wheeze": 0.4247186481952667
+        },
+        "updates": 9128
+      },
+      "Native_attributes": {
+        "completed_epochs": 27,
+        "elapsed_minutes": 257.57471509930036,
+        "evidence_boundary": "seed42 official-test-selected benchmark control; not clean causal evidence",
+        "label": "Native_attributes",
+        "native": {
+          "icbhi": {
+            "confusion": [
+              [
+                1243,
+                260,
+                56,
+                20
+              ],
+              [
+                259,
+                373,
+                5,
+                12
+              ],
+              [
+                123,
+                74,
+                117,
+                71
+              ],
+              [
+                30,
+                34,
+                29,
+                50
+              ]
+            ],
+            "macro_f1": 0.5096265596458299,
+            "per_class": {
+              "both": {
+                "f1": 0.33783783783783783,
+                "precision": 0.32679738562091504,
+                "recall": 0.34965034965034963,
+                "support": 143
+              },
+              "crackle": {
+                "f1": 0.5366906474820143,
+                "precision": 0.5033738191632928,
+                "recall": 0.5747303543913713,
+                "support": 649
+              },
+              "normal": {
+                "f1": 0.7687074829931972,
+                "precision": 0.7510574018126889,
+                "recall": 0.7872070930968967,
+                "support": 1579
+              },
+              "wheeze": {
+                "f1": 0.3952702702702703,
+                "precision": 0.5652173913043478,
+                "recall": 0.3038961038961039,
+                "support": 385
+              }
+            },
+            "rows": 2756,
+            "sensitivity": 0.45879354290569246,
+            "specificity": 0.7872070930968967,
+            "uar": 0.5038709752586804
+          },
+          "sprsound": {
+            "confusion": [
+              [
+                900,
+                140
+              ],
+              [
+                9,
+                380
+              ]
+            ],
+            "macro_f1": 0.8798170735493251,
+            "per_class": {
+              "abnormal": {
+                "f1": 0.8360836083608361,
+                "precision": 0.7307692307692307,
+                "recall": 0.9768637532133676,
+                "support": 389
+              },
+              "normal": {
+                "f1": 0.9235505387378142,
+                "precision": 0.9900990099009901,
+                "recall": 0.8653846153846154,
+                "support": 1040
+              }
+            },
+            "rows": 1429,
+            "sensitivity": 0.9768637532133676,
+            "specificity": 0.8653846153846154,
+            "uar": 0.9211241842989915
+          }
+        },
+        "native_delta_vs_full": {
+          "icbhi": {
+            "macro_f1": 0.024536307760038345,
+            "per_class_recall": {
+              "both": 0.10489510489510487,
+              "crackle": 0.055469953775038494,
+              "normal": -0.016466117796073543,
+              "wheeze": -0.012987012987012991
+            },
+            "sensitivity": 0.039082412914188625,
+            "specificity": -0.016466117796073543,
+            "uar": 0.03272798197176424
+          },
+          "sprsound": {
+            "macro_f1": 0.02064640498958914,
+            "per_class_recall": {
+              "abnormal": 0.005141388174807138,
+              "normal": 0.025000000000000022
+            },
+            "sensitivity": 0.005141388174807138,
+            "specificity": 0.025000000000000022,
+            "uar": 0.015070694087403469
+          }
+        },
+        "primary": {
+          "icbhi_score": 0.6230003180012946,
+          "spr_cw_mean_auroc": 0.974069729749974,
+          "sprsound_official_score": 0.9194377127049769
+        },
+        "primary_delta_vs_full": {
+          "icbhi_score": 0.011308147559057513,
+          "spr_cw_mean_auroc": 0.0023507746732590595,
+          "sprsound_official_score": 0.0157639943101906
+        },
+        "run_summary": "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/native_attributes/seed_42/run_summary.json",
+        "seed": 42,
+        "selected_epoch": 17,
+        "selection_dataset": "icbhi",
+        "selection_score": 0.6230003180012946,
+        "source_run": "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/native_attributes/seed_42",
+        "spr_cw": {
+          "crackle": {
+            "auprc": 0.6389515374262641,
+            "auroc": 0.9607806691449814,
+            "eligible": 1429,
+            "negative": 1345,
+            "positive": 84
+          },
+          "mean": {
+            "auprc": 0.7925749545824636,
+            "auroc": 0.974069729749974
+          },
+          "wheeze": {
+            "auprc": 0.9461983717386631,
+            "auroc": 0.9873587903549665,
+            "eligible": 1429,
+            "negative": 1123,
+            "positive": 306
+          }
+        },
+        "spr_cw_delta_vs_full": {
+          "crackle_auprc": 0.07586979018810758,
+          "crackle_auroc": 0.0037528766153300808,
+          "mean_auprc": 0.0406933878741178,
+          "mean_auroc": 0.0023507746732590595,
+          "wheeze_auprc": 0.005516985560127807,
+          "wheeze_auroc": 0.0009486727311879273
+        },
+        "terminal_metrics": "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/native_attributes/seed_42/terminal/native_metrics.json",
+        "thresholds": {
+          "crackle": 0.6778755784034729,
+          "wheeze": 0.13519124686717987
+        },
+        "updates": 8802
+      },
+      "SPRSound_only": {
+        "completed_epochs": 34,
+        "elapsed_minutes": 281.630642870833,
+        "evidence_boundary": "seed42 official-test-selected benchmark control; not clean causal evidence",
+        "label": "SPRSound_only",
+        "native": {
+          "icbhi": {
+            "confusion": [
+              [
+                1307,
+                151,
+                119,
+                2
+              ],
+              [
+                590,
+                49,
+                10,
+                0
+              ],
+              [
+                234,
+                42,
+                105,
+                4
+              ],
+              [
+                88,
+                20,
+                35,
+                0
+              ]
+            ],
+            "macro_f1": 0.2792329972973631,
+            "per_class": {
+              "both": {
+                "f1": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 143
+              },
+              "crackle": {
+                "f1": 0.10757409440175632,
+                "precision": 0.18702290076335878,
+                "recall": 0.07550077041602465,
+                "support": 649
+              },
+              "normal": {
+                "f1": 0.6882569773565034,
+                "precision": 0.5890040558810274,
+                "recall": 0.8277390753641545,
+                "support": 1579
+              },
+              "wheeze": {
+                "f1": 0.3211009174311927,
+                "precision": 0.3903345724907063,
+                "recall": 0.2727272727272727,
+                "support": 385
+              }
+            },
+            "rows": 2756,
+            "sensitivity": 0.1308411214953271,
+            "specificity": 0.8277390753641545,
+            "uar": 0.29399177962686296
+          },
+          "sprsound": {
+            "confusion": [
+              [
+                905,
+                135
+              ],
+              [
+                8,
+                381
+              ]
+            ],
+            "macro_f1": 0.8843841320761656,
+            "per_class": {
+              "abnormal": {
+                "f1": 0.8419889502762431,
+                "precision": 0.7383720930232558,
+                "recall": 0.9794344473007712,
+                "support": 389
+              },
+              "normal": {
+                "f1": 0.926779313876088,
+                "precision": 0.9912376779846659,
+                "recall": 0.8701923076923077,
+                "support": 1040
+              }
+            },
+            "rows": 1429,
+            "sensitivity": 0.9794344473007712,
+            "specificity": 0.8701923076923077,
+            "uar": 0.9248133774965395
+          }
+        },
+        "native_delta_vs_full": {
+          "icbhi": {
+            "macro_f1": -0.20585725458842846,
+            "per_class_recall": {
+              "both": -0.24475524475524477,
+              "crackle": -0.4437596302003082,
+              "normal": 0.024065864471184195,
+              "wheeze": -0.04415584415584417
+            },
+            "sensitivity": -0.2888700084961767,
+            "specificity": 0.024065864471184195,
+            "uar": -0.1771512136600532
+          },
+          "sprsound": {
+            "macro_f1": 0.025213463516429613,
+            "per_class_recall": {
+              "abnormal": 0.007712082262210762,
+              "normal": 0.029807692307692313
+            },
+            "sensitivity": 0.007712082262210762,
+            "specificity": 0.029807692307692313,
+            "uar": 0.018759887284951482
+          }
+        },
+        "primary": {
+          "icbhi_score": 0.4792900984297408,
+          "spr_cw_mean_auroc": 0.9785796755881047,
+          "sprsound_official_score": 0.9232003703000848
+        },
+        "primary_delta_vs_full": {
+          "icbhi_score": -0.13240207201249632,
+          "spr_cw_mean_auroc": 0.006860720511389751,
+          "sprsound_official_score": 0.019526651905298564
+        },
+        "run_summary": "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/sprsound_only/seed_42/run_summary.json",
+        "seed": 42,
+        "selected_epoch": 24,
+        "selection_dataset": "sprsound",
+        "selection_score": 0.9232003703000848,
+        "source_run": "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/sprsound_only/seed_42",
+        "spr_cw": {
+          "crackle": {
+            "auprc": 0.7164080531506976,
+            "auroc": 0.9701628606833068,
+            "eligible": 1429,
+            "negative": 1345,
+            "positive": 84
+          },
+          "mean": {
+            "auprc": 0.8375589116184929,
+            "auroc": 0.9785796755881047
+          },
+          "wheeze": {
+            "auprc": 0.9587097700862884,
+            "auroc": 0.9869964904929024,
+            "eligible": 1429,
+            "negative": 1123,
+            "positive": 306
+          }
+        },
+        "spr_cw_delta_vs_full": {
+          "crackle_auprc": 0.15332630591254104,
+          "crackle_auroc": 0.013135068153655505,
+          "mean_auprc": 0.08567734491014711,
+          "mean_auroc": 0.006860720511389751,
+          "wheeze_auprc": 0.018028383907753187,
+          "wheeze_auroc": 0.0005863728691237746
+        },
+        "terminal_metrics": "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/sprsound_only/seed_42/terminal/native_metrics.json",
+        "thresholds": {
+          "crackle": 0.6049056053161621,
+          "wheeze": 0.9929736852645874
+        },
+        "updates": 11084
+      }
+    },
+    "differences_vs_full_reference_seed42": {
+      "Coarse_SPR": {
+        "native": {
+          "icbhi": {
+            "macro_f1": -0.02647714920105637,
+            "per_class_recall": {
+              "both": 0.3426573426573426,
+              "crackle": -0.07395993836671805,
+              "normal": -0.05953134895503487,
+              "wheeze": -0.09350649350649351
+            },
+            "sensitivity": -0.02973661852166526,
+            "specificity": -0.05953134895503487,
+            "uar": 0.02891489045727408
+          },
+          "sprsound": {
+            "macro_f1": -0.0050963790067837245,
+            "per_class_recall": {
+              "abnormal": 0.010282776349614386,
+              "normal": -0.011538461538461497
+            },
+            "sensitivity": 0.010282776349614386,
+            "specificity": -0.011538461538461497,
+            "uar": -0.000627842594423611
+          }
+        },
+        "primary": {
+          "icbhi_score": -0.04463398373835015,
+          "spr_cw_mean_auroc": -0.03500492513678033,
+          "sprsound_official_score": -0.0014865580469287654
+        },
+        "spr_cw": {
+          "crackle_auprc": -0.22831187707742467,
+          "crackle_auroc": -0.047902283590015915,
+          "mean_auprc": -0.15883177100403922,
+          "mean_auroc": -0.03500492513678033,
+          "wheeze_auprc": -0.08935166493065394,
+          "wheeze_auroc": -0.022107566683544966
+        }
+      },
+      "ICBHI_only": {
+        "native": {
+          "icbhi": {
+            "macro_f1": -0.035163964830768335,
+            "per_class_recall": {
+              "both": 0.23776223776223773,
+              "crackle": 0.08628659476117106,
+              "normal": -0.13236225459151363,
+              "wheeze": -0.13506493506493505
+            },
+            "sensitivity": 0.032285471537807975,
+            "specificity": -0.13236225459151363,
+            "uar": 0.014155410716740091
+          },
+          "sprsound": {
+            "macro_f1": -0.30417799331389617,
+            "per_class_recall": {
+              "abnormal": -0.46529562982005146,
+              "normal": -0.20192307692307698
+            },
+            "sensitivity": -0.46529562982005146,
+            "specificity": -0.20192307692307698,
+            "uar": -0.3336093533715643
+          }
+        },
+        "primary": {
+          "icbhi_score": -0.050038391526852855,
+          "spr_cw_mean_auroc": -0.15941279570660094,
+          "sprsound_official_score": -0.3350363262101579
+        },
+        "spr_cw": {
+          "crackle_auprc": -0.3656170028237682,
+          "crackle_auroc": -0.15295627544698176,
+          "mean_auprc": -0.36560641238948666,
+          "mean_auroc": -0.15941279570660094,
+          "wheeze_auprc": -0.36559582195520524,
+          "wheeze_auroc": -0.16586931596622034
+        }
+      },
+      "Native_attributes": {
+        "native": {
+          "icbhi": {
+            "macro_f1": 0.024536307760038345,
+            "per_class_recall": {
+              "both": 0.10489510489510487,
+              "crackle": 0.055469953775038494,
+              "normal": -0.016466117796073543,
+              "wheeze": -0.012987012987012991
+            },
+            "sensitivity": 0.039082412914188625,
+            "specificity": -0.016466117796073543,
+            "uar": 0.03272798197176424
+          },
+          "sprsound": {
+            "macro_f1": 0.02064640498958914,
+            "per_class_recall": {
+              "abnormal": 0.005141388174807138,
+              "normal": 0.025000000000000022
+            },
+            "sensitivity": 0.005141388174807138,
+            "specificity": 0.025000000000000022,
+            "uar": 0.015070694087403469
+          }
+        },
+        "primary": {
+          "icbhi_score": 0.011308147559057513,
+          "spr_cw_mean_auroc": 0.0023507746732590595,
+          "sprsound_official_score": 0.0157639943101906
+        },
+        "spr_cw": {
+          "crackle_auprc": 0.07586979018810758,
+          "crackle_auroc": 0.0037528766153300808,
+          "mean_auprc": 0.0406933878741178,
+          "mean_auroc": 0.0023507746732590595,
+          "wheeze_auprc": 0.005516985560127807,
+          "wheeze_auroc": 0.0009486727311879273
+        }
+      },
+      "SPRSound_only": {
+        "native": {
+          "icbhi": {
+            "macro_f1": -0.20585725458842846,
+            "per_class_recall": {
+              "both": -0.24475524475524477,
+              "crackle": -0.4437596302003082,
+              "normal": 0.024065864471184195,
+              "wheeze": -0.04415584415584417
+            },
+            "sensitivity": -0.2888700084961767,
+            "specificity": 0.024065864471184195,
+            "uar": -0.1771512136600532
+          },
+          "sprsound": {
+            "macro_f1": 0.025213463516429613,
+            "per_class_recall": {
+              "abnormal": 0.007712082262210762,
+              "normal": 0.029807692307692313
+            },
+            "sensitivity": 0.007712082262210762,
+            "specificity": 0.029807692307692313,
+            "uar": 0.018759887284951482
+          }
+        },
+        "primary": {
+          "icbhi_score": -0.13240207201249632,
+          "spr_cw_mean_auroc": 0.006860720511389751,
+          "sprsound_official_score": 0.019526651905298564
+        },
+        "spr_cw": {
+          "crackle_auprc": 0.15332630591254104,
+          "crackle_auroc": 0.013135068153655505,
+          "mean_auprc": 0.08567734491014711,
+          "mean_auroc": 0.006860720511389751,
+          "wheeze_auprc": 0.018028383907753187,
+          "wheeze_auroc": 0.0005863728691237746
+        }
+      }
+    },
+    "evidence_label": "seed42_official_test_selected_benchmark_control",
+    "full_reference_seed42": {
+      "completed_epochs": 27,
+      "elapsed_minutes": 274.0128489687505,
+      "evidence_boundary": "seed42 official-test-selected benchmark control; not clean causal evidence",
+      "label": "Full_reference_seed42",
+      "native": {
+        "icbhi": {
+          "confusion": [
+            [
+              1269,
+              235,
+              63,
+              12
+            ],
+            [
+              294,
+              337,
+              6,
+              12
+            ],
+            [
+              132,
+              72,
+              122,
+              59
+            ],
+            [
+              33,
+              39,
+              36,
+              35
+            ]
+          ],
+          "macro_f1": 0.4850902518857916,
+          "per_class": {
+            "both": {
+              "f1": 0.2681992337164751,
+              "precision": 0.2966101694915254,
+              "recall": 0.24475524475524477,
+              "support": 143
+            },
+            "crackle": {
+              "f1": 0.506006006006006,
+              "precision": 0.493411420204978,
+              "recall": 0.5192604006163328,
+              "support": 649
+            },
+            "normal": {
+              "f1": 0.767462957363169,
+              "precision": 0.734375,
+              "recall": 0.8036732108929703,
+              "support": 1579
+            },
+            "wheeze": {
+              "f1": 0.39869281045751637,
+              "precision": 0.5374449339207048,
+              "recall": 0.3168831168831169,
+              "support": 385
+            }
+          },
+          "rows": 2756,
+          "sensitivity": 0.41971112999150384,
+          "specificity": 0.8036732108929703,
+          "uar": 0.47114299328691617
+        },
+        "sprsound": {
+          "confusion": [
+            [
+              874,
+              166
+            ],
+            [
+              11,
+              378
+            ]
+          ],
+          "macro_f1": 0.859170668559736,
+          "per_class": {
+            "abnormal": {
+              "f1": 0.8102893890675241,
+              "precision": 0.6948529411764706,
+              "recall": 0.9717223650385605,
+              "support": 389
+            },
+            "normal": {
+              "f1": 0.908051948051948,
+              "precision": 0.9875706214689266,
+              "recall": 0.8403846153846154,
+              "support": 1040
+            }
+          },
+          "rows": 1429,
+          "sensitivity": 0.9717223650385605,
+          "specificity": 0.8403846153846154,
+          "uar": 0.906053490211588
+        }
+      },
+      "primary": {
+        "icbhi_score": 0.6116921704422371,
+        "spr_cw_mean_auroc": 0.9717189550767149,
+        "sprsound_official_score": 0.9036737183947863
+      },
+      "run_summary": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/seed_42/run_summary.json",
+      "seed": 42,
+      "selected_epoch": 17,
+      "selection_dataset": "icbhi",
+      "selection_score": 0.6116921704422371,
+      "source_run": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/seed_42",
+      "spr_cw": {
+        "crackle": {
+          "auprc": 0.5630817472381565,
+          "auroc": 0.9570277925296513,
+          "eligible": 1429,
+          "negative": 1345,
+          "positive": 84
+        },
+        "mean": {
+          "auprc": 0.7518815667083458,
+          "auroc": 0.9717189550767149
+        },
+        "wheeze": {
+          "auprc": 0.9406813861785353,
+          "auroc": 0.9864101176237786,
+          "eligible": 1429,
+          "negative": 1123,
+          "positive": 306
+        }
+      },
+      "terminal_metrics": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/seed_42/terminal/native_metrics.json",
+      "thresholds": {
+        "crackle": 0.35382890701293945,
+        "wheeze": 0.3287310004234314
+      },
+      "updates": 8802
+    },
+    "interrupted_partial_attempts": {
+      "coarse_spr_seed_42": {
+        "note": "Retained unchanged; not used as warm start, not part of the five final rows.",
+        "source": "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/coarse_spr/seed_42",
+        "status": "interrupted_partial_not_counted"
+      }
+    },
+    "primary_metric_definition": "ICBHI native Score; SPRSound official-inter Score; SPRSound C/W mean AUROC (within-run mean of Crackle/Wheeze AUROC)",
+    "queue": {
+      "completed_at": "2026-09-11T08:14:09Z",
+      "console": "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/recovery_logs/recovery_queue_console.log",
+      "order": [
+        "coarse_spr_attempt2",
+        "native_attributes"
+      ],
+      "queue_exit": 0,
+      "recovery_console": "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/recovery_logs/recovery_queue_console.log",
+      "status": "complete",
+      "tmux_session": "acoustic_benchmark_recovery_20260910"
+    },
+    "root": "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42",
+    "selection_policy": {
+      "coarse_spr": "ICBHI official-test native Score",
+      "icbhi_only": "ICBHI official-test native Score",
+      "native_attributes": "ICBHI official-test native Score",
+      "sprsound_only": "SPRSound official-inter native Score"
+    },
+    "status": "complete_four_condition_seed42"
+  },
+  "cw_readout_existing_pilot": {
+    "boundary": "existing saved pilot aggregate; no probability rebuild in this artifact",
+    "cw_only_mean_sample_sd": {
+      "both_recall": [
+        0.3682983682983683,
+        0.11369462375997388
+      ],
+      "macro_f1": [
+        0.49244117041451113,
+        0.0076904817351340525
+      ],
+      "score": [
+        0.6028985288897809,
+        0.018135819089113627
+      ],
+      "se": [
+        0.5239308977626734,
+        0.061221620333254415
+      ],
+      "sp": [
+        0.6818661600168884,
+        0.09626831871109283
+      ],
+      "uar": [
+        0.5084139033753142,
+        0.02501987364643583
+      ]
+    },
+    "evidence_label": "posthoc_test_selected_cw_readout_pilot",
+    "formal_table2_included": false,
+    "full_mean_sample_sd": {
+      "both_recall": [
+        0.3682983682983683,
+        0.11369462375997388
+      ],
+      "macro_f1": [
+        0.4973224913907109,
+        0.010593442367507118
+      ],
+      "score": [
+        0.6116809605827261,
+        0.0031387308369878607
+      ],
+      "se": [
+        0.47352024922118385,
+        0.05352816095760636
+      ],
+      "sp": [
+        0.7498416719442685,
+        0.05689597493716062
+      ],
+      "uar": [
+        0.5040489142355803,
+        0.030277153983431372
+      ]
+    },
+    "paired_delta_cw_minus_full_mean_sample_sd": {
+      "both_recall": [
+        0.0,
+        0.0
+      ],
+      "macro_f1": [
+        -0.004881320976199792,
+        0.011248560885166521
+      ],
+      "score": [
+        -0.008782431692945273,
+        0.01599713776159989
+      ],
+      "se": [
+        0.050410648541489654,
+        0.007894284828528109
+      ],
+      "sp": [
+        -0.0679755119273802,
+        0.03937416400940424
+      ],
+      "uar": [
+        0.004364989139733932,
+        0.00608531574962202
+      ]
+    },
+    "source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_CW_READOUT_PILOT_EXISTING/cw_readout_existing_pilot.json"
+  },
+  "data_composition_recording_features": {
+    "boundary": "descriptive existing table only; no new PCA/separability experiment or feature extraction was run",
+    "dataset_stats": {
+      "HF_Lung": {
+        "device_n": 2,
+        "duration_s": {
+          "max": 15.0,
+          "mean": 15.0,
+          "median": 15.0,
+          "min": 15.0
+        },
+        "groups": 157,
+        "native_sr": {
+          "4000": 9765
+        },
+        "recording_class": {
+          "adventitious": 5956,
+          "phase_only": 3751,
+          "unlabeled": 58
+        },
+        "rows": 9765,
+        "site_n": 1,
+        "splits": {
+          "test": 1956,
+          "train": 7809
+        }
+      },
+      "ICBHI": {
+        "device_n": 4,
+        "duration_s": {
+          "max": 86.2,
+          "mean": 21.492424,
+          "median": 20.0,
+          "min": 7.856
+        },
+        "groups": 126,
+        "native_sr": {
+          "10000": 6,
+          "4000": 90,
+          "44100": 824
+        },
+        "recording_class": {
+          "abnormal": 633,
+          "normal": 287
+        },
+        "rows": 920,
+        "site_n": 7,
+        "splits": {
+          "NA": 1,
+          "test": 381,
+          "train": 538
+        }
+      },
+      "KAUH": {
+        "device_n": 1,
+        "duration_s": {
+          "max": 30.0,
+          "mean": 17.399119,
+          "median": 15.984,
+          "min": 5.0
+        },
+        "groups": 112,
+        "native_sr": {
+          "4000": 336
+        },
+        "recording_class": {
+          "abnormal": 231,
+          "normal": 105
+        },
+        "rows": 336,
+        "site_n": 14,
+        "splits": {
+          "prefix_B": 112,
+          "prefix_D": 112,
+          "prefix_E": 112
+        }
+      },
+      "SPRSound": {
+        "device_n": 1,
+        "duration_s": {
+          "max": 15.36,
+          "mean": 10.952075,
+          "median": 9.216,
+          "min": 0.304
+        },
+        "groups": 292,
+        "native_sr": {
+          "8000": 2683
+        },
+        "recording_class": {
+          "CAS": 233,
+          "CAS & DAS": 131,
+          "DAS": 347,
+          "Normal": 1785,
+          "Poor Quality": 187
+        },
+        "rows": 2683,
+        "site_n": 4,
+        "splits": {
+          "inter_test": 355,
+          "intra_test": 379,
+          "train": 1949
+        }
+      }
+    },
+    "figure1_group_definition": "dataset x group identifier; group-level median of 13 acoustic features; patient_id defines groups for ICBHI/SPRSound/KAUH, while HF uses a recording-date proxy; balanced sampling uses 112 groups per dataset for the PCA/distribution panels",
+    "figure1_source": "docs/paper/ICASSP_2026_acoustic_disease/Figure/figure1_dataset_composition_acoustic.py",
+    "source": "result/acoustic_distribution/recording_features.csv",
+    "unit_note": "rows are feature-table units; dataset-native units are not uniform: ICBHI rows are recordings, SPRSound rows are recording-level table rows from BioCAS audio recordings, model event units are separate, HF rows are recordings, KAUH rows are recordings"
+  },
+  "generated_date": "2026-09-09",
+  "hf_kauh_external": {
+    "boundary": "fixed selected checkpoints; no external threshold tuning; compatible-overlay KAUH, not raw9 reproduction",
+    "evidence_label": "posthoc_fixed_JH2_main_selected_checkpoints_HF_KAUH_external_diagnostic",
+    "hf_mean_sample_sd": {
+      "d_auprc": [
+        0.5910827346651554,
+        0.029341741917365938
+      ],
+      "d_auroc": [
+        0.6782251913092688,
+        0.04424921329562219
+      ],
+      "d_interval_recall": [
+        0.5827814569536424,
+        0.1263073720418352
+      ],
+      "d_recording_macro_f1": [
+        0.5892116170931984,
+        0.08128460725983908
+      ],
+      "d_recording_score": [
+        0.6164164575182697,
+        0.05373422858042887
+      ],
+      "d_recording_sensitivity": [
+        0.6929347826086957,
+        0.1338160027417949
+      ],
+      "d_recording_specificity": [
+        0.5398981324278438,
+        0.22027513035598556
+      ],
+      "d_recording_uar": [
+        0.6164164575182697,
+        0.05373422858042887
+      ],
+      "wheeze_auprc": [
+        0.8433791966412644,
+        0.022611171972264293
+      ],
+      "wheeze_auroc": [
+        0.8636033577861276,
+        0.013764548563328694
+      ],
+      "wheeze_interval_recall": [
+        0.8543123543123543,
+        0.010681994626936668
+      ],
+      "wheeze_recording_macro_f1": [
+        0.7305803856759763,
+        0.008325313400163986
+      ],
+      "wheeze_recording_score": [
+        0.751263642869923,
+        0.006168937705528147
+      ],
+      "wheeze_recording_sensitivity": [
+        0.8847736625514404,
+        0.019178897444824795
+      ],
+      "wheeze_recording_specificity": [
+        0.6177536231884058,
+        0.024372507331655274
+      ],
+      "wheeze_recording_uar": [
+        0.751263642869923,
+        0.006168937705528147
+      ]
+    },
+    "kauh_mean_sample_sd": {
+      "patient_flat4_macro_f1": [
+        0.33829886556837513,
+        0.03167574174222169
+      ],
+      "patient_flat4_score": [
+        0.47002801120448173,
+        0.08296425104990163
+      ],
+      "patient_flat4_uar": [
+        0.5024099883855981,
+        0.060990479821552535
+      ],
+      "patient_level1_macro_f1": [
+        0.7129286752245684,
+        0.028736860340184852
+      ],
+      "patient_level1_score": [
+        0.7216619981325865,
+        0.016410677576337077
+      ],
+      "patient_level1_uar": [
+        0.7216619981325865,
+        0.016410677576337077
+      ],
+      "recording_flat4_macro_f1": [
+        0.34034209964744916,
+        0.022129255173903493
+      ],
+      "recording_flat4_score": [
+        0.47784002489884836,
+        0.09139527218168042
+      ],
+      "recording_flat4_uar": [
+        0.45443524970963994,
+        0.007857307966835064
+      ],
+      "recording_level1_macro_f1": [
+        0.7003423337347714,
+        0.03732341095678222
+      ],
+      "recording_level1_score": [
+        0.7098661686896981,
+        0.035323787830816626
+      ],
+      "recording_level1_uar": [
+        0.7098661686896981,
+        0.035323787830816626
+      ]
+    },
+    "source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed_external_HF_KAUH/external_multiseed_summary.json",
+    "support": {
+      "hf_d_interval_support": 1812,
+      "hf_eligible_recordings": 957,
+      "hf_recordings": 1956,
+      "hf_wheeze_interval_support": 1430,
+      "kauh_compatible_recordings": 258,
+      "kauh_patients": 112,
+      "kauh_recordings": 336,
+      "kauh_unresolved": [
+        "Crep",
+        "Bronchial",
+        "I C B"
+      ]
+    }
+  },
+  "jh2_main_test_selected": {
+    "actual_jh2_selection_support": {
+      "note": "Old JH2 test-selected runs used seed-dependent validation partitions; do not substitute for the new clean manifest.",
+      "seed_0": {
+        "icbhi_c_positive": 179,
+        "icbhi_eligible_c": 506,
+        "icbhi_eligible_w": 506,
+        "icbhi_rows": 506,
+        "icbhi_w_positive": 190,
+        "spr_c_positive": 331,
+        "spr_eligible_c": 1432,
+        "spr_eligible_w": 1432,
+        "spr_rows": 1437,
+        "spr_w_positive": 65
+      },
+      "seed_1": {
+        "icbhi_c_positive": 664,
+        "icbhi_eligible_c": 1262,
+        "icbhi_eligible_w": 1262,
+        "icbhi_rows": 1262,
+        "icbhi_w_positive": 218,
+        "spr_c_positive": 331,
+        "spr_eligible_c": 1432,
+        "spr_eligible_w": 1432,
+        "spr_rows": 1437,
+        "spr_w_positive": 65
+      },
+      "seed_42": {
+        "icbhi_c_positive": 283,
+        "icbhi_eligible_c": 968,
+        "icbhi_eligible_w": 968,
+        "icbhi_rows": 968,
+        "icbhi_w_positive": 244,
+        "spr_c_positive": 331,
+        "spr_eligible_c": 1432,
+        "spr_eligible_w": 1432,
+        "spr_rows": 1437,
+        "spr_w_positive": 65
+      },
+      "source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/seed_{0,1,42}/validation/epoch_{selected}.npz"
+    },
+    "actual_partition_support": {
+      "boundary": "Actual historical JH2 subtrain/validation support. These are data and eligibility counts, not new model results or the prospective clean split.",
+      "method": "Metadata-only reconstruction using each saved run config, load_selection_samples and partition_summary. Reconstructed validation sample IDs exactly match the saved selected-epoch validation NPZ for all three seeds; no audio/model forward or checksum computation.",
+      "per_seed": {
+        "0": {
+          "config_source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/seed_0/config.json",
+          "support": {
+            "icbhi": {
+              "subtrain": {
+                "eligible": {
+                  "crackle": 3636,
+                  "level1": 3636,
+                  "wheeze": 3636
+                },
+                "groups": 63,
+                "masked": {
+                  "crackle": 0,
+                  "level1": 0,
+                  "wheeze": 0
+                },
+                "negative": {
+                  "crackle": 2237,
+                  "level1": 1825,
+                  "wheeze": 2962
+                },
+                "positive": {
+                  "crackle": 1399,
+                  "level1": 1811,
+                  "wheeze": 674
+                },
+                "units": 3636
+              },
+              "validation": {
+                "eligible": {
+                  "crackle": 506,
+                  "level1": 506,
+                  "wheeze": 506
+                },
+                "groups": 16,
+                "masked": {
+                  "crackle": 0,
+                  "level1": 0,
+                  "wheeze": 0
+                },
+                "negative": {
+                  "crackle": 327,
+                  "level1": 238,
+                  "wheeze": 316
+                },
+                "positive": {
+                  "crackle": 179,
+                  "level1": 268,
+                  "wheeze": 190
+                },
+                "units": 506
+              }
+            },
+            "sprsound": {
+              "subtrain": {
+                "eligible": {
+                  "crackle": 5170,
+                  "level1": 5219,
+                  "wheeze": 5170
+                },
+                "groups": 194,
+                "masked": {
+                  "crackle": 49,
+                  "level1": 0,
+                  "wheeze": 49
+                },
+                "negative": {
+                  "crackle": 4510,
+                  "level1": 4114,
+                  "wheeze": 4753
+                },
+                "positive": {
+                  "crackle": 660,
+                  "level1": 1105,
+                  "wheeze": 417
+                },
+                "units": 5219
+              },
+              "validation": {
+                "eligible": {
+                  "crackle": 1432,
+                  "level1": 1437,
+                  "wheeze": 1432
+                },
+                "groups": 49,
+                "masked": {
+                  "crackle": 5,
+                  "level1": 0,
+                  "wheeze": 5
+                },
+                "negative": {
+                  "crackle": 1101,
+                  "level1": 1045,
+                  "wheeze": 1367
+                },
+                "positive": {
+                  "crackle": 331,
+                  "level1": 392,
+                  "wheeze": 65
+                },
+                "units": 1437
+              }
+            }
+          },
+          "validation_ids_match": true,
+          "validation_source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/seed_0/validation/epoch_015.npz"
+        },
+        "1": {
+          "config_source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/seed_1/config.json",
+          "support": {
+            "icbhi": {
+              "subtrain": {
+                "eligible": {
+                  "crackle": 2880,
+                  "level1": 2880,
+                  "wheeze": 2880
+                },
+                "groups": 63,
+                "masked": {
+                  "crackle": 0,
+                  "level1": 0,
+                  "wheeze": 0
+                },
+                "negative": {
+                  "crackle": 1966,
+                  "level1": 1557,
+                  "wheeze": 2234
+                },
+                "positive": {
+                  "crackle": 914,
+                  "level1": 1323,
+                  "wheeze": 646
+                },
+                "units": 2880
+              },
+              "validation": {
+                "eligible": {
+                  "crackle": 1262,
+                  "level1": 1262,
+                  "wheeze": 1262
+                },
+                "groups": 16,
+                "masked": {
+                  "crackle": 0,
+                  "level1": 0,
+                  "wheeze": 0
+                },
+                "negative": {
+                  "crackle": 598,
+                  "level1": 506,
+                  "wheeze": 1044
+                },
+                "positive": {
+                  "crackle": 664,
+                  "level1": 756,
+                  "wheeze": 218
+                },
+                "units": 1262
+              }
+            },
+            "sprsound": {
+              "subtrain": {
+                "eligible": {
+                  "crackle": 5170,
+                  "level1": 5219,
+                  "wheeze": 5170
+                },
+                "groups": 194,
+                "masked": {
+                  "crackle": 49,
+                  "level1": 0,
+                  "wheeze": 49
+                },
+                "negative": {
+                  "crackle": 4510,
+                  "level1": 4114,
+                  "wheeze": 4753
+                },
+                "positive": {
+                  "crackle": 660,
+                  "level1": 1105,
+                  "wheeze": 417
+                },
+                "units": 5219
+              },
+              "validation": {
+                "eligible": {
+                  "crackle": 1432,
+                  "level1": 1437,
+                  "wheeze": 1432
+                },
+                "groups": 49,
+                "masked": {
+                  "crackle": 5,
+                  "level1": 0,
+                  "wheeze": 5
+                },
+                "negative": {
+                  "crackle": 1101,
+                  "level1": 1045,
+                  "wheeze": 1367
+                },
+                "positive": {
+                  "crackle": 331,
+                  "level1": 392,
+                  "wheeze": 65
+                },
+                "units": 1437
+              }
+            }
+          },
+          "validation_ids_match": true,
+          "validation_source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/seed_1/validation/epoch_011.npz"
+        },
+        "42": {
+          "config_source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/seed_42/config.json",
+          "support": {
+            "icbhi": {
+              "subtrain": {
+                "eligible": {
+                  "crackle": 3174,
+                  "level1": 3174,
+                  "wheeze": 3174
+                },
+                "groups": 63,
+                "masked": {
+                  "crackle": 0,
+                  "level1": 0,
+                  "wheeze": 0
+                },
+                "negative": {
+                  "crackle": 1879,
+                  "level1": 1512,
+                  "wheeze": 2554
+                },
+                "positive": {
+                  "crackle": 1295,
+                  "level1": 1662,
+                  "wheeze": 620
+                },
+                "units": 3174
+              },
+              "validation": {
+                "eligible": {
+                  "crackle": 968,
+                  "level1": 968,
+                  "wheeze": 968
+                },
+                "groups": 16,
+                "masked": {
+                  "crackle": 0,
+                  "level1": 0,
+                  "wheeze": 0
+                },
+                "negative": {
+                  "crackle": 685,
+                  "level1": 551,
+                  "wheeze": 724
+                },
+                "positive": {
+                  "crackle": 283,
+                  "level1": 417,
+                  "wheeze": 244
+                },
+                "units": 968
+              }
+            },
+            "sprsound": {
+              "subtrain": {
+                "eligible": {
+                  "crackle": 5170,
+                  "level1": 5219,
+                  "wheeze": 5170
+                },
+                "groups": 194,
+                "masked": {
+                  "crackle": 49,
+                  "level1": 0,
+                  "wheeze": 49
+                },
+                "negative": {
+                  "crackle": 4510,
+                  "level1": 4114,
+                  "wheeze": 4753
+                },
+                "positive": {
+                  "crackle": 660,
+                  "level1": 1105,
+                  "wheeze": 417
+                },
+                "units": 5219
+              },
+              "validation": {
+                "eligible": {
+                  "crackle": 1432,
+                  "level1": 1437,
+                  "wheeze": 1432
+                },
+                "groups": 49,
+                "masked": {
+                  "crackle": 5,
+                  "level1": 0,
+                  "wheeze": 5
+                },
+                "negative": {
+                  "crackle": 1101,
+                  "level1": 1045,
+                  "wheeze": 1367
+                },
+                "positive": {
+                  "crackle": 331,
+                  "level1": 392,
+                  "wheeze": 65
+                },
+                "units": 1437
+              }
+            }
+          },
+          "validation_ids_match": true,
+          "validation_source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/seed_42/validation/epoch_017.npz"
+        }
+      },
+      "source_code": [
+        "baseline/pafa/joint_hierarchy.py:load_selection_samples",
+        "baseline/pafa/joint_hierarchy.py:partition_summary"
+      ]
+    },
+    "evidence_label": "JH2_main_icbhi-test-selected_multiseed_diagnostic",
+    "icbhi_mean_sample_sd": {
+      "macro_f1": [
+        0.4973224913907109,
+        0.010593442367507118
+      ],
+      "official_score": [
+        0.6116809605827261,
+        0.0031387308369878607
+      ],
+      "sensitivity": [
+        0.47352024922118385,
+        0.05352816095760636
+      ],
+      "specificity": [
+        0.7498416719442685,
+        0.05689597493716062
+      ],
+      "uar": [
+        0.5040489142355803,
+        0.030277153983431372
+      ]
+    },
+    "icbhi_per_class_recall_mean_sample_sd": {
+      "both": [
+        0.3682983682983683,
+        0.11369462375997388
+      ],
+      "crackle": [
+        0.6019517205957884,
+        0.0848204368206028
+      ],
+      "normal": [
+        0.7498416719442685,
+        0.05689597493716062
+      ],
+      "wheeze": [
+        0.2961038961038961,
+        0.020779220779220786
+      ]
+    },
+    "n": 3,
+    "per_seed_icbhi": {
+      "seed_0": {
+        "confusion": [
+          [
+            1193,
+            289,
+            77,
+            20
+          ],
+          [
+            245,
+            388,
+            5,
+            11
+          ],
+          [
+            93,
+            76,
+            114,
+            102
+          ],
+          [
+            25,
+            36,
+            26,
+            56
+          ]
+        ],
+        "macro_f1": 0.503422526541453,
+        "official_score": 0.6148140714765753,
+        "per_class_recall": {
+          "both": 0.3916083916083916,
+          "crackle": 0.5978428351309707,
+          "normal": 0.7555414819506017,
+          "wheeze": 0.2961038961038961
+        },
+        "selected_epoch": 15,
+        "sensitivity": 0.47408666100254887,
+        "specificity": 0.7555414819506017,
+        "uar": 0.510274151198465
+      },
+      "seed_1": {
+        "confusion": [
+          [
+            1090,
+            384,
+            62,
+            43
+          ],
+          [
+            176,
+            447,
+            5,
+            21
+          ],
+          [
+            97,
+            70,
+            106,
+            112
+          ],
+          [
+            22,
+            34,
+            20,
+            67
+          ]
+        ],
+        "macro_f1": 0.5034546957448882,
+        "official_score": 0.6085366398293661,
+        "per_class_recall": {
+          "both": 0.46853146853146854,
+          "crackle": 0.6887519260400616,
+          "normal": 0.6903103229892337,
+          "wheeze": 0.2753246753246753
+        },
+        "selected_epoch": 11,
+        "sensitivity": 0.5267629566694987,
+        "specificity": 0.6903103229892337,
+        "uar": 0.5307295982213598
+      },
+      "seed_42": {
+        "confusion": [
+          [
+            1269,
+            235,
+            63,
+            12
+          ],
+          [
+            294,
+            337,
+            6,
+            12
+          ],
+          [
+            132,
+            72,
+            122,
+            59
+          ],
+          [
+            33,
+            39,
+            36,
+            35
+          ]
+        ],
+        "macro_f1": 0.4850902518857916,
+        "official_score": 0.6116921704422371,
+        "per_class_recall": {
+          "both": 0.24475524475524477,
+          "crackle": 0.5192604006163328,
+          "normal": 0.8036732108929703,
+          "wheeze": 0.3168831168831169
+        },
+        "selected_epoch": 17,
+        "sensitivity": 0.41971112999150384,
+        "specificity": 0.8036732108929703,
+        "uar": 0.47114299328691617
+      }
+    },
+    "seeds": [
+      0,
+      1,
+      42
+    ],
+    "selected_epochs": {
+      "seed_0": 15,
+      "seed_1": 11,
+      "seed_42": 17
+    },
+    "source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/multiseed_summary.json",
+    "sprsound_task1_1_mean_sample_sd": {
+      "average_score_as": [
+        0.9094777865664755,
+        0.0031129743493505924
+      ],
+      "harmonic_score_hs": [
+        0.904495055736319,
+        0.003934052167240796
+      ],
+      "macro_f1": [
+        0.8625683250157404,
+        0.006839147669143389
+      ],
+      "official_score": [
+        0.9069864211513973,
+        0.003423989412800346
+      ],
+      "sensitivity": [
+        0.9760068551842331,
+        0.01214862628856711
+      ],
+      "specificity": [
+        0.842948717948718,
+        0.01364345939345685
+      ],
+      "uar": [
+        0.9094777865664755,
+        0.0031129743493505924
+      ]
+    }
+  },
+  "jh3_3_hf_kauh_external": {
+    "authorization": "direct user instruction in local task: 补充计算HF lung和KAUH的test",
+    "boundary": "separate user-authorized fixed-checkpoint external diagnostic; not part of the original CPU-only asset aggregation, not a clean estimate, and not a paper primary result",
+    "evidence_label": "posthoc_fixed_JH3_3_selected_checkpoint_HF_KAUH_external_diagnostic",
+    "frozen_thresholds": {
+      "crackle": 0.29448893666267395,
+      "wheeze": 0.13569095730781555
+    },
+    "hf": {
+      "d_auprc": 0.4846917806694554,
+      "d_auroc": 0.5715564331586329,
+      "d_interval_recall": 0.19536423841059603,
+      "d_macro_f1": 0.5543105346384035,
+      "d_score": 0.5671089540119584,
+      "d_sensitivity": 0.2717391304347826,
+      "d_specificity": 0.8624787775891342,
+      "d_uar": 0.5671089540119584,
+      "eligible_recordings": 957,
+      "source_test_recordings": 1956,
+      "wheeze_auprc": 0.8464495025438619,
+      "wheeze_auroc": 0.8656848273394167,
+      "wheeze_interval_recall": 0.8594405594405594,
+      "wheeze_macro_f1": 0.733314026872408,
+      "wheeze_score": 0.755870907139023,
+      "wheeze_sensitivity": 0.9012345679012346,
+      "wheeze_specificity": 0.6105072463768116,
+      "wheeze_uar": 0.755870907139023
+    },
+    "kauh": {
+      "compatible_recordings": 258,
+      "patient_flat4_macro_f1": 0.3729080210659586,
+      "patient_flat4_score": 0.5140056022408963,
+      "patient_flat4_uar": 0.4956445993031359,
+      "patient_level1_macro_f1": 0.7153888582460011,
+      "patient_level1_score": 0.7198879551820728,
+      "patient_level1_uar": 0.7198879551820728,
+      "patients": 112,
+      "recording_flat4_macro_f1": 0.3739684005756624,
+      "recording_flat4_score": 0.5303454715219421,
+      "recording_flat4_uar": 0.44940476190476186,
+      "recording_level1_macro_f1": 0.6825700615174299,
+      "recording_level1_score": 0.6904761904761905,
+      "recording_level1_uar": 0.6904761904761905,
+      "recordings": 336,
+      "unresolved": [
+        "Crep",
+        "Bronchial",
+        "I C B"
+      ]
+    },
+    "selected_epoch": 21,
+    "source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH3_3_HF_KAUH_external_seed42/run_summary.json"
+  },
+  "jh4_hf_extension": {
+    "boundary": "descriptive external diagnostic; old HF text must not be copied as a clean positive-only claim without the code/eligibility caveat",
+    "evidence_label": "JH2_base_icbhi-test-selected_hf-auxiliary_external-diagnostic",
+    "hf_off_on": {
+      "d_auprc": [
+        0.4118399332583368,
+        0.5148646275808586
+      ],
+      "d_auroc": [
+        0.5081244925075662,
+        0.6980373883516646
+      ],
+      "d_interval_recall": [
+        0.5264900662251656,
+        0.9310154525386314
+      ],
+      "wheeze_auprc": [
+        0.8185003926066473,
+        0.868532865632216
+      ],
+      "wheeze_auroc": [
+        0.8550478618715334,
+        0.8983136518160673
+      ],
+      "wheeze_interval_recall": [
+        0.9377622377622378,
+        0.7692307692307693
+      ]
+    },
+    "historical_spr_cw_macro_auroc": {
+      "hf_off": {
+        "crackle_auprc": 0.5847171409560206,
+        "crackle_auroc": 0.9516197557089751,
+        "cw_macro_auprc": 0.762431778571505,
+        "cw_macro_auroc": 0.9680633538961361,
+        "wheeze_auprc": 0.9401464161869895,
+        "wheeze_auroc": 0.984506952083297
+      },
+      "hf_off_source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH4_JH2_HFaux_seed42_attempt2/historical_jh2_spr_cw_posthoc/metrics.json",
+      "hf_on": {
+        "crackle_auprc": 0.5421055184276099,
+        "crackle_auroc": 0.9505133651973801,
+        "cw_macro_auprc": 0.7512222353678639,
+        "cw_macro_auroc": 0.9695049904109809,
+        "wheeze_auprc": 0.9603389523081178,
+        "wheeze_auroc": 0.9884966156245817
+      },
+      "hf_on_minus_hf_off": {
+        "crackle_auprc": -0.042611622528410664,
+        "crackle_auroc": -0.0011063905115950012,
+        "cw_macro_auprc": -0.011209543203641092,
+        "cw_macro_auroc": 0.0014416365148448573,
+        "wheeze_auprc": 0.020192536121128368,
+        "wheeze_auroc": 0.003989663541284716
+      },
+      "hf_on_source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH4_JH2_HFaux_seed42_attempt2/terminal/selected_sprsound_predictions_scored.npz",
+      "note": "Exact historical JH2 epoch19 checkpoint was used for HF-off; HF-on was read from its saved selected SPR NPZ. No current JH2 seed42 or other checkpoint was substituted.",
+      "status": "complete_fixed_checkpoint_posthoc"
+    },
+    "matching_status": "historical single-seed JH4-vs-historical-JH2 pair; not matched to current clean Table2 or current JH2 0/1/fresh42 checkpoints",
+    "selected_epoch": 9,
+    "source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH4_JH2_HFaux_seed42_attempt2/hf_on_off_comparison.json",
+    "support": {
+      "d_positive_intervals": 1812,
+      "eligible_presence": 957,
+      "empty_annotation": 4,
+      "phase_only_or_not_annotated": 995,
+      "source_test_recordings": 1956,
+      "wheeze_positive_intervals": 1430
+    }
+  },
+  "main_manuscript_locations": {
+    "ablation_table": "docs/paper/ICASSP_2026_acoustic_disease/Section/4evaluation.tex:tab:ablations",
+    "data_section": "docs/paper/ICASSP_2026_acoustic_disease/Section/2data.tex",
+    "figure1_placeholder": "docs/paper/ICASSP_2026_acoustic_disease/main.tex:fig:dataset_characteristics",
+    "figure1_source": "docs/paper/ICASSP_2026_acoustic_disease/Figure/figure1_dataset_composition_acoustic.py",
+    "native_benchmark": "docs/paper/ICASSP_2026_acoustic_disease/Section/4evaluation.tex:tab:native_results"
+  },
+  "prospective_clean_manifest": {
+    "boundary": "prospective clean-suite metadata; must not be written as completed JH2 main training statistics",
+    "executed": false,
+    "source": "baseline/pafa/table2_clean_split_manifest.json",
+    "status": "design_frozen_split_support_verified",
+    "support": {
+      "ICBHI": {
+        "calibration": {
+          "groups": 5,
+          "units": 700
+        },
+        "selection": {
+          "groups": 11,
+          "units": 387
+        },
+        "subtrain": {
+          "groups": 63,
+          "units": 3055
+        }
+      },
+      "SPRSound": {
+        "calibration": {
+          "groups": 26,
+          "units": 694
+        },
+        "selection": {
+          "groups": 23,
+          "units": 743
+        },
+        "subtrain": {
+          "groups": 194,
+          "units": 5219
+        }
+      }
+    }
+  },
+  "sprsound_attribute_posthoc": {
+    "boundary": "selected test probabilities and saved eligibility; no threshold refit; descriptive test-selected attribute diagnostic",
+    "cw_macro_mean_sample_sd": {
+      "auprc": [
+        0.7741847965276994,
+        0.02032140149482083
+      ],
+      "auroc": [
+        0.9731810158260886,
+        0.0014807055648917646
+      ]
+    },
+    "evidence_label": "posthoc_selected_checkpoint_attribute_diagnostic",
+    "mean_sample_sd": {
+      "crackle_auprc": [
+        0.603247598227389,
+        0.03861207555790782
+      ],
+      "crackle_auroc": [
+        0.9607895202690742,
+        0.004053437967796181
+      ],
+      "wheeze_auprc": [
+        0.94512199482801,
+        0.005643212031386177
+      ],
+      "wheeze_auroc": [
+        0.9855725113831029,
+        0.0011378497677620356
+      ]
+    },
+    "per_seed": {
+      "seed_0": {
+        "crackle_auprc": 0.6065698349049351,
+        "crackle_auroc": 0.9602584528235085,
+        "cw_macro_auprc": 0.7790210481515055,
+        "cw_macro_auroc": 0.9731444051754533,
+        "source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/seed_0/terminal/selected_sprsound_predictions_scored.npz",
+        "wheeze_auprc": 0.951472261398076,
+        "wheeze_auroc": 0.9860303575273981
+      },
+      "seed_1": {
+        "crackle_auprc": 0.6400912125390754,
+        "crackle_auroc": 0.9650823154540626,
+        "cw_macro_auprc": 0.7916517747232472,
+        "cw_macro_auroc": 0.9746796872260972,
+        "source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/seed_1/terminal/selected_sprsound_predictions_scored.npz",
+        "wheeze_auprc": 0.9432123369074189,
+        "wheeze_auroc": 0.9842770589981318
+      },
+      "seed_42": {
+        "crackle_auprc": 0.5630817472381565,
+        "crackle_auroc": 0.9570277925296513,
+        "cw_macro_auprc": 0.7518815667083458,
+        "cw_macro_auroc": 0.9717189550767149,
+        "source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/seed_42/terminal/selected_sprsound_predictions_scored.npz",
+        "wheeze_auprc": 0.9406813861785353,
+        "wheeze_auroc": 0.9864101176237786
+      }
+    },
+    "source": "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/seed_{0,1,42}/terminal/selected_sprsound_predictions_scored.npz",
+    "support_each_seed": {
+      "crackle_negative": 1345,
+      "crackle_positive": 84,
+      "rows": 1429,
+      "wheeze_negative": 1123,
+      "wheeze_positive": 306
+    }
+  },
+  "status": "existing_assets_summarized_no_new_training",
+  "true_missing_conditions": [
+    "If the current validation-selected Table2 definition is retained, no complete corresponding Full/ICBHI-only/SPRSound-only results are available; whether new training is required and the seed budget remain for user/management discussion",
+    "Full42 queue is partial at point1/update326 and is not a completed experiment",
+    "If the current validation-selected Table2 definition is retained, no complete corresponding Full+HF, Coarse SPR, or Native+attributes results are available; whether new training is required and the seed budget remain for user/management discussion",
+    "Figure1 discussion/Overleaf assembly remains writing review; this task did not compile locally",
+    "Current HF/KAUH and JH4 extension are external/test-selected diagnostics, not clean Table2 evidence"
+  ]
+}

@@ -1,22 +1,112 @@
 # Acoustic Work Plan
 
-更新日期：2026-09-08
+更新日期：2026-09-11
 
-写作工作区：`/Users/zilongzeng/Research/Acoustic`，分支`main`。用户已要求论文写作任务直接在主目录维护稿件；本轮已将独立工作区的最新论文交付合入主目录。
+当前优先级：用户要求先完整提交并同步main仓库，保存当前本地状态；用户随后会提供Overleaf当前稿件的副本，再围绕副本精修。管理已通知写作任务暂停对main的追加修改，保留已落盘内容。本次Git快照不把尚未落稿的Section2、Abstract/Conclusion及全文收尾标记完成；这些工作在收到副本后按新范围继续。图1的完整图包已在main，后续是否接入、采用哪份正文以用户提供的副本为准。
 
-当前计划：[09-08 周二写作计划](work_plans/2026-09-08_work_plan_zh.md)。  
-Notion：[周二 Working Plan](https://app.notion.com/p/3d4309efda29819aa175ddb25fcfcf94?pvs=204)。
+当前状态（09-11 11:10核对）：4/4条件全部完成。恢复队列已于今天03:14（芝加哥）正常退出，QUEUE_EXIT=0；实时检查无Acoustic训练进程。Coarse采用seed_42_attempt2完整结果，原中断目录保留且不计入结果；没有启动额外实验。
 
-用户已将旧Todo1–4逐项等待改为并行准备、集中确认。文献、缺失数据与审阅稿已交付，因时间安排，剩余写作与审阅任务顺延到09-08周二。
+新增工作（09-11 Wade feedback）：已收到四数据集声学特征箱线图与PCA图，原图保存在[Wade材料目录](student_tasks/received/2026-09-11_wade_acoustic_features/)。独立任务“Wade 声学特征独立验证”已完成正式交付，ID为`01a09336-a12c-7181-9cf2-1f9610d494e8`，工作区为`/Users/zilongzeng/.codex/worktrees/5513/Acoustic`；只读访问main中的四源原始数据及最新方法/结果。管理已核对[最终报告](/Users/zilongzeng/.codex/worktrees/5513/Acoustic/docs/analysis/wade_acoustic_validation/REPORT_zh.md)、关键统计表与候选图。本次仅执行已授权的本地声学特征提取、统计分析和科学绘图，没有新增模型训练或模型推理。原代码/逐样本表仍缺；本次完成独立合理性验证，不宣称精确复现Wade的计算。
 
-当前状态：9项准备/工作稿交付保持勾选，并已更新为09-08整稿重写与编译交付。用户要求的“共享属性监督—标注条件—两层原生任务读出”主线已贯穿新版，下一步从Introduction开始逐章审阅。最新入口：[09-08五页章节审阅PDF](/Users/zilongzeng/Research/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/review_2026-09-08.pdf)。当前仍为IEEEtran审阅稿；正式模板、作者信息、最终贡献及投稿验收尚未完成。
+- [x] 独立任务完成13,704条真实录音的声学提取，覆盖ICBHI920、SPR BioCAS2022 2683、HF9765、KAUH336，并提取45,618个论文5s输入；`extraction_summary.json`未记录音频问题。此项是声学分析完成，不是模型实验或论文结论验收。
+- [x] 独立验证特征定义、幅度特征冗余、DC/滤波影响、PCA缩放和载荷，以及样本/组数量不均的影响；所有固定对照和有限探索性定义核对已交付。
+- [x] 核对全录音与论文5s输入视角，完成标签兼容的class-matched及组级描述；HF日期代理和KAUH B/D/E版本按真实依赖关系处理。model5s较原录音少4组，源于SPR四患者的全部录音无event，并非PCA删失。
+- [x] 已交付逐项结论、可复算代码/表、六组PNG/SVG/PDF科学图和与当前五行seed42结果的衔接建议。
+- [x] 用户已明确授权将验证内容同步写作，完成Figure1并补齐Section2，然后通读全文、完成Abstract与Conclusion；管理已向声学验证任务和写作任务下发本轮工作。
 
-09-08补充：[研究定位深度调研稿](/Users/zilongzeng/Research/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/DEEP_NOVELTY_GAP_REVIEW_2026-09-08_zh.md)及[共享属性主线与贡献讨论稿](/Users/zilongzeng/Research/Acoustic/docs/paper/ICASSP_2026_acoustic_disease/SHARED_ATTRIBUTE_STORY_NOVELTY_CONTRIBUTIONS_2026-09-08_zh.md)已用于本轮重写。C2/C3仍是待实验回答的候选贡献，最小补证范围与执行授权尚未确定；整稿完成不等于新发现已成立。
+本轮论文收尾（已获执行与同步授权，沿用Overleaf编译流程）：
 
-- [09-05至09-06计划](work_plans/2026-09-05_to_2026-09-06_work_plan_zh.md)已转为历史；未验收事项迁入今天，不视为已完成。
-- Hanlin已被用户要求补seed0/1；完成结果尚未收到，不能把请求当作已执行。学生不设具体期限。
-- 项目侧新训练、validation/test、缓存和服务器任务仍需明确start，不因今天的写作冲刺自动执行。
-- 邮件和联系Jingping放在今天研究、写作工作完成及集中讨论后；现在不发送、不联系。
-- 管理：01a06de3-f57c-7bf3-a7b2-2a6bd7c33aae。写作（迁移到主目录后）：01a08442-92e6-7110-8399-e42eca520ea8。文献：01a01d5b-0631-7981-a5b3-8ee4be98d98f。模型设计：019fb42d-11d9-7b53-a6ae-d0ab010609c5。
+- [x] 声学验证任务已完成7.00×2.26in通栏三panel Figure1；管理核对PNG、脚本和caption定义后，已将PDF/SVG/PNG/PY及少量源表复制到main的`Figure/figure1_dataset_characteristics.*`和`Figure/figure1_source_data/`，并通知写作接入。
+- [ ] 写作任务：在main接入Figure1及caption，补齐Section2声学内容，并核对四源角色、分析单位和标签语义。
+- [ ] 写作任务：通读全文，统一贡献、方法、数字和协议；改掉过期validation-selected计划描述，完成基于现有结果的Abstract和Conclusion。
+- [ ] 管理：核对最终main图文和静态检查结果，向用户交付本轮完整稿及确实仍需补充的信息；本轮不编译整篇、增加实验或发送合作邮件。
 
-Structured：复用「Acoustic写作」，顺延至09-08 21:00–23:00（America/Chicago），加入6项写作子任务。原9项完成勾选保留，新实验和邮件仍按依赖与授权执行。
+独立验证结论：四源声学异质性有支持，但Wade图中的部分幅值/频谱量级、silence解释和PCA的37.1%/16.0%尚未按其原定义验证，不判定其计算错误。相同5s处理后，ICBHI与SPR兼容四类内部仍有组级差异：ICBHI−SPR的level差25.13–29.11dB，80–2000Hz谱质心差−28.95至−68.38Hz；Both的SPR仅10患者组，保留支持限制。112患者KAUH配对的D−B带内谱质心差+105.84Hz，95%区间96.89–108.51Hz，说明滤波版本会影响该统计量，不解释为疾病差异。建议Figure1保留四源概览，声学部分优先讨论[同类别5s候选图](/Users/zilongzeng/.codex/worktrees/5513/Acoustic/result/wade_acoustic_validation/figures/04_class_matched_5s.png)；PCA作为背景/敏感性材料。声学观察不证明迁移因果或hierarchy优势，现有Native+attributes高于Full的结果继续如实讨论。全部产物保留在独立工作区`result/wade_acoustic_validation/`，无待启动的新分析分支。
+
+备选训练复盘：[2–3天补齐数字与Hanlin分工草案](work_plans/2026-09-09_2to3day_replan_zh.md)。
+暂停前计划：[正文同步与最小补证](work_plans/2026-09-09_experiment_work_plan_zh.md)。
+实验规格：[四条件benchmark规格与准确命令](paper/ICASSP_2026_acoustic_disease/EXPERIMENT_SPEC_2026-09-09_zh.md)。
+
+用户已对“现在按ICBHI-only→SPRSound-only→Coarse SPR→Native+attributes串行开跑，各seed42”的明确问题回答“可以”。授权包括这四项正式训练、各自规定的选模/评测及结果交接；成功完成一项后继续下一项，失败或用户暂停则停止后续队列。Full/HF、其他seed与旧14/18-run计划均不在本次启动范围。
+
+- [x] 本地训练任务：核对并整理正式JH2三seed主结果、Full/CW-only配对结果、属性指标、已有HF/KAUH及HF扩展结果；管理补齐实际训练eligibility统计并核对原validation样本。交付目录为`docs/paper/ICASSP_2026_acoustic_disease/LOCAL_ASSETS_NO_TRAIN_2026-09-09/`。
+- [x] 本地训练任务：可用数字、来源、适用论文位置和比较限制已落盘并回报管理。其跨任务就绪通知被审批拦截，管理已成功通知论文写作从同一main工作区读取修正版。
+- [x] 论文写作任务：已接收并核对上批全部统计，更新Data的实际训练覆盖句，完成[资产接收与缺项清单](paper/ICASSP_2026_acoustic_disease/LOCAL_ASSETS_RECEPTION_AND_GAPS_2026-09-09_zh.md)。当前主checkpoint的核心推理已齐全；已有结果可以用于benchmark、固定读出和外部分析。
+- [x] 本地训练任务：完成现有checkpoint预测查漏、HF/KAUH端点后处理及精确历史HF-off的SPR inter补推理；历史HF-on用已有NPZ。主JH2与JH3.3的已完成核心推理未重复，无训练或优化器更新。
+- [x] 论文写作任务：已将benchmark读出/属性/外部结果及独立历史HF案例写入§4.2；管理核对并补上最后的历史SPR C/W AUROC/AUPRC配对，更新接收与缺项清单。Abstract/Conclusion最后处理，本轮未编译；后续日常写作仍不自动汇报。
+- [x] 管理与用户：已确认延续benchmark的最小方向，顺序为两个单源、Coarse SPR、Native+attributes，各seed42一次；Full/HF不默认重跑。
+- [x] 模型设计任务：已更新当前协议，新增`table2_benchmark_controls.py`及定向测试，提供四条命令；metadata/loss/schedule检查通过，未执行模型前向或训练。
+- [x] 本地训练任务：已只读核对预训练初始化、旧Full参照、原配方/分组与独立输出路径，未发现相关活动训练进程；建议根目录`PAFA_BENCHMARK_4COND_seed42`当前不存在。四个新variant不含Full，包含Native+attributes；命令就绪也不自动启动。
+- [x] 管理：完成静态审阅，修复学习率调度与旧Full不一致的问题，按原JH2每epoch cosine更新、epoch内保持常数；新增epoch1/25/50纯函数检查通过。
+- [x] 用户已明确授权启动四项串行训练；本地任务已收到启动指令，不再重复申请。
+- [x] ICBHI-only seed42：完成28 epochs，selected18，共9128 updates，用时256.87分钟；terminal预测与run_summary已落盘。
+- [x] SPRSound-only seed42：完成34 epochs，selected24，共11084 updates，用时281.63分钟；terminal预测与run_summary已落盘。
+- [x] Coarse SPR seed42：工程重试seed_42_attempt2已完成30 epochs，selected20，9780 updates，294.88分钟；原partial保留，不用于最终表格。
+- [x] Native+attributes seed42：已完成27 epochs，selected17，8802 updates，257.57分钟；今天03:14最终评测和队列成功结束。
+
+本科生新材料（09-10接收）：已保存[25组配置三seed汇总与核对说明](student_tasks/received/2026-09-10_baseline_3seed/REVIEW_zh.md)。来稿caption声明seeds0/1/42的mean±sample SD，覆盖五个backbone的ICBHI、SPR binary、SPR event7、KAUH nine-class及HF四标签时间任务。用户已明确确认本次结果为frozen encoder、5s输入，input方法与主方法一致；此前2s/1s说法不适用于这份新汇总。写作已将Table1五行旧seed42背景值升级为三seed mean±SD，并同步caption、分块标题、5s说明和正文举例；管理已核对30个mean/SD单元与来稿一致。逐seed原始metrics/config尚未随文件提供，按学生汇总值记录，不宣称已独立复算每个run；已确认的输入设置不再列为待确认。HF/KAUH指标不与本论文的外部兼容评测混用；该文件未包含Figure1声学分析或PAFA/SG-SCL等强方法的新多seed结果。本地四条件训练继续，不受此次材料接收影响。
+
+合作沟通：已为`arian_azarang@med.unc.edu`准备[英文进度邮件草稿](communications/2026-09-10_arian_progress_email_draft.md)，说明当前paper story、联合模型/基线与两个单源结果、正在补齐的标签/分类接口分析和后续临床合作反馈。邮件尚未发送；发送时应按当时的实际实验状态更新进度措辞。
+
+中断与恢复：17:48的实时ps已无原carrier/queue/caffeinate/训练Python；原session72539在管理与执行任务均返回Unknown process id。现有日志无traceback或退出码，不能归因为模型异常、OOM或已知tee问题；epoch25的no-improvement counter为8，未达到patience10。最后可确定阶段是epoch26 validation prediction已保存。旧last checkpoint无optimizer/RNG，不能无损续跑。恢复使用独立tmux与直接stdout/stderr日志：保留原Coarse目录，重试输出为`coarse_spr/seed_42_attempt2`，Native仍用原未创建的`native_attributes/seed_42`；只完成原批准的两项剩余条件，不重跑两项已完成单源，不改科学规格。
+
+恢复实证（18:05）：tmux `acoustic_benchmark_recovery_20260910`存活，server PID19730的PPID为1，pane/queue PID19731、caffeinate PID19734、Coarse Python PID19736均存活。新console直接落盘于`result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/recovery_logs/recovery_queue_console.log`，已保存实际update1至160。配置确认seed42、MPS FP32、原BEATs预训练初始化与epoch cosine，未加载旧Coarse checkpoint；旧目录保留。恢复脚本记录每项exit code，失败停后续；不依赖原Codex PTY会话。退出根因仍未知，不能把更换carrier写成已证实的根因修复。
+
+下一步（不自动增加实验）：
+
+- [x] 写作任务已补齐Table2最后两行、signed差值和结果解释；管理已回读Evaluation并核对Coarse/Native数字，本批训练数字无xxx。
+- [ ] 与用户讨论Native+attributes高于Full对主方法定位及贡献措辞的影响；不自行更换主方法。
+- [ ] 完成Figure1与§2.2的声学说明，随后收尾Abstract/Conclusion、全篇一致性和投稿版面。
+- [ ] 根据最终讨论更新Arian邮件并按用户发送指令处理；当前仍是草稿。
+
+本次已完成结果（均为seed42，Score为百分数）：
+
+| 条件 | ICBHI Score | SPR official Score |
+|---|---:|---:|
+| 既有Full fresh42 | 61.17 | 90.37 |
+| ICBHI-only | 56.17 | 56.86 |
+| SPRSound-only | 47.93 | 92.32 |
+| Coarse SPR（attempt2） | 56.71 | 90.22 |
+| Native+attributes | 62.30 | 91.94 |
+
+四项完整run_summary、selected terminal NPZ及native指标均存在；恢复console的QUEUE_COMPLETE为2026-09-11T08:14:09Z，QUEUE_EXIT=0。Coarse工程重试与原attempt的config逐字段仅output_dir不同。管理已从Coarse/Native最终NPZ独立复算ICBHI Score、SPR official Score及C/W macro AUROC，均与保存汇总一致。
+
+关键已完成对照（均为seed42）：Full相对Coarse的ICBHI/SPR/CW-AUROC分别高4.46/0.15/3.50pp；Native+attributes相对Full分别高1.13/1.58/0.24pp。不能宣称hierarchy优于native heads，也不自动将Native替换为主方法；主线与最终contribution需与用户讨论。单源选择目标/暴露差异仍按原协议披露。
+
+写作收尾已下发：最后两行和对应数值语句使用完整Coarse attempt2和Native结果，更新来源与缺项清单。Table1本科生frozen encoder、同5s输入、三seed背景已完成并核对30个mean/SD单元。接下来是结果解释、Figure1、Abstract/Conclusion及投稿版整理；Arian邮件仍为本地未发送草稿。
+
+08:55观察记录：总queue_console在昨晚首epoch后未继续同步，本地任务也未按原约定及时回报两项完成；当时训练本身未停。管理已用各run的train_log/run_summary与实时进程核对，并要求本地任务恢复session72539输出接收、持续追加日志及每项完成交接；不重启队列。两个已完成结果已通知写作读取，按实际benchmark协议更新Table2与对应正文。
+
+原队列启动记录（这些进程现已结束）：queue session `72539`，carrier PID86111/86112，caffeinate PID86114，首项Python PID86118；UTC启动时间2026-09-10T03:01:49（芝加哥09-09 22:01）。首个update1实际loss=1.721060，后续update224=0.687375，仅作运行证据，不作实验结论。console为`result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42/queue_console.log`；初始tee先于目录建立导致日志文件未打开，已从持久exec session恢复保存，训练未中断或重启。后续由执行任务继续追加日志。
+
+首个完整epoch已核对落盘：`train_log.jsonl`、`validation/epoch_001.npz`、`selection_test/epoch_001.npz`及best/last checkpoint均存在。epoch1学习率与原JH2调度一致；选模分数属于训练过程，不写入论文表格。暂不依据单个epoch重估整批完成时间，后续以实际早停和完整run耗时为准。
+
+已获启动授权的最小方案：先ICBHI-only和SPRSound-only各seed42，再Coarse SPR与Native+attributes各seed42。配方可比时使用现有fresh42 Full配对，不拿三seed均值替代；若执行时发现不能复用的实质差异，先报告，不自动增加Full训练。历史HF案例已完整，本轮不追加HF训练。四个常规run按历史MPS耗时约18–21小时估算，另留汇总和写作时间；正常早停下以2–3天为项目目标，不构成时限承诺或学生个人截止时间。Hanlin资源未确认，不计入必达路径。
+
+本轮实施口径：ICBHI-only/Coarse SPR/Native+attributes按ICBHI official-test native Score选模，SPRSound-only按本源SPR official inter native Score选模；单源仅用本源validation拟C/W阈值，另一目标在选模冻结后评估。Full保留其原ICBHI-selected checkpoint，所以SPR-only与Full的selection目标不同，按原生benchmark参照解释，不把差值全部因果归于来源共享。复用原fresh42两分数据（ICBHI3174/968、SPR5219/1437），不采用新calibration/selection三分；每epoch326更新、max50/patience10。四个新条件均从原BEATs预训练初始化开始，不从finetuned Full续训；Coarse在SPR只保留A/3，隐藏SPR细标签及其validation用途。Native匹配C/W辅助标签和1/3系数，使用native-head argmax。详细实现由模型设计写入当前规格后核对。
+
+Full复用核对补充：仅重建fresh42原metadata与确定性batch schedule（27 epochs、每源4401个batch），ICBHI/SPR所有batch的A/C/W均非空，SPR每batch至少28个C/W eligible样本。故该已完成Full的available-node平均损失实际每节点均为1/3；不能只因公式写法与固定1/3不同就判定必须重跑。该观察不消除数据划分、选模与预算差异；Coarse变体移除C/W后仍需明确保持A系数，不能自动归一为1。无音频、模型前向或训练执行。
+
+推理执行采用对应完整checkpoint原来的输入预处理、readout、既有validation阈值与评测单位，冻结权重，不重选epoch、不用test调阈值；不新增特征研究、训练缓存或服务器任务。已有test-selected结果按benchmark协议如实使用，不一律废弃，也不冒充validation-selected结果。查漏若确认无新推理需要，记录无需重复执行，继续后处理和写作。
+
+本轮具体推理已完成：本地补齐HF/KAUH的BA、Macro-F1、UAR等端点，并对精确历史`PAFA_JH2_test_selected_seed42_attempt2/best_checkpoint.pt`（epoch19）完成1429个SPR inter events推理。重算native SPR official Score为0.8920104437477139，与原存档一致。历史HF-off/on的SPR C/W macro AUROC为96.806%→96.950%（+0.144pp），macro AUPRC为76.243%→75.122%（−1.121pp）；HF-on仅读取已有NPZ。新资产位于`PAFA_JH4_JH2_HFaux_seed42_attempt2/historical_jh2_spr_cw_posthoc/`，同一交付目录已更新并通知写作读取，未新增训练。
+
+此前存量数字落文已完成：§4.2包含三seed benchmark读出/属性/外评及独立历史HF案例。新增四项训练现已全部完成，Table2最后两行与结果解释正在同步；后续聚焦主线讨论和论文收尾，不再把原四条件列为待跑。旧clean队列及原Coarse partial不恢复。
+
+上批接收完成：修正版JSON、CSV及中文说明已完成并获写作接收；SPRSound录音/事件单位、SPR选模标注和clean-suite条件性缺项已修正，逐seed C/W平均AUROC已补齐。管理从已有三seed SPR NPZ独立复算C/W平均AUROC为97.318±0.148%（sample SD），并从原config/metadata补齐旧JH2实际训练eligibility，三个seed的重建validation样本均与已存NPZ完全匹配。旧ICBHI训练cycles依seed为3636/2880/3174，C/W均100%eligible；旧SPR各seed训练5219events，C/W各5170eligible、49masked（0.939%）。该批无新增训练或管理侧模型前向；当前新增推理授权及数字落文按上面的最新清单执行。
+
+用户另在本地任务直接授权“补充计算HF lung和KAUH的test”：JH3.3既有checkpoint的固定外部推理已于09-09约19:00完成，无新增训练，独立保存在`result/reproduce/pafa_joint_hierarchy/PAFA_JH3_3_HF_KAUH_external_seed42/`。已通知写作读取；该资产是JH3.3外部诊断，不替代JH2 Full或HF-on配对，也不混入原CPU-only交付的执行范围。
+
+旧clean队列暂停记录：Full42在update448附近被Ctrl-C中断，完整保存至validation point1/update326，官方test未访问；Python59399与旧queue controller59395均已结束，后续不会自动继续。best/last checkpoint、NPZ与日志保留；旧clean协议的两个单源从未启动，当前benchmark队列状态以上方最新核对为准。
+
+- 旧备选两案：A本地六条件seed42；B Hanlin同CUDA环境核心九项＋本地带独立Full参照的机制四项。两案均待现有资产盘点后重审，不是已确定的缺失训练清单；B还取决于其资源确认。
+- 暂停前14/18-run预算不再作为自动执行清单；新seed分配和恢复需用户确认。E1/属性指标从已有输出派生，不额外增加训练。
+- 旧E1已存在：Full/CW-only平均Score61.17%/60.29%，逐seed差值方向不一致；仅test-selected诊断，不填新Table2。
+- 本机历史同类运行4.4–5.2小时/run；HF旧run约7小时。新Full42已实际训练并保存首个validation point，但目前停止，不能把partial当完成结果。
+- 写作只补仍缺内容，Abstract与Conclusion留到最后。日常改稿仍由用户在Overleaf编译；本轮指定PDF比较的特批已完成。
+
+工作目录：`/Users/zilongzeng/Research/Acoustic`，分支`main`。当前纸稿、计划和实现修改尚未新增Git提交。
+
+执行任务：论文写作`01a08442-92e6-7110-8399-e42eca520ea8`；模型设计`019fb42d-11d9-7b53-a6ae-d0ab010609c5`；Acoustic本地训练`01a03625-ebcd-7433-8e0e-042abd365d1e`；管理`01a06de3-f57c-7bf3-a7b2-2a6bd7c33aae`。
+
+[此前写作进度记录](work_plans/2026-09-08_work_plan_zh.md)保留已完成交付与摘要确认；[上次同步的Notion计划](https://app.notion.com/p/3d4309efda29819aa175ddb25fcfcf94)与09-08 Structured时段作为历史安排。本轮不自动设置新完成期限、提交Git、启动服务器或联系外部人员。Hanlin不设具体期限，seed0/1回报仍按原规则处理。

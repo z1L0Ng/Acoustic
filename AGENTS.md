@@ -26,14 +26,18 @@ This file applies to every agent and every subdirectory in the Acoustic project.
 - Do not start experiments, server runs, Notion writes, or Git commits/pushes without the authorization required by the management task.
 - The current Working Plan permits contract and implementation preparation, but Model Design training remains paused at `READY_FOR_USER_START`. No experiment, feature extraction, cache build, validation, test, or server run may start until the user gives an explicit start instruction.
 
-## Paper-writing workspace
+## Paper-writing workspace and workflow
 
 - The paper-writing task (`01a08442-92e6-7110-8399-e42eca520ea8`) works directly in `/Users/zilongzeng/Research/Acoustic` on the `main` branch, as requested by the user on 2026-09-08.
 - Keep manuscript sources, discussion drafts, figures, and review PDFs in `docs/paper/ICASSP_2026_acoustic_disease/` under this main checkout.
+- Routine manuscript edits do not trigger local LaTeX compilation, review-PDF generation, or PDF rendering/visual inspection. The user compiles in Overleaf; compile locally only when the user explicitly requests it.
+- Send writing progress or a handoff to management only when the user explicitly permits synchronization. This also applies to completion, blockers, decision points, and scientific findings: discuss them with the user in the writing task, and wait for permission before syncing to management. Do not generate an automatic management receipt after each edit.
+- Management-side collection of writing progress and its Work Plan/Notion synchronization follow the same user-authorized synchronization rule.
 
 ## Mandatory management handoff
 
-- Every Acoustic project task must report to the project-management task when its assigned work completes, reaches a decision gate, or becomes blocked. Do not finish silently inside a specialist task.
+- The paper-writing task is exempt from the automatic reporting requirements in this section and follows the user-controlled synchronization rule above.
+- Every other Acoustic project task must report to the project-management task when its assigned work completes, reaches a decision gate, or becomes blocked. Do not finish silently inside a specialist task.
 - The management destination is the task titled `接管 Acoustic 项目管理` (thread ID `01a06de3-f57c-7bf3-a7b2-2a6bd7c33aae`).
 - A completion handoff must state: execution status; completed scope; changed files or external pages; Verified Results; Interpretation; Issues/HOLD; actions not performed; and the next decision required from management or the user.
 - Report planning, code readiness, partial cache, validation-only evidence, and completed experimental results as different statuses. Never upgrade one into another.

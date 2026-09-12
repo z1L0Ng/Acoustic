@@ -1,50 +1,99 @@
-\RequirePackage[T1]{fontenc}
-\documentclass[conference]{IEEEtran}
+\documentclass[10pt,letterpaper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{spconf}
 \usepackage{cite}
-\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{textcomp}
-\usepackage{xcolor}
+\usepackage{placeins}
 \usepackage[hidelinks]{hyperref}
 
-% Chapter-review draft, 2026-09-08, following the user-approved storyline.
-% Empirical contributions 2 and 3 are explicitly pending; no new results.
-\newcommand{\draftnote}[1]{\par\smallskip\noindent{\footnotesize
+% Queue one full-width top float per page. Keep [t] (not [!t]) on wide
+% figures/tables: ! would override the float-count limit.
+\setcounter{dbltopnumber}{1}
+
+% ICASSP 2027 official Paper Kit:
+% https://cmsworkshops.com/ICASSP2027/papers/paper_kit.php
+% Keep spconf.sty and IEEEbib.bst beside this file when uploading to Overleaf.
+% The official style supplies the two-column layout, fonts, title, and empty page style.
+% Technical content: at most four pages. An optional fifth page is restricted
+% to references, funding acknowledgements, and the ethics-compliance statement.
+% Use the 10pt default; \small is 9pt for tables and review notes.
+\newcommand{\draftnote}[1]{\par\smallskip\noindent{\small
 \textbf{Draft note.} #1}\par\smallskip}
+
+\title{Shared Attribute Supervision Across Native Respiratory Sound Tasks}
+% TODO: add confirmed affiliations. Wade Wu's email has not yet been supplied.
+\name{Zilong Zeng, Hanlin Liu, Wade Wu, Arian Azarang, Stephen Xia, Jingping Nie}
+\address{%
+{\small \texttt{zilongzeng2030@u.northwestern.edu},
+\texttt{2023190503025@std.uestc.edu.cn}}\\
+{\small \texttt{arian\_azarang@med.unc.edu},
+\texttt{stephen.xia@northwestern.edu}, \texttt{jingping@unc.edu}}
+}
+
 \begin{document}
-\bstctlcite{paperreviewstyle}
-\title{Shared Attribute Supervision for Respiratory Sound Learning Across Native Tasks}
-\author{}
 \maketitle
 
 \begin{abstract}
-Respiratory-sound datasets annotate related acoustic phenomena using different
-units, category granularities, and annotation coverage. We investigate whether
-compatible supervision from these datasets can support shared sound attributes
-while retaining their native classification targets. A shared BEATs encoder
-learns abnormality, Crackle, and Wheeze predictions from annotation-supported
-targets. A two-level decision scheme uses these predictions for ICBHI
-cycle-level four-class classification and SPRSound event-level
-Normal/Adventitious classification. The study distinguishes the reuse of
-attribute information across annotation conditions from the effect of the
-final task readout. Preliminary results from three ICBHI-test-selected runs
-achieve an ICBHI Score of $61.17\pm0.31\%$ and a SPRSound official Score of
-$90.70\pm0.34\%$ with one joint model per run. These results establish a
-native-task operating point. Whether cross-source supervision compensates for
-missing fine-grained labels, and how much the two-level decision contributes,
-remain to be determined by the specified matched ablations.
+Respiratory sound datasets annotate related events at different granularities.
+We study whether shared fine-attribute supervision helps native tasks and
+whether its benefits depend on the classification interface. A shared BEATs
+encoder learns abnormality, crackle, and wheeze from ICBHI cycles and SPRSound
+events. HF supports a separate auxiliary-supervision study and attribute
+evaluation; KAUH provides external evaluation. Within-class acoustic
+differences persist between ICBHI and SPRSound after common 5-s preparation.
+We report a three-seed benchmark and seed-42 controls using official-test-based
+checkpoint selection. Retaining SPRSound fine annotations raises ICBHI Score
+by 4.46 percentage points and SPRSound C/W macro AUROC by 3.50 points relative
+to coarse supervision. Native heads with matched C/W auxiliary supervision
+score higher than the two-level reference in the single-seed comparison.
+These observations support reusing fine annotations while assessing native
+readout choices and task-specific costs separately.
 \end{abstract}
 
-\begin{IEEEkeywords}
+\begin{keywords}
 respiratory sounds, shared supervision, heterogeneous annotations, acoustic attributes, hierarchical decoding
-\end{IEEEkeywords}
+\end{keywords}
+
+% Declare both wide figures on page 1, before the section text.
+% With dbltopnumber=1 and [t], Figure 1 targets the top of page 2,
+% Figure 2 the top of page 3. Keep their actual discussion in Sections 2/3.
+% Check the final page positions in Overleaf after changing figure heights.
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{Figure/figure1_dataset_characteristics.pdf}
+\caption{Acoustic summaries of 5-s inputs. (a) Group-level centroids for
+ICBHI, SPRSound train+inter, HF source-test, and KAUH. Counts are patient
+groups except HF recording-date proxies. Boxes show medians/IQRs and
+1.5-IQR whiskers; outlier markers are omitted. (b,c) ICBHI/SPRSound
+class-matched patient medians and 95\% group-bootstrap intervals.
+Patient counts for Normal/Crackle/Wheeze/Both are 124/274, 74/89, 63/63,
+and 35/10. Descriptors aggregate within recording then group. Level is
+uncalibrated dBFS; centroids use 80--2000~Hz power after global centering.}
+\label{fig:dataset_characteristics}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{Figure/figure2_method.pdf}
+\caption{Shared attribute learning and native task readouts. (a) ICBHI and
+SPRSound annotations supervise available A/C/W targets, while their audio
+trains a common encoder and three parallel heads. (b) The same scores support
+binary and two-level four-class decisions. HF source-train supplies a
+separate C/W auxiliary-supervision condition; HF source-test and KAUH
+evaluate fixed models.}
+\label{fig:method_overview}
+\end{figure*}
 
 \input{Section/1introduction}
 \input{Section/2data}
 \input{Section/3method}
 \input{Section/4evaluation}
 \input{Section/5conclusion}
-\bibliographystyle{IEEEtran}
+% Finish all figure/table floats before starting the reference list.
+\FloatBarrier
+\bibliographystyle{IEEEbib}
 \bibliography{citation}
 \end{document}

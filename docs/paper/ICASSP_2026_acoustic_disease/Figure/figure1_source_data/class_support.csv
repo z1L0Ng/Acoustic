@@ -1,0 +1,9 @@
+dataset,compatible_label,units,recordings,groups
+ICBHI,Both,506,171,35
+ICBHI,Crackle,1864,432,74
+ICBHI,Normal,3642,714,124
+ICBHI,Wheeze,886,255,63
+SPRSound,Both,31,17,10
+SPRSound,Crackle,1044,375,89
+SPRSound,Normal,6199,1808,274
+SPRSound,Wheeze,757,277,63
