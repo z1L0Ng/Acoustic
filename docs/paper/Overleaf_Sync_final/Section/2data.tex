@@ -24,6 +24,26 @@ Diaphragm, and Extended (B/D/E) versions of each recording
 
 \subsection{Acoustic Cues and Annotation Granularity}
 \label{sec:acoustic_characteristics}
+Figure~\ref{fig:dataset_characteristics} summarizes acoustic variation after
+the common 5-s preparation in Section~\ref{sec:annotation_alignment}.
+We measure uncalibrated signal level (dBFS) after global mean removal and
+the power-weighted spectral centroid over 80--2000~Hz. Centroids use
+Welch spectra\cite{welch1967spectra} of globally centered 4-kHz analysis
+copies, with 1-s periodic Hann windows and 50\% overlap. Descriptor medians
+are aggregated within recording and then within patient. HF uses
+recording-date proxies for grouping.
+
+The four-source overview in Figure~\ref{fig:dataset_characteristics}(a)
+shows the highest median centroid for HF source-test data. Panels (b,c) compare compatible
+ICBHI/SPRSound classes, merging Fine and Coarse Crackle. Across Normal,
+Crackle, Wheeze, and Both, ICBHI's class-specific medians are
+25.13--29.11~dB higher in level and 28.95--68.38~Hz lower in centroid
+than SPRSound's.
+The 95\% intervals use 1,000 bootstrap resamples of patient summaries
+within each source/class. The SPRSound Both estimate uses ten patients.
+These differences persist within compatible labels after common input
+preparation, motivating evaluation of shared attribute supervision's
+benefits and costs on each native task.
 
 \subsection{Annotation Alignment and Input Preparation}
 \label{sec:annotation_alignment}
