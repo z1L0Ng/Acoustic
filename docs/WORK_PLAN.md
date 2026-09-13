@@ -1,19 +1,40 @@
 # Acoustic Work Plan
 
-更新日期：2026-09-11
+更新日期：2026-09-13（周日）
 
-当前优先级：历史4个提交和当前状态快照`e0bdf3e`均已推送。用户随后提供了[Overleaf最新副本](paper/Overleaf_Sync_final/main.tex)，并指定`docs/paper/Overleaf_Sync_final/`为今后唯一与Overleaf同步、精修的稿件目录；`docs/paper/ICASSP_2026_acoustic_disease/`及此前稿件目录仅作历史资产，不自动回写或覆盖新副本。
+会后重排准备（9/13）：上一轮work plan已按当前状态保存为[旧计划快照](work_plans/snapshots/2026-09-13_previous_work_plan_snapshot_zh.md)。等待用户提供刚结束的meet内容后再制定后续计划；写作/绘图暂停及本地训练原安排维持。
 
-新副本首轮整理：清理作者自写TeX/BibTeX中的内部注释、旧占位和draftnote，删除作者Hanlin Liu及其作者邮箱；模板文件中的第三方版权说明和宏定义保持原样。新副本已经接入Figure1/2并包含Abstract和Conclusion，但Section2.2原先仍为内部占位，清理后正文待补。写作任务已收到新目录规则；本轮不自动续写旧任务、不编译或推送Git。
+当前暂停状态（9/13 15:20 America/Chicago）：用户明确暂停“论文绘图”和“论文写作”任务，两项均已确认暂停，等待用户明确恢复。保留当前已落盘稿件、PPT及图件；不继续修改、导出、渲染、集成或自动回填新结果。两任务确认没有遗留的本任务后台作业。本地训练进程、剩余有限队列及既有训练授权保持不动，不因本次暂停改变训练安排。
 
-当前精修状态：
+最新交付（9/13）：Figure2原生可编辑PPT首稿已完成，管理已核对并集成到`docs/paper/Overleaf_Sync_final/Figure/figure2_method.pptx/.pdf/.png`。图参考旧roadmap，尺寸178×57mm，文字9–11pt；SPR只连A，IC分别接A门控与C/W，HF/KAUH角色独立。main.tex对应caption已同步。可复算JS位于`figures/paper/figure2_method_ppt.mjs`。后续按作者反馈改版；Figure1与整篇压缩仍待推进，本地训练继续原队列。
 
-- [x] 明确唯一Overleaf同步目录，旧稿保留为历史资产。
-- [x] 清理新副本TeX/BibTeX中的134行内部注释、未使用的draftnote和Section2.2内部占位；删除Hanlin Liu及其作者邮箱。作者自写源码未残留注释，26个实际引用键、交叉引用和全部本地图文资源静态检查通过；2图、2表、Abstract和Conclusion均存在，未编译。
-- [ ] 围绕新副本补齐Section2.2，随后按用户逐步确定的范围精修全文。
-- [ ] 补充已确认的作者单位和Wade邮箱；当前作者为Zilong Zeng、Wade Wu、Arian Azarang、Stephen Xia、Jingping Nie。
+最新执行指示（9/13）：用户要求“正常继续跑就行”，剩余SPR-only0→IC-only1→SPR-only1按原有限队列继续完成，原周日窗口改为时间估计，不因预计超过今晚暂停这批已批准任务。用户同时批准写作任务立即将已完成结果写回唯一同步目录`docs/paper/Overleaf_Sync_final/`；Table2、协议、相关结果解释、Introduction、Abstract和Conclusion统一修订。本轮允许完成后一次性交接，不进行本地编译、额外实验或Git操作。
 
-以下为之前主稿的工作记录，状态以用户提供的新副本及本页顶部盘点为准。
+训练进度（9/13 10:45 America/Chicago核对）：新增完成5/8，P0完成4/4，P1完成1/4。已完成Coarse0/1、Native0/1和IC-only0；当前SPR-only0由Python5792、continuation64304正常训练，完整epoch10/update3260，epoch11真实update已至3552。剩余IC-only1、SPR-only1尚未启动。IC-only0实际用时408.09min，后续时间预算需结合新耗时复核；周日晚全齐不能保证。Coarse0的退化结果50.00/25.00/78.93%完整保留。
+
+科学解释更新：Full、Coarse、Native均已具有seeds0/1/42完整结果。Native三seed的IC/SPR/CW分别为63.67±1.67/90.86±1.21/97.27±0.14%，与同seed Full的配对均值差为+2.50/+0.16/−0.05pp。IC在三seed均提高；SPR的seed1为−1.49pp，因此撤回将前两个seed“两项native Score均提高”的观察推广到三seed的说法。Coarse三seed为54.66±4.05/67.23±36.62/88.84±8.59%，包含seed0退化；“SPR二分类几乎不变”不是稳定结论。以上仍沿用official-test选模协议，不能解释为纯结构因果。稿件仍为seed42控制描述，尚未自动写入这些结果。
+
+当前计划：[论文复盘、多seed补证与4页稿](work_plans/2026-09-12_paper_review_work_plan_zh.md)；[Notion 9/12 Working Plan](https://app.notion.com/p/3d9309efda2981e0bae7e27f069c5366?pvs=204)。用户9/12明确批准“本地训练线程完成缺的多seed实验”，授权包括必要的runner seed泛化、分区核对及正式训练/评测/汇总。顺序为Coarse0→Native0→Coarse1→Native1，再IC-only0→SPR-only0→IC-only1→SPR-only1；均复用对应Full参照，不重跑已完成seed42。队列可延长到9/13，若追加运行预计超出该窗口则在继续前回报。前5项已完整结束，第6项SPR-only0正在continuation中运行；不包含新Full/HF/其他模型、论文编辑、编译或Git操作。
+
+唯一稿件入口仍为[Overleaf_Sync_final](paper/Overleaf_Sync_final/main.tex)；旧稿目录为历史资产，只读查证、不自动覆盖当前稿。9/12重新读取后，Section2.2已补齐、Wade邮箱已填写，Abstract/Conclusion及2图2表均存在，不再把这些列作未写内容。当前主要工作是论点与贡献、重复seed证据、图的字号/高度及正文取舍；作者单位仍待确认。
+
+- [x] 从当前副本完整复盘核心论点、候选贡献、方法、结果和逐节功能，形成claim/evidence/缺口清单。
+- [x] 核对Full三seed及四个seed42控制；管理已完成runner seed0/1/42支持、动态Full引用和独立输出目录，6项定向测试通过。原seed42默认目录与配方保留；执行任务核对最终sample IDs后直接进入已授权队列。
+- [x] 估算P0的Coarse/Native seed0/1共4run：既有早停耗时外推18.4h，全部50epoch情形约32.3h；可选全部8run为36.4h，满预算情形约61.4h，不能承诺周日全齐。
+- [x] 只读检查两张现有图；Figure1存在6.7–8pt标签，Figure2高约2.75in。正文叙述加摘要粗计2961词，Evaluation占1323词，已制定1845–2100词的首轮叙述预算及4页PDF验收规则。
+- [x] 新计划已写入Acoustic的Notion Working Plan库并回读核对；旧9/8页加历史标记，保留原记录。
+- [x] 用户已批准本地补齐缺失多seed；9/13进一步确认正常继续原队列，无需逐run重复申请。此授权不以论文贡献措辞讨论完成为前提。
+- [x] P0四个新增run全部完成，Full/Coarse/Native三seed汇总及同seed配对差已核对，Coarse0退化结果保留。
+- [ ] P1四个新增run完成及汇总：IC-only0完成，SPR-only0运行中，IC-only1和SPR-only1待运行。按9/13指示继续完成原队列；保留时间估计、训练错误停止和自动汇总。
+- [ ] 与用户逐条讨论核心论点和候选贡献，再按完成的实验结果确定最终力度。
+- [x] 首批已完成结果已写回Table2/相关正文/Abstract/Conclusion；采用Full/Coarse/Native各n=3、IC-only n=2、SPR-only n=1的明确快照，配对差仅用同seed交集。后续新完成单源结果在下一次回填更新。
+- [x] Figure2原生可编辑PPT首稿、单图PDF/PNG已交付并集成唯一同步目录，caption已同步；后续按作者反馈调整。
+- [ ] 后续处理Figure1和正文压缩，使用用户Overleaf编译PDF验收技术内容4页。
+- [ ] 补齐已确认的作者单位，核对最终作者、引用和图表信息。
+
+本轮训练输出：`result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_multiseed/`。原首项日志为`queue_logs/multiseed_queue_console.log`，接续日志为`queue_logs/continuation_queue_console.log`；自动汇总为`multiseed_summary.json`及`.md`，n=1的sample SD为空，配对差只按同seed交集计算。当前Full/Coarse/Native各n=3，IC-only n=2，SPR-only n=1；运行中的SPR-only0未计入完成结果。
+
+以下为历史工作记录；其中的待办、旧路径和旧完成状态不代表当前Overleaf副本，以9/12计划为准。
 
 当前状态（09-11 11:10核对）：4/4条件全部完成。恢复队列已于今天03:14（芝加哥）正常退出，QUEUE_EXIT=0；实时检查无Acoustic训练进程。Coarse采用seed_42_attempt2完整结果，原中断目录保留且不计入结果；没有启动额外实验。
 

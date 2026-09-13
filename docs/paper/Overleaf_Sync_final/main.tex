@@ -8,8 +8,24 @@
 \usepackage{textcomp}
 \usepackage{placeins}
 \usepackage[hidelinks]{hyperref}
+\usepackage{etoolbox}
 
 \setcounter{dbltopnumber}{1}
+\setlength{\textfloatsep}{6pt plus 1pt minus 2pt}
+\setlength{\dbltextfloatsep}{6pt plus 1pt minus 2pt}
+\setlength{\floatsep}{6pt plus 1pt minus 2pt}
+\setlength{\dblfloatsep}{6pt plus 1pt minus 2pt}
+\setlength{\intextsep}{6pt plus 1pt minus 2pt}
+
+\makeatletter
+\patchcmd{\@makecaption}{\vskip 10pt}{\small\vskip 4pt}{}{}
+\makeatother
+\apptocmd{\thebibliography}{
+  \small
+  \setlength{\itemsep}{1pt plus 0.3pt}
+  \setlength{\parsep}{0pt}
+  \setlength{\parskip}{0pt}
+}{}{}
 
 \title{Shared Attribute Supervision Across Native Respiratory Sound Tasks}
 \name{Zilong Zeng, Wade Wu, Arian Azarang, Stephen Xia, Jingping Nie}
@@ -30,11 +46,13 @@ encoder learns abnormality, crackle, and wheeze from ICBHI cycles and SPRSound
 events. HF supports a separate auxiliary-supervision study and attribute
 evaluation; KAUH provides external evaluation. Within-class acoustic
 differences persist between ICBHI and SPRSound after common 5-s preparation.
-We report a three-seed benchmark and seed-42 controls using official-test-based
-checkpoint selection. Retaining SPRSound fine annotations raises ICBHI Score
-by 4.46 percentage points and SPRSound C/W macro AUROC by 3.50 points relative
-to coarse supervision. Native heads with matched C/W auxiliary supervision
-score higher than the two-level reference in the single-seed comparison.
+We compare fine and coarse supervision and two classification interfaces
+across three paired seeds using official-test-based checkpoint selection.
+Retaining fine annotations produces higher native-task Scores and C/W macro
+AUROC than coarse supervision, whose performance varies sharply across seeds.
+Native heads with matched C/W supervision improve ICBHI Score by 2.50
+percentage points on average over the two-level reference, while SPRSound
+Score changes direction across seeds.
 These observations support reusing fine annotations while assessing native
 readout choices and task-specific costs separately.
 \end{abstract}
@@ -61,11 +79,14 @@ uncalibrated dBFS; centroids use 80--2000~Hz power after global centering.}
 \centering
 \includegraphics[width=\textwidth]{Figure/figure2_method.pdf}
 \caption{Shared attribute learning and native task readouts. (a) ICBHI and
-SPRSound annotations supervise available A/C/W targets, while their audio
-trains a common encoder and three parallel heads. (b) The same scores support
-binary and two-level four-class decisions. HF source-train supplies a
-separate C/W auxiliary-supervision condition; HF source-test and KAUH
-evaluate fixed models.}
+SPRSound audio trains a shared encoder and parallel A/C/W heads; available
+labels and masks define supervision. R/S denotes Rhonchi/Stridor, whose
+labels supervise A only. (b) SPRSound uses A alone; ICBHI combines A gating
+with C/W decisions, using the margin rule only for Abnormal predictions
+with neither attribute positive.
+HF source-train supplies C/W supervision in a separate auxiliary condition.
+HF source-test and KAUH evaluate fixed models; KAUH averages B/D/E
+probabilities within each patient before decoding.}
 \label{fig:method_overview}
 \end{figure*}
 

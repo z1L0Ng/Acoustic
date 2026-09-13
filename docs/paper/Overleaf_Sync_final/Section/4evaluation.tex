@@ -78,12 +78,13 @@ C/W thresholds use internal validation data; SPRSound inter is evaluated
 once per selected checkpoint. We report three completed runs with seeds
 0, 1, and 42, using their mean and sample standard deviation.
 
-Table~\ref{tab:ablations} uses seed 42 throughout and reuses the
-corresponding Full model from Table~\ref{tab:native_results}. Four new
-conditions start from the same pretrained BEATs initialization.
-They retain its patient-grouped subtraining/validation splits:
-3,174/968 ICBHI cycles from 63/16 patients, and 5,219/1,437 SPRSound
-events from 194/49 patients.
+Table~\ref{tab:ablations} uses seeds 0, 1, and 42 for Full, Coarse SPR,
+and Native + attributes; seeds 0 and 42 for ICBHI-only; and seed 42 for
+SPRSound-only. Full reuses the joint runs in Table~\ref{tab:native_results}.
+Each control starts from the same pretrained BEATs checkpoint and retains
+the corresponding Full run's patient-grouped subtraining/validation
+partitions for its training sources. Paired differences use only the seeds
+shared by a control and Full, with calculations performed before rounding.
 
 At each epoch, C/W thresholds are fit to eligible annotations in the
 training sources' validation data before test scoring.
@@ -100,8 +101,8 @@ epoch-wise cosine schedule with a constant learning rate within each epoch.
 Joint training assigns 163 updates to each source, whereas single-source
 training assigns all 326 to its source. Thus, maximum total updates match,
 but each source receives twice as many updates per epoch in single-source
-training. These are single-run benchmark controls; their selection objectives
-and source exposure must be considered when interpreting differences.
+training. These benchmark comparisons therefore differ in source exposure
+and, for SPRSound-only, in the checkpoint-selection objective.
 
 ICBHI Score is $(Sp+Se)/2$, where $Sp$ is Normal recall and $Se$ counts
 abnormal cycles assigned to the correct abnormal subclass.
@@ -191,13 +192,13 @@ The additional HF batches also increase computation.
 \subsection{Benchmark Controls}
 \label{sec:ablations}
 Table~\ref{tab:ablations} compares training sources, available annotations,
-and classification interfaces against the reused Full seed-42 reference.
-The four controls retain its input processing, pretrained
+and classification interfaces against the corresponding Full runs.
+The four controls retain Full's input processing, pretrained
 encoder, PAFA regularization, optimizer, and maximum update budget.
 
-Every training batch of the reused Full model contains eligible A/C/W
-targets, so Equation~\ref{eq:classification_loss} gives each node weight
-$1/3$. The hierarchy controls explicitly use $(L_A+L_C+L_W)/3$.
+When a batch contains eligible A/C/W targets,
+Equation~\ref{eq:classification_loss} gives each node weight $1/3$.
+The hierarchy controls explicitly retain $(L_A+L_C+L_W)/3$.
 Each $L_k$ averages eligible rows and is zero for an empty node; missing
 terms do not redistribute their weights. Coarse SPR retains its audio
 and binary A supervision but withholds SPR C/W annotations from training,
@@ -206,48 +207,53 @@ use $L_A/3$, with PAFA unchanged; C/W thresholds use ICBHI validation only.
 Withheld SPR attributes are read only for terminal inter-set AUROC evaluation.
 
 \begin{table}[!htbp]
-\caption{Benchmark controls (\%, one run per condition, seed 42).
-Full reuses the seed-42 run from Table~\ref{tab:native_results}.
-SPRSound-only$^\dagger$ selects on SPR inter Score;
-other rows use ICBHI test Score. SPR Score denotes official Score.
-Differences are computed before rounding.}
+\caption{Benchmark controls (\%; mean $\pm$ sample SD for $n>1$).
+$n$ is the number of seeds: $n=3$ uses 0/1/42, $n=2$ uses 0/42,
+and $n=1$ uses 42.
+Full reuses Table~\ref{tab:native_results}.
+SPRSound-only$^\dagger$ selects on SPR inter Score; other rows use
+ICBHI test Score. SPR Score denotes official Score.}
 \label{tab:ablations}
 \centering
 \small
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lccc@{}}
+\setlength{\tabcolsep}{2pt}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lcccc@{}}
 \toprule
-Variant & ICBHI & SPR & SPR C/W\\
-& Score & Score & AUROC\\
+Variant & $n$ & ICBHI & SPR & SPR C/W\\
+& & Score & Score & AUROC\\
 \midrule
-Full (HF-off) & 61.17 & 90.37 & 97.17\\
-ICBHI only & 56.17 & 56.86 & 81.23\\
-SPRSound only$^\dagger$ & 47.93 & 92.32 & 97.86\\
+Full (HF-off) & 3 & $61.17\pm0.31$ & $90.70\pm0.34$ & $97.32\pm0.15$\\
+ICBHI only & 2 & $57.16\pm1.40$ & $51.73\pm7.26$ & $77.04\pm5.92$\\
+SPRSound only$^\dagger$ & 1 & 47.93 & 92.32 & 97.86\\
 \midrule
-Coarse SPR labels & 56.71 & 90.22 & 93.67\\
-Native + attributes & 62.30 & 91.94 & 97.41\\
+Coarse SPR labels & 3 & $54.66\pm4.05$ & $67.23\pm36.62$ & $88.84\pm8.59$\\
+Native + attributes & 3 & $63.67\pm1.67$ & $90.86\pm1.21$ & $97.27\pm0.14$\\
 \bottomrule
 \end{tabular*}
 \end{table}
 
 \textit{Source sharing.}
-Full scores 5.00 pp above ICBHI-only on ICBHI:
-$Sp$ increases from 67.13\% to 80.37\%, while $Se$ decreases from
-45.20\% to 41.97\%. On SPRSound, Full scores 1.95 pp below SPRSound-only,
+Across seeds 0 and 42, Full exceeds ICBHI-only on ICBHI by
+$4.17\pm1.18$ pp (mean paired change $\pm$ sample SD).
+The paired mean $Sp$ increases by 8.80 pp, while $Se$ decreases by 0.47 pp.
+At seed 42, Full scores 1.95 pp below SPRSound-only on SPRSound,
 with C/W macro AUROC 0.69 pp lower.
-Fixed transfer gives 56.86\% SPR Score from ICBHI-only and
-47.93\% ICBHI Score from SPRSound-only.
+Fixed transfer gives $51.73\pm7.26\%$ SPR Score from ICBHI-only
+(two seeds) and 47.93\% ICBHI Score from SPRSound-only (one seed).
 The SPRSound-only contrast also changes the selection objective;
 both single-source conditions change source exposure. These differences
 therefore cannot be attributed entirely to source sharing.
 
 \textit{Annotation information.}
-At seed 42, withholding SPR C/W targets while retaining its audio and
-abnormality labels lowers SPR C/W macro AUROC by 3.50 pp, ICBHI Score by
-4.46 pp, and SPRSound Score by 0.15 pp relative to Full.
-The retained loss weights remain fixed, and withheld fine labels are used
-only for evaluation. Full therefore has stronger attribute discrimination
-and a higher ICBHI Score than Coarse SPR in this single-seed benchmark.
+Relative to Coarse SPR, Full's mean paired gains across three seeds are
+6.51 pp in ICBHI Score, 23.46 pp in SPRSound Score, and 8.48 pp in C/W
+macro AUROC. All three endpoints improve in every pair, but the magnitudes
+vary strongly. The Coarse model selected for seed 0 predicts Normal for all
+ICBHI cycles and SPRSound events, yielding Scores of 50.00\% and 25.00\%.
+This run is included in the reported statistics. The SPRSound Score gains
+for seeds 0/1/42 are 65.68/4.57/0.15 pp, illustrating substantial seed
+dependence. These comparisons show native-task as well as attribute
+benefits from retaining fine annotations under this protocol.
 
 \textit{Classification design.}
 Native + attributes uses linear $256\!\to\!4$ ICBHI and $256\!\to\!2$
@@ -258,7 +264,12 @@ and C/W targets, masks, eligible-row averaging, and coefficients match Full.
 PAFA is unchanged. Native-head argmax drives selection and native-task
 prediction; C/W scores are retained for attribute AUROC, without entering
 native decisions. This comparison changes the native objective and head
-capacity while matching C/W supervision. Relative to Full at seed 42,
-Native + attributes increases ICBHI/SPRSound Scores by 1.13/1.58 pp
-and SPR C/W macro AUROC by 0.24 pp. It is higher than Full on all three metrics
-in this single-seed benchmark.
+capacity while matching C/W supervision. Across three paired seeds,
+Native + attributes raises ICBHI Score by $2.50\pm1.90$ pp, with positive
+changes in every seed. Its mean SPRSound Score change is $+0.16$ pp, but
+the changes are $+0.39$, $-1.49$, and $+1.58$ pp for seeds 0, 1, and 42.
+Mean C/W macro AUROC changes by $-0.05$ pp.
+Thus, the native-task benefit depends on the dataset even with matched
+C/W supervision. A native-only variant without C/W supervision is not
+evaluated here, so this contrast does not measure the benefit of adding
+attribute auxiliaries.

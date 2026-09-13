@@ -48,10 +48,11 @@ those labels changes supervision and classification design together.
 
 We study this distinction with a shared BEATs encoder for abnormality,
 crackle, and wheeze, using two-level native readouts as a reference.
-Our contribution combines label-conditional acoustic characterization with
-source, annotation-granularity, and classification-interface benchmarks.
-The results favor retaining fine supervision for attribute discrimination
-and ICBHI scoring, while native heads with matched attribute auxiliaries
-score higher than the hierarchical reference. A separate HF supervision
-study and KAUH external evaluation further characterize benefits and costs
-across endpoints.
+Our contribution combines annotation-aware shared learning for distinct
+native tasks with comparisons of supervision information and classification
+interfaces. Fine-versus-coarse comparisons favor retaining fine labels for
+attribute discrimination and both native tasks, with seed-dependent effect
+sizes. Native heads with matched C/W supervision improve ICBHI scoring in
+each paired seed, whereas SPRSound changes direction across seeds.
+A separate HF supervision study and KAUH external evaluation further
+characterize benefits and costs across endpoints.

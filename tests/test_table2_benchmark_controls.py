@@ -53,7 +53,39 @@ class Table2BenchmarkControlsTest(unittest.TestCase):
                     & set(reference["datasets"][dataset]["groups"]["validation"])
                 )
 
-    def test_seed_and_local_device_remain_fixed(self) -> None:
+    def test_multiseed_config_uses_matching_reference_and_output(self) -> None:
+        for seed in (0, 1):
+            with self.subTest(seed=seed):
+                config = default_config(ROOT, "native_attributes", seed)
+                config.validate()
+                self.assertEqual(config.seed, seed)
+                self.assertEqual(config.core.model_seed, seed)
+                self.assertEqual(config.core.base_config().seed, seed)
+                self.assertEqual(
+                    config.full_reference,
+                    ROOT / "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed" / f"seed_{seed}",
+                )
+                self.assertEqual(config.to_dict()["full_reference"], str(config.full_reference))
+                self.assertEqual(
+                    config.output_dir,
+                    ROOT / "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_multiseed/native_attributes" / f"seed_{seed}",
+                )
+
+    def test_original_jh2_multiseed_sample_partitions(self) -> None:
+        for seed, expected_icbhi in ((0, (3636, 506)), (1, (2880, 1262))):
+            with self.subTest(seed=seed):
+                config = default_config(ROOT, "coarse_spr", seed)
+                samples = load_benchmark_training_samples(config)
+                reference = benchmark_split_reference(config, samples)
+                for dataset, expected in (("icbhi", expected_icbhi), ("sprsound", (5219, 1437))):
+                    support = reference["datasets"][dataset]["support"]
+                    self.assertEqual(
+                        (support["subtrain"]["units"], support["validation"]["units"]), expected
+                    )
+                    groups = reference["datasets"][dataset]["groups"]
+                    self.assertFalse(set(groups["subtrain"]) & set(groups["validation"]))
+
+    def test_default_seed_and_local_recipe_preserved(self) -> None:
         config = BenchmarkConfig(
             repo_root=ROOT,
             variant="native_attributes",

@@ -1,4 +1,4 @@
-"""Seed-42 PAFA/JH2 benchmark controls for Table 2.
+"""PAFA/JH2 benchmark controls paired with the original Full model seeds.
 
 These controls retain the historical JH2 benchmark split and test-selected
 evidence boundary.  The module does nothing unless ``--run`` is supplied.
@@ -66,11 +66,14 @@ BENCHMARK_VARIANTS = (
     "coarse_spr",
     "native_attributes",
 )
-FULL_REFERENCE_RELATIVE = Path(
-    "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/seed_42"
+FULL_REFERENCE_ROOT_RELATIVE = Path(
+    "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed"
 )
 OUTPUT_ROOT_RELATIVE = Path(
     "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_seed42"
+)
+MULTISEED_OUTPUT_ROOT_RELATIVE = Path(
+    "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_multiseed"
 )
 SEED = 42
 
@@ -104,23 +107,27 @@ class BenchmarkConfig:
     def selection_dataset(self) -> str:
         return "sprsound" if self.variant == "sprsound_only" else "icbhi"
 
+    @property
+    def full_reference(self) -> Path:
+        return self.repo_root / FULL_REFERENCE_ROOT_RELATIVE / f"seed_{self.seed}"
+
     def validate(self) -> None:
         if self.variant not in BENCHMARK_VARIANTS:
             raise ValueError(f"unsupported benchmark variant: {self.variant}")
-        if self.seed != SEED or self.seed not in MODEL_SEEDS:
-            raise ValueError("benchmark controls are fixed to seed 42")
+        if self.seed not in MODEL_SEEDS:
+            raise ValueError(f"benchmark seed must be one of {MODEL_SEEDS}")
         self.core.validate()
 
     def to_dict(self) -> dict[str, object]:
         payload = {
             **self.core.to_dict(),
-            "protocol": "JH2_seed42_test_selected_benchmark_control",
-            "full_reference": str(self.repo_root / FULL_REFERENCE_RELATIVE),
+            "protocol": f"JH2_seed{self.seed}_test_selected_benchmark_control",
+            "full_reference": str(self.full_reference),
             "checkpoint": str(self.core.checkpoint),
             "split_manifest": None,
             "split": (
-                "original JH2 seed42 official-train split: ICBHI 3174/968 and "
-                "SPRSound 5219/1437 subtrain/validation"
+                f"original JH2 seed{self.seed} official-train subtrain/validation split; "
+                "sample IDs and support are recorded in split_reference.json"
             ),
             "selection_dataset": self.selection_dataset,
             "selection": (
@@ -172,7 +179,7 @@ def benchmark_split_reference(
     config: BenchmarkConfig, samples: Sequence[Sample]
 ) -> dict[str, object]:
     return {
-        "protocol": "original JH2 seed42 official-train split",
+        "protocol": f"original JH2 seed{config.seed} official-train split",
         "active_datasets": list(config.active_datasets),
         "datasets": {
             dataset: {
@@ -300,7 +307,7 @@ def _learning_rate(epoch: int) -> float:
 
 
 def run_benchmark_control(config: BenchmarkConfig) -> dict[str, object]:
-    """Run one explicitly approved seed-42 benchmark control."""
+    """Run one explicitly approved benchmark control."""
 
     config.validate()
     if config.output_dir.exists() and any(config.output_dir.iterdir()):
@@ -606,11 +613,13 @@ def run_benchmark_control(config: BenchmarkConfig) -> dict[str, object]:
     return summary
 
 
-def default_config(repo_root: Path, variant: str) -> BenchmarkConfig:
+def default_config(repo_root: Path, variant: str, seed: int = SEED) -> BenchmarkConfig:
+    output_root = OUTPUT_ROOT_RELATIVE if seed == SEED else MULTISEED_OUTPUT_ROOT_RELATIVE
     return BenchmarkConfig(
         repo_root=repo_root,
         variant=variant,
-        output_dir=repo_root / OUTPUT_ROOT_RELATIVE / variant / "seed_42",
+        output_dir=repo_root / output_root / variant / f"seed_{seed}",
+        seed=seed,
     )
 
 
@@ -618,12 +627,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo-root", type=Path, default=Path.cwd())
     parser.add_argument("--variant", choices=BENCHMARK_VARIANTS, required=True)
-    parser.add_argument("--seed", type=int, default=SEED)
+    parser.add_argument("--seed", type=int, choices=MODEL_SEEDS, default=SEED)
     parser.add_argument("--run", action="store_true")
     args = parser.parse_args()
-    config = default_config(args.repo_root, args.variant)
-    if args.seed != SEED:
-        raise ValueError("this approved benchmark package is seed42 only")
+    config = default_config(args.repo_root, args.variant, args.seed)
+    config.validate()
     if not args.run:
         print(
             json.dumps(
