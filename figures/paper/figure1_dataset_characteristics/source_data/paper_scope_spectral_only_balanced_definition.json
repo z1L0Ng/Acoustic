@@ -1,0 +1,70 @@
+{
+  "name": "paper_scope_spectral_only_balanced",
+  "n_input": 561,
+  "n_complete": 561,
+  "n_excluded": 0,
+  "features": [
+    "band80_centroid_hz",
+    "band80_bandwidth_hz",
+    "band80_peak_hz"
+  ],
+  "constant_features": [],
+  "log_frequency": true,
+  "equal_source_weights": true,
+  "scaling": "common_zscore",
+  "center": [
+    2.282578907728232,
+    2.0754690141134726,
+    2.040003243259399
+  ],
+  "scale": [
+    0.14292163251958848,
+    0.2173380429606099,
+    0.12532586953377337
+  ],
+  "explained_variance_ratio": [
+    0.6314546890588517,
+    0.3324884883438012,
+    0.03605682259734717
+  ],
+  "between_source_fraction_all_dimensions": 0.47307051980014714,
+  "between_source_fraction_PC1_PC2": 0.4851247632213025,
+  "pairwise": [
+    {
+      "variant": "paper_scope_spectral_only_balanced",
+      "source1": "ICBHI",
+      "source2": "SPRSound",
+      "standardized_centroid_distance": 1.52620026517086
+    },
+    {
+      "variant": "paper_scope_spectral_only_balanced",
+      "source1": "ICBHI",
+      "source2": "HF_Lung",
+      "standardized_centroid_distance": 2.2598021589635175
+    },
+    {
+      "variant": "paper_scope_spectral_only_balanced",
+      "source1": "ICBHI",
+      "source2": "KAUH",
+      "standardized_centroid_distance": 0.38708939397445785
+    },
+    {
+      "variant": "paper_scope_spectral_only_balanced",
+      "source1": "SPRSound",
+      "source2": "HF_Lung",
+      "standardized_centroid_distance": 2.4734589055143674
+    },
+    {
+      "variant": "paper_scope_spectral_only_balanced",
+      "source1": "SPRSound",
+      "source2": "KAUH",
+      "standardized_centroid_distance": 1.7988387682703233
+    },
+    {
+      "variant": "paper_scope_spectral_only_balanced",
+      "source1": "HF_Lung",
+      "source2": "KAUH",
+      "standardized_centroid_distance": 2.4016106747171038
+    }
+  ]
+}

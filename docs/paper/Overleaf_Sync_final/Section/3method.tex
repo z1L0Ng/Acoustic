@@ -5,6 +5,22 @@ attributes, then recovers native task labels from their predictions
 (Figure~\ref{fig:method_overview}). This separates the information used to
 learn the representation from the rules used to make task decisions.
 
+\subsection{Input Preparation and Annotation Alignment}
+\label{sec:annotation_alignment}
+Inputs are mono at 16~kHz. ICBHI cycles, SPRSound events, and KAUH files
+use 5~s through front truncation or repetition with boundary fading.
+HF uses three continuous windows: [0,5], [5,10], and [10,15]~s.
+Native sample identities are retained. ICBHI, SPRSound, and KAUH retain
+patient identifiers; HF uses recording-date proxies, not patient IDs.
+
+Shared core targets $(a,c,w)$ encode abnormality, Crackle, and Wheeze.
+ICBHI labels specify all three; compatible SPRSound labels use the same
+decomposition, merging Coarse and Fine Crackle. Rhonchi/Stridor provide
+only abnormality supervision, and unsupported core targets are masked.
+HF supplies separate C/W auxiliary supervision, with its discontinuous
+adventitious-sound label D mapped to Crackle and no abnormality target.
+Split and selection details are given in Section~\ref{sec:evaluation}.
+
 \subsection{Shared Acoustic Attribute Predictors}
 For waveform $x_i$, a BEATs iter3+ AS2M encoder\cite{chen2023beats}
 pretrained on AudioSet\cite{gemmeke2017audioset} produces
@@ -83,4 +99,3 @@ absence within these eligible windows, although uncertain events may be
 omitted in the source annotations\cite{hsu2021hflung}.
 HF is excluded from threshold fitting, checkpoint selection, and early
 stopping; its source-test partition is reserved for evaluation.
-

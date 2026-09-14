@@ -1,5 +1,37 @@
 # Acoustic Work Plan
 
+## 当前周期：2026-09-13–2026-09-14
+
+当前执行入口：用户已恢复“论文写作”任务与用户逐章讨论和修订，从Introduction开始，按Introduction→Datasets/Analysis→Method→Evaluation推进。完成本章约定修改并标红DONE后继续下一章。Abstract/Conclusion暂时跳过；需要图件时由写作与论文绘图任务直接协作，写作核对后集成到唯一同步目录。无需管理逐章转发或等待HF训练。
+
+后台HF-on补证：seed0已正式训练，本次同步写作时已见epoch1/update200；seed1串行待运行，新增完整结果0/2，旧seed42复用。训练与收尾由本地任务独立推进，写作不等待这些结果，也不把未完成数字纳入论文。
+
+老师指定红色DONE：每个section完成本轮约定修改后，在标题之后、正文之前加一个红色DONE；图完成并接入后，在对应figure caption开头加红色DONE，标记不画进PPT。未完成内容不标，旧首稿不自动算新一轮完成。该用户指定审阅标记优先于旧的内部标记禁用约定，其他内部注释仍放在同步稿外。
+
+当前计划：[Paper整体思路与逐章重构](work_plans/2026-09-13_to_2026-09-14_paper_restructure_work_plan_zh.md)；[Notion工作计划](https://app.notion.com/p/3da309efda29818d9474cf12d24dfdd9)。
+
+会议记录：[9/13完整中文纪要](meeting_records/2026-09-13_paper_revision_meeting_record_zh.md)；[Notion会议全文](https://app.notion.com/p/3da309efda29818fa0f1d0edb27a7ea6)。
+
+用户已补充老师认可的大方向：提出连接异构呼吸音标注与相异原生任务的联合学习框架，并以原生任务性能与跨数据集可迁移性之间的取舍作为主要价值。现以当前A/C/W联合框架为主线，Native+attributes保留为对照。具体章节和必要配图按用户在写作任务中的讨论执行，继续细化基线、归因及图文对应；本地训练安排不动。
+
+上一轮核心控制已收口：8/8于9/13 19:01（America/Chicago）全部完成，Full、Coarse、Native、IC-only、SPR-only均为3seed。完整run_summary/terminal及当时队列正常退出已核对，finish正确跳过已完成项。最终统计见本轮plan和result内multiseed_summary；新增HF-on0/1为本次独立追加授权。
+
+- [x] 会议全文与两天规划已写入Notion并互相链接，原文48个段落完整保留。
+- [x] 用户转述的老师认可大方向已补入会议记录与新计划，四篇直接相关文献的设置已核对。
+- [x] 本轮8个新增run与所有条件三seed汇总完成；Full对同配方单源的IC/SPR配对均值差分别+3.39/−2.13pp。
+- [x] 已将HF-on0/1追加任务及红色DONE规则同步对应执行任务，并写入新work plan。
+- [ ] 完成HF-on0/1及对应native/HF/KAUH评测；不作为写作前置条件。
+- [ ] 量化第二条贡献的比较基线、任务代价与归因，细化正式方法名称和贡献措辞。
+- [ ] 确认逐章蓝图、Figure1取舍、Figure2图文公式对应和核心表格组织。
+- [x] 用户已恢复主体第1–4章逐章讨论与修订，写作/绘图可按需直接协作。
+- [ ] 当前先完成Introduction讨论与本章修改，再按顺序继续；Abstract/Conclusion后置。
+
+上一轮计划保留在[会后重排前快照](work_plans/snapshots/2026-09-13_previous_work_plan_snapshot_zh.md)及本地提交16a9296中。旧Notion页已加历史标记，下方管理记录按当时状态保留。
+
+---
+
+## 会后重排前的管理记录（历史）
+
 更新日期：2026-09-13（周日）
 
 会后重排准备（9/13）：上一轮work plan已按当前状态保存为[旧计划快照](work_plans/snapshots/2026-09-13_previous_work_plan_snapshot_zh.md)。等待用户提供刚结束的meet内容后再制定后续计划；写作/绘图暂停及本地训练原安排维持。

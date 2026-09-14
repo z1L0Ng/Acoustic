@@ -6,9 +6,12 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{textcomp}
+\usepackage{xcolor}
 \usepackage{placeins}
 \usepackage[hidelinks]{hyperref}
 \usepackage{etoolbox}
+
+\newcommand{\revisiondone}{\textcolor{red}{\textbf{DONE}}}
 
 \setcounter{dbltopnumber}{1}
 \setlength{\textfloatsep}{6pt plus 1pt minus 2pt}
@@ -37,6 +40,7 @@
 
 \begin{document}
 \maketitle
+\raggedbottom
 
 \begin{abstract}
 Respiratory sound datasets annotate related events at different granularities.
@@ -64,14 +68,19 @@ respiratory sounds, shared supervision, heterogeneous annotations, acoustic attr
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{Figure/figure1_dataset_characteristics.pdf}
-\caption{Acoustic summaries of 5-s inputs. (a) Group-level centroids for
-ICBHI, SPRSound train+inter, HF source-test, and KAUH. Counts are patient
-groups except HF recording-date proxies. Boxes show medians/IQRs and
-1.5-IQR whiskers; outlier markers are omitted. (b,c) ICBHI/SPRSound
-class-matched patient medians and 95\% group-bootstrap intervals.
-Patient counts for Normal/Crackle/Wheeze/Both are 124/274, 74/89, 63/63,
-and 35/10. Descriptors aggregate within recording then group. Level is
-uncalibrated dBFS; centroids use 80--2000~Hz power after global centering.}
+\caption{Dataset annotations and acoustic characteristics.
+(a) Annotation units, native tasks, and study roles; N/C/W denote
+Normal/Crackle/Wheeze and B/D/E denote Bell/Diaphragm/Extended filters.
+(b) Common PCA of log-transformed, standardized spectral centroid,
+bandwidth, and peak frequency, with equal source weights.
+The plotted groups comprise 126 ICBHI patients, 284 SPRSound train+inter
+patients, 39 HF source-test recording-date proxies, and 112 KAUH patients.
+(c,d) Within-class ICBHI/SPRSound comparisons of signal level and spectral
+centroid, respectively. Points denote source medians; bars show 95\%
+confidence intervals from 1,000 patient bootstraps.
+Descriptors use globally centered 5-s inputs; level is uncalibrated dBFS.
+Spectral measures use 80--2000~Hz Welch power
+(4-kHz analysis copies, 1-s Hann windows, 50\% overlap).}
 \label{fig:dataset_characteristics}
 \end{figure*}
 

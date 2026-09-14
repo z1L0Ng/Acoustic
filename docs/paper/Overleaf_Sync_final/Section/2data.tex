@@ -1,72 +1,30 @@
 \section{Datasets and Acoustic Characteristics}
 \label{sec:data_alignment}
+\revisiondone\par
 
-\subsection{Datasets and Study Roles}
-Core training uses ICBHI respiratory cycles and SPRSound events.
-ICBHI labels cycles as Normal, Crackle, Wheeze, or Both and provides
-4,142/2,756 training/test cycles in its official recording split
-\cite{rocha2019icbhi}; this split is not strictly patient-held-out.
-Both denotes C/W co-presence within a cycle.
-SPRSound provides seven event categories, while its native BioCAS2022
-Task1-1 evaluates Normal/Adventitious classification on 1,429 official
-inter-subject test events\cite{zhang2022sprsound}.
+\subsection{Datasets and Annotations}
+ICBHI and SPRSound provide core joint-training data.
+ICBHI labels respiratory cycles as Normal, Crackle, Wheeze, or Both
+\cite{rocha2019icbhi}; SPRSound provides seven event categories alongside
+the binary Normal/Adventitious task studied here\cite{zhang2022sprsound}.
+HF Lung supplies timed phase and abnormal-event annotations for a separate
+auxiliary-supervision study and attribute evaluation\cite{hsu2021hflung}.
+KAUH provides recording-level sound categories and three filter versions
+per patient for external evaluation\cite{fraiwan2021kauh}.
+Figure~\ref{fig:dataset_characteristics}(a) summarizes these roles and
+annotation units.
 
-HF\_Lung\_V1 contains 9,765 15-s recordings, split into 7,809 source-training
-and 1,956 source-test recordings, with timed phase and adventitious-sound
-annotations\cite{hsu2021hflung}. These distinguish inhalation/exhalation
-(I/E), discontinuous adventitious sounds (DAS, source label D), and
-continuous adventitious sounds (CAS: Wheeze, Rhonchi, and Stridor).
-Source-training data support a separate
-auxiliary-supervision study; source-test data evaluate the shared attributes.
-KAUH supplies external evaluation: 336 files from 112 subjects, with Bell,
-Diaphragm, and Extended (B/D/E) versions of each recording
-\cite{fraiwan2021kauh}. These versions are aggregated within patient.
-
-\subsection{Acoustic Cues and Annotation Granularity}
+\subsection{Acoustic Characteristics}
 \label{sec:acoustic_characteristics}
-Figure~\ref{fig:dataset_characteristics} summarizes acoustic variation after
-the common 5-s preparation in Section~\ref{sec:annotation_alignment}.
-We measure uncalibrated signal level (dBFS) after global mean removal and
-the power-weighted spectral centroid over 80--2000~Hz. Centroids use
-Welch spectra\cite{welch1967spectra} of globally centered 4-kHz analysis
-copies, with 1-s periodic Hann windows and 50\% overlap. Descriptor medians
-are aggregated within recording and then within patient. HF uses
-recording-date proxies for grouping.
-
-The four-source overview in Figure~\ref{fig:dataset_characteristics}(a)
-shows the highest median centroid for HF source-test data. Panels (b,c)
-compare compatible ICBHI/SPRSound classes, merging Fine and Coarse Crackle.
-Across Normal, Crackle, Wheeze, and Both, ICBHI's class-specific medians are
-25.13--29.11~dB higher in level and 28.95--68.38~Hz lower in centroid
-than SPRSound's.
-The 95\% intervals use 1,000 bootstrap resamples of patient summaries
-within each source/class. The SPRSound Both estimate uses ten patients.
-These differences persist within compatible labels after common input
-preparation, motivating evaluation of shared attribute supervision's
-benefits and costs on each native task.
-
-\subsection{Annotation Alignment and Input Preparation}
-\label{sec:annotation_alignment}
-Shared core targets $(a,c,w)$ encode abnormality, Crackle, and Wheeze. ICBHI labels
-specify all three; compatible SPRSound labels use the same decomposition,
-merging Coarse and Fine Crackle. Rhonchi/Stridor provide only abnormality
-supervision, and unsupported core targets are masked. HF supplies separate
-C/W auxiliary supervision, with D mapped to Crackle and no abnormality target.
-
-For the benchmark in Table~\ref{tab:native_results}, the ICBHI subtraining
-partitions contain 3,636/2,880/3,174 unique cycles for seeds 0/1/42,
-all with A/C/W targets. Each SPRSound subtraining partition contains
-5,219 unique events: all support A and 5,170 support each of C and W.
-The same 49 events (0.94\%) are masked for both attributes.
-
-For KAUH, N, C/I~C, E~W/I~E~W, and I~C~E~W map to Normal, Crackle,
-Wheeze, and Both, respectively. Crep, Bronchial, and I~C~B are excluded,
-leaving 86 compatible patients. This evaluation uses sound labels rather
-than disease diagnoses or the complete nine-class taxonomy.
-
-Inputs are mono at 16~kHz. ICBHI cycles, SPRSound events, and KAUH files
-use 5~s through front truncation or repetition with boundary fading.
-HF uses three continuous windows: [0,5], [5,10], and [10,15]~s.
-Native sample identities are retained. ICBHI, SPRSound, and KAUH retain
-patient identifiers; HF uses recording-date proxies, not patient IDs.
-Split and selection details are given in Section~\ref{sec:evaluation}.
+After common 5-s preparation (Section~\ref{sec:annotation_alignment}),
+we estimate 80--2000~Hz Welch spectra from globally centered
+signals\cite{welch1967spectra}. PCA of spectral centroid, bandwidth,
+and peak frequency shows source
+structure with partial overlap (Figure~\ref{fig:dataset_characteristics}(b)).
+Within compatible Normal/Crackle/Wheeze/Both labels, ICBHI retains higher
+signal levels and lower spectral centroids than SPRSound
+(Figure~\ref{fig:dataset_characteristics}(c,d)).
+Thus, matching labels does not eliminate differences in the input
+distributions, motivating assessment of both native-task retention and
+external transfer. Summaries aggregate within recording and then patient;
+HF uses recording-date proxies.

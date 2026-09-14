@@ -65,6 +65,20 @@ questions while retaining the four dataset roles in Section~\ref{sec:data_alignm
 
 \subsection{Experimental Protocol and Metrics}
 \label{sec:protocol}
+ICBHI uses its official recording split of 4,142 training and 2,756 test
+cycles\cite{rocha2019icbhi}; this split is not strictly patient-held-out.
+SPRSound Task1-1 uses the 1,429 official inter-subject test
+events\cite{zhang2022sprsound}. HF Lung contains 9,765 15-s recordings,
+with 7,809 in source-training and 1,956 in source-test
+\cite{hsu2021hflung}. KAUH contains 336 Bell, Diaphragm, and Extended
+(B/D/E) files from 112 patients\cite{fraiwan2021kauh}.
+
+For the benchmark in Table~\ref{tab:native_results}, the ICBHI subtraining
+partitions contain 3,636/2,880/3,174 unique cycles for seeds 0/1/42,
+all with A/C/W targets. Each SPRSound subtraining partition contains
+5,219 unique events: all support A and 5,170 support each of C and W.
+The same 49 events (0.94\%) are masked for both attributes.
+
 The benchmark model uses the 5-s inputs and losses in Section~\ref{sec:method},
 batch size 32, Adam with learning rate $5\times10^{-5}$ and weight decay
 $10^{-6}$, a 50-epoch cosine schedule, and parameter EMA 0.5. Each joint
@@ -118,9 +132,13 @@ interval when any overlapping 5-s window reaches the fixed attribute
 threshold, over 1,812 D and 1,430 Wheeze intervals.
 Recording AUROC uses maximum scores across the three windows
 on the 957 recordings with at least one D/W/R/S annotation; absent target
-annotations supply derived negatives. KAUH averages B/D/E probabilities
-within patient before reporting binary balanced accuracy (BA), four-class
-Macro-F1, and unweighted average recall (UAR) on the 86 compatible patients.
+annotations supply derived negatives.
+For KAUH, N, C/I~C, E~W/I~E~W, and I~C~E~W map to Normal, Crackle,
+Wheeze, and Both, respectively. Crep, Bronchial, and I~C~B are excluded,
+leaving 86 compatible patients. This evaluation uses sound labels rather
+than disease diagnoses or the complete nine-class taxonomy.
+KAUH averages B/D/E probabilities within patient before reporting binary
+balanced accuracy (BA), four-class Macro-F1, and unweighted average recall (UAR).
 
 \subsection{Benchmark Results and Comparison}
 \label{sec:native_results}
