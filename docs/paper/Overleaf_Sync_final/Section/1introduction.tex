@@ -38,9 +38,10 @@ dataset's original prediction target. This also requires assessing the
 benefits and costs for the original tasks and for transfer, and how these
 outcomes depend on annotation detail and classification design.
 
-To address this gap, we propose an annotation-aware joint learning framework
-that learns a shared acoustic representation and uses attribute predictions
-to recover the outputs required by each original task. Abnormality, crackle,
+To address this gap, we propose CHORD (Cross-task Harmonization Of Respiratory
+Datasets), an annotation-aware framework that learns a shared acoustic
+representation and uses attribute predictions to recover each dataset's
+native task outputs. Abnormality, crackle,
 and wheeze provide common supervision targets that encourage the encoder
 to capture the underlying acoustic cues across datasets. ICBHI cycles and
 SPRSound events jointly train this encoder and three parallel attribute

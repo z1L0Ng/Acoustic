@@ -1,101 +1,84 @@
 \section{Method}
 \label{sec:method}
-Our method connects heterogeneous annotations through shared acoustic
-attributes, then recovers native task labels from their predictions
-(Figure~\ref{fig:method_overview}). This separates the information used to
-learn the representation from the rules used to make task decisions.
+\revisiondone\par
 
-\subsection{Input Preparation and Annotation Alignment}
+CHORD shares abnormality (A), Crackle (C), and Wheeze (W)
+supervision across ICBHI and SPRSound, then recovers their native task
+outputs (Figure~\ref{fig:method_overview}).
+
+\subsection{Shared Acoustic Representation}
 \label{sec:annotation_alignment}
-Inputs are mono at 16~kHz. ICBHI cycles, SPRSound events, and KAUH files
-use 5~s through front truncation or repetition with boundary fading.
-HF uses three continuous windows: [0,5], [5,10], and [10,15]~s.
-Native sample identities are retained. ICBHI, SPRSound, and KAUH retain
-patient identifiers; HF uses recording-date proxies, not patient IDs.
-
-Shared core targets $(a,c,w)$ encode abnormality, Crackle, and Wheeze.
-ICBHI labels specify all three; compatible SPRSound labels use the same
-decomposition, merging Coarse and Fine Crackle. Rhonchi/Stridor provide
-only abnormality supervision, and unsupported core targets are masked.
-HF supplies separate C/W auxiliary supervision, with its discontinuous
-adventitious-sound label D mapped to Crackle and no abnormality target.
-Split and selection details are given in Section~\ref{sec:evaluation}.
-
-\subsection{Shared Acoustic Attribute Predictors}
-For waveform $x_i$, a BEATs iter3+ AS2M encoder\cite{chen2023beats}
-pretrained on AudioSet\cite{gemmeke2017audioset} produces
-768-dimensional token features. Mean pooling followed by a
-linear projection gives $h_i\in\mathbb{R}^{256}$. Three parallel linear
-heads predict abnormality (A), Crackle (C), and Wheeze (W):
+For each mono 16-kHz, 5-s input $x_i$, AudioSet-pretrained BEATs iter3+
+AS2M\cite{chen2023beats,gemmeke2017audioset} produces $T_i$
+768-dimensional tokens $H_i$.
+Mean pooling and a linear projection give $h_i\in\mathbb{R}^{256}$.
+Three parallel linear heads predict
 \begin{equation}
-\begin{aligned}
- p_{ia}&=\operatorname{softmax}(W_a h_i+b_a)_{\rm Abnormal},\\
- p_{ic}&=\sigma(W_c h_i+b_c),\qquad
- p_{iw}=\sigma(W_w h_i+b_w).
-\end{aligned}
+p_{ik}=\phi_k(W_k h_i+b_k),\qquad k\in\{a,c,w\},
+\label{eq:attribute_predictions}
 \end{equation}
-A uses two logits, whereas C/W each use one. All heads jointly fine-tune
-the encoder on ICBHI and SPRSound. C/W are marginal attribute probabilities;
-the two-level hierarchy is applied in the decision readout.
+where $\phi_a$ returns the Abnormal probability from a two-logit softmax,
+and $\phi_c,\phi_w$ apply sigmoid to one logit each.
+Their outputs form the shared attribute vector
+$\mathbf p_i=(p_{ia},p_{ic},p_{iw})$.
 
-\subsection{Learning from Available Annotations}
-Partial-label learning distinguishes unobserved targets from observed
-negatives\cite{shi2021marginal,zhou2022unknown}.
-The alignment in Section~\ref{sec:annotation_alignment} supplies targets
-$y_{ik}$ and availability masks $m_{ik}$ for $k\in\{a,c,w\}$.
-A mask is one only when the source annotation supports that target.
-For batch $B$, let
-$B_k=\{i\in B:m_{ik}=1\}$ and $K_B=\{k:|B_k|>0\}$. The
-classification objective averages available supervision within each node:
+\subsection{Annotation-Aware Joint Learning}
+\label{sec:joint_supervision}
+We use cycle and event labels to learn shared acoustic cues: SPRSound's
+fine labels contribute C/W information despite its binary native task.
+Both sources jointly fine-tune the encoder and heads.
+Annotations supply targets $y_{ik}$ and masks $m_{ik}$,
+with $m_{ik}=1$ only for supported attributes, preserving the distinction
+between unknown and observed negatives\cite{shi2021marginal,zhou2022unknown}.
+ICBHI labels specify A/C/W; for SPRSound, we merge Fine/Coarse Crackle and
+use Rhonchi/Stridor for A only. For batch $B$, let
+$B_k=\{i\in B:m_{ik}=1\}$ and $K_B=\{k:|B_k|>0\}$. Then
 \begin{equation}
 \mathcal L_{\rm cls}(B)=\frac{1}{|K_B|}\sum_{k\in K_B}
 \frac{1}{|B_k|}\sum_{i\in B_k}\ell_k(p_{ik},y_{ik}),
 \label{eq:classification_loss}
 \end{equation}
-where $\ell_a$ is two-class cross-entropy and $\ell_c,\ell_w$ are binary
-cross-entropy. This lets compatible labels share a predictor while masking
-unsupported targets. Dataset-homogeneous batches contribute equal numbers
-of updates per epoch.
+where $\ell_a$ is cross-entropy on $(1-p_{ia},p_{ia})$ and
+$\ell_c,\ell_w$ are binary cross-entropy.
 
-To regularize patient-specific variation, we retain PAFA's patient
-cohesion-separation and global patient alignment objectives\cite{jeong2025pafa}:
+To account for patient-level acoustic variation, we retain PAFA's patient
+cohesion-separation (PCSL) and global patient alignment (GPAL)
+losses\cite{jeong2025pafa}. Their patient-based grouping accommodates
+heterogeneous class labels. PCSL promotes within-patient cohesion and
+between-patient separation; GPAL limits centroid dispersion. Both use a
+separate attention-based projection $z_i=g(H_i)$, giving
 \begin{equation}
-\mathcal L_{\rm core}=\mathcal L_{\rm cls}+50\mathcal L_{\rm PCSL}
-                                  +0.0005\mathcal L_{\rm GPAL}.
+\mathcal L_{\rm core}=\mathcal L_{\rm cls}
+ +\lambda_p\mathcal L_{\rm PCSL}+\lambda_g\mathcal L_{\rm GPAL},
+\label{eq:core_objective}
 \end{equation}
-A separate attention-based projection of encoder tokens supplies their
-features during training; patient identifiers are qualified by dataset.
+with regularization weights $\lambda_p$ and $\lambda_g$.
 
-\subsection{Two-Level Native Task Readouts}
-The Normal/Abnormal argmax defines $\hat a$ (ties select Normal), and
-$\hat c=\mathbb{I}[p_c\geq\tau_c]$,
-$\hat w=\mathbb{I}[p_w\geq\tau_w]$ define attribute decisions.
-SPRSound uses $\hat a$ for Normal/Adventitious classification.
-ICBHI first assigns Normal when $\hat a=0$; otherwise, two positive
-attributes yield Both and a single positive attribute yields its class.
-If neither is positive, the larger $p_k-\tau_k$ margin selects Crackle
-or Wheeze, with ties assigned to Crackle.
-
-Shared thresholds independently maximize the equal-source mean of
-available-target binary F1 on core validation data. Candidates are the
-observed probabilities plus 0 and 1; ties select the larger threshold.
-Changing the readout while fixing the encoder and attribute scores isolates
-decision-rule effects from changes in the learned representation.
-
-\subsection{HF Auxiliary-Supervision Condition}
+\subsection{Native Readouts and Dataset Extension}
+\label{sec:native_readouts}
 \label{sec:hf_method}
-To examine additional attribute supervision, we retain the architecture
-and add HF source-training windows:
+Let $\hat a_i$ be the Normal/Abnormal argmax (ties select Normal),
+$\hat c_i=\mathbb{I}[p_{ic}\geq\tau_c]$, and
+$\hat w_i=\mathbb{I}[p_{iw}\geq\tau_w]$.
+SPRSound uses $\hat a_i$ for Normal/Adventitious classification.
+For ICBHI, $\hat a_i=0$ yields Normal; otherwise, two positive attributes
+yield Both and one yields its class. If neither is positive, the larger
+$p_{ik}-\tau_k$ margin selects Crackle or Wheeze, with ties selecting Crackle.
+Thresholds use core validation (Section~\ref{sec:protocol}).
+
+The same attributes support additional supervision and external evaluation.
+In a separate condition, HF source-training windows supply C/W targets,
+mapping its discontinuous adventitious-sound label D to C. Eligibility and
+derived negatives are defined in Section~\ref{sec:protocol}.
+Their masked BCE yields $\mathcal L_{\rm HF}$, giving
 \begin{equation}
-\mathcal L_{\rm HF\mbox{-}on}=\mathcal L_{\rm core}+0.25\mathcal L_{\rm HF},
+\mathcal L_{\rm HF\mbox{-}on}=\mathcal L_{\rm core}
+ +\lambda_{\rm HF}\mathcal L_{\rm HF},
+\label{eq:hf_objective}
 \end{equation}
-using one batch of 32 HF windows per core update. A window overlapping
-D, Wheeze, Rhonchi, or Stridor supplies both C/W targets: each is one
-when the corresponding D or Wheeze annotation overlaps, and zero otherwise.
-$\mathcal L_{\rm HF}$ averages their node-wise BCE losses.
-Gap, empty, and phase-only windows are masked; HF supplies no A target.
-The derived negatives assume that an absent attribute annotation denotes
-absence within these eligible windows, although uncertain events may be
-omitted in the source annotations\cite{hsu2021hflung}.
-HF is excluded from threshold fitting, checkpoint selection, and early
-stopping; its source-test partition is reserved for evaluation.
+where $\lambda_{\rm HF}$ weights auxiliary supervision; HF adds no A or
+PAFA loss. HF source-test evaluates intervals from C/W window scores
+and recordings from their maxima. KAUH averages probabilities across each
+patient's filter versions before binary/four-class decoding of compatible
+labels. With models and thresholds fixed, these evaluations assess
+core-model transfer and the effects of HF supervision.

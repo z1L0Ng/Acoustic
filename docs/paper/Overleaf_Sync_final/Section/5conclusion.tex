@@ -1,13 +1,12 @@
 \section{Conclusion}
 \label{sec:conclusion}
-We studied shared respiratory attributes while retaining dataset-native
-tasks. Acoustic differences persisted within compatible labels after common
-input preparation. Across three paired seeds, retaining fine SPRSound
-annotations improved both native-task Scores and attribute discrimination
-over coarse supervision, whose performance varied strongly across seeds.
-Native heads with matched C/W supervision consistently improved ICBHI Score
-over the two-level reference, while SPRSound changes varied in sign.
-Source comparisons and the separate HF-supervision case showed further
-task-dependent gains and costs. These findings support reusing available
-fine annotations and assessing classification choices separately under the
-studied corpora and selection protocols.
+\revisiondone\par
+CHORD connects heterogeneous respiratory annotations through shared acoustic
+attributes and dataset-specific readouts. Joint training supports ICBHI and
+SPRSound native tasks with gains and costs relative to single-source models.
+Fine annotations remain useful under the evaluated loss weighting, while
+readout comparisons show that similar C/W discrimination can accompany
+different task accuracy. HF and KAUH extend the assessment beyond the core datasets,
+with mixed effects from added HF supervision. These findings support reusing
+fine acoustic supervision while evaluating task reconstruction and transfer
+separately.

@@ -30,7 +30,7 @@
   \setlength{\parskip}{0pt}
 }{}{}
 
-\title{Shared Attribute Supervision Across Native Respiratory Sound Tasks}
+\title{CHORD: Cross-task Harmonization Of Respiratory Datasets}
 \name{Zilong Zeng, Wade Wu, Arian Azarang, Stephen Xia, Jingping Nie}
 \address{{\small \texttt{zilongzeng2030@u.northwestern.edu},
 \texttt{wadewu@unc.edu}}\\
@@ -43,32 +43,33 @@
 \raggedbottom
 
 \begin{abstract}
-Respiratory sound datasets annotate related events at different granularities.
-We study whether shared fine-attribute supervision helps native tasks and
-whether its benefits depend on the classification interface. A shared BEATs
-encoder learns abnormality, crackle, and wheeze from ICBHI cycles and SPRSound
-events. HF supports a separate auxiliary-supervision study and attribute
-evaluation; KAUH provides external evaluation. Within-class acoustic
-differences persist between ICBHI and SPRSound after common 5-s preparation.
-We compare fine and coarse supervision and two classification interfaces
-across three paired seeds using official-test-based checkpoint selection.
-Retaining fine annotations produces higher native-task Scores and C/W macro
-AUROC than coarse supervision, whose performance varies sharply across seeds.
-Native heads with matched C/W supervision improve ICBHI Score by 2.50
-percentage points on average over the two-level reference, while SPRSound
-Score changes direction across seeds.
-These observations support reusing fine annotations while assessing native
-readout choices and task-specific costs separately.
+\revisiondone\ Respiratory sound datasets contain complementary annotations, but differences
+in granularity and task definitions hinder their joint use. We propose CHORD
+(Cross-task Harmonization Of Respiratory Datasets), an annotation-aware
+framework that shares acoustic supervision while retaining native tasks.
+A shared encoder jointly learns abnormality, crackle (C), and wheeze (W)
+from ICBHI cycles and SPRSound events, using supported labels to supervise
+each attribute. Task readouts recover four-class cycle and binary event
+predictions. HF Lung supports separate auxiliary supervision and attribute
+evaluation; KAUH provides external evaluation.
+Across three seeds with official-test-based checkpoint selection, CHORD
+improves ICBHI Score by 3.39 percentage points and reduces SPRSound Score
+by 2.13 points relative to their respective single-source models.
+Retaining fine labels benefits the binary task under the evaluated loss
+weighting, while native classifiers can improve task accuracy at similar
+C/W discrimination. Added HF supervision has task-dependent effects.
+These findings support sharing fine acoustic supervision while assessing
+native readouts and transfer separately.
 \end{abstract}
 
 \begin{keywords}
-respiratory sounds, shared supervision, heterogeneous annotations, acoustic attributes, hierarchical decoding
+respiratory sounds, shared supervision, heterogeneous annotations, acoustic attributes, cross-task learning
 \end{keywords}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{Figure/figure1_dataset_characteristics.pdf}
-\caption{Dataset annotations and acoustic characteristics.
+\caption{Datasets and acoustic characteristics for CHORD.
 (a) Annotation units, native tasks, and study roles; N/C/W denote
 Normal/Crackle/Wheeze and B/D/E denote Bell/Diaphragm/Extended filters.
 (b) Common PCA of log-transformed, standardized spectral centroid,
@@ -87,15 +88,15 @@ Spectral measures use 80--2000~Hz Welch power
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{Figure/figure2_method.pdf}
-\caption{Shared attribute learning and native task readouts. (a) ICBHI and
-SPRSound audio trains a shared encoder and parallel A/C/W heads; available
-labels and masks define supervision. R/S denotes Rhonchi/Stridor, whose
-labels supervise A only. (b) SPRSound uses A alone; ICBHI combines A gating
-with C/W decisions, using the margin rule only for Abnormal predictions
-with neither attribute positive.
-HF source-train supplies C/W supervision in a separate auxiliary condition.
-HF source-test and KAUH evaluate fixed models; KAUH averages B/D/E
-probabilities within each patient before decoding.}
+\caption{\revisiondone\ CHORD: shared attribute prediction, task readouts, and joint
+training. The illustrated waveform is schematic. Parallel A/C/W heads
+supply shared probabilities for readouts and masked supervision; a separate
+projection supplies features for PAFA regularization. The gray dashed
+return denotes training feedback. ICBHI and SPRSound provide core attribute
+supervision and patient groups; the optional term uses HF source-train
+C/W labels. HF source-test and KAUH evaluate fixed models and thresholds,
+with KAUH decoding restricted to compatible labels. Readout rules and
+supervision eligibility follow Sections~\ref{sec:method} and~\ref{sec:protocol}.}
 \label{fig:method_overview}
 \end{figure*}
 
