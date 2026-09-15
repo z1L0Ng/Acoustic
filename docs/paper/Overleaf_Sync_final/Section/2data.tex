@@ -1,53 +1,16 @@
 \section{Datasets and Acoustic Characteristics}
-\label{sec:data_alignment}
+\label{sec:data_alignment}\label{sec:acoustic_characteristics}
 
-\subsection{Datasets and Annotations}
-ICBHI and SPRSound provide LSAA's core joint-training data.
-ICBHI annotates respiratory cycles as Normal, Crackle (C), Wheeze (W),
-or Both (C and W)\cite{rocha2019icbhi}. SPRSound annotates seven event
-categories, while the event task studied here predicts Normal or
-Adventitious (abnormal)\cite{zhang2022sprsound}. Both datasets provide
-patient identifiers and annotation boundaries. SPRSound's fine C/W labels
-retain sound-type information relevant to ICBHI's four-class task, even
-though its own prediction target is binary. This motivates sharing fine
-acoustic supervision while retaining each task's prediction unit and target.
+\noindent\textbf{Datasets and Annotations. }
+ICBHI and SPRSound provide LSAA's core joint-training data. ICBHI annotates respiratory cycles as Normal, Crackle (C), Wheeze (W), or Both (C and W)\cite{rocha2019icbhi}. SPRSound annotates seven event categories, while the event task studied here predicts Normal or Adventitious (abnormal)\cite{zhang2022sprsound}. Both datasets provide patient identifiers and annotation boundaries. SPRSound's fine C/W labels retain sound-type information relevant to ICBHI's four-class task, even though its own prediction target is binary. This motivates sharing fine acoustic supervision while retaining each task's prediction unit and target.
 
-HF Lung provides timed breath-phase and adventitious-sound
-annotations\cite{hsu2021hflung}. We use its source-training partition for
-a separate auxiliary C/W supervision condition and its source-test
-partition for attribute evaluation. KAUH provides recording-level sound
-categories and Bell, Diaphragm, and Extended filter versions of each
-patient's recording\cite{fraiwan2021kauh}. We use these recordings for
-external evaluation, grouping the filter versions within each patient.
-Figure~\ref{fig:dataset_characteristics}(a) reports original label counts
-in cycles for ICBHI, events for SPRSound, annotated intervals for HF,
-and filter-version recordings for KAUH.
+HF Lung provides timed breath-phase and adventitious-sound annotations\cite{hsu2021hflung}. We use its source-training partition for a separate auxiliary C/W supervision condition and its source-test partition for attribute evaluation. KAUH provides recording-level sound categories and Bell, Diaphragm, and Extended filter versions of each patient's recording\cite{fraiwan2021kauh}. For the compatible-label subset, we map N to Normal, C/IC to Crackle, EW/IEW to Wheeze, and ICEW to Both, excluding Crep, Bronchial, and ICB. This subset comprises 86 patients for external binary evaluation and class-wise acoustic summaries,
+with filter versions grouped within each patient.
+Figure~\ref{fig:dataset_characteristics}(a) summarizes original label counts and the data partitions used in this study.
 
-\subsection{Acoustic Characteristics}
-\label{sec:acoustic_characteristics}
-To compare acoustic inputs across sources, we prepare mono 16-kHz,
-5-s inputs. ICBHI cycles, SPRSound events, and KAUH recordings are
-repeated if shorter than 5~s or cropped to the first 5~s if longer,
-with boundary fading; HF recordings supply three consecutive windows.
-From globally centered 4-kHz analysis copies, we estimate 80--2000~Hz Welch
-spectra\cite{welch1967spectra} and compute spectral centroid (power-weighted
-mean frequency), bandwidth (frequency spread), and peak frequency.
-Descriptor medians are taken within recording and then within patient;
-HF uses recording-date groups. Principal component analysis (PCA) of
-log-transformed, jointly standardized descriptors with equal source
-weights shows source structure with partial overlap
-(Figure~\ref{fig:dataset_characteristics}(b)).
+\noindent\textbf{Acoustic Characteristics. }
+To compare acoustic inputs across sources, we prepare mono 16-kHz, 5-s inputs. ICBHI cycles, SPRSound events, and KAUH recordings are repeated if shorter than 5~s or cropped to the first 5~s if longer, with boundary fading; HF recordings supply three consecutive windows.
+From globally centered 4-kHz analysis copies, we estimate 80--2000~Hz Welch spectra\cite{welch1967spectra} and compute spectral centroid, bandwidth, and peak frequency.
+Descriptor medians are taken within recording and then within patient; HF uses recording-date groups. Principal component analysis (PCA) of log-transformed, jointly standardized descriptors shows source structure with partial overlap in the first two principal components, PC1 and PC2 (Figure~\ref{fig:dataset_characteristics}(b)).
 
-Figure~\ref{fig:dataset_characteristics}(c) compares median spectral
-centroids within Normal, Crackle, Wheeze, and Both label groups.
-SPRSound's Fine/Coarse Crackle labels are combined as Crackle, and
-Wheeze+Crackle corresponds to Both. ICBHI has lower
-centroids than SPRSound in all four classes. HF source-test windows and
-KAUH recordings with compatible labels provide additional descriptive
-references. HF windows are grouped by D (discontinuous adventitious sound)
-annotations without Wheeze annotations, Wheeze annotations without D,
-or both annotations. Missing
-annotations do not establish sound absence, and no HF Normal group is
-assigned. These comparisons show that compatible sound labels accompany
-differing source distributions, which shared acoustic supervision must
-accommodate.
+Figure~\ref{fig:dataset_characteristics}(c) compares median spectral centroids within Normal, Crackle, Wheeze, and Both label groups. SPRSound's Fine/Coarse Crackle labels are combined as Crackle, and Wheeze+Crackle corresponds to Both. ICBHI has lower centroids than SPRSound in all four classes. HF source-test windows and KAUH recordings with compatible labels provide additional descriptive references. HF windows are grouped by D (discontinuous adventitious sound) annotations without Wheeze annotations, Wheeze annotations without D, or both annotations. Missing annotations do not establish sound absence, and no HF Normal group is assigned. These comparisons show that compatible sound labels accompany differing source distributions, which shared acoustic supervision must accommodate.

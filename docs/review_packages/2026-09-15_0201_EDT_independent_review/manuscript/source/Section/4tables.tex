@@ -1,8 +1,13 @@
 \newcommand{\LSAAMainResultsTable}{%
 \begin{table}[H]
-\caption{Performance of LSAA and frozen-encoder references across four respiratory sound datasets. Values are means (\%) over three seeds, with sample standard deviations shown as subscripts. In Train, I/S denotes separate ICBHI/SPRSound models and I+S denotes joint training. \textbf{Bold} and \underline{underlined} values mark the
+\caption{Performance of LSAA and frozen-encoder references across four
+respiratory sound datasets. Values are means (\%) over three seeds,
+with sample standard deviations shown as subscripts.
+In Train, I/S denotes separate ICBHI/SPRSound models and I+S denotes
+joint training. \textbf{Bold} and \underline{underlined} values mark the
 highest and second-highest means within each metric column.
-For LSAA, CAS AUROC evaluates maximum-window Wheeze-head scores against the Wheeze/Rhonchi/Stridor label union.}
+For LSAA, CAS AUROC evaluates maximum-window Wheeze-head scores
+against the Wheeze/Rhonchi/Stridor label union.}
 \label{tab:native_results}
 \centering
 \small
@@ -33,12 +38,12 @@ HeAR \cite{baur2024hear} & I/S & $49.50_{\pm0.62}$ & $87.89_{\pm0.31}$ & $64.20_
 
 \newcommand{\LSAAAnalysisTable}{%
 \begin{table}[H]
-\caption{Effects of training sources, supervision detail, and task readouts. 
+\caption{Effects of training sources, supervision detail, and task readouts.
 (a) Absolute performance (\%) and paired changes (pp), with
-$\Delta_{\rm I}$ and $\Delta_{\rm S}$ denoting LSAA minus ICBHI-only and SPRSound-only, respectively. Bold marks the highest absolute mean per column in (a).
+$\Delta_{\rm I}$ and $\Delta_{\rm S}$ denoting LSAA minus ICBHI-only and
+SPRSound-only, respectively.
 (b) Variant minus LSAA; CW is SPRSound C/W macro AUROC
-(LSAA: $97.32\pm0.15$\%). 
-(c) HF-on minus the corresponding same-seed
+(LSAA: $97.32\pm0.15$\%). (c) HF-on minus the corresponding same-seed
 HF-off run. Values are means with subscripted $\pm$ sample SD over
 three seeds. IC/SPR: native Scores; CAS: HF recording AUROC
 using Wheeze-head scores for CAS-union ranking;
@@ -52,12 +57,12 @@ BA: KAUH patient balanced accuracy.}
 \multicolumn{5}{l}{\textit{(a) Single-source and joint training}}\\
 Model & IC & SPR & CAS & BA\\
 \midrule
-ICBHI-only & $57.78_{\pm1.47}$ & $49.53_{\pm6.40}$ & $\mathbf{87.05}_{\pm0.86}$ & $70.44_{\pm1.52}$\\
+ICBHI-only & $57.78_{\pm1.47}$ & $49.53_{\pm6.40}$ & $87.05_{\pm0.86}$ & $70.44_{\pm1.52}$\\
 SPRSound-only & $47.75_{\pm0.51}$ & $\mathbf{92.82}_{\pm0.65}$ & $79.25_{\pm1.08}$ & $67.25_{\pm4.29}$\\
-\textbf{LSAA} & $\mathbf{61.17}_{\pm0.31}$ & $90.70_{\pm0.34}$ & $86.44_{\pm2.13}$ & $\mathbf{72.17}_{\pm1.64}$\\
+\textbf{LSAA} & $\mathbf{61.17}_{\pm0.31}$ & $90.70_{\pm0.34}$ & $86.44_{\pm2.13}$ & $72.17_{\pm1.64}$\\
 \midrule
-$\Delta_{\rm I}$ & $+3.39_{\pm1.59}$ & $+41.17_{\pm6.70}$ & $-0.61_{\pm1.32}$ & $+1.73_{\pm0.81}$\\
-$\Delta_{\rm S}$ & $+13.42_{\pm0.82}$ & $-2.13_{\pm0.33}$ & $+7.19_{\pm1.05}$ & $+4.91_{\pm4.69}$\\
+$\Delta_{\rm I}$ & $\mathbf{+3.39}_{\pm1.59}$ & $+41.17_{\pm6.70}$ & $-0.61_{\pm1.32}$ & $+1.73_{\pm0.81}$\\
+$\Delta_{\rm S}$ & $+13.42_{\pm0.82}$ & $\mathbf{-2.13}_{\pm0.33}$ & $+7.19_{\pm1.05}$ & $+4.91_{\pm4.69}$\\
 \bottomrule
 \end{tabular*}
 \par\smallskip

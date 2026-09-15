@@ -1,29 +1,16 @@
 \section{Method}
 \label{sec:method}
 
-LSAA connects heterogeneous annotations through shared abnormality (A),
-Crackle (C), and Wheeze (W) probabilities and dataset-specific readouts
+LSAA connects heterogeneous annotations through shared abnormality (A), Crackle (C), and Wheeze (W) probabilities and dataset-specific readouts
 (Figure~\ref{fig:method_overview}).
 
 \subsection{Shared Attributes and Task Readouts}
 \label{sec:annotation_alignment}
 \label{sec:native_readouts}
-The prediction path maps each audio unit to shared attribute probabilities
-and then to the output required by its dataset. For a mono 16-kHz, 5-s input $x_i$
-prepared as in Section~\ref{sec:acoustic_characteristics},
-AudioSet-pretrained BEATs iter3+ AS2M\cite{chen2023beats,gemmeke2017audioset}
-produces $H_i\in\mathbb{R}^{T_i\times D}$, where $T_i$ is the token count
-and $D=768$.
-Mean pooling over tokens followed by a linear $768\to256$ projection
-gives $h_i\in\mathbb{R}^{256}$. Three parallel linear heads predict
-\begin{equation}
-p_{ik}=\phi_k(W_k h_i+b_k),\qquad k\in\{a,c,w\},
-\label{eq:attribute_predictions}
-\end{equation}
-where $\phi_a$ returns the Abnormal probability from a two-logit softmax,
-and $\phi_c,\phi_w$ apply sigmoid to one logit each.
+The prediction path maps each audio unit to shared attribute probabilities and then to the output required by its dataset. For a mono 16-kHz, 5-s input $x_i$ prepared as in Section~\ref{sec:acoustic_characteristics}, AudioSet-pretrained BEATs iter3+ AS2M\cite{chen2023beats,gemmeke2017audioset} produces $H_i\in\mathbb{R}^{T_i\times D}$, where $T_i$ is the token count and $D=768$. Mean pooling over tokens followed by a linear $768\to256$ projection gives $h_i\in\mathbb{R}^{256}$. Three parallel linear heads predict $p_{ik}=\phi_k(W_k h_i+b_k)$ for $k\in\{a,c,w\}$,
+where $\phi_a$ returns the Abnormal probability from a two-logit softmax, and $\phi_c,\phi_w$ apply sigmoid to one logit each.
 Their outputs form the shared attribute vector
-$\mathbf p_i=(p_{ia},p_{ic},p_{iw})$.
+$\boldsymbol{p_i}=(p_{ia},p_{ic},p_{iw})$.
 
 Let $\hat a_i$ be the Normal/Abnormal argmax (ties select Normal),
 $\hat c_i=\mathbb{I}[p_{ic}\geq\tau_c]$, and
@@ -34,22 +21,16 @@ yield Both and one yields its class. If neither is positive, the larger
 $p_{ik}-\tau_k$ margin selects Crackle or Wheeze, with ties selecting Crackle.
 Thresholds use core validation.
 
-For HF source-test, maxima over C/W window probabilities give recording
-scores. For KAUH, we average probabilities across each patient's filter
-versions and predict Normal/Abnormal for patients with compatible sound
-labels. Models and thresholds remain fixed for these evaluations.
+For HF source-test, the maximum Wheeze-head probability over windows provides a recording-level score for continuous adventitious sounds (CAS).
+CAS positives contain a Wheeze, Rhonchi, or Stridor annotation. For KAUH, we average probabilities across each patient's filters and predict Normal/Abnormal for patients with compatible sound labels.
 
 \subsection{Annotation-Aware Joint Training}
 \label{sec:joint_supervision}
 \label{sec:hf_method}
-Training uses each annotation to supervise the attributes it supports,
-jointly fine-tuning the encoder and prediction heads on ICBHI and SPRSound.
+Training uses each annotation to supervise the attributes it supports, jointly fine-tuning the encoder and prediction heads on ICBHI and SPRSound.
 Annotations supply targets $y_{ik}$ and masks $m_{ik}$,
-with $m_{ik}=1$ only for supported attributes, distinguishing unknown
-labels from observed negatives\cite{shi2021marginal,zhou2022unknown}.
-ICBHI labels specify A/C/W. SPRSound's fine C/W labels supervise the
-corresponding heads despite its binary task, while Rhonchi/Stridor
-supervise A only. For batch $B$, let $B_k=\{i\in B:m_{ik}=1\}$ and
+with $m_{ik}=1$ only for supported attributes, distinguishing unknown labels from observed negatives\cite{shi2021marginal,zhou2022unknown}.
+ICBHI labels specify A/C/W. SPRSound's fine C/W labels supervise the corresponding heads despite its binary task, while Rhonchi/Stridor supervise A only. For batch $B$, let $B_k=\{i\in B:m_{ik}=1\}$ and
 $K_B=\{k:|B_k|>0\}$. Classification uses
 \begin{equation}
 \mathcal L_{\rm cls}(B)=\frac{1}{|K_B|}\sum_{k\in K_B}
@@ -61,16 +42,10 @@ $\ell_c,\ell_w$ are binary cross-entropy.
 
 Patient-based regularization uses a separate attention-based projection
 $Z_i=\mathcal G(H_i)\in\mathbb{R}^{768}$ and PAFA's patient
-cohesion-separation (PCSL) and global patient alignment (GPAL)
-losses\cite{jeong2025pafa}. Within each core-source batch, PCSL promotes
-within-patient cohesion and between-patient separation, while GPAL
-limits the dispersion of patient feature means. These losses regularize
-the shared encoder during joint training.
+cohesion-separation (PCSL) and global patient alignment (GPAL) losses\cite{jeong2025pafa}. Within each core-source batch, PCSL promotes within-patient cohesion and between-patient separation, while GPAL limits the dispersion of patient feature means. These losses regularize the shared encoder during joint training.
 
-In the auxiliary condition, HF source-training windows add C/W supervision,
-mapping the discontinuous adventitious-sound label D to C.
-Their masked binary cross-entropy gives $\mathcal L_{\rm HF}$.
-The treatment of derived negatives is discussed in Section~\ref{sec:hf_supervision}.
+In the auxiliary condition, HF source-training windows add C/W supervision, mapping the discontinuous adventitious-sound label D to C. Only windows overlapping D/Wheeze/Rhonchi/Stridor annotations contribute
+HF supervision, with missing C/W annotations treated as negatives. Their masked binary cross-entropy gives $\mathcal L_{\rm HF}$.
 Core batches supply classification and PAFA regularization, yielding
 \begin{equation}
 \mathcal L=
@@ -82,5 +57,4 @@ Core batches supply classification and PAFA regularization, yielding
 \end{equation}
 with $\lambda_p=50$, $\lambda_g=5\times10^{-4}$, and
 $\lambda_{\rm HF}=0$ for core training or $0.25$ for the auxiliary condition.
-HF contributes only the C/W term, leaving A supervision and patient
-regularization to the core sources.
+HF contributes only the C/W term, leaving A supervision and patient regularization to the core sources.

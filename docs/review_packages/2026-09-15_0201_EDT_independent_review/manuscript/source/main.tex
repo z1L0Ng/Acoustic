@@ -12,7 +12,7 @@
 \usepackage{float}
 \usepackage[hidelinks]{hyperref}
 \usepackage{etoolbox}
-\usepackage{enumitem}
+
 \setcounter{dbltopnumber}{1}
 \setlength{\textfloatsep}{6pt plus 1pt minus 2pt}
 \setlength{\dbltextfloatsep}{6pt plus 1pt minus 2pt}
@@ -61,19 +61,28 @@ additional supervision.
 \end{abstract}
 
 \begin{keywords}
-respiratory acoustics, shared supervision, heterogeneous annotations, cross-task learning
+respiratory sounds, shared supervision, heterogeneous annotations, acoustic attributes, cross-task learning
 \end{keywords}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{Figure/figure1_dataset_characteristics.pdf}
 \caption{Source labels and acoustic distributions.
-(a) Original label counts in the units and partitions shown. HF I/E/D denote inhalation, exhalation, and discontinuous adventitious sounds; KAUH retains source sound codes, and B/D/E denote Bell/Diaphragm/Extended
+(a) Original label counts in the units and partitions shown.
+HF I/E/D denote inhalation, exhalation, and discontinuous adventitious sounds;
+KAUH retains source sound codes, and B/D/E denote Bell/Diaphragm/Extended
 recording versions.
-(b) PCA of log-transformed, jointly standardized spectral centroid, bandwidth, and peak frequency, with equal source weights. Points represent 126 ICBHI patients, 284 SPRSound train+inter patients, 39 HF source-test recording-date groups, and 112 KAUH patients.
-(c) Source medians by sound-label group, aggregated within recording and then patient (recording date for HF).
-HF source-test groups follow observed D/Wheeze annotation combinations, with no Normal group; their definition is given in Section~\ref{sec:acoustic_characteristics}.
-KAUH uses 86 patients with compatible labels; Both contains two patients. Spectral descriptors use 5-s inputs and globally centered 4-kHz analysis copies, with 80--2000~Hz Welch power (1-s Hann windows, 50\% overlap).}
+(b) PCA of log-transformed, jointly standardized spectral centroid,
+bandwidth, and peak frequency, with equal source weights.
+Points represent 126 ICBHI patients, 284 SPRSound train+inter patients,
+39 HF source-test recording-date groups, and 112 KAUH patients.
+(c) Source medians by sound-label group, aggregated within recording
+and then patient (recording date for HF).
+HF source-test groups follow observed D/Wheeze annotation combinations,
+with no Normal group; their definition is given in Section~\ref{sec:acoustic_characteristics}.
+KAUH uses 86 patients with compatible labels; Both contains two patients.
+Spectral descriptors use 5-s inputs and globally centered 4-kHz analysis
+copies, with 80--2000~Hz Welch power (1-s Hann windows, 50\% overlap).}
 \label{fig:dataset_characteristics}
 \end{figure*}
 
@@ -81,9 +90,15 @@ KAUH uses 86 patients with compatible labels; Both contains two patients. Spectr
 \centering
 \includegraphics[width=\textwidth]{Figure/figure2_method.pdf}
 \caption{LSAA prediction and training paths.
-BEATs tokens of width $D=768$ are mean-pooled and linearly projected to 256 dimensions. Parallel heads form shared abnormality (A), Crackle (C), and Wheeze (W) probabilities. Task readouts convert these probabilities to dataset-specific outputs. A separate attention-based projection $\mathcal G$ supplies 768-dimensional features for the PAFA patient regularizers. ICBHI and SPRSound provide core attribute supervision and patient groups;
-the optional HF Lung term uses only source-train C/W supervision. HF source-test uses maximum-window Wheeze-head scores for continuous adventitious sounds (CAS) ranking, with Wheeze/Rhonchi/Stridor forming the
-positive class. Models and thresholds remain fixed for HF and KAUH evaluation. The objective and readouts are defined in Section~\ref{sec:method}.}
+BEATs tokens of width $D=768$ are mean-pooled and linearly projected to 256 dimensions.
+Parallel heads form shared abnormality (A), Crackle (C), and Wheeze (W)
+probabilities. Task readouts convert these probabilities to dataset-specific
+outputs. A separate attention-based projection $\mathcal G$ supplies
+768-dimensional features for the PAFA patient regularizers.
+ICBHI and SPRSound provide core attribute supervision and patient groups;
+the optional HF Lung term uses only source-train C/W supervision.
+HF source-test and KAUH evaluate fixed models and thresholds.
+The objective and readouts are defined in Section~\ref{sec:method}.}
 \label{fig:method_overview}
 \end{figure*}
 

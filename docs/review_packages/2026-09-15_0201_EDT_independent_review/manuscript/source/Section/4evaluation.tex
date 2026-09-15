@@ -1,0 +1,72 @@
+\begingroup
+\setlength{\emergencystretch}{1.5em}
+\section{Evaluation}
+\label{sec:evaluation}
+
+\subsection{Joint Learning and Transfer}
+\label{sec:protocol}
+\label{sec:native_results}
+Table~\ref{tab:native_results} compares LSAA with separately trained
+frozen-encoder references. LSAA achieves higher means on ICBHI and both
+external targets, whereas the strongest frozen references perform better
+on SPRSound. The ICBHI-only and SPRSound-only controls in
+Table~\ref{tab:ablations}(a) assess joint training within LSAA's shared
+architecture.
+
+\LSAAMainResultsTable
+
+Providing both readouts does not make single-source training sufficient
+for both datasets: each single-source model performs poorly on the other
+native task. These failures accompany the within-label acoustic differences
+in Figure~\ref{fig:dataset_characteristics}(b,c).
+Joint supervision enables one model to serve both tasks, improving ICBHI
+Score by 3.39 percentage points (pp) at a 2.13-pp cost on SPRSound relative
+to their respective single-source models. Both Normal recall and correct
+abnormal-subclass recall improve on ICBHI. Joint training therefore
+expands task coverage, with different gains and costs relative to the
+two specialist models.
+
+External benefits depend on the source and prediction target.
+LSAA's HF CAS ranking AUROC (86.44\%) is close to ICBHI-only (87.05\%)
+and exceeds SPRSound-only (79.25\%), while its KAUH patient BA exceeds
+both controls (Table~\ref{tab:ablations}(a)). Combining sources thus improves
+KAUH performance without producing a uniform gain across external targets.
+
+\subsection{Supervision and Readout Analysis}
+\label{sec:ablations}
+\label{sec:fine_supervision}
+\label{sec:readout_analysis}
+\label{sec:transfer}
+A binary prediction target can still benefit from fine supervision.
+Retaining SPRSound C/W labels improves both native Scores and SPRSound
+C/W AUROC across three seeds (Table~\ref{tab:ablations}(b)). Coarse SPR's
+mean ICBHI Score falls below ICBHI-only, showing that adding source audio
+alone does not ensure a gain under this recipe. The SPRSound improvement
+is uneven: Coarse includes an all-Normal seed, while the other two seeds
+gain 4.57/0.15 pp. Coarse also removes C/W calibration and changes relative
+loss strength, so the comparison supports the fine-supervision recipe
+without isolating annotation information alone.
+
+\LSAAAnalysisTable
+
+Shared fine supervision does not prescribe a unique task readout.
+Native + C/W improves ICBHI Score by 2.50 pp while SPRSound C/W AUROC
+changes by only $-0.05$ pp. This supports separate assessment of attribute
+detection and native-task performance. LSAA supplies an explicit
+attribute-to-task mapping; learned native heads offer another implementation.
+Because the alternative retrains both encoder and heads, the gain cannot
+be attributed solely to replacing the decoder.
+
+\label{sec:hf_supervision}
+More supervision from a source need not improve its evaluation target.
+HF-on lowers CAS AUROC in all three seeds ($-7.41\pm2.73$ pp), despite
+improving SPRSound in two seeds; KAUH changes direction across seeds
+(Table~\ref{tab:ablations}(c)). HF training assigns W negatives to eligible
+Rhonchi/Stridor windows without Wheeze annotations, whereas CAS evaluation
+treats any Wheeze/Rhonchi/Stridor annotation as positive and ranks recordings
+using maximum-window Wheeze-head scores. Of 661 CAS-positive test recordings,
+256 have no Wheeze annotation. Supervision and evaluation thus target
+different sound categories within the same source. This mismatch may contribute
+to the decline, but the current comparison does not isolate its causal effect.
+\par
+\endgroup

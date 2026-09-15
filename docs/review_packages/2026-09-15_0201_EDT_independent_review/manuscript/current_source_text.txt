@@ -1,0 +1,912 @@
+Reference-only source text with file names and line numbers. The wrappers are not manuscript content. The PDF remains the primary review target.
+
+
+===== SOURCE FILE: main.tex =====
+0001 | \documentclass[10pt,letterpaper]{article}
+0002 | \usepackage[T1]{fontenc}
+0003 | \usepackage{spconf}
+0004 | \usepackage{cite}
+0005 | \usepackage{amsmath,amssymb}
+0006 | \usepackage{graphicx}
+0007 | \usepackage{booktabs}
+0008 | \usepackage{array}
+0009 | \usepackage{textcomp}
+0010 | \usepackage{xcolor}
+0011 | \usepackage{placeins}
+0012 | \usepackage{float}
+0013 | \usepackage[hidelinks]{hyperref}
+0014 | \usepackage{etoolbox}
+0015 | 
+0016 | \setcounter{dbltopnumber}{1}
+0017 | \setlength{\textfloatsep}{6pt plus 1pt minus 2pt}
+0018 | \setlength{\dbltextfloatsep}{6pt plus 1pt minus 2pt}
+0019 | \setlength{\floatsep}{6pt plus 1pt minus 2pt}
+0020 | \setlength{\dblfloatsep}{6pt plus 1pt minus 2pt}
+0021 | \setlength{\intextsep}{6pt plus 1pt minus 2pt}
+0022 | 
+0023 | \makeatletter
+0024 | \patchcmd{\@makecaption}{\vskip 10pt}{\small\vskip 4pt}{}{}
+0025 | \makeatother
+0026 | \apptocmd{\thebibliography}{
+0027 |   \small
+0028 |   \setlength{\itemsep}{1pt plus 0.3pt}
+0029 |   \setlength{\parsep}{0pt}
+0030 |   \setlength{\parskip}{0pt}
+0031 | }{}{}
+0032 | 
+0033 | \title{Learning Shared Acoustic Attributes Across Respiratory Sound Datasets with Heterogeneous Annotations}
+0034 | \name{Zilong Zeng, Wade Wu, Arian Azarang, Stephen Xia, Jingping Nie}
+0035 | \address{{\small \texttt{zilongzeng2030@u.northwestern.edu},
+0036 | \texttt{wadewu@unc.edu}}\\
+0037 | {\small \texttt{arian\_azarang@med.unc.edu},
+0038 | \texttt{stephen.xia@northwestern.edu}, \texttt{jingping@unc.edu}}
+0039 | }
+0040 | 
+0041 | \begin{document}
+0042 | \maketitle
+0043 | \raggedbottom
+0044 | 
+0045 | \begin{abstract}
+0046 | Respiratory sound datasets provide complementary supervision, but differ
+0047 | in annotation granularity and prediction targets. We propose LSAA
+0048 | (Learning Shared Acoustic Attributes), a joint learning framework that
+0049 | shares acoustic supervision while preserving native tasks. LSAA learns
+0050 | abnormality, crackle, and wheeze from ICBHI cycles and SPRSound events,
+0051 | then uses task-specific readouts for four-class cycle and binary event
+0052 | prediction. This allows fine sound-type annotations to supervise learning
+0053 | even when the output is binary. We further assess attribute transfer and
+0054 | auxiliary supervision on HF Lung, and external generalization on KAUH.
+0055 | Across three seeds with official-test-based checkpoint selection, LSAA
+0056 | improves ICBHI Score by 3.39 percentage points with a 2.13-point SPRSound
+0057 | decrease relative to the respective single-source models. Further
+0058 | comparisons support retaining fine annotations under the evaluated
+0059 | training recipe and reveal task-dependent effects of readout design and
+0060 | additional supervision.
+0061 | \end{abstract}
+0062 | 
+0063 | \begin{keywords}
+0064 | respiratory sounds, shared supervision, heterogeneous annotations, acoustic attributes, cross-task learning
+0065 | \end{keywords}
+0066 | 
+0067 | \begin{figure*}[t]
+0068 | \centering
+0069 | \includegraphics[width=\textwidth]{Figure/figure1_dataset_characteristics.pdf}
+0070 | \caption{Source labels and acoustic distributions.
+0071 | (a) Original label counts in the units and partitions shown.
+0072 | HF I/E/D denote inhalation, exhalation, and discontinuous adventitious sounds;
+0073 | KAUH retains source sound codes, and B/D/E denote Bell/Diaphragm/Extended
+0074 | recording versions.
+0075 | (b) PCA of log-transformed, jointly standardized spectral centroid,
+0076 | bandwidth, and peak frequency, with equal source weights.
+0077 | Points represent 126 ICBHI patients, 284 SPRSound train+inter patients,
+0078 | 39 HF source-test recording-date groups, and 112 KAUH patients.
+0079 | (c) Source medians by sound-label group, aggregated within recording
+0080 | and then patient (recording date for HF).
+0081 | HF source-test groups follow observed D/Wheeze annotation combinations,
+0082 | with no Normal group; their definition is given in Section~\ref{sec:acoustic_characteristics}.
+0083 | KAUH uses 86 patients with compatible labels; Both contains two patients.
+0084 | Spectral descriptors use 5-s inputs and globally centered 4-kHz analysis
+0085 | copies, with 80--2000~Hz Welch power (1-s Hann windows, 50\% overlap).}
+0086 | \label{fig:dataset_characteristics}
+0087 | \end{figure*}
+0088 | 
+0089 | \begin{figure*}[t]
+0090 | \centering
+0091 | \includegraphics[width=\textwidth]{Figure/figure2_method.pdf}
+0092 | \caption{LSAA prediction and training paths.
+0093 | BEATs tokens of width $D=768$ are mean-pooled and linearly projected to 256 dimensions.
+0094 | Parallel heads form shared abnormality (A), Crackle (C), and Wheeze (W)
+0095 | probabilities. Task readouts convert these probabilities to dataset-specific
+0096 | outputs. A separate attention-based projection $\mathcal G$ supplies
+0097 | 768-dimensional features for the PAFA patient regularizers.
+0098 | ICBHI and SPRSound provide core attribute supervision and patient groups;
+0099 | the optional HF Lung term uses only source-train C/W supervision.
+0100 | HF source-test and KAUH evaluate fixed models and thresholds.
+0101 | The objective and readouts are defined in Section~\ref{sec:method}.}
+0102 | \label{fig:method_overview}
+0103 | \end{figure*}
+0104 | 
+0105 | \input{Section/1introduction}
+0106 | \input{Section/2data}
+0107 | \input{Section/3method}
+0108 | \input{Section/4tables}
+0109 | \input{Section/4evaluation}
+0110 | \input{Section/5conclusion}
+0111 | \FloatBarrier
+0112 | \bibliographystyle{IEEEbib}
+0113 | \bibliography{citation}
+0114 | \end{document}
+
+
+===== SOURCE FILE: Section/1introduction.tex =====
+0001 | \section{Introduction}
+0002 | \label{sec:introduction}
+0003 | 
+0004 | Automated recognition of crackles and wheezes can reduce the manual effort
+0005 | involved in respiratory sound assessment\cite{hsu2021hflung}.
+0006 | Training these classifiers requires expert annotations that are costly
+0007 | to obtain at scale\cite{zhang2024opera}. Existing respiratory
+0008 | datasets\cite{rocha2019icbhi,zhang2022sprsound} offer an opportunity to
+0009 | expand supervision by reusing labeled recordings. Their annotations
+0010 | describe related acoustic attributes but differ in granularity and
+0011 | prediction targets, so their task labels are not directly interchangeable.
+0012 | 
+0013 | To reuse annotations that are not directly interchangeable, a common
+0014 | strategy is to map source labels to a shared prediction target, as in
+0015 | SPRSound's fusion experiments and LungMix's cross-dataset
+0016 | transfer\cite{zhang2022sprsound,ge2025lungmix}. This enables reuse under an
+0017 | aligned task definition, but coarsening labels can discard distinctions
+0018 | needed by another task. Representing sound composition offers a more
+0019 | flexible way to use label information: Multi-breath and PC-MCL employ
+0020 | multilabel supervision within ICBHI\cite{chua2024multibreath,jeong2026pcmcl}.
+0021 | Across datasets, DCASE combines class mappings and masked supervision while
+0022 | retaining dataset-specific evaluation within a shared temporal sound-event
+0023 | detection system\cite{cornell2024dcase}. These studies provide ways to align
+0024 | labels and retain their information, but our setting requires sharing
+0025 | supervision across distinct cycle-level and event-level prediction targets.
+0026 | For example, SPRSound's Wheeze annotations contain information relevant to
+0027 | ICBHI's four-class cycle task, although its binary event task requires only
+0028 | normal/abnormal predictions\cite{zhang2022sprsound}. The available supervision
+0029 | is therefore richer than the required output. We aim to jointly learn from
+0030 | this information while preserving each dataset's native prediction target.
+0031 | 
+0032 | To this end, we propose LSAA (Learning Shared Acoustic Attributes).
+0033 | A shared encoder learns acoustic representations through abnormality,
+0034 | crackle, and wheeze supervision from ICBHI cycles and SPRSound events.
+0035 | Each annotation supervises only the attributes it supports.
+0036 | Task-specific readouts map the shared attribute predictions to four-class
+0037 | cycle and binary event outputs, allowing fine supervision to guide
+0038 | learning while preserving different native tasks.
+0039 | 
+0040 | In this work, we demonstrate:
+0041 | \begin{enumerate}
+0042 | \setlength{\itemsep}{1pt}
+0043 | \setlength{\parsep}{0pt}
+0044 | \item We propose LSAA, a joint learning framework that connects heterogeneous
+0045 | respiratory sound annotations through shared acoustic attributes in one model.
+0046 | \item We develop task-specific readouts over shared abnormality, crackle,
+0047 | and wheeze predictions, enabling fine-grained supervision to support
+0048 | distinct native outputs.
+0049 | \item We evaluate native-task performance on ICBHI and SPRSound,
+0050 | investigate attribute transfer and auxiliary supervision on HF
+0051 | Lung\cite{hsu2021hflung}, and assess external generalization on
+0052 | KAUH\cite{fraiwan2021kauh}.
+0053 | \end{enumerate}
+
+
+===== SOURCE FILE: Section/2data.tex =====
+0001 | \section{Datasets and Acoustic Characteristics}
+0002 | \label{sec:data_alignment}
+0003 | 
+0004 | \subsection{Datasets and Annotations}
+0005 | ICBHI and SPRSound provide LSAA's core joint-training data.
+0006 | ICBHI annotates respiratory cycles as Normal, Crackle (C), Wheeze (W),
+0007 | or Both (C and W)\cite{rocha2019icbhi}. SPRSound annotates seven event
+0008 | categories, while the event task studied here predicts Normal or
+0009 | Adventitious (abnormal)\cite{zhang2022sprsound}. Both datasets provide
+0010 | patient identifiers and annotation boundaries. SPRSound's fine C/W labels
+0011 | retain sound-type information relevant to ICBHI's four-class task, even
+0012 | though its own prediction target is binary. This motivates sharing fine
+0013 | acoustic supervision while retaining each task's prediction unit and target.
+0014 | 
+0015 | HF Lung provides timed breath-phase and adventitious-sound
+0016 | annotations\cite{hsu2021hflung}. We use its source-training partition for
+0017 | a separate auxiliary C/W supervision condition and its source-test
+0018 | partition for attribute evaluation. KAUH provides recording-level sound
+0019 | categories and Bell, Diaphragm, and Extended filter versions of each
+0020 | patient's recording\cite{fraiwan2021kauh}. We use these recordings for
+0021 | external evaluation, grouping the filter versions within each patient.
+0022 | Figure~\ref{fig:dataset_characteristics}(a) reports original label counts
+0023 | in cycles for ICBHI, events for SPRSound, annotated intervals for HF,
+0024 | and filter-version recordings for KAUH.
+0025 | 
+0026 | \subsection{Acoustic Characteristics}
+0027 | \label{sec:acoustic_characteristics}
+0028 | To compare acoustic inputs across sources, we prepare mono 16-kHz,
+0029 | 5-s inputs. ICBHI cycles, SPRSound events, and KAUH recordings are
+0030 | repeated if shorter than 5~s or cropped to the first 5~s if longer,
+0031 | with boundary fading; HF recordings supply three consecutive windows.
+0032 | From globally centered 4-kHz analysis copies, we estimate 80--2000~Hz Welch
+0033 | spectra\cite{welch1967spectra} and compute spectral centroid (power-weighted
+0034 | mean frequency), bandwidth (frequency spread), and peak frequency.
+0035 | Descriptor medians are taken within recording and then within patient;
+0036 | HF uses recording-date groups. Principal component analysis (PCA) of
+0037 | log-transformed, jointly standardized descriptors with equal source
+0038 | weights shows source structure with partial overlap
+0039 | (Figure~\ref{fig:dataset_characteristics}(b)).
+0040 | 
+0041 | Figure~\ref{fig:dataset_characteristics}(c) compares median spectral
+0042 | centroids within Normal, Crackle, Wheeze, and Both label groups.
+0043 | SPRSound's Fine/Coarse Crackle labels are combined as Crackle, and
+0044 | Wheeze+Crackle corresponds to Both. ICBHI has lower
+0045 | centroids than SPRSound in all four classes. HF source-test windows and
+0046 | KAUH recordings with compatible labels provide additional descriptive
+0047 | references. HF windows are grouped by D (discontinuous adventitious sound)
+0048 | annotations without Wheeze annotations, Wheeze annotations without D,
+0049 | or both annotations. Missing
+0050 | annotations do not establish sound absence, and no HF Normal group is
+0051 | assigned. These comparisons show that compatible sound labels accompany
+0052 | differing source distributions, which shared acoustic supervision must
+0053 | accommodate.
+
+
+===== SOURCE FILE: Section/3method.tex =====
+0001 | \section{Method}
+0002 | \label{sec:method}
+0003 | 
+0004 | LSAA connects heterogeneous annotations through shared abnormality (A),
+0005 | Crackle (C), and Wheeze (W) probabilities and dataset-specific readouts
+0006 | (Figure~\ref{fig:method_overview}).
+0007 | 
+0008 | \subsection{Shared Attributes and Task Readouts}
+0009 | \label{sec:annotation_alignment}
+0010 | \label{sec:native_readouts}
+0011 | The prediction path maps each audio unit to shared attribute probabilities
+0012 | and then to the output required by its dataset. For a mono 16-kHz, 5-s input $x_i$
+0013 | prepared as in Section~\ref{sec:acoustic_characteristics},
+0014 | AudioSet-pretrained BEATs iter3+ AS2M\cite{chen2023beats,gemmeke2017audioset}
+0015 | produces $H_i\in\mathbb{R}^{T_i\times D}$, where $T_i$ is the token count
+0016 | and $D=768$.
+0017 | Mean pooling over tokens followed by a linear $768\to256$ projection
+0018 | gives $h_i\in\mathbb{R}^{256}$. Three parallel linear heads predict
+0019 | \begin{equation}
+0020 | p_{ik}=\phi_k(W_k h_i+b_k),\qquad k\in\{a,c,w\},
+0021 | \label{eq:attribute_predictions}
+0022 | \end{equation}
+0023 | where $\phi_a$ returns the Abnormal probability from a two-logit softmax,
+0024 | and $\phi_c,\phi_w$ apply sigmoid to one logit each.
+0025 | Their outputs form the shared attribute vector
+0026 | $\mathbf p_i=(p_{ia},p_{ic},p_{iw})$.
+0027 | 
+0028 | Let $\hat a_i$ be the Normal/Abnormal argmax (ties select Normal),
+0029 | $\hat c_i=\mathbb{I}[p_{ic}\geq\tau_c]$, and
+0030 | $\hat w_i=\mathbb{I}[p_{iw}\geq\tau_w]$.
+0031 | SPRSound uses $\hat a_i$ for Normal/Adventitious classification.
+0032 | For ICBHI, $\hat a_i=0$ yields Normal; otherwise, two positive attributes
+0033 | yield Both and one yields its class. If neither is positive, the larger
+0034 | $p_{ik}-\tau_k$ margin selects Crackle or Wheeze, with ties selecting Crackle.
+0035 | Thresholds use core validation.
+0036 | 
+0037 | For HF source-test, maxima over C/W window probabilities give recording
+0038 | scores. For KAUH, we average probabilities across each patient's filter
+0039 | versions and predict Normal/Abnormal for patients with compatible sound
+0040 | labels. Models and thresholds remain fixed for these evaluations.
+0041 | 
+0042 | \subsection{Annotation-Aware Joint Training}
+0043 | \label{sec:joint_supervision}
+0044 | \label{sec:hf_method}
+0045 | Training uses each annotation to supervise the attributes it supports,
+0046 | jointly fine-tuning the encoder and prediction heads on ICBHI and SPRSound.
+0047 | Annotations supply targets $y_{ik}$ and masks $m_{ik}$,
+0048 | with $m_{ik}=1$ only for supported attributes, distinguishing unknown
+0049 | labels from observed negatives\cite{shi2021marginal,zhou2022unknown}.
+0050 | ICBHI labels specify A/C/W. SPRSound's fine C/W labels supervise the
+0051 | corresponding heads despite its binary task, while Rhonchi/Stridor
+0052 | supervise A only. For batch $B$, let $B_k=\{i\in B:m_{ik}=1\}$ and
+0053 | $K_B=\{k:|B_k|>0\}$. Classification uses
+0054 | \begin{equation}
+0055 | \mathcal L_{\rm cls}(B)=\frac{1}{|K_B|}\sum_{k\in K_B}
+0056 | \frac{1}{|B_k|}\sum_{i\in B_k}\ell_k(p_{ik},y_{ik}),
+0057 | \label{eq:classification_loss}
+0058 | \end{equation}
+0059 | where $\ell_a$ is cross-entropy on $(1-p_{ia},p_{ia})$ and
+0060 | $\ell_c,\ell_w$ are binary cross-entropy.
+0061 | 
+0062 | Patient-based regularization uses a separate attention-based projection
+0063 | $Z_i=\mathcal G(H_i)\in\mathbb{R}^{768}$ and PAFA's patient
+0064 | cohesion-separation (PCSL) and global patient alignment (GPAL)
+0065 | losses\cite{jeong2025pafa}. Within each core-source batch, PCSL promotes
+0066 | within-patient cohesion and between-patient separation, while GPAL
+0067 | limits the dispersion of patient feature means. These losses regularize
+0068 | the shared encoder during joint training.
+0069 | 
+0070 | In the auxiliary condition, HF source-training windows add C/W supervision,
+0071 | mapping the discontinuous adventitious-sound label D to C.
+0072 | Their masked binary cross-entropy gives $\mathcal L_{\rm HF}$.
+0073 | The treatment of derived negatives is discussed in Section~\ref{sec:hf_supervision}.
+0074 | Core batches supply classification and PAFA regularization, yielding
+0075 | \begin{equation}
+0076 | \mathcal L=
+0077 | \underbrace{\mathcal L_{\rm cls}
+0078 |  +\lambda_p\mathcal L_{\rm PCSL}
+0079 |  +\lambda_g\mathcal L_{\rm GPAL}}_{\mathcal L_{\rm core}}
+0080 |  +\lambda_{\rm HF}\mathcal L_{\rm HF},
+0081 | \label{eq:total_objective}
+0082 | \end{equation}
+0083 | with $\lambda_p=50$, $\lambda_g=5\times10^{-4}$, and
+0084 | $\lambda_{\rm HF}=0$ for core training or $0.25$ for the auxiliary condition.
+0085 | HF contributes only the C/W term, leaving A supervision and patient
+0086 | regularization to the core sources.
+
+
+===== SOURCE FILE: Section/4tables.tex =====
+0001 | \newcommand{\LSAAMainResultsTable}{%
+0002 | \begin{table}[H]
+0003 | \caption{Performance of LSAA and frozen-encoder references across four
+0004 | respiratory sound datasets. Values are means (\%) over three seeds,
+0005 | with sample standard deviations shown as subscripts.
+0006 | In Train, I/S denotes separate ICBHI/SPRSound models and I+S denotes
+0007 | joint training. \textbf{Bold} and \underline{underlined} values mark the
+0008 | highest and second-highest means within each metric column.
+0009 | For LSAA, CAS AUROC evaluates maximum-window Wheeze-head scores
+0010 | against the Wheeze/Rhonchi/Stridor label union.}
+0011 | \label{tab:native_results}
+0012 | \centering
+0013 | \small
+0014 | \setlength{\tabcolsep}{0pt}
+0015 | \begin{tabular}{@{}
+0016 | >{\raggedright\arraybackslash}p{0.17\columnwidth}
+0017 | >{\centering\arraybackslash}p{0.075\columnwidth}
+0018 | *{4}{>{\centering\arraybackslash}p{0.18875\columnwidth}}@{}}
+0019 | \toprule
+0020 | Model & Train
+0021 | & \shortstack{ICBHI\\\cite{rocha2019icbhi}\\Score}
+0022 | & \shortstack{SPRSound\\\cite{zhang2022sprsound}\\Score}
+0023 | & \shortstack{HF\\\cite{hsu2021hflung}\\CAS AUROC}
+0024 | & \shortstack{KAUH\\\cite{fraiwan2021kauh}\\BA}\\
+0025 | \midrule
+0026 | AST \cite{gong2021ast} & I/S & $51.40_{\pm0.48}$ & $90.20_{\pm0.18}$ & $\underline{77.01}_{\pm0.30}$ & $\underline{68.64}_{\pm0.41}$\\
+0027 | BEATs \cite{chen2023beats} & I/S & $51.68_{\pm1.19}$ & $\mathbf{92.37}_{\pm0.35}$ & $75.87_{\pm0.11}$ & $61.86_{\pm0.34}$\\
+0028 | PANNs \cite{kong2020panns} & I/S & $\underline{52.08}_{\pm0.16}$ & $\underline{91.23}_{\pm0.55}$ & $73.13_{\pm0.10}$ & $56.52_{\pm2.24}$\\
+0029 | OPERA-CT \cite{zhang2024opera} & I/S & $39.96_{\pm1.68}$ & $79.45_{\pm0.00}$ & $60.96_{\pm0.35}$ & $59.88_{\pm0.34}$\\
+0030 | HeAR \cite{baur2024hear} & I/S & $49.50_{\pm0.62}$ & $87.89_{\pm0.31}$ & $64.20_{\pm0.29}$ & $64.10_{\pm0.11}$\\
+0031 | \midrule
+0032 | \textbf{LSAA} & I+S & $\mathbf{61.17}_{\pm0.31}$ & $90.70_{\pm0.34}$ & $\mathbf{86.44}_{\pm2.13}$ & $\mathbf{72.17}_{\pm1.64}$\\
+0033 | \bottomrule
+0034 | \end{tabular}
+0035 | \end{table}
+0036 | }
+0037 | 
+0038 | 
+0039 | \newcommand{\LSAAAnalysisTable}{%
+0040 | \begin{table}[H]
+0041 | \caption{Effects of training sources, supervision detail, and task readouts.
+0042 | (a) Absolute performance (\%) and paired changes (pp), with
+0043 | $\Delta_{\rm I}$ and $\Delta_{\rm S}$ denoting LSAA minus ICBHI-only and
+0044 | SPRSound-only, respectively.
+0045 | (b) Variant minus LSAA; CW is SPRSound C/W macro AUROC
+0046 | (LSAA: $97.32\pm0.15$\%). (c) HF-on minus the corresponding same-seed
+0047 | HF-off run. Values are means with subscripted $\pm$ sample SD over
+0048 | three seeds. IC/SPR: native Scores; CAS: HF recording AUROC
+0049 | using Wheeze-head scores for CAS-union ranking;
+0050 | BA: KAUH patient balanced accuracy.}
+0051 | \label{tab:ablations}
+0052 | \centering
+0053 | \small
+0054 | \setlength{\tabcolsep}{1pt}
+0055 | \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lcccc@{}}
+0056 | \toprule
+0057 | \multicolumn{5}{l}{\textit{(a) Single-source and joint training}}\\
+0058 | Model & IC & SPR & CAS & BA\\
+0059 | \midrule
+0060 | ICBHI-only & $57.78_{\pm1.47}$ & $49.53_{\pm6.40}$ & $87.05_{\pm0.86}$ & $70.44_{\pm1.52}$\\
+0061 | SPRSound-only & $47.75_{\pm0.51}$ & $\mathbf{92.82}_{\pm0.65}$ & $79.25_{\pm1.08}$ & $67.25_{\pm4.29}$\\
+0062 | \textbf{LSAA} & $\mathbf{61.17}_{\pm0.31}$ & $90.70_{\pm0.34}$ & $86.44_{\pm2.13}$ & $72.17_{\pm1.64}$\\
+0063 | \midrule
+0064 | $\Delta_{\rm I}$ & $\mathbf{+3.39}_{\pm1.59}$ & $+41.17_{\pm6.70}$ & $-0.61_{\pm1.32}$ & $+1.73_{\pm0.81}$\\
+0065 | $\Delta_{\rm S}$ & $+13.42_{\pm0.82}$ & $\mathbf{-2.13}_{\pm0.33}$ & $+7.19_{\pm1.05}$ & $+4.91_{\pm4.69}$\\
+0066 | \bottomrule
+0067 | \end{tabular*}
+0068 | \par\smallskip
+0069 | \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lccc@{}}
+0070 | \toprule
+0071 | \multicolumn{4}{l}{\textit{(b) Fine supervision and readout}}\\
+0072 | Variant & $\Delta$ IC & $\Delta$ SPR & $\Delta$ CW\\
+0073 | \midrule
+0074 | Coarse SPR & $-6.51_{\pm4.33}$ & $-23.46_{\pm36.62}$ & $-8.48_{\pm8.58}$\\
+0075 | Native + C/W & $+2.50_{\pm1.90}$ & $+0.16_{\pm1.55}$ & $-0.05_{\pm0.25}$\\
+0076 | \bottomrule
+0077 | \end{tabular*}
+0078 | \par\smallskip
+0079 | \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lcccc@{}}
+0080 | \toprule
+0081 | \multicolumn{5}{l}{\textit{(c) HF supervision and transfer}}\\
+0082 | & \multicolumn{2}{c}{Native $\Delta$ Score}
+0083 | & HF & KAUH\\
+0084 | \cmidrule(lr){2-3}
+0085 | Variant & IC & SPR & $\Delta$ CAS & $\Delta$ BA\\
+0086 | \midrule
+0087 | HF-on & $-1.90_{\pm2.89}$ & $+1.31_{\pm1.43}$ & $-7.41_{\pm2.73}$ & $+1.91_{\pm7.03}$\\
+0088 | \bottomrule
+0089 | \end{tabular*}
+0090 | \end{table}
+0091 | }
+
+
+===== SOURCE FILE: Section/4evaluation.tex =====
+0001 | \begingroup
+0002 | \setlength{\emergencystretch}{1.5em}
+0003 | \section{Evaluation}
+0004 | \label{sec:evaluation}
+0005 | 
+0006 | \subsection{Joint Learning and Transfer}
+0007 | \label{sec:protocol}
+0008 | \label{sec:native_results}
+0009 | Table~\ref{tab:native_results} compares LSAA with separately trained
+0010 | frozen-encoder references. LSAA achieves higher means on ICBHI and both
+0011 | external targets, whereas the strongest frozen references perform better
+0012 | on SPRSound. The ICBHI-only and SPRSound-only controls in
+0013 | Table~\ref{tab:ablations}(a) assess joint training within LSAA's shared
+0014 | architecture.
+0015 | 
+0016 | \LSAAMainResultsTable
+0017 | 
+0018 | Providing both readouts does not make single-source training sufficient
+0019 | for both datasets: each single-source model performs poorly on the other
+0020 | native task. These failures accompany the within-label acoustic differences
+0021 | in Figure~\ref{fig:dataset_characteristics}(b,c).
+0022 | Joint supervision enables one model to serve both tasks, improving ICBHI
+0023 | Score by 3.39 percentage points (pp) at a 2.13-pp cost on SPRSound relative
+0024 | to their respective single-source models. Both Normal recall and correct
+0025 | abnormal-subclass recall improve on ICBHI. Joint training therefore
+0026 | expands task coverage, with different gains and costs relative to the
+0027 | two specialist models.
+0028 | 
+0029 | External benefits depend on the source and prediction target.
+0030 | LSAA's HF CAS ranking AUROC (86.44\%) is close to ICBHI-only (87.05\%)
+0031 | and exceeds SPRSound-only (79.25\%), while its KAUH patient BA exceeds
+0032 | both controls (Table~\ref{tab:ablations}(a)). Combining sources thus improves
+0033 | KAUH performance without producing a uniform gain across external targets.
+0034 | 
+0035 | \subsection{Supervision and Readout Analysis}
+0036 | \label{sec:ablations}
+0037 | \label{sec:fine_supervision}
+0038 | \label{sec:readout_analysis}
+0039 | \label{sec:transfer}
+0040 | A binary prediction target can still benefit from fine supervision.
+0041 | Retaining SPRSound C/W labels improves both native Scores and SPRSound
+0042 | C/W AUROC across three seeds (Table~\ref{tab:ablations}(b)). Coarse SPR's
+0043 | mean ICBHI Score falls below ICBHI-only, showing that adding source audio
+0044 | alone does not ensure a gain under this recipe. The SPRSound improvement
+0045 | is uneven: Coarse includes an all-Normal seed, while the other two seeds
+0046 | gain 4.57/0.15 pp. Coarse also removes C/W calibration and changes relative
+0047 | loss strength, so the comparison supports the fine-supervision recipe
+0048 | without isolating annotation information alone.
+0049 | 
+0050 | \LSAAAnalysisTable
+0051 | 
+0052 | Shared fine supervision does not prescribe a unique task readout.
+0053 | Native + C/W improves ICBHI Score by 2.50 pp while SPRSound C/W AUROC
+0054 | changes by only $-0.05$ pp. This supports separate assessment of attribute
+0055 | detection and native-task performance. LSAA supplies an explicit
+0056 | attribute-to-task mapping; learned native heads offer another implementation.
+0057 | Because the alternative retrains both encoder and heads, the gain cannot
+0058 | be attributed solely to replacing the decoder.
+0059 | 
+0060 | \label{sec:hf_supervision}
+0061 | More supervision from a source need not improve its evaluation target.
+0062 | HF-on lowers CAS AUROC in all three seeds ($-7.41\pm2.73$ pp), despite
+0063 | improving SPRSound in two seeds; KAUH changes direction across seeds
+0064 | (Table~\ref{tab:ablations}(c)). HF training assigns W negatives to eligible
+0065 | Rhonchi/Stridor windows without Wheeze annotations, whereas CAS evaluation
+0066 | treats any Wheeze/Rhonchi/Stridor annotation as positive and ranks recordings
+0067 | using maximum-window Wheeze-head scores. Of 661 CAS-positive test recordings,
+0068 | 256 have no Wheeze annotation. Supervision and evaluation thus target
+0069 | different sound categories within the same source. This mismatch may contribute
+0070 | to the decline, but the current comparison does not isolate its causal effect.
+0071 | \par
+0072 | \endgroup
+
+
+===== SOURCE FILE: Section/5conclusion.tex =====
+0001 | \section{Conclusion}
+0002 | \label{sec:conclusion}
+0003 | We presented LSAA, a joint learning framework that connects heterogeneous
+0004 | respiratory sound annotations through shared acoustic attributes.
+0005 | Task-specific readouts allow one model to support cycle-level four-class
+0006 | and event-level binary prediction while retaining fine-grained supervision.
+0007 | Our experiments support retaining fine annotations under the evaluated
+0008 | training recipe and reveal task-dependent tradeoffs from joint training
+0009 | and readout design. Evaluation on HF Lung and KAUH extends this assessment
+0010 | beyond the training datasets, showing that additional supervision does not
+0011 | uniformly improve transfer.
+
+
+===== SOURCE FILE: citation.bib =====
+0001 | % A. Dataset and benchmark primary papers
+0002 | 
+0003 | @article{rocha2019icbhi,
+0004 |   author  = {Bruno M. Rocha and Dimitris Filos and Lu{\'i}s Mendes and Gorkem Serbes and Sezer Ulukaya and Yasemin P. Kahya and Nik{\v{s}}a Jakovljevic and Tatjana L. Turukalo and Ioannis M. Vogiatzis and Eleni Perantoni and Evangelos Kaimakamis and Pantelis Natsiavas and Ana Oliveira and Cristina J{\'a}come and Alda Marques and Nicos Maglaveras and Rui Pedro Paiva and Ioanna Chouvarda and Paulo de Carvalho},
+0005 |   title   = {An Open Access Database for the Evaluation of Respiratory Sound Classification Algorithms},
+0006 |   journal = {Physiological Measurement},
+0007 |   year    = {2019},
+0008 |   volume  = {40},
+0009 |   number  = {3},
+0010 |   pages   = {035001},
+0011 |   doi     = {10.1088/1361-6579/ab03ea},
+0012 |   url     = {https://doi.org/10.1088/1361-6579/ab03ea}
+0013 | }
+0014 | 
+0015 | @article{zhang2022sprsound,
+0016 |   author  = {Qing Zhang and Jing Zhang and Jiajun Yuan and Huajie Huang and Yuhang Zhang and Baoqin Zhang and Gaomei Lv and Shuzhu Lin and Na Wang and Xin Liu and Mingyu Tang and Yahua Wang and Hui Ma and Lu Liu and Shuhua Yuan and Hongyuan Zhou and Jian Zhao and Yongfu Li and Yong Yin and Liebin Zhao and Guoxing Wang and Yong Lian},
+0017 |   title   = {{SPRSound}: Open-Source {SJTU} Paediatric Respiratory Sound Database},
+0018 |   journal = {IEEE Transactions on Biomedical Circuits and Systems},
+0019 |   year    = {2022},
+0020 |   volume  = {16},
+0021 |   number  = {5},
+0022 |   pages   = {867--881},
+0023 |   doi     = {10.1109/TBCAS.2022.3204910},
+0024 |   url     = {https://doi.org/10.1109/TBCAS.2022.3204910}
+0025 | }
+0026 | 
+0027 | @article{hsu2021hflung,
+0028 |   author  = {Fu-Shun Hsu and Shang-Ran Huang and Chien-Wen Huang and Chao-Jung Huang and Yuan-Ren Cheng and Chun-Chieh Chen and Jack Hsiao and Chung-Wei Chen and Li-Chin Chen and Yen-Chun Lai and Bi-Fang Hsu and Nian-Jhen Lin and Wan-Ling Tsai and Yi-Lin Wu and Tzu-Ling Tseng and Ching-Ting Tseng and Yi-Tsun Chen and Feipei Lai},
+0029 |   title   = {Benchmarking of Eight Recurrent Neural Network Variants for Breath Phase and Adventitious Sound Detection on a Self-Developed Open-Access Lung Sound Database---{HF\_Lung\_V1}},
+0030 |   journal = {PLOS ONE},
+0031 |   year    = {2021},
+0032 |   volume  = {16},
+0033 |   number  = {7},
+0034 |   pages   = {e0254134},
+0035 |   doi     = {10.1371/journal.pone.0254134},
+0036 |   url     = {https://doi.org/10.1371/journal.pone.0254134}
+0037 | }
+0038 | 
+0039 | @article{fraiwan2021kauh,
+0040 |   author  = {Mohammad Fraiwan and Luay Fraiwan and Basheer Khassawneh and Ali Ibnian},
+0041 |   title   = {A Dataset of Lung Sounds Recorded from the Chest Wall Using an Electronic Stethoscope},
+0042 |   journal = {Data in Brief},
+0043 |   year    = {2021},
+0044 |   volume  = {35},
+0045 |   pages   = {106913},
+0046 |   doi     = {10.1016/j.dib.2021.106913},
+0047 |   url     = {https://doi.org/10.1016/j.dib.2021.106913}
+0048 | }
+0049 | 
+0050 | @inproceedings{zhang2024opera,
+0051 |   author    = {Yuwei Zhang and Tong Xia and Jing Han and Yu Yvonne Wu and Georgios Rizos and Yang Liu and Mohammed Mosuily and Jagmohan Chauhan and Cecilia Mascolo},
+0052 |   title     = {Towards Open Respiratory Acoustic Foundation Models: Pretraining and Benchmarking},
+0053 |   booktitle = {Advances in Neural Information Processing Systems},
+0054 |   year      = {2024},
+0055 |   volume    = {37},
+0056 |   pages     = {27024--27055},
+0057 |   doi       = {10.52202/079017-0849},
+0058 |   url       = {https://proceedings.neurips.cc/paper_files/paper/2024/hash/2f803abdcad9de35b45d5a656dade45c-Abstract-Datasets_and_Benchmarks_Track.html}
+0059 | }
+0060 | 
+0061 | % B. ICBHI respiratory classification and direct comparators
+0062 | 
+0063 | @inproceedings{gairola2021respirenet,
+0064 |   author    = {Siddhartha Gairola and Francis Tom and Nipun Kwatra and Mohit Jain},
+0065 |   title     = {{RespireNet}: A Deep Neural Network for Accurately Detecting Abnormal Lung Sounds in Limited Data Setting},
+0066 |   booktitle = {2021 43rd Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC)},
+0067 |   year      = {2021},
+0068 |   pages     = {527--530},
+0069 |   doi       = {10.1109/EMBC46164.2021.9630091},
+0070 |   url       = {https://doi.org/10.1109/EMBC46164.2021.9630091}
+0071 | }
+0072 | 
+0073 | @inproceedings{bae2023patchmix,
+0074 |   author    = {Sangmin Bae and June-Woo Kim and Won-Yang Cho and Hyerim Baek and Soyoun Son and Byungjo Lee and Changwan Ha and Kyongpil Tae and Sungnyun Kim and Se-Young Yun},
+0075 |   title     = {Patch-Mix Contrastive Learning with Audio Spectrogram Transformer on Respiratory Sound Classification},
+0076 |   booktitle = {Interspeech 2023},
+0077 |   year      = {2023},
+0078 |   pages     = {5436--5440},
+0079 |   doi       = {10.21437/Interspeech.2023-1426},
+0080 |   url       = {https://www.isca-archive.org/interspeech_2023/bae23b_interspeech.html}
+0081 | }
+0082 | 
+0083 | @inproceedings{kim2024sgscl,
+0084 |   author    = {June-Woo Kim and Sangmin Bae and Won-Yang Cho and Byungjo Lee and Ho-Young Jung},
+0085 |   title     = {Stethoscope-Guided Supervised Contrastive Learning for Cross-Domain Adaptation on Respiratory Sound Classification},
+0086 |   booktitle = {ICASSP 2024---2024 IEEE International Conference on Acoustics, Speech and Signal Processing},
+0087 |   year      = {2024},
+0088 |   pages     = {1431--1435},
+0089 |   doi       = {10.1109/ICASSP48485.2024.10447734},
+0090 |   url       = {https://doi.org/10.1109/ICASSP48485.2024.10447734}
+0091 | }
+0092 | 
+0093 | @inproceedings{jeong2025pafa,
+0094 |   author    = {Seung Gyu Jeong and Seong Eun Kim},
+0095 |   title     = {Patient-Aware Feature Alignment for Robust Lung Sound Classification: Cohesion-Separation and Global Alignment Losses},
+0096 |   booktitle = {Interspeech 2025},
+0097 |   year      = {2025},
+0098 |   pages     = {1018--1022},
+0099 |   doi       = {10.21437/Interspeech.2025-1477},
+0100 |   url       = {https://www.isca-archive.org/interspeech_2025/jeong25_interspeech.html}
+0101 | }
+0102 | 
+0103 | @inproceedings{niizumi2025foundationeval,
+0104 |   author    = {Daisuke Niizumi and Daiki Takeuchi and Masahiro Yasuda and Binh Thien Nguyen and Yasunori Ohishi and Noboru Harada},
+0105 |   title     = {Assessing the Utility of Audio Foundation Models for Heart and Respiratory Sound Analysis},
+0106 |   booktitle = {2025 47th Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC)},
+0107 |   year      = {2025},
+0108 |   pages     = {1--4},
+0109 |   doi       = {10.1109/EMBC58623.2025.11254427},
+0110 |   url       = {https://doi.org/10.1109/EMBC58623.2025.11254427}
+0111 | }
+0112 | 
+0113 | @misc{wang2026spa,
+0114 |   author       = {Ying Wang and Guoheng Huang and Chan-Tong Lam and Xiaochen Yuan},
+0115 |   title        = {Spherical Procrustes Alignment for Reliable Medical Audio Diagnosis},
+0116 |   year         = {2026},
+0117 |   howpublished = {OpenReview},
+0118 |   url          = {https://openreview.net/forum?id=czRY4Qj153}
+0119 | }
+0120 | 
+0121 | @misc{chua2024multibreath,
+0122 |   author       = {Yi-Wei Chua and Yun-Chien Cheng},
+0123 |   title        = {Towards Enhanced Classification of Abnormal Lung Sound in Multi-Breath: A Light Weight Multi-Label and Multi-Head Attention Classification Method},
+0124 |   year         = {2024},
+0125 |   howpublished = {arXiv:2407.10828},
+0126 |   eprint       = {2407.10828},
+0127 |   archiveprefix = {arXiv},
+0128 |   primaryclass  = {cs.SD},
+0129 |   url          = {https://arxiv.org/abs/2407.10828}
+0130 | }
+0131 | 
+0132 | @inproceedings{jeong2026pcmcl,
+0133 |   author    = {Seung Gyu Jeong and Seong-Eun Kim},
+0134 |   title     = {{PC-MCL}: Patient-Consistent Multi-Cycle Learning with Multi-Label Bias Correction for Respiratory Sound Classification},
+0135 |   booktitle = {ICASSP 2026---2026 IEEE International Conference on Acoustics, Speech and Signal Processing},
+0136 |   year      = {2026},
+0137 |   pages     = {2665--2669},
+0138 |   eprint    = {2601.17080},
+0139 |   archiveprefix = {arXiv},
+0140 |   primaryclass  = {eess.AS},
+0141 |   url       = {https://arxiv.org/abs/2601.17080}
+0142 | }
+0143 | 
+0144 | % C. Audio foundation models and pretraining
+0145 | 
+0146 | @inproceedings{chen2023beats,
+0147 |   author    = {Sanyuan Chen and Yu Wu and Chengyi Wang and Shujie Liu and Daniel Tompkins and Zhuo Chen and Wanxiang Che and Xiangzhan Yu and Furu Wei},
+0148 |   title     = {{BEATs}: Audio Pre-Training with Acoustic Tokenizers},
+0149 |   booktitle = {Proceedings of the 40th International Conference on Machine Learning},
+0150 |   year      = {2023},
+0151 |   volume    = {202},
+0152 |   series    = {Proceedings of Machine Learning Research},
+0153 |   pages     = {5178--5193},
+0154 |   publisher = {PMLR},
+0155 |   url       = {https://proceedings.mlr.press/v202/chen23ag.html}
+0156 | }
+0157 | 
+0158 | @inproceedings{gong2021ast,
+0159 |   author    = {Yuan Gong and Yu-An Chung and James Glass},
+0160 |   title     = {{AST}: Audio Spectrogram Transformer},
+0161 |   booktitle = {Interspeech 2021},
+0162 |   year      = {2021},
+0163 |   pages     = {571--575},
+0164 |   doi       = {10.21437/Interspeech.2021-698},
+0165 |   url       = {https://www.isca-archive.org/interspeech_2021/gong21b_interspeech.html}
+0166 | }
+0167 | 
+0168 | @article{kong2020panns,
+0169 |   author  = {Qiuqiang Kong and Yin Cao and Turab Iqbal and Yuxuan Wang and Wenwu Wang and Mark D. Plumbley},
+0170 |   title   = {{PANNs}: Large-Scale Pretrained Audio Neural Networks for Audio Pattern Recognition},
+0171 |   journal = {IEEE/ACM Transactions on Audio, Speech, and Language Processing},
+0172 |   year    = {2020},
+0173 |   volume  = {28},
+0174 |   pages   = {2880--2894},
+0175 |   doi     = {10.1109/TASLP.2020.3030497},
+0176 |   url     = {https://doi.org/10.1109/TASLP.2020.3030497}
+0177 | }
+0178 | 
+0179 | @inproceedings{huang2022audiomae,
+0180 |   author    = {Po-Yao Huang and Hu Xu and Juncheng Li and Alexei Baevski and Michael Auli and Wojciech Galuba and Florian Metze and Christoph Feichtenhofer},
+0181 |   title     = {Masked Autoencoders that Listen},
+0182 |   booktitle = {Advances in Neural Information Processing Systems},
+0183 |   year      = {2022},
+0184 |   volume    = {35},
+0185 |   pages     = {28708--28720},
+0186 |   doi       = {10.52202/068431-2081},
+0187 |   url       = {https://proceedings.neurips.cc/paper_files/paper/2022/hash/b89d5e209990b19e33b418e14f323998-Abstract-Conference.html}
+0188 | }
+0189 | 
+0190 | @inproceedings{niizumi2023m2d,
+0191 |   author    = {Daisuke Niizumi and Daiki Takeuchi and Yasunori Ohishi and Noboru Harada and Kunio Kashino},
+0192 |   title     = {Masked Modeling Duo: Learning Representations by Encouraging Both Networks to Model the Input},
+0193 |   booktitle = {ICASSP 2023---2023 IEEE International Conference on Acoustics, Speech and Signal Processing},
+0194 |   year      = {2023},
+0195 |   pages     = {1--5},
+0196 |   doi       = {10.1109/ICASSP49357.2023.10097236},
+0197 |   url       = {https://doi.org/10.1109/ICASSP49357.2023.10097236}
+0198 | }
+0199 | 
+0200 | @inproceedings{niizumi2025m2dresp,
+0201 |   author    = {Daisuke Niizumi and Daiki Takeuchi and Masahiro Yasuda and Binh Thien Nguyen and Yasunori Ohishi and Noboru Harada},
+0202 |   title     = {Towards Pre-Training an Effective Respiratory Audio Foundation Model},
+0203 |   booktitle = {Interspeech 2025},
+0204 |   year      = {2025},
+0205 |   pages     = {998--1002},
+0206 |   doi       = {10.21437/Interspeech.2025-84},
+0207 |   url       = {https://www.isca-archive.org/interspeech_2025/niizumi25_interspeech.html}
+0208 | }
+0209 | 
+0210 | @inproceedings{gemmeke2017audioset,
+0211 |   author    = {Jort F. Gemmeke and Daniel P. W. Ellis and Dylan Freedman and Aren Jansen and Wade Lawrence and R. Channing Moore and Manoj Plakal and Marvin Ritter},
+0212 |   title     = {{Audio Set}: An Ontology and Human-Labeled Dataset for Audio Events},
+0213 |   booktitle = {2017 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+0214 |   year      = {2017},
+0215 |   pages     = {776--780},
+0216 |   doi       = {10.1109/ICASSP.2017.7952261},
+0217 |   url       = {https://research.google/pubs/audio-set-an-ontology-and-human-labeled-dataset-for-audio-events/}
+0218 | }
+0219 | 
+0220 | @misc{baur2024hear,
+0221 |   author = {Sebastien Baur and Zaid Nabulsi and Wei-Hung Weng and Jake Garrison and Louis Blankemeier and Sam Fishman and Christina Chen and Sujay Kakarmath and Minyoi Maimbolwa and Nsala Sanjase and Brian Shuma and Yossi Matias and Greg S. Corrado and Shwetak Patel and Shravya Shetty and Shruthi Prabhakara and Monde Muyoyeta and Diego Ardila},
+0222 |   title = {{HeAR}---Health Acoustic Representations},
+0223 |   year = {2024},
+0224 |   howpublished = {arXiv:2403.02522},
+0225 |   eprint = {2403.02522},
+0226 |   archiveprefix = {arXiv},
+0227 |   primaryclass = {cs.LG},
+0228 |   url = {https://arxiv.org/abs/2403.02522}
+0229 | }
+0230 | 
+0231 | % D. Cross-dataset and domain-generalization respiratory learning
+0232 | 
+0233 | @inproceedings{ge2025lungmix,
+0234 |   author    = {Shijia Ge and Weixiang Zhang and Shuzhao Xie and Baixu Yan and Zhi Wang},
+0235 |   title     = {{LungMix}: A Mixup-Based Strategy for Generalization in Respiratory Sound Classification},
+0236 |   booktitle = {ICASSP 2025---2025 IEEE International Conference on Acoustics, Speech and Signal Processing},
+0237 |   year      = {2025},
+0238 |   pages     = {1--5},
+0239 |   doi       = {10.1109/ICASSP49660.2025.10888016},
+0240 |   url       = {https://doi.org/10.1109/ICASSP49660.2025.10888016}
+0241 | }
+0242 | 
+0243 | @inproceedings{zhang2026respagent,
+0244 |   author    = {Pengfei Zhang and Tianxin Xie and Minghao Yang and Li Liu},
+0245 |   title     = {{Resp-Agent}: An Agent-Based System for Multimodal Respiratory Sound Generation and Disease Diagnosis},
+0246 |   booktitle = {The Fourteenth International Conference on Learning Representations},
+0247 |   year      = {2026},
+0248 |   eprint    = {2602.15909},
+0249 |   archiveprefix = {arXiv},
+0250 |   primaryclass  = {eess.AS},
+0251 |   url       = {https://arxiv.org/abs/2602.15909}
+0252 | }
+0253 | 
+0254 | @article{hsu2023mixedset,
+0255 |   author  = {Fu-Shun Hsu and Shang-Ran Huang and Chang-Fu Su and Chien-Wen Huang and Yuan-Ren Cheng and Chun-Chieh Chen and Chun-Yu Wu and Chung-Wei Chen and Yen-Chun Lai and Tang-Wei Cheng and Nian-Jhen Lin and Wan-Ling Tsai and Ching-Shiang Lu and Chuan Chen and Feipei Lai},
+0256 |   title   = {A Dual-Purpose Deep Learning Model for Auscultated Lung and Tracheal Sound Analysis Based on Mixed Set Training},
+0257 |   journal = {Biomedical Signal Processing and Control},
+0258 |   year    = {2023},
+0259 |   volume  = {86},
+0260 |   pages   = {105222},
+0261 |   doi     = {10.1016/j.bspc.2023.105222},
+0262 |   url     = {https://doi.org/10.1016/j.bspc.2023.105222}
+0263 | }
+0264 | 
+0265 | @inproceedings{koo2026btscard,
+0266 |   author    = {Heejoon Koo and Miika Toikkanen and Yoon Tae Kim and Soo Yong Kim and June-Woo Kim},
+0267 |   title     = {Empowering Multimodal Respiratory Sound Classification with Counterfactual Adversarial Debiasing for Out-of-Distribution Robustness},
+0268 |   booktitle = {ICASSP 2026---2026 IEEE International Conference on Acoustics, Speech and Signal Processing},
+0269 |   year      = {2026},
+0270 |   eprint    = {2510.22263},
+0271 |   archiveprefix = {arXiv},
+0272 |   primaryclass  = {eess.AS},
+0273 |   url       = {https://arxiv.org/abs/2510.22263}
+0274 | }
+0275 | 
+0276 | % E. Partial labels, positive-only supervision, and hierarchical learning
+0277 | 
+0278 | @article{schutera2022frugal,
+0279 |   author  = {Mark Schutera and Luca Rettenberger and Christian Pylatiuk and Markus Reischl},
+0280 |   title   = {Methods for the Frugal Labeler: Multi-Class Semantic Segmentation on Heterogeneous Labels},
+0281 |   journal = {PLOS ONE},
+0282 |   year    = {2022},
+0283 |   volume  = {17},
+0284 |   number  = {2},
+0285 |   pages   = {e0263656},
+0286 |   doi     = {10.1371/journal.pone.0263656},
+0287 |   url     = {https://doi.org/10.1371/journal.pone.0263656}
+0288 | }
+0289 | 
+0290 | @article{shi2021marginal,
+0291 |   author  = {Gonglei Shi and Li Xiao and Yang Chen and S. Kevin Zhou},
+0292 |   title   = {Marginal Loss and Exclusion Loss for Partially Supervised Multi-Organ Segmentation},
+0293 |   journal = {Medical Image Analysis},
+0294 |   year    = {2021},
+0295 |   volume  = {70},
+0296 |   pages   = {101979},
+0297 |   doi     = {10.1016/j.media.2021.101979},
+0298 |   url     = {https://doi.org/10.1016/j.media.2021.101979}
+0299 | }
+0300 | 
+0301 | @inproceedings{zhou2022unknown,
+0302 |   author    = {Donghao Zhou and Pengfei Chen and Qiong Wang and Guangyong Chen and Pheng-Ann Heng},
+0303 |   title     = {Acknowledging the Unknown for Multi-Label Learning with Single Positive Labels},
+0304 |   booktitle = {Computer Vision---ECCV 2022},
+0305 |   year      = {2022},
+0306 |   series    = {Lecture Notes in Computer Science},
+0307 |   volume    = {13684},
+0308 |   pages     = {423--440},
+0309 |   publisher = {Springer},
+0310 |   doi       = {10.1007/978-3-031-20053-3_25},
+0311 |   url       = {https://link.springer.com/chapter/10.1007/978-3-031-20053-3_25}
+0312 | }
+0313 | 
+0314 | @inproceedings{kiryo2017nnpu,
+0315 |   author    = {Ryuichi Kiryo and Gang Niu and Marthinus C. du Plessis and Masashi Sugiyama},
+0316 |   title     = {Positive-Unlabeled Learning with Non-Negative Risk Estimator},
+0317 |   booktitle = {Advances in Neural Information Processing Systems},
+0318 |   year      = {2017},
+0319 |   volume    = {30},
+0320 |   publisher = {Curran Associates, Inc.},
+0321 |   url       = {https://proceedings.neurips.cc/paper/2017/hash/7cce53cf90577442771720a370c3c723-Abstract.html}
+0322 | }
+0323 | 
+0324 | @inproceedings{bevandic2022overlapping,
+0325 |   author    = {Petra Bevandi{\'c} and Marin Or{\v{s}}i{\'c} and Ivan Grubi{\v{s}}i{\'c} and Josip {\v{S}}ari{\'c} and Sini{\v{s}}a {\v{S}}egvi{\'c}},
+0326 |   title     = {Multi-Domain Semantic Segmentation with Overlapping Labels},
+0327 |   booktitle = {Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision},
+0328 |   year      = {2022},
+0329 |   pages     = {2615--2624},
+0330 |   doi       = {10.1109/WACV51458.2022.00248},
+0331 |   url       = {https://openaccess.thecvf.com/content/WACV2022/html/Bevandic_Multi-Domain_Semantic_Segmentation_With_Overlapping_Labels_WACV_2022_paper.html}
+0332 | }
+0333 | 
+0334 | % F. Imbalance, patient-aware learning, and calibration
+0335 | 
+0336 | @inproceedings{lin2017focal,
+0337 |   author    = {Tsung-Yi Lin and Priya Goyal and Ross Girshick and Kaiming He and Piotr Doll{\'a}r},
+0338 |   title     = {Focal Loss for Dense Object Detection},
+0339 |   booktitle = {Proceedings of the IEEE International Conference on Computer Vision},
+0340 |   year      = {2017},
+0341 |   pages     = {2980--2988},
+0342 |   doi       = {10.1109/ICCV.2017.324},
+0343 |   url       = {https://openaccess.thecvf.com/content_iccv_2017/html/Lin_Focal_Loss_for_ICCV_2017_paper.html}
+0344 | }
+0345 | 
+0346 | @inproceedings{cui2019classbalanced,
+0347 |   author    = {Yin Cui and Menglin Jia and Tsung-Yi Lin and Yang Song and Serge Belongie},
+0348 |   title     = {Class-Balanced Loss Based on Effective Number of Samples},
+0349 |   booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+0350 |   year      = {2019},
+0351 |   pages     = {9268--9277},
+0352 |   doi       = {10.1109/CVPR.2019.00949},
+0353 |   url       = {https://openaccess.thecvf.com/content_CVPR_2019/html/Cui_Class-Balanced_Loss_Based_on_Effective_Number_of_Samples_CVPR_2019_paper.html}
+0354 | }
+0355 | 
+0356 | @inproceedings{guo2017calibration,
+0357 |   author    = {Chuan Guo and Geoff Pleiss and Yu Sun and Kilian Q. Weinberger},
+0358 |   title     = {On Calibration of Modern Neural Networks},
+0359 |   booktitle = {Proceedings of the 34th International Conference on Machine Learning},
+0360 |   year      = {2017},
+0361 |   volume    = {70},
+0362 |   series    = {Proceedings of Machine Learning Research},
+0363 |   pages     = {1321--1330},
+0364 |   publisher = {PMLR},
+0365 |   url       = {https://proceedings.mlr.press/v70/guo17a.html}
+0366 | }
+0367 | 
+0368 | % Heterogeneous audio supervision: closest task-formulation precedent
+0369 | @misc{cornell2024dcase,
+0370 |   author = {Samuele Cornell and Janek Ebbers and Constance Douwes and Irene Mart{\'i}n-Morat{\'o} and Manu Harju and Annamaria Mesaros and Romain Serizel},
+0371 |   title = {{DCASE} 2024 Task 4: Sound Event Detection with Heterogeneous Data and Missing Labels},
+0372 |   year = {2024},
+0373 |   howpublished = {arXiv:2406.08056},
+0374 |   eprint = {2406.08056},
+0375 |   archiveprefix = {arXiv},
+0376 |   url = {https://arxiv.org/abs/2406.08056}
+0377 | }
+0378 | 
+0379 | % Respiratory attribute and structured-decoding precedent, verified 2026-09-08.
+0380 | @article{zhang2026ocad,
+0381 |   author = {Xinyu Zhang and Wei Zhao and Haicheng Liang},
+0382 |   title = {{OCAD}: Overlap Composition and Class-Atom Decoding for Respiratory-Sound Classification},
+0383 |   journal = {Applied Sciences},
+0384 |   year = {2026},
+0385 |   volume = {16},
+0386 |   number = {13},
+0387 |   pages = {6832},
+0388 |   doi = {10.3390/app16136832},
+0389 |   url = {https://www.mdpi.com/2076-3417/16/13/6832}
+0390 | }
+0391 | 
+0392 | % Display settings only; full source metadata and URLs are retained above.
+0393 | @article{welch1967spectra,
+0394 |   author  = {P. Welch},
+0395 |   title   = {The Use of the Fast {Fourier} Transform for the Estimation of Power Spectra: A Method Based on Time Averaging over Short, Modified Periodograms},
+0396 |   journal = {IEEE Transactions on Audio and Electroacoustics},
+0397 |   volume  = {15},
+0398 |   pages   = {70--73},
+0399 |   year    = {1967}
+0400 | }
+0401 | 
+0402 | @IEEEtranBSTCTL{paperreviewstyle,
+0403 |   CTLuse_url = "no",
+0404 |   CTLuse_forced_etal = "yes",
+0405 |   CTLmax_names_forced_etal = "6",
+0406 |   CTLnames_show_etal = "1"
+0407 | }

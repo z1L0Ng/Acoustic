@@ -1,0 +1,492 @@
+User-designated PDF text extraction. Page layout, math and figures must be checked against current_paper.pdf.
+
+===== PDF PAGE 1 =====
+LEARNING SHARED ACOUSTIC A TTRIBUTES ACROSS RESPIRA TORY SOUND
+DA TASETS WITH HETEROGENEOUS ANNOTA TIONS
+Zilong Zeng, Wade Wu, Arian Azarang, Stephen Xia, Jingping Nie
+zilongzeng2030@u.northwestern.edu,wadewu@unc.edu
+arian_azarang@med.unc.edu,stephen.xia@northwestern.edu,jingping@unc.edu
+ABSTRACT
+Respiratory sound datasets provide complementary super-
+vision, but differ in annotation granularity and prediction
+targets. We propose LSAA (Learning Shared Acoustic At-
+tributes), a joint learning framework that shares acoustic
+supervision while preserving native tasks. LSAA learns
+abnormality, crackle, and wheeze from ICBHI cycles and
+SPRSound events, then uses task-specific readouts for four-
+class cycle and binary event prediction. This allows fine
+sound-type annotations to supervise learning even when the
+output is binary. We further assess attribute transfer and aux-
+iliary supervision on HF Lung, and external generalization
+on KAUH. Across three seeds with official-test-based check-
+point selection, LSAA improves ICBHI Score by 3.39 per-
+centage points with a 2.13-point SPRSound decrease relative
+to the respective single-source models. Further comparisons
+support retaining fine annotations under the evaluated train-
+ing recipe and reveal task-dependent effects of readout design
+and additional supervision.
+Index Terms—respiratory sounds, shared supervision,
+heterogeneous annotations, acoustic attributes, cross-task
+learning
+1. INTRODUCTION
+Automated recognition of crackles and wheezes can reduce
+the manual effort involved in respiratory sound assessment
+[1]. Training these classifiers requires expert annotations that
+are costly to obtain at scale [2]. Existing respiratory datasets
+[3, 4] offer an opportunity to expand supervision by reusing
+labeled recordings. Their annotations describe related acous-
+tic attributes but differ in granularity and prediction targets,
+so their task labels are not directly interchangeable.
+To reuse annotations that are not directly interchange-
+able, a common strategy is to map source labels to a shared
+prediction target, as in SPRSound’s fusion experiments and
+LungMix’s cross-dataset transfer [4, 5]. This enables reuse
+under an aligned task definition, but coarsening labels can
+discard distinctions needed by another task. Representing
+sound composition offers a more flexible way to use label
+information: Multi-breath and PC-MCL employ multilabel
+supervision within ICBHI [6, 7]. Across datasets, DCASE
+combines class mappings and masked supervision while re-
+taining dataset-specific evaluation within a shared temporal
+sound-event detection system [8]. These studies provide
+ways to align labels and retain their information, but our set-
+ting requires sharing supervision across distinct cycle-level
+and event-level prediction targets. For example, SPRSound’s
+Wheeze annotations contain information relevant to ICBHI’s
+four-class cycle task, although its binary event task requires
+only normal/abnormal predictions [4]. The available super-
+vision is therefore richer than the required output. We aim
+to jointly learn from this information while preserving each
+dataset’s native prediction target.
+To this end, we propose LSAA (Learning Shared Acous-
+tic Attributes). A shared encoder learns acoustic representa-
+tions through abnormality, crackle, and wheeze supervision
+from ICBHI cycles and SPRSound events. Each annotation
+supervises only the attributes it supports. Task-specific read-
+outs map the shared attribute predictions to four-class cycle
+and binary event outputs, allowing fine supervision to guide
+learning while preserving different native tasks.
+In this work, we demonstrate:
+1. We propose LSAA, a joint learning framework that
+connects heterogeneous respiratory sound annotations
+through shared acoustic attributes in one model.
+2. We develop task-specific readouts over shared abnor-
+mality, crackle, and wheeze predictions, enabling fine-
+grained supervision to support distinct native outputs.
+3. We evaluate native-task performance on ICBHI and
+SPRSound, investigate attribute transfer and auxiliary
+supervision on HF Lung [1], and assess external gener-
+alization on KAUH [9].
+2. DA TASETS AND ACOUSTIC CHARACTERISTICS
+2.1. Datasets and Annotations
+ICBHI and SPRSound provide LSAA’s core joint-training
+data. ICBHI annotates respiratory cycles as Normal, Crackle
+(C), Wheeze (W), or Both (C and W) [3]. SPRSound an-
+notates seven event categories, while the event task studied
+
+===== PDF PAGE 2 =====
+(a) ICBHI (cycles)
+Train + Test
+0 2k 4k
+Normal 3,642
+Crackle 1,864
+Wheeze 886
+Both 506
+SPRSound (events)
+Train + Inter-test
+0 3.5k 7k
+Normal 6,199
+Fine Crackle 992
+Coarse Crackle 52
+Wheeze 757
+Wheeze+Crackle 31
+Rhonchi 39
+Stridor 15
+HF Lung (intervals)
+Auxiliary Train + Test
+0 20k 40k
+I 34,095
+E 18,349
+D 15,606
+Wheeze 8,457
+Rhonchi 4,740
+Stridor 686
+KAUH (recordings)
+Test Only (B/D/E)
+0 60 120
+N 105
+C 21
+IC 3
+EW 117
+IEW 6
+ICEW 6
+Crep 69
+Bronchial 3
+ICB 6
+(b) Spectral PCA
+-4 0 4 8
+-2
+2
+6
+PC1 (63.15%)
+PC2 (33.25%)
+(c) Median spectral centroid (Hz) ICBHI SPRSound HF Lung KAUH
+0
+150
+300
+Normal
+148 177 163
+Crackle
+144
+194
+258
+146
+Wheeze
+153
+209
+286
+161
+Both
+147
+215 249
+155
+HF: observed C/W combinations; Normal is unavailable.
+Fig. 1. Source labels and acoustic distributions. (a) Original label counts in the units and partitions shown. HF I/E/D denote inhalation,
+exhalation, and discontinuous adventitious sounds; KAUH retains source sound codes, and B/D/E denote Bell/Diaphragm/Extended recording
+versions. (b) PCA of log-transformed, jointly standardized spectral centroid, bandwidth, and peak frequency, with equal source weights.
+Points represent 126 ICBHI patients, 284 SPRSound train+inter patients, 39 HF source-test recording-date groups, and 112 KAUH patients.
+(c) Source medians by sound-label group, aggregated within recording and then patient (recording date for HF). HF source-test groups follow
+observed D/Wheeze annotation combinations, with no Normal group; their definition is given in Section 2.2. KAUH uses 86 patients with
+compatible labels; Both contains two patients. Spectral descriptors use 5-s inputs and globally centered 4-kHz analysis copies, with 80–
+2000 Hz Welch power (1-s Hann windows, 50% overlap).
+here predicts Normal or Adventitious (abnormal) [4]. Both
+datasets provide patient identifiers and annotation boundaries.
+SPRSound’s fine C/W labels retain sound-type information
+relevant to ICBHI’s four-class task, even though its own pre-
+diction target is binary. This motivates sharing fine acoustic
+supervision while retaining each task’s prediction unit and
+target.
+HF Lung provides timed breath-phase and adventitious-
+sound annotations [1]. We use its source-training partition
+for a separate auxiliary C/W supervision condition and its
+source-test partition for attribute evaluation. KAUH provides
+recording-level sound categories and Bell, Diaphragm, and
+Extended filter versions of each patient’s recording [9]. We
+use these recordings for external evaluation, grouping the fil-
+ter versions within each patient. Figure 1(a) summarizes the
+annotation units, prediction tasks, and study roles.
+2.2. Acoustic Characteristics
+To compare acoustic inputs across sources, we prepare mono
+16-kHz, 5-s inputs: ICBHI cycles, SPRSound events, and
+KAUH recordings are front-truncated or repeated with bound-
+ary fading, while HF recordings supply three consecutive
+windows. From globally centered 4-kHz analysis copies, we
+estimate 80–2000 Hz Welch spectra [10] and compute spec-
+tral centroid (power-weighted mean frequency), bandwidth
+(frequency spread), and peak frequency. Descriptor medi-
+ans are taken within recording and then within patient; HF
+uses recording-date groups. Principal component analysis
+(PCA) of log-transformed, jointly standardized descriptors
+with equal source weights shows source structure with partial
+overlap (Figure 1(b)).
+To examine whether differences persist within the same
+sound categories, we compare ICBHI and SPRSound within
+Normal, Crackle, Wheeze, and Both. SPRSound’s Fine/Coarse
+Crackle labels are combined as Crackle, and Wheeze+Crackle
+corresponds to Both. ICBHI has lower spectral centroids in
+every class (Figure 1(c)), showing that input differences
+persist after aligning the sound labels. Joint learning must
+therefore use compatible acoustic supervision across differ-
+ing source distributions.
+3. METHOD
+LSAA connects heterogeneous annotations through shared
+abnormality (A), Crackle (C), and Wheeze (W) probabilities
+and dataset-specific readouts (Figure 2).
+3.1. Shared Attributes and Task Readouts
+The prediction path maps each audio unit to shared attribute
+probabilities and then to the output required by its dataset.
+For a mono 16-kHz, 5-s inputx i prepared as in Section 2.2,
+AudioSet-pretrained BEATs iter3+ AS2M [11, 12] produces
+Hi ∈R Ti×D, whereT i is the token count andD= 768.
+Mean pooling over tokens followed by a linear768→256
+projection givesh i ∈R 256. Three parallel linear heads pre-
+dict
+pik =ϕ k(Wkhi +b k), k∈ {a, c, w},(1)
+whereϕ a returns the Abnormal probability from a two-logit
+softmax, andϕ c, ϕw apply sigmoid to one logit each. Their
+outputs form the shared attribute vectorp i = (p ia, pic, piw).
+Letˆai be the Normal/Abnormal argmax (ties select Nor-
+mal),ˆci =I[p ic ≥τ c], andˆwi =I[p iw ≥τ w]. SPRSound
+usesˆai for Normal/Adventitious classification. For ICBHI,
+
+===== PDF PAGE 3 =====
+Mean Pooling(Linear 768→256)BEATs Encoder(Pretrained)Attention 𝓖(PAFA projection)
+A: AbnormalC: CrackleRespiratory AudioLinear Heads
+*: Training + Inference#: Inference Only
+ICBHI∗, SPRSound∗	HF∗ (optional), KAUH#	 W: Wheeze
+𝒑𝒊(Shared Attributes)
+ICBHI∗: Normal ! Crackle ! Wheeze ! Both Task-Specific Outputs
+SPRSound∗	: Normal ! AdventitiousHF source−test#	: Crackle ! WheezeKAUH#	: Normal ! Abnormal
+𝐻#T!×D
+ℒ	=	𝜆#ℒ$%&'     +     𝜆(ℒ)$*'	+    ℒ%'&	+     𝜆+,ℒ+,	Patient Cohesion–SeparationGlobal Patient AlignmentClassificationHF Lung Loss(Optional C/W)
+𝑍#1×768
+Fig. 2. LSAA prediction and training paths. BEATs tokens of widthD= 768are mean-pooled and linearly projected to 256 dimensions.
+Parallel heads form shared abnormality (A), Crackle (C), and Wheeze (W) probabilities. Task readouts convert these probabilities to dataset-
+specific outputs. A separate attention-based projectionGsupplies 768-dimensional features for the PAFA patient regularizers. ICBHI and
+SPRSound provide core attribute supervision and patient groups; the optional HF Lung term uses only source-train C/W supervision. HF
+source-test and KAUH evaluate fixed models and thresholds. The objective and readouts are defined in Section 3.
+ˆai = 0yields Normal; otherwise, two positive attributes yield
+Both and one yields its class. If neither is positive, the larger
+pik −τ k margin selects Crackle or Wheeze, with ties selecting
+Crackle. Thresholds use core validation.
+For HF source-test, maxima over C/W window prob-
+abilities give recording scores. For KAUH, we average
+probabilities across each patient’s filter versions and predict
+Normal/Abnormal for patients with compatible sound labels.
+Models and thresholds remain fixed for these evaluations.
+3.2. Annotation-Aware Joint Training
+Training uses each annotation to supervise the attributes it
+supports, jointly fine-tuning the encoder and prediction heads
+on ICBHI and SPRSound. Annotations supply targetsy ik and
+masksm ik, withm ik = 1only for supported attributes, dis-
+tinguishing unknown labels from observed negatives [13,14].
+ICBHI labels specify A/C/W. SPRSound’s fine C/W labels su-
+pervise the corresponding heads despite its binary task, while
+Rhonchi/Stridor supervise A only. For batchB, letB k =
+{i∈B:m ik = 1}andK B ={k:|B k|>0}. Classifica-
+tion uses
+Lcls(B) = 1
+|KB|
+X
+k∈KB
+1
+|Bk|
+X
+i∈Bk
+ℓk(pik, yik),(2)
+whereℓ a is cross-entropy on(1−p ia, pia)andℓ c, ℓw are bi-
+nary cross-entropy.
+Patient-based regularization uses a separate attention-
+based projectionZ i =G(H i)∈R 768 and PAFA’s patient
+cohesion-separation (PCSL) and global patient alignment
+(GPAL) losses [15]. Within each core-source batch, PCSL
+promotes within-patient cohesion and between-patient sep-
+aration, while GPAL limits the dispersion of patient feature
+means. These losses regularize the shared encoder during
+joint training.
+In the auxiliary condition, HF source-training windows
+add C/W supervision, mapping the discontinuous adventitious-
+sound label D to C. Their masked binary cross-entropy gives
+LHF. The treatment of derived negatives is discussed in
+Section 4.2. Core batches supply classification and PAFA
+regularization, yielding
+L=L cls +λ pLPCSL +λ gLGPAL| {z }
+Lcore
++λHFLHF,(3)
+withλ p = 50,λ g = 5×10 −4, andλ HF = 0for core training
+or0.25for the auxiliary condition. HF contributes only the
+C/W term, leaving A supervision and patient regularization
+to the core sources.
+4. EV ALUA TION
+4.1. Joint Learning and Transfer
+Table 1 compares LSAA with separately trained frozen-
+encoder references. LSAA achieves higher means on ICBHI
+and both external targets, whereas the strongest frozen ref-
+erences perform better on SPRSound. The ICBHI-only and
+SPRSound-only controls in Table 2(a) assess joint training
+within LSAA’s shared architecture.
+
+===== PDF PAGE 4 =====
+Table 1. Performance of LSAA and frozen-encoder references
+across four respiratory sound datasets. Values are means (%) over
+three seeds, with sample standard deviations shown as subscripts.
+In Train, I/S denotes separate ICBHI/SPRSound models and I+S de-
+notes joint training.Boldand underlined values mark the highest and
+second-highest means within each metric column. For LSAA, CAS
+AUROC evaluates maximum-window Wheeze-head scores against
+the Wheeze/Rhonchi/Stridor label union.
+Model Train
+ICBHI
+[3]
+Score
+SPRSound
+[4]
+Score
+HF
+[1]
+CAS AUROC
+KAUH
+[9]
+BA
+AST [16] I/S51.40 ±0.48 90.20±0.18 77.01±0.30 68.64±0.41
+BEATs
+[11]
+I/S51.68 ±1.19 92.37±0.35 75.87±0.11 61.86±0.34
+PANNs
+[17]
+I/S52.08 ±0.16 91.23±0.55 73.13±0.10 56.52±2.24
+OPERA-
+CT [2]
+I/S39.96 ±1.68 79.45±0.00 60.96±0.35 59.88±0.34
+HeAR [18] I/S49.50 ±0.62 87.89±0.31 64.20±0.29 64.10±0.11
+LSAAI+S61.17 ±0.31 90.70±0.34 86.44±2.13 72.17±1.64
+Providing both readouts does not make single-source
+training sufficient for both datasets: each single-source
+model performs poorly on the other native task. These
+failures accompany the within-label acoustic differences in
+Figure 1(b,c). Joint supervision enables one model to serve
+both tasks, improving ICBHI Score by 3.39 percentage points
+(pp) at a 2.13-pp cost on SPRSound relative to their respec-
+tive single-source models. Both Normal recall and correct
+abnormal-subclass recall improve on ICBHI. Joint training
+therefore expands task coverage, with different gains and
+costs relative to the two specialist models.
+External benefits depend on the source and prediction
+target. LSAA’s HF CAS ranking AUROC (86.44%) is
+close to ICBHI-only (87.05%) and exceeds SPRSound-only
+(79.25%), while its KAUH patient BA exceeds both controls
+(Table 2(a)). Combining sources thus improves KAUH per-
+formance without producing a uniform gain across external
+targets.
+4.2. Supervision and Readout Analysis
+A binary prediction target can still benefit from fine super-
+vision. Retaining SPRSound C/W labels improves both na-
+tive Scores and SPRSound C/W AUROC across three seeds
+(Table 2(b)). Coarse SPR’s mean ICBHI Score falls below
+ICBHI-only, showing that adding source audio alone does not
+ensure a gain under this recipe. The SPRSound improvement
+is uneven: Coarse includes an all-Normal seed, while the
+other two seeds gain 4.57/0.15 pp. Coarse also removes C/W
+calibration and changes relative loss strength, so the compari-
+son supports the fine-supervision recipe without isolating an-
+notation information alone.
+Table 2. Effects of training sources, supervision detail, and task
+readouts. (a) Absolute performance (%) and paired changes (pp),
+with∆ I and∆ S denoting LSAA minus ICBHI-only and SPRSound-
+only, respectively. (b) Variant minus LSAA; CW is SPRSound C/W
+macro AUROC (LSAA:97.32±0.15%). (c) HF-on minus the corre-
+sponding same-seed HF-off run. Values are means with subscripted
+±sample SD over three seeds. IC/SPR: native Scores; CAS: HF
+recording AUROC using Wheeze-head scores for CAS-union rank-
+ing; BA: KAUH patient balanced accuracy.
+(a) Single-source and joint training
+Model IC SPR CAS BA
+ICBHI-only57.78 ±1.47 49.53±6.40 87.05±0.86 70.44±1.52
+SPRSound-only47.75 ±0.51 92.82±0.65 79.25±1.08 67.25±4.29
+LSAA61.17 ±0.31 90.70±0.34 86.44±2.13 72.17±1.64
+∆I +3.39±1.59 +41.17±6.70 −0.61±1.32 +1.73±0.81
+∆S +13.42±0.82 −2.13±0.33 +7.19±1.05 +4.91±4.69
+(b) Fine supervision and readout
+Variant∆IC∆SPR∆CW
+Coarse SPR−6.51 ±4.33 −23.46±36.62 −8.48±8.58
+Native + C/W+2.50 ±1.90 +0.16±1.55 −0.05±0.25
+(c) HF supervision and transfer
+Native∆Score HF KAUH
+Variant IC SPR∆CAS∆BA
+HF-on−1.90 ±2.89 +1.31±1.43 −7.41±2.73 +1.91±7.03
+Shared fine supervision does not prescribe a unique task
+readout. Native + C/W improves ICBHI Score by 2.50 pp
+while SPRSound C/W AUROC changes by only−0.05pp.
+This supports separate assessment of attribute detection and
+native-task performance. LSAA supplies an explicit attribute-
+to-task mapping; learned native heads offer another imple-
+mentation. Because the alternative retrains both encoder and
+heads, the gain cannot be attributed solely to replacing the
+decoder.
+More supervision from a source need not improve its eval-
+uation target. HF-on lowers CAS AUROC in all three seeds
+(−7.41±2.73pp), despite improving SPRSound in two seeds;
+KAUH changes direction across seeds (Table 2(c)). HF train-
+ing assigns W negatives to eligible Rhonchi/Stridor windows
+without Wheeze annotations, whereas CAS evaluation treats
+any Wheeze/Rhonchi/Stridor annotation as positive and ranks
+recordings using maximum-window Wheeze-head scores. Of
+661 CAS-positive test recordings, 256 have no Wheeze anno-
+tation. Supervision and evaluation thus target different sound
+categories within the same source. This mismatch may con-
+tribute to the decline, but the current comparison does not iso-
+late its causal effect.
+5. CONCLUSION
+We presented LSAA, a joint learning framework that con-
+nects heterogeneous respiratory sound annotations through
+
+===== PDF PAGE 5 =====
+shared acoustic attributes. Task-specific readouts allow one
+model to support cycle-level four-class and event-level binary
+prediction while retaining fine-grained supervision. Our ex-
+periments support retaining fine annotations under the evalu-
+ated training recipe and reveal task-dependent tradeoffs from
+joint training and readout design. Evaluation on HF Lung and
+KAUH extends this assessment beyond the training datasets,
+showing that additional supervision does not uniformly im-
+prove transfer.
+6. REFERENCES
+[1] F.-S. Hsuet al., “Benchmarking of eight recurrent neural net-
+work variants for breath phase and adventitious sound detec-
+tion on a self-developed open-access lung sound database—
+HF_Lung_V1,”PLOS ONE, vol. 16, no. 7, pp. e0254134,
+2021.
+[2] Y . Zhanget al., “Towards open respiratory acoustic foundation
+models: Pretraining and benchmarking,” inAdvances in Neu-
+ral Information Processing Systems, 2024, vol. 37, pp. 27024–
+27055.
+[3] B. M. Rochaet al., “An open access database for the evalu-
+ation of respiratory sound classification algorithms,”Physio-
+logical Measurement, vol. 40, no. 3, pp. 035001, 2019.
+[4] Q. Zhanget al., “SPRSound: Open-source SJTU paediatric
+respiratory sound database,”IEEE Transactions on Biomedi-
+cal Circuits and Systems, vol. 16, no. 5, pp. 867–881, 2022.
+[5] S. Ge, W. Zhang, S. Xie, B. Yan, and Z. Wang, “Lung-
+Mix: A mixup-based strategy for generalization in respiratory
+sound classification,” inICASSP 2025—2025 IEEE Interna-
+tional Conference on Acoustics, Speech and Signal Process-
+ing, 2025, pp. 1–5.
+[6] Y .-W. Chua and Y .-C. Cheng, “Towards enhanced classifica-
+tion of abnormal lung sound in multi-breath: A light weight
+multi-label and multi-head attention classification method,”
+arXiv:2407.10828, 2024.
+[7] S. G. Jeong and S.-E. Kim, “PC-MCL: Patient-consistent
+multi-cycle learning with multi-label bias correction for respi-
+ratory sound classification,” inICASSP 2026—2026 IEEE In-
+ternational Conference on Acoustics, Speech and Signal Pro-
+cessing, 2026, pp. 2665–2669.
+[8] S. Cornellet al., “DCASE 2024 task 4: Sound event
+detection with heterogeneous data and missing labels,”
+arXiv:2406.08056, 2024.
+[9] M. Fraiwan, L. Fraiwan, B. Khassawneh, and A. Ibnian, “A
+dataset of lung sounds recorded from the chest wall using an
+electronic stethoscope,”Data in Brief, vol. 35, pp. 106913,
+2021.
+[10] P. Welch, “The use of the fast Fourier transform for the estima-
+tion of power spectra: A method based on time averaging over
+short, modified periodograms,”IEEE Transactions on Audio
+and Electroacoustics, vol. 15, pp. 70–73, 1967.
+[11] S. Chenet al., “BEATs: Audio pre-training with acoustic tok-
+enizers,” inProceedings of the 40th International Conference
+on Machine Learning. 2023, vol. 202 ofProceedings of Ma-
+chine Learning Research, pp. 5178–5193, PMLR.
+[12] J. F. Gemmekeet al., “Audio Set: An ontology and human-
+labeled dataset for audio events,” in2017 IEEE Interna-
+tional Conference on Acoustics, Speech and Signal Processing
+(ICASSP), 2017, pp. 776–780.
+[13] G. Shi, L. Xiao, Y . Chen, and S. K. Zhou, “Marginal loss and
+exclusion loss for partially supervised multi-organ segmenta-
+tion,”Medical Image Analysis, vol. 70, pp. 101979, 2021.
+[14] D. Zhou, P. Chen, Q. Wang, G. Chen, and P.-A. Heng, “Ac-
+knowledging the unknown for multi-label learning with single
+positive labels,” inComputer Vision—ECCV 2022. 2022, vol.
+13684 ofLecture Notes in Computer Science, pp. 423–440,
+Springer.
+[15] S. G. Jeong and S. E. Kim, “Patient-aware feature alignment
+for robust lung sound classification: Cohesion-separation and
+global alignment losses,” inInterspeech 2025, 2025, pp. 1018–
+1022.
+[16] Y . Gong, Y .-A. Chung, and J. Glass, “AST: Audio spectrogram
+transformer,” inInterspeech 2021, 2021, pp. 571–575.
+[17] Q. Kong, Y . Cao, T. Iqbal, Y . Wang, W. Wang, and M. D.
+Plumbley, “PANNs: Large-scale pretrained audio neural net-
+works for audio pattern recognition,”IEEE/ACM Transac-
+tions on Audio, Speech, and Language Processing, vol. 28,
+pp. 2880–2894, 2020.
+[18] S. Bauret al., “HeAR—health acoustic representations,”
+arXiv:2403.02522, 2024.
