@@ -83,7 +83,7 @@ KAUH uses 86 patients with compatible labels; Both contains two patients. Spectr
 \caption{LSAA prediction and training paths.
 BEATs tokens of width $D=768$ are mean-pooled and linearly projected to 256 dimensions. Parallel heads form shared abnormality (A), Crackle (C), and Wheeze (W) probabilities. Task readouts convert these probabilities to dataset-specific outputs. A separate attention-based projection $\mathcal G$ supplies 768-dimensional features for the PAFA patient regularizers. ICBHI and SPRSound provide core attribute supervision and patient groups;
 the optional HF Lung term uses only source-train C/W supervision. HF source-test uses maximum-window Wheeze-head scores for continuous adventitious sounds (CAS) ranking, with Wheeze/Rhonchi/Stridor forming the
-positive class. Models and thresholds remain fixed for HF and KAUH evaluation. The objective and readouts are defined in Section~\ref{sec:method}.}
+positive class. Models and thresholds remain fixed for HF and KAUH evaluation. See Section~\ref{sec:method}.}
 \label{fig:method_overview}
 \end{figure*}
 

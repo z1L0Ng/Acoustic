@@ -6,7 +6,7 @@
 \subsection{Joint Learning and Transfer}
 \label{sec:protocol}
 \label{sec:native_results}
-Table~\ref{tab:native_results} compares LSAA with separately trained frozen-encoder references. Frozen BEATs nearly matches SPRSound-only (92.4\% versus 92.8\%), whereas ICBHI-only reaches 57.8\% compared with 51.7\% for frozen BEATs (Table~\ref{tab:ablations}(a)). This smaller
+Table~\ref{tab:native_results} compares LSAA with separately trained fro\-zen-en\-coder references. Frozen BEATs nearly matches SPRSound-only (92.4\% versus 92.8\%), whereas ICBHI-only reaches 57.8\% compared with 51.7\% for frozen BEATs (Table~\ref{tab:ablations}(a)). This smaller
 observed gap suggests less performance headroom on SPRSound within the tested configurations, providing context for the uneven gains from joint training.
 
 \LSAAMainResultsTable
@@ -26,7 +26,7 @@ gain 4.57/0.15 pp.
 
 \LSAAAnalysisTable
 
-Shared fine supervision does not prescribe a unique task readout. Native + C/W improves ICBHI Score by 2.50 pp while SPRSound C/W AUROC changes by only $-0.05$ pp. This supports separate assessment of attribute detection and native-task performance. LSAA supplies an explicit attribute-to-task mapping while learned native heads offer another implementation.
+Shared fine supervision does not prescribe a unique task readout. Native + C/W improves ICBHI Score by 2.50 pp while SPRSound C/W AUROC changes by only $-0.05$ pp. This supports separate assessment of attribute detection and native-task performance. LSAA supplies an explicit attribute-to-task mapping while native heads offer an alternative.
 
 \label{sec:hf_supervision}
 More supervision from a source need not improve its evaluation target. HF-on reduces ICBHI Score by 1.90 pp on average and CAS AUROC in all three seeds ($-7.41\pm2.73$ pp), despite improving SPRSound in two seeds; KAUH changes direction across seeds (Table~\ref{tab:ablations}(c)). CAS evaluation uses a broader positive class than the auxiliary Wheeze target, so additional Wheeze supervision need not improve CAS ranking. Of 661 CAS-positive test recordings, 256 have no Wheeze annotation. Supervision and evaluation thus target different sound categories within the same source. This mismatch may contribute

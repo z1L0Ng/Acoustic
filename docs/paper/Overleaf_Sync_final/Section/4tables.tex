@@ -1,30 +1,29 @@
 \newcommand{\LSAAMainResultsTable}{%
 \begin{table}[H]
-\caption{Performance of LSAA and frozen-encoder references across four respiratory sound datasets. Values are means (\%) over three seeds, with sample standard deviations shown as subscripts. In Train, I/S denotes separate ICBHI/SPRSound models and I+S denotes joint training. \textbf{Bold} and \underline{underlined} values mark the
+\caption{Performance of LSAA and frozen-encoder references across four respiratory sound datasets. Values are means (\%) over three seeds, with sample standard deviations shown as subscripts. Frozen-encoder references use separately trained ICBHI and SPRSound models; LSAA uses joint training. \textbf{Bold} and \underline{underlined} values mark the
 highest and second-highest means within each metric column.
-For LSAA, CAS AUROC evaluates maximum-window Wheeze-head scores against the Wheeze/Rhonchi/Stridor label union.}
+For LSAA, CAS AUROC uses maximum-window Wheeze-head scores with Wheeze/\allowbreak{}Rhonchi/\allowbreak{}Stridor positives.}
 \label{tab:native_results}
 \centering
 \small
 \setlength{\tabcolsep}{0pt}
 \begin{tabular}{@{}
->{\raggedright\arraybackslash}p{0.17\columnwidth}
->{\centering\arraybackslash}p{0.075\columnwidth}
-*{4}{>{\centering\arraybackslash}p{0.18875\columnwidth}}@{}}
+>{\raggedright\arraybackslash}p{0.26\columnwidth}
+*{2}{>{\centering\arraybackslash}p{0.175\columnwidth}}>{\centering\arraybackslash}p{0.215\columnwidth}>{\centering\arraybackslash}p{0.175\columnwidth}@{}}
 \toprule
-Model & Train
+Model
 & \shortstack{ICBHI\\\cite{rocha2019icbhi}\\Score}
 & \shortstack{SPRSound\\\cite{zhang2022sprsound}\\Score}
 & \shortstack{HF\\\cite{hsu2021hflung}\\CAS AUROC}
 & \shortstack{KAUH\\\cite{fraiwan2021kauh}\\BA}\\
 \midrule
-AST \cite{gong2021ast} & I/S & $51.40_{\pm0.48}$ & $90.20_{\pm0.18}$ & $\underline{77.01}_{\pm0.30}$ & $\underline{68.64}_{\pm0.41}$\\
-BEATs \cite{chen2023beats} & I/S & $51.68_{\pm1.19}$ & $\mathbf{92.37}_{\pm0.35}$ & $75.87_{\pm0.11}$ & $61.86_{\pm0.34}$\\
-PANNs \cite{kong2020panns} & I/S & $\underline{52.08}_{\pm0.16}$ & $\underline{91.23}_{\pm0.55}$ & $73.13_{\pm0.10}$ & $56.52_{\pm2.24}$\\
-OPERA-CT \cite{zhang2024opera} & I/S & $39.96_{\pm1.68}$ & $79.45_{\pm0.00}$ & $60.96_{\pm0.35}$ & $59.88_{\pm0.34}$\\
-HeAR \cite{baur2024hear} & I/S & $49.50_{\pm0.62}$ & $87.89_{\pm0.31}$ & $64.20_{\pm0.29}$ & $64.10_{\pm0.11}$\\
+AST \cite{gong2021ast} & $51.40_{\pm0.48}$ & $90.20_{\pm0.18}$ & $\underline{77.01}_{\pm0.30}$ & $\underline{68.64}_{\pm0.41}$\\
+BEATs \cite{chen2023beats} & $51.68_{\pm1.19}$ & $\mathbf{92.37}_{\pm0.35}$ & $75.87_{\pm0.11}$ & $61.86_{\pm0.34}$\\
+PANNs \cite{kong2020panns} & $\underline{52.08}_{\pm0.16}$ & $\underline{91.23}_{\pm0.55}$ & $73.13_{\pm0.10}$ & $56.52_{\pm2.24}$\\
+OPERA-CT \cite{zhang2024opera} & $39.96_{\pm1.68}$ & $79.45_{\pm0.00}$ & $60.96_{\pm0.35}$ & $59.88_{\pm0.34}$\\
+HeAR \cite{baur2024hear} & $49.50_{\pm0.62}$ & $87.89_{\pm0.31}$ & $64.20_{\pm0.29}$ & $64.10_{\pm0.11}$\\
 \midrule
-\textbf{LSAA} & I+S & $\mathbf{61.17}_{\pm0.31}$ & $90.70_{\pm0.34}$ & $\mathbf{86.44}_{\pm2.13}$ & $\mathbf{72.17}_{\pm1.64}$\\
+\textbf{LSAA} & $\mathbf{61.17}_{\pm0.31}$ & $90.70_{\pm0.34}$ & $\mathbf{86.44}_{\pm2.13}$ & $\mathbf{72.17}_{\pm1.64}$\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -32,7 +31,7 @@ HeAR \cite{baur2024hear} & I/S & $49.50_{\pm0.62}$ & $87.89_{\pm0.31}$ & $64.20_
 
 
 \newcommand{\LSAAAnalysisTable}{%
-\begin{table}[H]
+\begin{table}[t]
 \caption{Effects of training sources, supervision detail, and task readouts. 
 (a) Absolute performance (\%) and paired changes (pp), with
 $\Delta_{\rm I}$ and $\Delta_{\rm S}$ denoting LSAA minus ICBHI-only and SPRSound-only, respectively. Bold marks the highest absolute mean per column in (a).
@@ -46,7 +45,7 @@ BA: KAUH patient balanced accuracy.}
 \label{tab:ablations}
 \centering
 \small
-\setlength{\tabcolsep}{1pt}
+\setlength{\tabcolsep}{0.5pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lcccc@{}}
 \toprule
 \multicolumn{5}{l}{\textit{(a) Single-source and joint training}}\\

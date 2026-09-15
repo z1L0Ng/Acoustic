@@ -42,9 +42,9 @@ $\ell_c,\ell_w$ are binary cross-entropy.
 
 Patient-based regularization uses a separate attention-based projection
 $Z_i=\mathcal G(H_i)\in\mathbb{R}^{768}$ and PAFA's patient
-cohesion-separation (PCSL) and global patient alignment (GPAL) losses\cite{jeong2025pafa}. Within each core-source batch, PCSL promotes within-patient cohesion and between-patient separation, while GPAL limits the dispersion of patient feature means. These losses regularize the shared encoder during joint training.
+cohesion-separation (PCSL) and global patient alignment (GPAL) losses\cite{jeong2025pafa}. Within each core-source batch, PCSL promotes within-patient cohesion and between-patient separation, while GPAL limits the dispersion of patient feature means. These losses regularize the shared encoder.
 
-In the auxiliary condition, HF source-training windows add C/W supervision, mapping the discontinuous adventitious-sound label D to C. Only windows overlapping D/Wheeze/Rhonchi/Stridor annotations contribute
+In the auxiliary condition, HF source-training windows add C/W supervision, mapping the discontinuous ad\-ven\-ti\-tious-sound label D to C. Only windows overlapping D/\allowbreak{}Wheeze/\allowbreak{}Rhonchi/\allowbreak{}Stridor annotations contribute
 HF supervision, with missing C/W annotations treated as negatives. Their masked binary cross-entropy gives $\mathcal L_{\rm HF}$.
 Core batches supply classification and PAFA regularization, yielding
 \begin{equation}
