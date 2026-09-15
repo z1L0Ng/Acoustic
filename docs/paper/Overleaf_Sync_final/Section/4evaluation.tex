@@ -13,20 +13,20 @@ observed gap suggests less performance headroom on SPRSound within the tested co
 
 Single-source training gives poor performance on the other native task despite access to both readouts, alongside the within-label acoustic differences in Figure~\ref{fig:dataset_characteristics}(b,c). Joint supervision enables one model to serve both tasks, improving ICBHI Score by 3.39 percentage points (pp) at a 2.13-pp cost on SPRSound relative to their respective single-source models. ICBHI's Normal recall ($Sp$) increases from 72.8\% to 75.0\%, and correct abnormal-subclass recall ($Se$) from 42.8\% to 47.4\%. Joint training thus supports both native tasks with tradeoffs relative to the single-source models.
 
-External benefits depend on the source and prediction target. LSAA's HF CAS ranking AUROC (86.44\%) is close to ICBHI-only (87.05\%) and exceeds SPRSound-only (79.25\%), while its KAUH patient BA exceeds both controls (Table~\ref{tab:ablations}(a)). KAUH's abnormal-class spectral centroids are closer to ICBHI than to SPRSound (Figure~\ref{fig:dataset_characteristics}(c)), consistent with stronger KAUH transfer from ICBHI-only. Joint training improves KAUH performance, but its external gains dependent on native dataset target.
+External benefits depend on the source and prediction target. LSAA's HF CAS ranking AUROC (86.44\%) is close to ICBHI-only (87.05\%) and exceeds SPRSound-only (79.25\%), while its KAUH patient BA exceeds both controls (Table~\ref{tab:ablations}(a)). KAUH's abnormal-class spectral centroids are closer to ICBHI than to SPRSound (Figure~\ref{fig:dataset_characteristics}(c)), consistent with stronger KAUH transfer from ICBHI-only. Joint training improves KAUH performance, but its external gains depend on the evaluation target.
 
 \subsection{Supervision and Readout Analysis}
 \label{sec:ablations}
 \label{sec:fine_supervision}
 \label{sec:readout_analysis}
 \label{sec:transfer}
-A binary prediction target can still benefit from fine supervision. Retaining SPRSound C/W labels improves both native Scores and SPRSound C/W AUROC across three seeds (Table~\ref{tab:ablations}(b)). Coarse SPR's
-mean ICBHI Score falls below ICBHI-only, showing that adding source audio alone does not ensure a gain under this recipe. The SPRSound improvement is uneven: Coarse includes an all-Normal seed, while the other two seeds
+A binary prediction target can still benefit from fine-grained supervision. Retaining SPRSound C/W labels improves both native Scores and SPRSound C/W macro AUROC across three seeds (Table~\ref{tab:ablations}(b)). Coarse SPR's
+mean ICBHI Score falls below ICBHI-only, showing that adding source audio alone does not ensure a gain under this recipe. The SPRSound improvement is uneven: Coarse SPR includes an all-Normal seed, while the other two seeds
 gain 4.57/0.15 pp.
 
 \LSAAAnalysisTable
 
-Shared fine supervision does not prescribe a unique task readout. Native + C/W improves ICBHI Score by 2.50 pp while SPRSound C/W AUROC changes by only $-0.05$ pp. This supports separate assessment of attribute detection and native-task performance. LSAA supplies an explicit attribute-to-task mapping while native heads offer an alternative.
+Shared fine-grained supervision does not prescribe a unique readout. Native + C/W improves ICBHI Score by 2.50 pp while SPRSound C/W macro AUROC changes by only $-0.05$ pp. This supports separate assessment of attribute detection and native-task performance. LSAA explicitly maps attributes to tasks; native heads remain an alternative.
 
 \label{sec:hf_supervision}
 More supervision from a source need not improve its evaluation target. HF-on reduces ICBHI Score by 1.90 pp on average and CAS AUROC in all three seeds ($-7.41\pm2.73$ pp), despite improving SPRSound in two seeds; KAUH changes direction across seeds (Table~\ref{tab:ablations}(c)). CAS evaluation uses a broader positive class than the auxiliary Wheeze target, so additional Wheeze supervision need not improve CAS ranking. Of 661 CAS-positive test recordings, 256 have no Wheeze annotation. Supervision and evaluation thus target different sound categories within the same source. This mismatch may contribute

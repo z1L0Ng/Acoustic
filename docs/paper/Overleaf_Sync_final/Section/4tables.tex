@@ -32,10 +32,10 @@ HeAR \cite{baur2024hear} & $49.50_{\pm0.62}$ & $87.89_{\pm0.31}$ & $64.20_{\pm0.
 
 \newcommand{\LSAAAnalysisTable}{%
 \begin{table}[t]
-\caption{Effects of training sources, supervision detail, and task readouts. 
+\caption{Effects of training sources, supervision detail, and task-specific readouts. 
 (a) Absolute performance (\%) and paired changes (pp), with
 $\Delta_{\rm I}$ and $\Delta_{\rm S}$ denoting LSAA minus ICBHI-only and SPRSound-only, respectively. Bold marks the highest absolute mean per column in (a).
-(b) Variant minus LSAA; CW is SPRSound C/W macro AUROC
+(b) Variant minus LSAA; C/W is SPRSound C/W macro AUROC
 (LSAA: $97.32\pm0.15$\%). 
 (c) HF-on minus the corresponding same-seed
 HF-off run. Values are means with subscripted $\pm$ sample SD over
@@ -62,8 +62,8 @@ $\Delta_{\rm S}$ & $+13.42_{\pm0.82}$ & $-2.13_{\pm0.33}$ & $+7.19_{\pm1.05}$ & 
 \par\smallskip
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lccc@{}}
 \toprule
-\multicolumn{4}{l}{\textit{(b) Fine supervision and readout}}\\
-Variant & $\Delta$ IC & $\Delta$ SPR & $\Delta$ CW\\
+\multicolumn{4}{l}{\textit{(b) Fine-grained supervision and readout}}\\
+Variant & $\Delta$ IC & $\Delta$ SPR & $\Delta$ C/W\\
 \midrule
 Coarse SPR & $-6.51_{\pm4.33}$ & $-23.46_{\pm36.62}$ & $-8.48_{\pm8.58}$\\
 Native + C/W & $+2.50_{\pm1.90}$ & $+0.16_{\pm1.55}$ & $-0.05_{\pm0.25}$\\

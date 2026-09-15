@@ -9,15 +9,15 @@ For example, SPRSound's Wheeze annotations contain information relevant to ICBHI
 normal/abnormal predictions\cite{zhang2022sprsound}. The available supervision is therefore richer than the required output. We aim to jointly learn from this information while preserving each dataset's native prediction target.
 
 To this end, we propose LSAA (Learning Shared Acoustic Attributes). A shared encoder learns acoustic representations through abnormality,
-crackle, and wheeze supervision from ICBHI cycles and SPRSound events. Each annotation supervises only the attributes it supports. Task-specific readouts map the shared attribute predictions to four-class cycle and binary event outputs, allowing fine supervision to guide
+crackle, and wheeze supervision from ICBHI cycles and SPRSound events. Each annotation supervises only the attributes it supports. Task-specific readouts map the shared attribute predictions to four-class cycle and binary event outputs, allowing fine-grained supervision to guide
 learning while preserving different native tasks. We further assess
-attribute transfer and auxiliary supervision on HF Lung\cite{hsu2021hflung},
+attribute transfer and auxiliary supervision on HF Lung (HF)\cite{hsu2021hflung},
 and external generalization on KAUH\cite{fraiwan2021kauh}. This work makes the following contributions:
 
 \begin{itemize}[leftmargin=*, itemsep=3pt]
 \item We introduce LSAA, which shares acoustic attribute supervision across heterogeneous annotations and uses task-specific readouts to support cycle-level four-class and event-level binary predictions within a single model.
-\item We show that retaining SPRSound's fine-grained sound-type supervision benefits both native tasks under the training recipe, even though its prediction target is binary.
-\item We show that training and readout designs can improve ICBHI classification while maintaining SPRSound crackle -- wheeze discrimination, supporting separate assessments of attribute detection and native-task performance.
+\item We show that retaining SPRSound's fine-grained supervision benefits both native tasks under the training recipe, even though its prediction target is binary.
+\item We show that training and readout designs can improve ICBHI classification while maintaining SPRSound crackle and wheeze discrimination, supporting separate assessments of attribute detection and native-task performance.
 \end{itemize}
 % \setlength{\itemsep}{1pt}
 % \setlength{\parsep}{0pt}
