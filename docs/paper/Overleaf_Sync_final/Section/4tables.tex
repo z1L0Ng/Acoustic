@@ -1,0 +1,91 @@
+\newcommand{\LSAAMainResultsTable}{%
+\begin{table}[H]
+\caption{Performance of LSAA and frozen-encoder references across four
+respiratory sound datasets. Values are means (\%) over three seeds,
+with sample standard deviations shown as subscripts.
+In Train, I/S denotes separate ICBHI/SPRSound models and I+S denotes
+joint training. \textbf{Bold} and \underline{underlined} values mark the
+highest and second-highest means within each metric column.
+For LSAA, CAS AUROC evaluates maximum-window Wheeze-head scores
+against the Wheeze/Rhonchi/Stridor label union.}
+\label{tab:native_results}
+\centering
+\small
+\setlength{\tabcolsep}{0pt}
+\begin{tabular}{@{}
+>{\raggedright\arraybackslash}p{0.17\columnwidth}
+>{\centering\arraybackslash}p{0.075\columnwidth}
+*{4}{>{\centering\arraybackslash}p{0.18875\columnwidth}}@{}}
+\toprule
+Model & Train
+& \shortstack{ICBHI\\\cite{rocha2019icbhi}\\Score}
+& \shortstack{SPRSound\\\cite{zhang2022sprsound}\\Score}
+& \shortstack{HF\\\cite{hsu2021hflung}\\CAS AUROC}
+& \shortstack{KAUH\\\cite{fraiwan2021kauh}\\BA}\\
+\midrule
+AST \cite{gong2021ast} & I/S & $51.40_{\pm0.48}$ & $90.20_{\pm0.18}$ & $\underline{77.01}_{\pm0.30}$ & $\underline{68.64}_{\pm0.41}$\\
+BEATs \cite{chen2023beats} & I/S & $51.68_{\pm1.19}$ & $\mathbf{92.37}_{\pm0.35}$ & $75.87_{\pm0.11}$ & $61.86_{\pm0.34}$\\
+PANNs \cite{kong2020panns} & I/S & $\underline{52.08}_{\pm0.16}$ & $\underline{91.23}_{\pm0.55}$ & $73.13_{\pm0.10}$ & $56.52_{\pm2.24}$\\
+OPERA-CT \cite{zhang2024opera} & I/S & $39.96_{\pm1.68}$ & $79.45_{\pm0.00}$ & $39.04_{\pm0.35}$ & $40.12_{\pm0.34}$\\
+HeAR \cite{baur2024hear} & I/S & $49.50_{\pm0.62}$ & $87.89_{\pm0.31}$ & $64.20_{\pm0.29}$ & $64.10_{\pm0.11}$\\
+\midrule
+\textbf{LSAA} & I+S & $\mathbf{61.17}_{\pm0.31}$ & $90.70_{\pm0.34}$ & $\mathbf{86.44}_{\pm2.13}$ & $\mathbf{72.17}_{\pm1.64}$\\
+\bottomrule
+\end{tabular}
+\end{table}
+}
+
+
+\newcommand{\LSAAAnalysisTable}{%
+\begin{table}[H]
+\caption{Effects of training sources, supervision detail, and task readouts.
+(a) Absolute performance (\%) and paired changes (pp), with
+$\Delta_{\rm I}$ and $\Delta_{\rm S}$ denoting LSAA minus ICBHI-only and
+SPRSound-only, respectively.
+(b) Variant minus LSAA; CW is SPRSound C/W macro AUROC
+(LSAA: $97.32\pm0.15$\%). (c) HF-on minus the corresponding same-seed
+HF-off run. Values are means with subscripted $\pm$ sample SD over
+three seeds. IC/SPR: native Scores; CAS: HF recording AUROC
+using Wheeze-head scores for CAS-union ranking;
+BA: KAUH patient balanced accuracy.}
+\label{tab:ablations}
+\centering
+\small
+\setlength{\tabcolsep}{1pt}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lcccc@{}}
+\toprule
+\multicolumn{5}{l}{\textit{(a) Single-source and joint training}}\\
+Model & IC & SPR & CAS & BA\\
+\midrule
+ICBHI-only & $57.78_{\pm1.47}$ & $49.53_{\pm6.40}$ & $87.05_{\pm0.86}$ & $70.44_{\pm1.52}$\\
+SPRSound-only & $47.75_{\pm0.51}$ & $\mathbf{92.82}_{\pm0.65}$ & $79.25_{\pm1.08}$ & $67.25_{\pm4.29}$\\
+\textbf{LSAA} & $\mathbf{61.17}_{\pm0.31}$ & $90.70_{\pm0.34}$ & $86.44_{\pm2.13}$ & $72.17_{\pm1.64}$\\
+\midrule
+$\Delta_{\rm I}$ & $\mathbf{+3.39}_{\pm1.59}$ & $+41.17_{\pm6.70}$ & $-0.61_{\pm1.32}$ & $+1.73_{\pm0.81}$\\
+$\Delta_{\rm S}$ & $+13.42_{\pm0.82}$ & $\mathbf{-2.13}_{\pm0.33}$ & $+7.19_{\pm1.05}$ & $+4.91_{\pm4.69}$\\
+\bottomrule
+\end{tabular*}
+\par\smallskip
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lccc@{}}
+\toprule
+\multicolumn{4}{l}{\textit{(b) Fine supervision and readout}}\\
+Variant & $\Delta$ IC & $\Delta$ SPR & $\Delta$ CW\\
+\midrule
+Coarse SPR & $-6.51_{\pm4.33}$ & $-23.46_{\pm36.62}$ & $-8.48_{\pm8.58}$\\
+Native + C/W & $+2.50_{\pm1.90}$ & $+0.16_{\pm1.55}$ & $-0.05_{\pm0.25}$\\
+\bottomrule
+\end{tabular*}
+\par\smallskip
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lcccc@{}}
+\toprule
+\multicolumn{5}{l}{\textit{(c) HF supervision and transfer}}\\
+& \multicolumn{2}{c}{Native $\Delta$ Score}
+& HF & KAUH\\
+\cmidrule(lr){2-3}
+Variant & IC & SPR & $\Delta$ CAS & $\Delta$ BA\\
+\midrule
+HF-on & $-1.90_{\pm2.89}$ & $+1.31_{\pm1.43}$ & $-7.41_{\pm2.73}$ & $+1.91_{\pm7.03}$\\
+\bottomrule
+\end{tabular*}
+\end{table}
+}

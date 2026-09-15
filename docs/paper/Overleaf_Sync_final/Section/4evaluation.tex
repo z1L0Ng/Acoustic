@@ -1,130 +1,72 @@
-\begin{table*}[t]
-\caption{Performance (\%; mean $\pm$ sample SD, seeds 0/1/42).
-I/S: ICBHI/SPRSound; Single: separate frozen-encoder models.
-ICBHI $Sp/Se$: Normal/correct abnormal-subclass recalls; Score is their mean.
-SPR $AS/HS$: arithmetic/harmonic means of binary recalls; Score $=(AS+HS)/2$.
-HF: recording AUROC; KAUH: patient binary BA.
-Bold/underline: best/second Scores within A/C/W models; ---: unavailable.}
-\label{tab:native_results}
-\centering
-\small
-\setlength{\tabcolsep}{1pt}
-\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lc*{9}{c}@{}}
-\toprule
-& & \multicolumn{3}{c}{ICBHI four-class\cite{rocha2019icbhi}}
-& \multicolumn{3}{c}{SPRSound binary\cite{zhang2022sprsound}}
-& \multicolumn{2}{c}{HF AUROC\cite{hsu2021hflung}}
-& KAUH\cite{fraiwan2021kauh}\\
-\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-10}\cmidrule(lr){11-11}
-Model & Train & $Sp$ & $Se$ & \textbf{Score}
-& $AS$ & $HS$ & \textbf{Score} & D & Wheeze & BA\\
-\midrule
-\multicolumn{11}{l}{\textit{Single-dataset references: frozen encoders}}\\
-AST\cite{gong2021ast} & Single & $55.41_{\pm0.55}$ & $47.38_{\pm1.50}$ & $51.40_{\pm0.48}$ & $90.28_{\pm0.12}$ & $90.11_{\pm0.24}$ & $90.20_{\pm0.18}$ & --- & --- & ---\\
-BEATs\cite{chen2023beats} & Single & $61.01_{\pm5.72}$ & $42.34_{\pm3.98}$ & $51.68_{\pm1.19}$ & $92.43_{\pm0.34}$ & $92.30_{\pm0.36}$ & $92.37_{\pm0.35}$ & --- & --- & ---\\
-PANNs\cite{kong2020panns} & Single & $59.38_{\pm3.75}$ & $44.77_{\pm3.84}$ & $52.08_{\pm0.16}$ & $91.26_{\pm0.54}$ & $91.18_{\pm0.57}$ & $91.23_{\pm0.55}$ & --- & --- & ---\\
-OPERA-CT\cite{zhang2024opera} & Single & $41.61_{\pm5.42}$ & $38.32_{\pm2.78}$ & $39.96_{\pm1.68}$ & $79.55_{\pm0.06}$ & $79.36_{\pm0.05}$ & $79.45_{\pm0.00}$ & --- & --- & ---\\
-HeAR\cite{baur2024hear} & Single & $71.84_{\pm4.60}$ & $27.16_{\pm3.57}$ & $49.50_{\pm0.62}$ & $87.92_{\pm0.31}$ & $87.87_{\pm0.30}$ & $87.89_{\pm0.31}$ & --- & --- & ---\\
-\midrule
-\multicolumn{11}{l}{\textit{CHORD and source controls: BEATs/PAFA with full fine-tuning}}\\
-ICBHI-only & I & $72.77_{\pm6.57}$ & $42.79_{\pm4.10}$ & $\underline{57.78}_{\pm1.47}$ & $55.15_{\pm2.39}$ & $43.91_{\pm10.89}$ & $49.53_{\pm6.40}$ & --- & --- & ---\\
-SPRSound-only & S & $83.43_{\pm1.83}$ & $12.06_{\pm2.86}$ & $47.75_{\pm0.51}$ & $92.94_{\pm0.64}$ & $92.71_{\pm0.66}$ & $\mathbf{92.82}_{\pm0.65}$ & --- & --- & ---\\
-\textbf{CHORD} & I+S & $74.98_{\pm5.69}$ & $47.35_{\pm5.35}$ & $\mathbf{61.17}_{\pm0.31}$ & $90.95_{\pm0.31}$ & $90.45_{\pm0.39}$ & $\underline{90.70}_{\pm0.34}$ & $67.82_{\pm4.42}$ & $86.36_{\pm1.38}$ & $72.17_{\pm1.64}$\\
-\bottomrule
-\end{tabular*}
-\end{table*}
-
+\begingroup
+\setlength{\emergencystretch}{1.5em}
 \section{Evaluation}
 \label{sec:evaluation}
-\revisiondone\par
-
-\subsection{Experimental Setup}
-\label{sec:protocol}
-ICBHI cycles and SPRSound events train CHORD; evaluation uses
-the official ICBHI split (not strictly patient-held-out)\cite{rocha2019icbhi}
-and SPRSound inter-subject test set. Native inputs use 5-s front
-truncation or repetition with boundary fading.
-HF adds optional source-train C/W supervision; source-test evaluation
-covers 957 eligible recordings. Each supplies three 5-s windows.
-D/W/Rhonchi/Stridor overlap defines eligibility: absent C/W labels are
-treated as negatives within eligible windows; gap, empty, and phase-only windows
-are excluded. KAUH provides external binary balanced accuracy (BA) on
-86 Normal/Crackle/Wheeze/Both patients.
-
-Core controls share encoder initialization, partitions, and maximum
-update budgets; source exposure differs. Checkpoints use ICBHI test Score
-except SPRSound-only uses SPR inter Score; C/W thresholds use core validation.
-Core results use seeds 0/1/42 and PAFA weights\cite{jeong2025pafa};
-HF-on uses $\lambda_{\rm HF}=0.25$. External evaluation fixes models
-and thresholds.
 
 \subsection{Joint Learning and Transfer}
+\label{sec:protocol}
 \label{sec:native_results}
-Joint training with CHORD improves ICBHI Score by 3.39 percentage points
-(pp) and reduces SPRSound Score by 2.13 pp relative to their respective
-single-source models (Table~\ref{tab:native_results}). Direct cross-source
-application performs substantially worse, supporting joint supervision
-for both native tasks under this protocol. Frozen-encoder references
-provide adaptation context: CHORD exceeds their ICBHI Scores, while the
-strongest retain higher SPRSound performance.
+Table~\ref{tab:native_results} compares LSAA with separately trained
+frozen-encoder references. LSAA achieves higher means on ICBHI and both
+external targets, whereas the strongest frozen references perform better
+on SPRSound. The ICBHI-only and SPRSound-only controls in
+Table~\ref{tab:ablations}(a) assess joint training within LSAA's shared
+architecture.
 
-HF/KAUH results quantify transfer through the same attributes at recording
-and patient levels, without external tuning. Comparisons with single-source
-external models remain unavailable.
+\LSAAMainResultsTable
 
-\begin{table}[!htbp]
-\caption{Paired changes (pp). (a) Variant minus CHORD, mean with subscripted
-$\pm$ sample SD; IC/SPR: native Scores; CW: SPR C/W macro AUROC
-(CHORD: $97.32\pm0.15$\%); ---: unchanged.
-(b) Individual HF-on minus HF-off pairs; seed 42 uses an independent reference.}
-\label{tab:ablations}
-\centering
-\small
-\setlength{\tabcolsep}{1.5pt}
-\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lccc@{}}
-\toprule
-\multicolumn{4}{l}{\textit{(a) Fine supervision and readout}}\\
-Variant & $\Delta$ IC & $\Delta$ SPR & $\Delta$ CW\\
-\midrule
-Coarse SPR & $-6.51_{\pm4.33}$ & $-23.46_{\pm36.62}$ & $-8.48_{\pm8.58}$\\
-Direct C/W & $-0.88_{\pm1.60}$ & --- & ---\\
-Native + C/W & $+2.50_{\pm1.90}$ & $+0.16_{\pm1.55}$ & $-0.05_{\pm0.25}$\\
-\bottomrule
-\end{tabular*}
-\par\smallskip
-\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lccccc@{}}
-\toprule
-\multicolumn{6}{l}{\textit{(b) HF supervision and transfer}}\\
-& \multicolumn{2}{c}{Native $\Delta$ Score}
-& \multicolumn{2}{c}{HF $\Delta$ AUROC} & KAUH\\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}
-Seed & IC & SPR & D & Wheeze & $\Delta$ BA\\
-\midrule
-0 & $-5.24$ & $+1.53$ & $-2.23$ & $-3.03$ & $+9.36$\\
-42 & $-0.34$ & $+2.61$ & $+18.99$ & $+4.33$ & $-4.62$\\
-\bottomrule
-\end{tabular*}
-\end{table}
+Providing both readouts does not make single-source training sufficient
+for both datasets: each single-source model performs poorly on the other
+native task. These failures accompany the within-label acoustic differences
+in Figure~\ref{fig:dataset_characteristics}(b,c).
+Joint supervision enables one model to serve both tasks, improving ICBHI
+Score by 3.39 percentage points (pp) at a 2.13-pp cost on SPRSound relative
+to their respective single-source models. Both Normal recall and correct
+abnormal-subclass recall improve on ICBHI. Joint training therefore
+expands task coverage, with different gains and costs relative to the
+two specialist models.
 
-\subsection{Supervision and Readout Ablations}
+External benefits depend on the source and prediction target.
+LSAA's HF CAS ranking AUROC (86.44\%) is close to ICBHI-only (87.05\%)
+and exceeds SPRSound-only (79.25\%), while its KAUH patient BA exceeds
+both controls (Table~\ref{tab:ablations}(a)). Combining sources thus improves
+KAUH performance without producing a uniform gain across external targets.
+
+\subsection{Supervision and Readout Analysis}
 \label{sec:ablations}
 \label{sec:fine_supervision}
 \label{sec:readout_analysis}
 \label{sec:transfer}
-Fine labels benefit SPRSound's binary task under the evaluated recipe.
-Coarse SPR removes its C/W supervision and calibration, retaining $L_A/3$.
-Fine labels improve C/W AUROC and both native Scores in all three seeds
-(Table~\ref{tab:ablations}(a)). The SPR mean gain includes an all-Normal
-Coarse seed 0; seeds 1/42 gain 4.57/0.15 pp. This comparison also changes
-classification-loss strength relative to PAFA.
+A binary prediction target can still benefit from fine supervision.
+Retaining SPRSound C/W labels improves both native Scores and SPRSound
+C/W AUROC across three seeds (Table~\ref{tab:ablations}(b)). Coarse SPR's
+mean ICBHI Score falls below ICBHI-only, showing that adding source audio
+alone does not ensure a gain under this recipe. The SPRSound improvement
+is uneven: Coarse includes an all-Normal seed, while the other two seeds
+gain 4.57/0.15 pp. Coarse also removes C/W calibration and changes relative
+loss strength, so the comparison supports the fine-supervision recipe
+without isolating annotation information alone.
 
-Direct C/W bypasses A gating on fixed ICBHI scores: $Sp$ falls 6.80 pp
-while $Se$ rises 5.04 pp. Native + C/W retrains the model with dataset-specific
-heads and matched C/W supervision, gaining 2.50 pp on ICBHI with only a
-$-0.05$-pp C/W AUROC change. Attribute discrimination and task accuracy
-therefore need separate assessment. Two-level decoding provides explicit
-A/C/W readouts; native heads can improve task accuracy.
+\LSAAAnalysisTable
 
-HF supervision raises SPRSound Score but lowers ICBHI Score in both
-pairs (Table~\ref{tab:ablations}(b)). HF AUROC and KAUH BA change direction
-across pairs: added mapped labels have task-dependent effects.
+Shared fine supervision does not prescribe a unique task readout.
+Native + C/W improves ICBHI Score by 2.50 pp while SPRSound C/W AUROC
+changes by only $-0.05$ pp. This supports separate assessment of attribute
+detection and native-task performance. LSAA supplies an explicit
+attribute-to-task mapping; learned native heads offer another implementation.
+Because the alternative retrains both encoder and heads, the gain cannot
+be attributed solely to replacing the decoder.
+
+\label{sec:hf_supervision}
+More supervision from a source need not improve its evaluation target.
+HF-on lowers CAS AUROC in all three seeds ($-7.41\pm2.73$ pp), despite
+improving SPRSound in two seeds; KAUH changes direction across seeds
+(Table~\ref{tab:ablations}(c)). HF training assigns W negatives to eligible
+Rhonchi/Stridor windows without Wheeze annotations, whereas CAS evaluation
+treats any Wheeze/Rhonchi/Stridor annotation as positive and ranks recordings
+using maximum-window Wheeze-head scores. Of 661 CAS-positive test recordings,
+256 have no Wheeze annotation. Supervision and evaluation thus target
+different sound categories within the same source. This mismatch may contribute
+to the decline, but the current comparison does not isolate its causal effect.
+\par
+\endgroup

@@ -5,13 +5,13 @@
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{array}
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{placeins}
+\usepackage{float}
 \usepackage[hidelinks]{hyperref}
 \usepackage{etoolbox}
-
-\newcommand{\revisiondone}{\textcolor{red}{\textbf{DONE}}}
 
 \setcounter{dbltopnumber}{1}
 \setlength{\textfloatsep}{6pt plus 1pt minus 2pt}
@@ -30,7 +30,7 @@
   \setlength{\parskip}{0pt}
 }{}{}
 
-\title{CHORD: Cross-task Harmonization Of Respiratory Datasets}
+\title{Learning Shared Acoustic Attributes Across Respiratory Sound Datasets with Heterogeneous Annotations}
 \name{Zilong Zeng, Wade Wu, Arian Azarang, Stephen Xia, Jingping Nie}
 \address{{\small \texttt{zilongzeng2030@u.northwestern.edu},
 \texttt{wadewu@unc.edu}}\\
@@ -43,23 +43,21 @@
 \raggedbottom
 
 \begin{abstract}
-\revisiondone\ Respiratory sound datasets contain complementary annotations, but differences
-in granularity and task definitions hinder their joint use. We propose CHORD
-(Cross-task Harmonization Of Respiratory Datasets), an annotation-aware
-framework that shares acoustic supervision while retaining native tasks.
-A shared encoder jointly learns abnormality, crackle (C), and wheeze (W)
-from ICBHI cycles and SPRSound events, using supported labels to supervise
-each attribute. Task readouts recover four-class cycle and binary event
-predictions. HF Lung supports separate auxiliary supervision and attribute
-evaluation; KAUH provides external evaluation.
-Across three seeds with official-test-based checkpoint selection, CHORD
-improves ICBHI Score by 3.39 percentage points and reduces SPRSound Score
-by 2.13 points relative to their respective single-source models.
-Retaining fine labels benefits the binary task under the evaluated loss
-weighting, while native classifiers can improve task accuracy at similar
-C/W discrimination. Added HF supervision has task-dependent effects.
-These findings support sharing fine acoustic supervision while assessing
-native readouts and transfer separately.
+Respiratory sound datasets provide complementary supervision, but differ
+in annotation granularity and prediction targets. We propose LSAA
+(Learning Shared Acoustic Attributes), a joint learning framework that
+shares acoustic supervision while preserving native tasks. LSAA learns
+abnormality, crackle, and wheeze from ICBHI cycles and SPRSound events,
+then uses task-specific readouts for four-class cycle and binary event
+prediction. This allows fine sound-type annotations to supervise learning
+even when the output is binary. We further assess attribute transfer and
+auxiliary supervision on HF Lung, and external generalization on KAUH.
+Across three seeds with official-test-based checkpoint selection, LSAA
+improves ICBHI Score by 3.39 percentage points with a 2.13-point SPRSound
+decrease relative to the respective single-source models. Further
+comparisons support retaining fine annotations under the evaluated
+training recipe and reveal task-dependent effects of readout design and
+additional supervision.
 \end{abstract}
 
 \begin{keywords}
@@ -69,40 +67,45 @@ respiratory sounds, shared supervision, heterogeneous annotations, acoustic attr
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{Figure/figure1_dataset_characteristics.pdf}
-\caption{Datasets and acoustic characteristics for CHORD.
-(a) Annotation units, native tasks, and study roles; N/C/W denote
-Normal/Crackle/Wheeze and B/D/E denote Bell/Diaphragm/Extended filters.
-(b) Common PCA of log-transformed, standardized spectral centroid,
+\caption{Source labels and acoustic distributions.
+(a) Original label counts in the units and partitions shown.
+HF I/E/D denote inhalation, exhalation, and discontinuous adventitious sounds;
+KAUH retains source sound codes, and B/D/E denote Bell/Diaphragm/Extended
+recording versions.
+(b) PCA of log-transformed, jointly standardized spectral centroid,
 bandwidth, and peak frequency, with equal source weights.
-The plotted groups comprise 126 ICBHI patients, 284 SPRSound train+inter
-patients, 39 HF source-test recording-date proxies, and 112 KAUH patients.
-(c,d) Within-class ICBHI/SPRSound comparisons of signal level and spectral
-centroid, respectively. Points denote source medians; bars show 95\%
-confidence intervals from 1,000 patient bootstraps.
-Descriptors use globally centered 5-s inputs; level is uncalibrated dBFS.
-Spectral measures use 80--2000~Hz Welch power
-(4-kHz analysis copies, 1-s Hann windows, 50\% overlap).}
+Points represent 126 ICBHI patients, 284 SPRSound train+inter patients,
+39 HF source-test recording-date groups, and 112 KAUH patients.
+(c) Source medians by sound-label group, aggregated within recording
+and then patient (recording date for HF).
+HF source-test groups follow observed D/Wheeze annotation combinations,
+with no Normal group; their definition is given in Section~\ref{sec:acoustic_characteristics}.
+KAUH uses 86 patients with compatible labels; Both contains two patients.
+Spectral descriptors use 5-s inputs and globally centered 4-kHz analysis
+copies, with 80--2000~Hz Welch power (1-s Hann windows, 50\% overlap).}
 \label{fig:dataset_characteristics}
 \end{figure*}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{Figure/figure2_method.pdf}
-\caption{\revisiondone\ CHORD: shared attribute prediction, task readouts, and joint
-training. The illustrated waveform is schematic. Parallel A/C/W heads
-supply shared probabilities for readouts and masked supervision; a separate
-projection supplies features for PAFA regularization. The gray dashed
-return denotes training feedback. ICBHI and SPRSound provide core attribute
-supervision and patient groups; the optional term uses HF source-train
-C/W labels. HF source-test and KAUH evaluate fixed models and thresholds,
-with KAUH decoding restricted to compatible labels. Readout rules and
-supervision eligibility follow Sections~\ref{sec:method} and~\ref{sec:protocol}.}
+\caption{LSAA prediction and training paths.
+BEATs tokens of width $D=768$ are mean-pooled and linearly projected to 256 dimensions.
+Parallel heads form shared abnormality (A), Crackle (C), and Wheeze (W)
+probabilities. Task readouts convert these probabilities to dataset-specific
+outputs. A separate attention-based projection $\mathcal G$ supplies
+768-dimensional features for the PAFA patient regularizers.
+ICBHI and SPRSound provide core attribute supervision and patient groups;
+the optional HF Lung term uses only source-train C/W supervision.
+HF source-test and KAUH evaluate fixed models and thresholds.
+The objective and readouts are defined in Section~\ref{sec:method}.}
 \label{fig:method_overview}
 \end{figure*}
 
 \input{Section/1introduction}
 \input{Section/2data}
 \input{Section/3method}
+\input{Section/4tables}
 \input{Section/4evaluation}
 \input{Section/5conclusion}
 \FloatBarrier

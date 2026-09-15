@@ -1,12 +1,11 @@
 \section{Conclusion}
 \label{sec:conclusion}
-\revisiondone\par
-CHORD connects heterogeneous respiratory annotations through shared acoustic
-attributes and dataset-specific readouts. Joint training supports ICBHI and
-SPRSound native tasks with gains and costs relative to single-source models.
-Fine annotations remain useful under the evaluated loss weighting, while
-readout comparisons show that similar C/W discrimination can accompany
-different task accuracy. HF and KAUH extend the assessment beyond the core datasets,
-with mixed effects from added HF supervision. These findings support reusing
-fine acoustic supervision while evaluating task reconstruction and transfer
-separately.
+We presented LSAA, a joint learning framework that connects heterogeneous
+respiratory sound annotations through shared acoustic attributes.
+Task-specific readouts allow one model to support cycle-level four-class
+and event-level binary prediction while retaining fine-grained supervision.
+Our experiments support retaining fine annotations under the evaluated
+training recipe and reveal task-dependent tradeoffs from joint training
+and readout design. Evaluation on HF Lung and KAUH extends this assessment
+beyond the training datasets, showing that additional supervision does not
+uniformly improve transfer.

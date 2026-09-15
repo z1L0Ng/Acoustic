@@ -1,6 +1,24 @@
 # Acoustic Work Plan
 
-## 当前周期：2026-09-13–2026-09-14
+## 当前周期：2026-09-14晚–2026-09-15 01:00 EDT
+
+本轮以9/14最新会议为依据，优先把已有结果组织成连贯、可读的论文。先明确overall论点、baseline定义和Table 1/2各自的takeaway，再整理Section 2/3、段落逻辑、图件与caption；主体稳定后收拢Abstract/Conclusion。23:45 EDT形成可通读稿，约09/15 01:00 EDT收口（芝加哥00:00 CDT）。
+
+当前计划：[9/14夜间工作计划](work_plans/2026-09-14_to_2026-09-15_0100_ET_paper_work_plan_zh.md)；[Notion工作计划](https://app.notion.com/p/3db309efda29817f856ff55a4c82e8e3)。会议：[9/14完整中文记录](meeting_records/2026-09-14_paper_revision_meeting_record_zh.md)；[Notion会议全文](https://app.notion.com/p/3db309efda29813d8044fbe789225846)。Honey与Wit分别校正为Hanlin与Wade；58项讨论及10条总结保留。
+
+最新双写作分工（9/14 20:30 EDT）：线程1“论文写作”（01a08442-92e6-7110-8399-e42eca520ea8）负责Section 1、Section 4、Section 5及Abstract，包括Table 1/2和Evaluation图表；线程2“论文写作二”（01a0a275-3711-73f3-9fec-7dbfd04c1611）负责Section 2、Section 3及对应Figure 1/2和数据/方法图表。两条任务同在main，各改自己负责的章节，保留Section 4已落盘修改后交接给线程1。线程2直接对接论文绘图；main.tex、citation.bib及共享宏仍由线程1唯一实际写入，线程2传递用户已确认的局部图注/引用/全局设置变更。不得整文件回写或覆盖对方章节。
+
+独立reviewer：“论文独立审阅”（01a0a220-f1a7-7973-9778-4a986479c4fb）已创建，独立worktree已就绪，9/14 20:23 EDT状态为idle。它不读取任一写作任务的记忆；只有用户在该任务明确要求review时才开始，一轮结束后回到待命。工作计划时间块、管理消息和训练完成均不触发审稿。本管理回合不执行具体重写或联系合作者。
+
+本轮稿件起点为main提交a4627d6；唯一Overleaf同步目录仍为docs/paper/Overleaf_Sync_final/。后台HF-on按原授权继续，9/14 18:49 EDT最近核对为seed1 epoch23/update7200、尚无完成summary；当前新增seed0和历史seed42已完成。PAFA三seed缺合格权重，不进入今晚关键路径，不新增源域训练。未完成数字不计入三seed汇总。
+
+最新用户规则：DONE与\revisiondone已停用，不添加或恢复任何完成标记；由用户在Overleaf编译，不例行本地编译。Wade/Hanlin的内部read-through由用户安排，不设个人硬截止；本周期未获反馈时由用户和获明确授权的reviewer完成检查。
+
+下方及上一轮文件按历史保留，未完成项目不因换计划被标记完成。
+
+---
+
+## 2026-09-13–2026-09-14 周期记录（历史）
 
 当前执行入口：用户已恢复“论文写作”任务与用户逐章讨论和修订，从Introduction开始，按Introduction→Datasets/Analysis→Method→Evaluation推进。完成本章约定修改并标红DONE后继续下一章。Abstract/Conclusion暂时跳过；需要图件时由写作与论文绘图任务直接协作，写作核对后集成到唯一同步目录。无需管理逐章转发或等待HF训练。
 

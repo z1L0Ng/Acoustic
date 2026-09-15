@@ -1,57 +1,35 @@
 \section{Introduction}
 \label{sec:introduction}
-\revisiondone\par
 
-Listening to breathing sounds offers a simple, non-invasive way to assess
-respiratory health. Identifying abnormal sounds such as crackles and wheezes
-is an important part of this assessment, motivating automated methods that
-can assist their recognition\cite{hsu2021hflung}. Developing these systems
-depends on expert-labeled recordings, which are expensive to obtain at
-scale\cite{zhang2024opera}. Existing respiratory sound datasets provide
-annotated examples collected from different patient populations and
-recording conditions\cite{rocha2019icbhi,zhang2022sprsound}. Using these
-resources together offers an opportunity to make fuller use of the
-supervision already available.
+Automated recognition of crackles and wheezes can reduce the manual effort
+involved in respiratory sound assessment\cite{hsu2021hflung}. However, training
+respiratory sound classifiers requires expert annotations that are costly to obtain at scale\cite{zhang2024opera}. Joint training across
+existing public datasets\cite{rocha2019icbhi,zhang2022sprsound} therefore offers a way to expand supervision without collecting new expert annotations.
+Those datasets' annotations refer to shared acoustic attributes but differ in granularity and prediction targets, so their labels are not directly interchangeable.
 
-Prior work has improved respiratory sound recognition through data
-augmentation and contrastive learning
-\cite{gairola2021respirenet,bae2023patchmix}, training that accounts for
-patient and device variation\cite{kim2024sgscl,jeong2025pafa}, and audio
-pretraining
-\cite{chen2023beats,zhang2024opera,niizumi2025m2dresp,niizumi2025foundationeval}.
-For reusing annotated datasets, SPRSound explores data fusion with merged
-categories\cite{zhang2022sprsound}, while LungMix studies transfer after
-mapping datasets to a common classification target\cite{ge2025lungmix}.
-Multi-breath and PC-MCL encode co-occurring sound categories through
-multi-label supervision within the ICBHI task
-\cite{chua2024multibreath,jeong2026pcmcl}. More general sound-event learning
-supports joint training with heterogeneous and missing
-labels\cite{cornell2024dcase}. However, the respiratory formulations above
-leave open how to jointly use annotations that differ in granularity and
-task definition. ICBHI assigns sound-type labels to breathing cycles,
-whereas SPRSound provides detailed event annotations but evaluates
-normal/abnormal recognition in the task studied here
-\cite{rocha2019icbhi,zhang2022sprsound}. These annotations describe related
-acoustics at different levels and are not directly interchangeable.
-The challenge is to share their acoustic supervision while preserving each
-dataset's original prediction target. This also requires assessing the
-benefits and costs for the original tasks and for transfer, and how these
-outcomes depend on annotation detail and classification design.
+Existing methods include mapping diverse annotations from multiple datasets to a unified prediction target to align task definitions. For instance, fusion experiments in SPRSound merged source categories \cite{zhang2022sprsound}, whereas LungMix mapped the ICBHI, SPRSound, and HF datasets to the same four-class label space used by ICBHI to facilitate single-source transfer \cite{ge2025lungmix}.
+Multi-breath and PC-MCL express sound composition through multilabel supervision, but their training and evaluation remain within
+ICBHI\cite{chua2024multibreath,jeong2026pcmcl}. DCASE supports joint training with class mappings and missing-label masks while retaining dataset-specific evaluation but both datasets share a temporal sound-event detection output
+interface\cite{cornell2024dcase}. 
 
-To address this gap, we propose CHORD (Cross-task Harmonization Of Respiratory
-Datasets), an annotation-aware framework that learns a shared acoustic
-representation and uses attribute predictions to recover each dataset's
-native task outputs. Abnormality, crackle,
-and wheeze provide common supervision targets that encourage the encoder
-to capture the underlying acoustic cues across datasets. ICBHI cycles and
-SPRSound events jointly train this encoder and three parallel attribute
-predictors; each annotation supervises only the attributes it supports.
-Task readouts then map the attribute predictions to the labels required by
-each original task. SPRSound uses abnormality alone for
-normal/abnormal event classification. For ICBHI, a two-level readout first
-predicts whether a cycle is abnormal and, if so, assigns Crackle, Wheeze,
-or Both from the attribute scores. We compare single-source and joint
-training, fine and coarse labels, and alternative task classifiers to assess
-the benefits and costs of shared supervision. HF Lung supports attribute
-evaluation and a separate auxiliary-supervision study, while KAUH provides
-external evaluation\cite{hsu2021hflung,fraiwan2021kauh}.
+In contrast, our respiratory sound analysis task simultaneously performs the four-class respiratory cycle detection from the ICBHI dataset and the binary classification task from the SPRsound dataset; the outputs of these two tasks differ. Restricting supervision to a coarser prediction target can discard finer sound-type information. For example, a SPRSound Wheeze
+annotation identifies a sound type also needed for ICBHI classification, although SPRSound's native binary task requires only a normal/abnormal
+prediction\cite{zhang2022sprsound}. We therefore seek a joint model that learns shared acoustic attributes from available fine annotations while preserving each dataset's native prediction target.
+
+We address this gap with LSAA (Learning Shared Acoustic Attributes), which jointly trains a shared encoder and abnormality, crackle, and wheeze predictors on ICBHI cycles and SPRSound events. Each annotation supervises only the
+attributes it supports, allowing fine sound-type information to guide learning even when the native output is binary. The same model produces both native predictions through task readouts that explicitly map shared attributes to
+task labels. We also use HF Lung's timed labels for auxiliary supervision and attribute evaluation, and reserve KAUH's recording-level labels for external evaluation without target-data adaptation\cite{hsu2021hflung,fraiwan2021kauh}.
+
+Our contributions are twofold:
+\begin{enumerate}
+\setlength{\itemsep}{1pt}
+\setlength{\parsep}{0pt}
+\item We propose LSAA, a joint learning framework that connects heterogeneous
+respiratory sound annotations through shared acoustic attributes, supporting
+cycle-level four-class and event-level binary prediction within one model.
+We further evaluate attribute transfer on HF Lung and KAUH.
+\item We develop task-specific readouts over shared abnormality, crackle,
+and wheeze predictions, enabling fine-grained supervision to support distinct
+native outputs. Comparisons with single-source models and alternative
+readouts characterize the benefits and costs of this design.
+\end{enumerate}
