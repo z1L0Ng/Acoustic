@@ -1,0 +1,50 @@
+{
+  "status": "HISTORICAL_SUPERSEDED_DO_NOT_RUN",
+  "superseded_by": "dcase_joint_union_run.json",
+  "method": "DCASE-inspired CRNN (ICBHI-only, 5 s)",
+  "seeds": [0, 1, 42],
+  "sample_rate": 16000,
+  "input_seconds": 5.0,
+  "batch_size": 32,
+  "frame_extract_batch_size": 8,
+  "num_workers": 4,
+  "epochs": 50,
+  "early_stopping": true,
+  "run_full_epochs": false,
+  "early_stopping_patience": 10,
+  "early_stopping_min_delta": 0.0,
+  "optimizer": "Adam",
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "schedule": "cosine per epoch, no warmup",
+  "specaugment": false,
+  "specaugment_basis": "official pretrained DCASE config sets frequency/time SpecAugment probabilities to zero; this source-only supervised adaptation adds no augmentation",
+  "logmel": {
+    "n_mels": 128,
+    "n_fft": 2048,
+    "win_length": 2048,
+    "hop_length": 256,
+    "f_min": 0,
+    "f_max": 8000,
+    "normalization": "instance minmax after amplitude-to-dB clamp [-50,80]"
+  },
+  "model": {
+    "cnn_channels": [16, 32, 64, 128, 128, 128, 128],
+    "cnn_pooling": [[2,2],[2,2],[1,2],[1,2],[1,2],[1,2],[1,2]],
+    "fusion_dim": 128,
+    "bigru_hidden": 192,
+    "dropout": 0.2,
+    "class_order": ["normal", "crackle", "wheeze", "both"]
+  },
+  "selection": "strict maximum epochwise ICBHI official-test Score; exact tie keeps earlier epoch",
+  "evidence": "test-selected DCASE-inspired ICBHI source diagnostic",
+  "fixed_transfer": {
+    "sprsound": "abnormal probability 1-p_Normal; threshold 0.5",
+    "hf": "per-window p_Wheeze+p_Both; maximum over three fixed 5-s windows; CAS AUROC",
+    "kauh": "per-view 1-p_Normal; mean B/D/E probability; threshold 0.5 at patient level"
+  },
+  "source_repo": ".cache/multidataset_pipeline/assets/P2/source/repo",
+  "initial_checkpoint": ".cache/multidataset_pipeline/assets/P2/checkpoints/BEATs_iter3_plus_AS2M.pt",
+  "frame_cache_root": ".cache/frozen_method_baselines/dcase_icbhi5s_frames",
+  "output_root": "result/reproduce/source_transfer_baselines/DCASE_CRNN_ICBHI5s"
+}

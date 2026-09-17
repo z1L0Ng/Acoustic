@@ -1,0 +1,99 @@
+{
+  "status": "DESIGN_READY_SOURCE_TRAINING_NOT_AUTHORIZED",
+  "method_id": "pcmcl_icbhi5s_source_trained_fixed_transfer",
+  "evidence_label": "icbhi_official_test_selected_source_model_with_fixed_external_readouts",
+  "seeds": [0, 1, 42],
+  "seed_meaning": "three independent full ICBHI source trainings; encoder, N/C/W head, patient head, pair sampling and batch order all vary",
+  "assets": {
+    "generic_initialization": ".cache/multidataset_pipeline/assets/P2/checkpoints/BEATs_iter3_plus_AS2M.pt",
+    "generic_initialization_present": true,
+    "trained_pcmcl_checkpoints": null,
+    "trained_checkpoint_status": "no local PC-MCL-trained source checkpoint found",
+    "official_source": "https://github.com/wa976/PC-MCL",
+    "official_source_local_copy": null
+  },
+  "source_training": {
+    "dataset": "ICBHI 2017 only",
+    "split": "official recording split: official train for optimization, official test for epochwise source selection",
+    "sample_rate": 16000,
+    "train_pair_input": "each constituent cycle repeat-padded or center-cropped to 2.5 s, then waveform-concatenated to exactly 5 s",
+    "single_unit_input": "repeat-pad or center-crop the single cycle to exactly 5 s",
+    "initialization": "generic BEATs iter3+ AS2M",
+    "encoder_trainable": true,
+    "trainable_modules": [
+      "entire BEATs encoder and frontend",
+      "Linear(768,3) Normal/Crackle/Wheeze classifier",
+      "Linear(768,2) same/different-patient classifier"
+    ],
+    "main_target": "additive logical-OR Normal/Crackle/Wheeze labels",
+    "patient_target": "same patient positive; different patient with matched pathology profile hard negative",
+    "loss": "BCEWithLogits(N/C/W) + 0.1 * CE(patient matching)",
+    "threshold": 0.5,
+    "mixing_probability": 0.5,
+    "patient_sample_probability": 0.3,
+    "batch_size": 32,
+    "optimizer_candidate_from_official_code": "Adam",
+    "learning_rate_candidate_from_official_code": 0.001,
+    "weight_decay_candidate_from_official_code": 0.0001,
+    "original_epochs_reference": 400,
+    "epochs": 50,
+    "early_stopping": "strict ICBHI source Score improvement; patience 10; min_delta 0; tie counts as no improvement",
+    "lr_schedule": "step decay at epochs 15 and 20 by factor 0.1, preserving the original 120/160 relative positions",
+    "specaugment_candidate_from_official_code": "enabled by default for BEATs unless --nospec",
+    "selection": "strict maximum ICBHI official-test Score with source-code sensitivity > 0.1 gate; exact tie keeps earlier epoch",
+    "selection_boundary": "test-selected source reproduction-style diagnostic, not clean validation-only evidence"
+  },
+  "source_code_delta": {
+    "paper_input": "10 s total, 5 s per constituent",
+    "user_input": "5 s total, 2.5 s per constituent",
+    "official_cli_default": "--desired_length 8",
+    "required_patch": "official --desired_length 5 only normalizes the final concatenation; use build_pcmcl_pair_5s so each constituent is independently normalized to 2.5 s before concatenation",
+    "loss_patch": "replace the source code convex ssl_weight mixture with exact L_main + 0.1 L_patient"
+  },
+  "post_selection_freeze": "freeze encoder, N/C/W classifier, patient classifier and threshold; no target adaptation or readout selection",
+  "fixed_transfer": {
+    "sprsound": {
+      "unit": "official inter BioCAS event, prepared as one 5-s unit",
+      "readout": "N/C/W probabilities -> fixed 0.5 C/W bits -> ICBHI flat4 -> Normal versus any abnormal",
+      "metric": "official Task1-1 Score",
+      "target_use": "terminal scoring only"
+    },
+    "hf": {
+      "unit": "three fixed 5-s windows per source-test recording",
+      "readout": "maximum-window p_W",
+      "target": "Wheeze/Rhonchi/Stridor positive and D-only negative in the fixed eligible pool",
+      "metric": "CAS AUROC",
+      "boundary": "Wheeze-head ranking proxy, not a complete CAS detector"
+    },
+    "kauh": {
+      "unit": "B/D/E recording views followed by P-number aggregation",
+      "view_score": "max(p_C,p_W)",
+      "patient_score": "mean of the three B/D/E view scores",
+      "decision": "patient_score >= 0.5 is abnormal",
+      "support": "86 patients with compatible source labels; Crep, Bronchial and I C B excluded",
+      "metric": "patient balanced accuracy"
+    }
+  },
+  "reporting": {
+    "source": ["config", "train log", "epochwise source-test selection log", "best and last model", "ICBHI N/C/W probabilities", "flat4 predictions and metrics"],
+    "transfer": ["stable target ID", "N/C/W logits and probabilities", "fixed readout prediction or ranking score", "raw target loaded only for terminal scoring", "support and confusion where applicable"],
+    "aggregate": "mean and sample standard deviation over three independent source-training seeds",
+    "preset_minimum_success_metric": false
+  },
+  "budget": {
+    "training_cache": "none; encoder updates require waveform-to-model training",
+    "official_train_cycles": 4142,
+    "approximate_examples_per_epoch": "about 1.8 times source cycles from original, mixed and patient samples",
+    "approximate_updates_per_epoch": 232,
+    "approximate_max_updates_per_seed": 11600,
+    "checkpoint_storage": "about one BEATs-sized model state per best/last artifact; optimizer resume state is materially larger",
+    "runtime": "not measured; no profile or forward was run"
+  },
+  "comparison_boundary": {
+    "paper_10s": "published 10-s PC-MCL results cannot substitute for this 5-s source model",
+    "main_comparator": "LSAA main model trained jointly on ICBHI and SPRSound",
+    "source_difference": "ICBHI-only PC-MCL versus joint-source LSAA is the intended system comparison and must be disclosed, not removed by adding matching experiments",
+    "existing_icbhi_only_lsaa": "remains only in the pre-existing ablation table; it is not the main comparator, a required control, or a new task for this PC-MCL baseline",
+    "transfer_interpretation": "target differences may reflect representation, label coverage, input adaptation and fixed readout; they are not attributable to N/C/W alone"
+  }
+}

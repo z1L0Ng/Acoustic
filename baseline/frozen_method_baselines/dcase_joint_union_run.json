@@ -1,0 +1,76 @@
+{
+  "method": "DCASE-inspired Native-Class-Union CRNN (ICBHI+SPRSound, 5 s)",
+  "status": "CODE_READY_NOT_RUN",
+  "seeds": [0, 1, 42],
+  "sample_rate": 16000,
+  "input_seconds": 5.0,
+  "batch_size": 32,
+  "batches_per_source_per_epoch": 163,
+  "updates_per_epoch": 326,
+  "frame_extract_batch_size": 8,
+  "num_workers": 4,
+  "epochs": 50,
+  "early_stopping": true,
+  "run_full_epochs": false,
+  "early_stopping_patience": 10,
+  "early_stopping_min_delta": 0.0,
+  "optimizer": "Adam",
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "schedule": "cosine per epoch, no warmup, T_max=50",
+  "specaugment": false,
+  "label_order": [
+    "N_ICBHI",
+    "N_SPR",
+    "Crackle",
+    "Wheeze",
+    "Both",
+    "FineCrackle",
+    "CoarseCrackle",
+    "Rhonchi",
+    "Stridor"
+  ],
+  "alias_policy": {
+    "SPRSound Fine Crackle": "positive FineCrackle and positive Crackle",
+    "SPRSound Coarse Crackle": "positive CoarseCrackle and positive Crackle",
+    "Wheeze": "shared exact native class",
+    "Wheeze+Crackle": "shared Both class",
+    "Normal": "dataset-qualified N_ICBHI and N_SPR remain independent",
+    "Rhonchi/Stridor": "Wheeze and Both are observed negative as mutually exclusive native classes; Crackle alias and N_ICBHI remain unknown"
+  },
+  "selection": {
+    "monitor": "0.5*ICBHI validation native4 macro multilabel F1@0.5 + 0.5*SPRSound validation native7 macro multilabel F1@0.5",
+    "threshold": 0.5,
+    "zero_division": 0,
+    "strict_improvement": true,
+    "tie": "earlier checkpoint retained and no-improvement count increments",
+    "target_exclusion": "HF, KAUH, ICBHI official test and SPRSound inter excluded"
+  },
+  "source_groups": "baseline/frozen_method_baselines/dcase_joint_source_groups.json",
+  "logmel": {
+    "n_mels": 128,
+    "n_fft": 2048,
+    "win_length": 2048,
+    "hop_length": 256,
+    "f_min": 0,
+    "f_max": 8000,
+    "normalization": "instance minmax after amplitude-to-dB clamp [-50,80]"
+  },
+  "model": {
+    "cnn_channels": [16, 32, 64, 128, 128, 128, 128],
+    "cnn_pooling": [[2,2],[2,2],[1,2],[1,2],[1,2],[1,2],[1,2]],
+    "fusion_dim": 128,
+    "bigru_hidden": 192,
+    "dropout": 0.2
+  },
+  "fixed_readouts": {
+    "icbhi": "argmax native scores [N_ICBHI,Crackle,Wheeze,Both]",
+    "sprsound": "argmax native scores [N_SPR,Rhonchi,Wheeze,Stridor,CoarseCrackle,FineCrackle,Both], then N_SPR vs adventitious",
+    "hf": "per-window max(Wheeze,Both,Rhonchi,Stridor), then maximum across three fixed 5-s windows",
+    "kauh": "mean B/D/E score vectors [N_ICBHI,Crackle,Wheeze,Both], then argmax and normal/abnormal regrouping"
+  },
+  "source_repo": ".cache/multidataset_pipeline/assets/P2/source/repo",
+  "initial_checkpoint": ".cache/multidataset_pipeline/assets/P2/checkpoints/BEATs_iter3_plus_AS2M.pt",
+  "frame_cache_root": ".cache/frozen_method_baselines/dcase_joint_union_frames",
+  "output_root": "result/reproduce/source_transfer_baselines/DCASE_Joint_NativeUnion_5s"
+}
