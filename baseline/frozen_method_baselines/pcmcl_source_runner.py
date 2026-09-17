@@ -19,6 +19,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
+from .pcmcl_numerics import backward_and_step, nonfinite_training_issue, require_finite
 from .pcmcl_source_transfer import (
     NCW_ORDER,
     PCMCLSourceHeads,
@@ -244,6 +245,10 @@ def _predict_ncw(
     with torch.no_grad():
         for waveform, target, sample_ids in loader:
             output = heads(_features(encoder, waveform.to(device), training=False))
+            require_finite(
+                output["pathology_logits"],
+                f"pathology logits during inference, sample_ids={list(sample_ids)}",
+            )
             probabilities.append(torch.sigmoid(output["pathology_logits"]).cpu().numpy())
             targets.append(target.numpy())
             ids.extend(sample_ids)
@@ -372,7 +377,8 @@ def train_source(
         encoder.train()
         heads.train()
         losses = []
-        for waveform, pathology_target, patient_target, patient_eligible, _ in train_loader:
+        for batch_index, batch in enumerate(train_loader, start=1):
+            waveform, pathology_target, patient_target, patient_eligible, sample_ids = batch
             waveform = waveform.to(device)
             output = heads(_features(encoder, waveform, training=True))
             loss = pcmcl_source_loss(
@@ -383,9 +389,11 @@ def train_source(
                 patient_eligibility=patient_eligible.to(device),
                 patient_weight=float(config["patient_loss_weight"]),
             )
-            optimizer.zero_grad(set_to_none=True)
-            loss["total"].backward()
-            optimizer.step()
+            backward_and_step(
+                loss["total"],
+                optimizer,
+                f"seed={seed}, epoch={epoch}, batch={batch_index}, sample_ids={list(sample_ids)}",
+            )
             losses.append(float(loss["total"].detach()))
         source = _predict_ncw(encoder, heads, test_loader, device)
         prediction = icbhi_flat4_from_ncw(
@@ -633,18 +641,34 @@ def run(repo_root: Path, config_path: Path, seed: int, device: str, resume: Path
     config = json.loads(config_path.read_text())
     config["seed"] = seed
     result_dir = repo_root / str(config["output_root"]) / f"seed_{seed}"
+    if resume is not None:
+        issue = nonfinite_training_issue(result_dir)
+        if issue is not None:
+            raise FloatingPointError(f"refusing to resume {result_dir}: {issue}")
     prepare_run_directory(result_dir, config, resume)
-    encoder, heads, selection = train_source(
-        repo_root, config, seed, torch.device(device), result_dir, resume=resume
-    )
-    metrics = evaluate_fixed_transfer(
-        repo_root,
-        result_dir,
-        encoder,
-        heads,
-        torch.device(device),
-        int(config["batch_size"]),
-    )
+    try:
+        encoder, heads, selection = train_source(
+            repo_root, config, seed, torch.device(device), result_dir, resume=resume
+        )
+        metrics = evaluate_fixed_transfer(
+            repo_root,
+            result_dir,
+            encoder,
+            heads,
+            torch.device(device),
+            int(config["batch_size"]),
+        )
+    except FloatingPointError as error:
+        write_json(
+            result_dir / "run_summary.json",
+            {
+                "status": "failed_nonfinite",
+                "method": config["method"],
+                "seed": seed,
+                "error": str(error),
+            },
+        )
+        raise
     summary = {
         "status": "complete_test_selected_source_transfer",
         "method": config["method"],

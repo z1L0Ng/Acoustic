@@ -1,0 +1,118 @@
+{
+  "alias_policy": {
+    "Normal": "dataset-qualified N_ICBHI and N_SPR remain independent",
+    "Rhonchi/Stridor": "Wheeze and Both are observed negative as mutually exclusive native classes; Crackle alias and N_ICBHI remain unknown",
+    "SPRSound Coarse Crackle": "positive CoarseCrackle and positive Crackle",
+    "SPRSound Fine Crackle": "positive FineCrackle and positive Crackle",
+    "Wheeze": "shared exact native class",
+    "Wheeze+Crackle": "shared Both class"
+  },
+  "batch_size": 32,
+  "batches_per_source_per_epoch": 163,
+  "early_stopping": true,
+  "early_stopping_min_delta": 0.0,
+  "early_stopping_patience": 10,
+  "epochs": 50,
+  "fixed_readouts": {
+    "hf": "per-window max(Wheeze,Both,Rhonchi,Stridor), then maximum across three fixed 5-s windows",
+    "icbhi": "argmax native scores [N_ICBHI,Crackle,Wheeze,Both]",
+    "kauh": "mean B/D/E score vectors [N_ICBHI,Crackle,Wheeze,Both], then argmax and normal/abnormal regrouping",
+    "sprsound": "argmax native scores [N_SPR,Rhonchi,Wheeze,Stridor,CoarseCrackle,FineCrackle,Both], then N_SPR vs adventitious"
+  },
+  "frame_cache_root": ".cache/frozen_method_baselines/dcase_joint_union_frames",
+  "frame_extract_batch_size": 8,
+  "initial_checkpoint": ".cache/multidataset_pipeline/assets/P2/checkpoints/BEATs_iter3_plus_AS2M.pt",
+  "input_seconds": 5.0,
+  "label_order": [
+    "N_ICBHI",
+    "N_SPR",
+    "Crackle",
+    "Wheeze",
+    "Both",
+    "FineCrackle",
+    "CoarseCrackle",
+    "Rhonchi",
+    "Stridor"
+  ],
+  "learning_rate": 0.001,
+  "logmel": {
+    "f_max": 8000,
+    "f_min": 0,
+    "hop_length": 256,
+    "n_fft": 2048,
+    "n_mels": 128,
+    "normalization": "instance minmax after amplitude-to-dB clamp [-50,80]",
+    "win_length": 2048
+  },
+  "method": "DCASE-inspired Native-Class-Union CRNN (ICBHI+SPRSound, 5 s)",
+  "model": {
+    "bigru_hidden": 192,
+    "cnn_channels": [
+      16,
+      32,
+      64,
+      128,
+      128,
+      128,
+      128
+    ],
+    "cnn_pooling": [
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        2
+      ]
+    ],
+    "dropout": 0.2,
+    "fusion_dim": 128
+  },
+  "num_workers": 4,
+  "optimizer": "Adam",
+  "output_root": "result/reproduce/source_transfer_baselines/DCASE_Joint_NativeUnion_5s",
+  "run_full_epochs": false,
+  "sample_rate": 16000,
+  "schedule": "cosine per epoch, no warmup, T_max=50",
+  "seed": 42,
+  "seeds": [
+    0,
+    1,
+    42
+  ],
+  "selection": {
+    "monitor": "0.5*ICBHI validation native4 macro multilabel F1@0.5 + 0.5*SPRSound validation native7 macro multilabel F1@0.5",
+    "strict_improvement": true,
+    "target_exclusion": "HF, KAUH, ICBHI official test and SPRSound inter excluded",
+    "threshold": 0.5,
+    "tie": "earlier checkpoint retained and no-improvement count increments",
+    "zero_division": 0
+  },
+  "source_groups": "baseline/frozen_method_baselines/dcase_joint_source_groups.json",
+  "source_repo": ".cache/multidataset_pipeline/assets/P2/source/repo",
+  "specaugment": false,
+  "status": "CODE_READY_NOT_RUN",
+  "updates_per_epoch": 326,
+  "weight_decay": 0.0001
+}

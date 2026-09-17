@@ -1,0 +1,88 @@
+{
+  "hf": {
+    "cas_auroc": 0.8821094165269657,
+    "eligible_recordings": 957,
+    "negative": 296,
+    "positive": 661,
+    "score": "max window max(Wheeze,Both,Rhonchi,Stridor)"
+  },
+  "icbhi": {
+    "confusion": [
+      [
+        1121,
+        155,
+        274,
+        29
+      ],
+      [
+        347,
+        261,
+        23,
+        18
+      ],
+      [
+        136,
+        30,
+        147,
+        72
+      ],
+      [
+        48,
+        19,
+        30,
+        46
+      ]
+    ],
+    "icbhi_score": 0.5478347125047687,
+    "macro_f1": 0.4508610607063908,
+    "per_class_recall": {
+      "both": 0.32167832167832167,
+      "crackle": 0.40215716486902925,
+      "normal": 0.7099430018999366,
+      "wheeze": 0.38181818181818183
+    },
+    "rows": 2756,
+    "sensitivity": 0.3857264231096007,
+    "specificity": 0.7099430018999366,
+    "uar": 0.45389916756636733
+  },
+  "kauh": {
+    "abnormal_recall": 0.7254901960784313,
+    "balanced_accuracy": 0.77703081232493,
+    "confusion": [
+      [
+        29,
+        6
+      ],
+      [
+        14,
+        37
+      ]
+    ],
+    "eligible_patients": 86,
+    "filter_view_consistency": 0.4186046511627907,
+    "normal_recall": 0.8285714285714286,
+    "rows": 86,
+    "score": "mean B/D/E native4 scores, argmax, regroup"
+  },
+  "sprsound": {
+    "average_score": 0.910664672730868,
+    "confusion": [
+      [
+        913,
+        127
+      ],
+      [
+        22,
+        367
+      ]
+    ],
+    "harmonic_score": 0.9094847300013437,
+    "macro_f1": 0.877907020084006,
+    "official_score": 0.9100747013661059,
+    "rows": 1429,
+    "sensitivity": 0.9434447300771208,
+    "specificity": 0.8778846153846154,
+    "uar": 0.910664672730868
+  }
+}

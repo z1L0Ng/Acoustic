@@ -6,7 +6,7 @@
 
 当前计划：[本地Work Plan](work_plans/2026-09-15_to_2026-09-24_baseline_extension_plan_zh.md)；[Notion Work Plan](https://app.notion.com/p/3dc309efda29810b84c1c7fd3fd21ad8)。学生材料：[PAFA交接清单](student_tasks/2026-09-16_hanlin_pafa_handoff_zh.md)及[已有baseline复跑说明](student_tasks/2026-09-16_hanlin_existing_baseline_rerun_zh.md)。原先Hanlin负责PC-MCL/DCASE、以及项目侧负责全部新增baseline的分工均被本轮替代。
 
-当前进度（9/17）：DCASE三个seed及四列评测已由服务器确认完成。PC-MCL旧seed0在10轮全Normal、无合格best后早停；用户现已批准完整400轮/seed，关闭patience早停、恢复120/160 LR节点，其他科学设置及Se资格保持。三个seed使用新目录从预训练初始化，旧资产保留。按CUDA实测1.243分钟/轮，两卡分两批预计训练约16.6小时，含评测和余量17–19小时。Acoustic服务器任务负责正式执行与每15分钟进度报告，管理不持续SSH轮询；PAFA/BEATs历史队列不恢复。先完成结果再讨论论文整合。
+当前进度（9/17）：DCASE三seed成功结果已完整拉回本地（47个原始文件及成功运行日志，含6个checkpoint），轻量原始指标/预测/日志与汇总位于[结果归档](result_exports/2026-09-17_dcase_joint_native_union/README.md)。用户明确不拉PC-MCL失败文件，本次新下载副本已清理，服务器原件保留。PC-MCL全部进程和heartbeat继续暂停；此前NaN修复及7项检查与当前文档一并纳入这次Git快照，随后由“模型设计”任务接管后续代码修改。未改科学超参数、未启动重跑，不恢复历史PAFA/BEATs队列。详见[核查与修复说明](baseline_design/2026-09-17_pcmcl_numerical_failure_and_source_audit_zh.md)。
 
 时间边界继续按纽约9/24 07:00规划：9/16–17完成设计与原协议核对，随后安排项目侧实现和正式run；9/21–22核验新旧结果，9/23回填、独立审阅及四页检查，24日早晨前保留提交缓冲。原Hanlin新增六run/168小时预算已取消；新冻结方案和已有baseline复跑分别核算。
 

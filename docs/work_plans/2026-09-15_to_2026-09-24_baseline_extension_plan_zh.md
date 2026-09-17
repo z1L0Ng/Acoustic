@@ -2,11 +2,11 @@
 
 Notion：[当前工作计划](https://app.notion.com/p/3dc309efda29810b84c1c7fd3fd21ad8)。
 
-状态（9/17）：服务器已确认DCASE三个seed及四列终点评测全部完成。PC-MCL旧seed0在10轮全Normal、无合格best后早停；用户现已批准每seed完整400轮，关闭patience早停并恢复120/160学习率下降节点。三个seed在新目录从预训练初始化运行，旧尝试完整保留。当前先完成run，再讨论写入论文。
+状态（9/17更新）：DCASE三个seed及四列终点评测完整，成功资产已拉回本地；只将DCASE轻量指标/预测/日志与汇总加入Git，完整checkpoint留本地和服务器。按用户修正，不保留本次PC-MCL失败文件的本地导入副本。当前先提交/推送这些结果与既有代码文档快照，再由“模型设计”接管PC-MCL代码整改。全部训练和heartbeat继续暂停，没有有效PC-MCL三seed基线，不能据此断言作者方法不可复现。
 
 ## 1. 本周期目标与责任
 
-当前优先级：完成PC-MCL三seed、核验DCASE完整结果，再讨论论文整合。Acoustic服务器任务在imec canonical main执行并每15分钟汇报当前最佳进度；管理不持续SSH监视。用户已批准最多两张GPU并行，DCASE完成后计划GPU0运行PC-MCL seed0→42、GPU2运行seed1。启动时复查占用，历史PAFA/BEATs队列不恢复。
+当前优先级：保留DCASE完整结果，核查PC-MCL作者配方与5-s适配差异并确认后续方案。PC-MCL队列和监控均已停止，不自动重启。核查与修复见`docs/baseline_design/2026-09-17_pcmcl_numerical_failure_and_source_audit_zh.md`。历史PAFA/BEATs队列不恢复。
 
 - 项目侧：按已批准方案完成三seed，核验四列结果，再与用户讨论论文整合。
 - 模型设计：完成当前方案、数据与标签接口、训练/选模/恢复、固定评测、三seed队列、汇总和运行说明；在main提交相关代码及设计文档，不推送，不混入并行稿件或管理文件。
@@ -86,9 +86,9 @@ HF的DCASE分数显式覆盖R/S，PC-MCL和LSAA现有分数是Wheeze proxy；该
 
 ## 5. 代码、Git与预算交付
 
-当前状态：DCASE COMPLETE 3/3；PC-MCL 400-EPOCH CONFIGURATION APPROVED。主实现及仓库快照均已push；DCASE修复`6166947`后复用原seed0 checkpoint完成评测并接续seed1/42。PC-MCL旧尝试无eligible best，400轮实验使用新结果目录。
+当前状态：DCASE COMPLETE 3/3 / IMPORTED；PC-MCL NUMERICAL FAILURE / STOPPED。DCASE本地完整副本在`result/reproduce/source_transfer_baselines/DCASE_Joint_NativeUnion_5s/`，Git结果包在`docs/result_exports/2026-09-17_dcase_joint_native_union/`。此前NaN处理与源码核查将随本次资产快照保存；后续代码由“模型设计”在main完成，不能将公开默认参数直接当成产生论文结果的完整命令。
 
-服务器CUDA实测PC-MCL前10轮耗时12.418分钟、稳态约1.243分钟/轮。fresh 400轮约497分钟/seed；三seed串行约24.9小时，两卡分两批约16.6小时训练及每轮源评测。含terminal评测和余量按17–19小时安排。GPU0/2在9/17 01:52 CDT均空闲，DCASE已释放GPU2；绝对完成时间按正式启动时间加上述区间更新，不保证400轮必然获得合格best。
+原17–19小时完成估计已失效：三个seed均出现NaN。seed0/1虽执行到400轮并生成summary，不能据此认定有效训练；seed42在40轮中断。新训练时间须在配方确认后重估，不能沿用旧队列完成承诺。
 
 文档收尾已完成：`docs/baseline_design/2026-09-16_source_baseline_implementation_brief_zh.md`的标题及顶部说明已由普通追加commit `3ece467`保存。管理核对该提交仅修改此一个文件，暂存区为空。此前的文档提交审批阻塞已解除，无需再确认；没有amend或改写已有历史。
 
@@ -142,7 +142,11 @@ HF的DCASE分数显式覆盖R/S，PC-MCL和LSAA现有分数是Wheeze proxy；该
 - [x] 保存并推送本地仓库、同步imec main；收到两卡正式执行授权。
 - [x] 修复DCASE label-free终点评测错误，服务器确认三个seed四列全部完成。
 - [x] 明确PC-MCL每seed400轮、关闭patience早停、恢复120/160节点并保留旧失败记录。
-- [ ] 完成PC-MCL新目录三个seed与四列评测，核验两方法mean/sample SD。
+- [x] 用户批准中断PC-MCL，核验进程/GPU释放并暂停原heartbeat；全部产物保留。
+- [x] 完成PC-MCL源代码差异核查、NaN终止/预测/旧结果排除修复及7项直接检查。
+- [x] 仅导入成功DCASE的47个原始文件及成功运行日志，核对路径/大小与三seed有限训练记录；清理本次PC-MCL导入副本，服务器原件保留。
+- [ ] 完成DCASE结果与当前工作区Git快照推送后，将后续代码整改交给“模型设计”。
+- [ ] 明确下一轮PC-MCL配方、是否先完成一个正式seed及启动授权；当前不重跑、不改科学超参数。
 - [ ] 明确Hanlin PAFA具体recipe/seed含义并核验PAFA及已有五组复跑产物。
 - [ ] 根据实际结果更新Table1、讨论、Abstract/Conclusion和最终稿。
 

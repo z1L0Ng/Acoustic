@@ -1,7 +1,7 @@
 """Pure interfaces for the proposed 5-s PC-MCL source-transfer protocol.
 
-No function in this module loads a model or dataset.  The source-training
-runner remains intentionally absent until execution is separately authorized.
+No function in this module loads a model or dataset. Training and inference
+require separate authorization through the source runner.
 """
 
 from __future__ import annotations
@@ -11,6 +11,8 @@ import math
 import torch
 from torch import nn
 from torch.nn import functional as F
+
+from .pcmcl_numerics import require_finite
 
 
 SAMPLE_RATE = 16_000
@@ -113,6 +115,7 @@ def icbhi_flat4_from_ncw(
 ) -> torch.Tensor:
     """Original fixed C/W-bit conversion: Normal, Crackle, Wheeze, Both."""
 
+    require_finite(probabilities, "N/C/W probabilities before ICBHI decoding")
     crackle = probabilities[..., 1] >= threshold
     wheeze = probabilities[..., 2] >= threshold
     output = torch.zeros_like(crackle, dtype=torch.long)
@@ -133,6 +136,7 @@ def spr_binary_from_ncw(
 def hf_maximum_window_p_w(window_probabilities: torch.Tensor) -> torch.Tensor:
     """Current CAS ranking proxy: maximum p_W over the three fixed windows."""
 
+    require_finite(window_probabilities, "N/C/W probabilities before HF aggregation")
     return window_probabilities[..., 2].max(dim=1).values
 
 
@@ -141,6 +145,7 @@ def kauh_patient_from_ncw_views(
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Average fixed-source abnormal scores across B/D/E, then threshold once."""
 
+    require_finite(view_probabilities, "N/C/W probabilities before KAUH aggregation")
     view_abnormal = view_probabilities[..., 1:3].max(dim=-1).values
     patient_probability = view_abnormal.mean(dim=-1)
     return patient_probability, (patient_probability >= threshold).long()

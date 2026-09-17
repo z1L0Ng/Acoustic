@@ -1,0 +1,748 @@
+{
+  "status": "complete_joint_native_union",
+  "method": "DCASE-inspired Native-Class-Union CRNN (ICBHI+SPRSound, 5 s)",
+  "seed": 0,
+  "source_split": {
+    "subtrain": {
+      "icbhi": {
+        "units": 3636,
+        "patients": 63,
+        "support": {
+          "both": 262,
+          "crackle": 1137,
+          "normal": 1825,
+          "wheeze": 412
+        },
+        "official_train_only": true
+      },
+      "sprsound": {
+        "units": 5219,
+        "patients": 194,
+        "support": {
+          "Coarse Crackle": 46,
+          "Fine Crackle": 593,
+          "Normal": 4114,
+          "Rhonchi": 34,
+          "Stridor": 15,
+          "Wheeze": 396,
+          "Wheeze+Crackle": 21
+        },
+        "official_train_only": true
+      }
+    },
+    "validation": {
+      "icbhi": {
+        "units": 506,
+        "patients": 16,
+        "support": {
+          "both": 101,
+          "crackle": 78,
+          "normal": 238,
+          "wheeze": 89
+        },
+        "official_train_only": true
+      },
+      "sprsound": {
+        "units": 1437,
+        "patients": 49,
+        "support": {
+          "Coarse Crackle": 3,
+          "Fine Crackle": 319,
+          "Normal": 1045,
+          "Rhonchi": 5,
+          "Wheeze": 56,
+          "Wheeze+Crackle": 9
+        },
+        "official_train_only": true
+      }
+    }
+  },
+  "selection": {
+    "selected_epoch": 15,
+    "selected_score": 0.48238046102567655,
+    "completed_epochs": 25,
+    "max_epochs": 50,
+    "stopped_early": true,
+    "stop_reason": "patience_exhausted",
+    "no_improvement_epochs": 10,
+    "elapsed_minutes": 0.0002961659183104833
+  },
+  "metrics": {
+    "icbhi": {
+      "rows": 2756,
+      "confusion": [
+        [
+          989,
+          257,
+          322,
+          11
+        ],
+        [
+          232,
+          387,
+          24,
+          6
+        ],
+        [
+          129,
+          54,
+          143,
+          59
+        ],
+        [
+          44,
+          36,
+          25,
+          38
+        ]
+      ],
+      "per_class_recall": {
+        "normal": 0.6263457884737176,
+        "crackle": 0.5963020030816641,
+        "wheeze": 0.37142857142857144,
+        "both": 0.26573426573426573
+      },
+      "specificity": 0.6263457884737176,
+      "sensitivity": 0.4825828377230246,
+      "icbhi_score": 0.5544643130983711,
+      "macro_f1": 0.4597063135197844,
+      "uar": 0.4649526571795547
+    },
+    "sprsound": {
+      "rows": 1429,
+      "confusion": [
+        [
+          933,
+          107
+        ],
+        [
+          26,
+          363
+        ]
+      ],
+      "specificity": 0.8971153846153846,
+      "sensitivity": 0.9331619537275064,
+      "average_score": 0.9151386691714456,
+      "harmonic_score": 0.9147837078993108,
+      "official_score": 0.9149611885353782,
+      "macro_f1": 0.8893177671489993,
+      "uar": 0.9151386691714456
+    },
+    "hf": {
+      "eligible_recordings": 957,
+      "positive": 661,
+      "negative": 296,
+      "cas_auroc": 0.7873154924970356,
+      "score": "max window max(Wheeze,Both,Rhonchi,Stridor)"
+    },
+    "kauh": {
+      "rows": 86,
+      "confusion": [
+        [
+          29,
+          6
+        ],
+        [
+          10,
+          41
+        ]
+      ],
+      "balanced_accuracy": 0.8162464985994398,
+      "normal_recall": 0.8285714285714286,
+      "abnormal_recall": 0.803921568627451,
+      "eligible_patients": 86,
+      "filter_view_consistency": 0.37209302325581395,
+      "score": "mean B/D/E native4 scores, argmax, regroup"
+    }
+  },
+  "hf_kauh_training": false
+}
+{
+  "status": "complete_joint_native_union",
+  "method": "DCASE-inspired Native-Class-Union CRNN (ICBHI+SPRSound, 5 s)",
+  "seed": 1,
+  "source_split": {
+    "subtrain": {
+      "icbhi": {
+        "units": 2880,
+        "patients": 63,
+        "support": {
+          "both": 237,
+          "crackle": 677,
+          "normal": 1557,
+          "wheeze": 409
+        },
+        "official_train_only": true
+      },
+      "sprsound": {
+        "units": 5219,
+        "patients": 194,
+        "support": {
+          "Coarse Crackle": 46,
+          "Fine Crackle": 593,
+          "Normal": 4114,
+          "Rhonchi": 34,
+          "Stridor": 15,
+          "Wheeze": 396,
+          "Wheeze+Crackle": 21
+        },
+        "official_train_only": true
+      }
+    },
+    "validation": {
+      "icbhi": {
+        "units": 1262,
+        "patients": 16,
+        "support": {
+          "both": 126,
+          "crackle": 538,
+          "normal": 506,
+          "wheeze": 92
+        },
+        "official_train_only": true
+      },
+      "sprsound": {
+        "units": 1437,
+        "patients": 49,
+        "support": {
+          "Coarse Crackle": 3,
+          "Fine Crackle": 319,
+          "Normal": 1045,
+          "Rhonchi": 5,
+          "Wheeze": 56,
+          "Wheeze+Crackle": 9
+        },
+        "official_train_only": true
+      }
+    }
+  },
+  "selection": {
+    "selected_epoch": 16,
+    "selected_score": 0.46344245145098617,
+    "completed_epochs": 26,
+    "max_epochs": 50,
+    "stopped_early": true,
+    "stop_reason": "patience_exhausted",
+    "no_improvement_epochs": 10,
+    "elapsed_minutes": 8.767966665750524
+  },
+  "metrics": {
+    "icbhi": {
+      "rows": 2756,
+      "confusion": [
+        [
+          1064,
+          259,
+          243,
+          13
+        ],
+        [
+          332,
+          272,
+          30,
+          15
+        ],
+        [
+          159,
+          32,
+          155,
+          39
+        ],
+        [
+          61,
+          21,
+          33,
+          28
+        ]
+      ],
+      "per_class_recall": {
+        "normal": 0.6738442051931602,
+        "crackle": 0.41910631741140214,
+        "wheeze": 0.4025974025974026,
+        "both": 0.1958041958041958
+      },
+      "specificity": 0.6738442051931602,
+      "sensitivity": 0.38657604078164826,
+      "icbhi_score": 0.5302101229874042,
+      "macro_f1": 0.4272413476705608,
+      "uar": 0.4228380302515402
+    },
+    "sprsound": {
+      "rows": 1429,
+      "confusion": [
+        [
+          911,
+          129
+        ],
+        [
+          15,
+          374
+        ]
+      ],
+      "specificity": 0.8759615384615385,
+      "sensitivity": 0.961439588688946,
+      "average_score": 0.9187005635752422,
+      "harmonic_score": 0.9167122941215247,
+      "official_score": 0.9177064288483834,
+      "macro_f1": 0.8826599272840074,
+      "uar": 0.9187005635752422
+    },
+    "hf": {
+      "eligible_recordings": 957,
+      "positive": 661,
+      "negative": 296,
+      "cas_auroc": 0.7597773643537638,
+      "score": "max window max(Wheeze,Both,Rhonchi,Stridor)"
+    },
+    "kauh": {
+      "rows": 86,
+      "confusion": [
+        [
+          27,
+          8
+        ],
+        [
+          16,
+          35
+        ]
+      ],
+      "balanced_accuracy": 0.7288515406162466,
+      "normal_recall": 0.7714285714285715,
+      "abnormal_recall": 0.6862745098039216,
+      "eligible_patients": 86,
+      "filter_view_consistency": 0.26744186046511625,
+      "score": "mean B/D/E native4 scores, argmax, regroup"
+    }
+  },
+  "hf_kauh_training": false
+}
+{
+  "status": "complete_joint_native_union",
+  "method": "DCASE-inspired Native-Class-Union CRNN (ICBHI+SPRSound, 5 s)",
+  "seed": 42,
+  "source_split": {
+    "subtrain": {
+      "icbhi": {
+        "units": 3174,
+        "patients": 63,
+        "support": {
+          "both": 253,
+          "crackle": 1042,
+          "normal": 1512,
+          "wheeze": 367
+        },
+        "official_train_only": true
+      },
+      "sprsound": {
+        "units": 5219,
+        "patients": 194,
+        "support": {
+          "Coarse Crackle": 46,
+          "Fine Crackle": 593,
+          "Normal": 4114,
+          "Rhonchi": 34,
+          "Stridor": 15,
+          "Wheeze": 396,
+          "Wheeze+Crackle": 21
+        },
+        "official_train_only": true
+      }
+    },
+    "validation": {
+      "icbhi": {
+        "units": 968,
+        "patients": 16,
+        "support": {
+          "both": 110,
+          "crackle": 173,
+          "normal": 551,
+          "wheeze": 134
+        },
+        "official_train_only": true
+      },
+      "sprsound": {
+        "units": 1437,
+        "patients": 49,
+        "support": {
+          "Coarse Crackle": 3,
+          "Fine Crackle": 319,
+          "Normal": 1045,
+          "Rhonchi": 5,
+          "Wheeze": 56,
+          "Wheeze+Crackle": 9
+        },
+        "official_train_only": true
+      }
+    }
+  },
+  "selection": {
+    "selected_epoch": 20,
+    "selected_score": 0.4569866445471366,
+    "completed_epochs": 30,
+    "max_epochs": 50,
+    "stopped_early": true,
+    "stop_reason": "patience_exhausted",
+    "no_improvement_epochs": 10,
+    "elapsed_minutes": 9.27419585911557
+  },
+  "metrics": {
+    "icbhi": {
+      "rows": 2756,
+      "confusion": [
+        [
+          1121,
+          155,
+          274,
+          29
+        ],
+        [
+          347,
+          261,
+          23,
+          18
+        ],
+        [
+          136,
+          30,
+          147,
+          72
+        ],
+        [
+          48,
+          19,
+          30,
+          46
+        ]
+      ],
+      "per_class_recall": {
+        "normal": 0.7099430018999366,
+        "crackle": 0.40215716486902925,
+        "wheeze": 0.38181818181818183,
+        "both": 0.32167832167832167
+      },
+      "specificity": 0.7099430018999366,
+      "sensitivity": 0.3857264231096007,
+      "icbhi_score": 0.5478347125047687,
+      "macro_f1": 0.4508610607063908,
+      "uar": 0.45389916756636733
+    },
+    "sprsound": {
+      "rows": 1429,
+      "confusion": [
+        [
+          913,
+          127
+        ],
+        [
+          22,
+          367
+        ]
+      ],
+      "specificity": 0.8778846153846154,
+      "sensitivity": 0.9434447300771208,
+      "average_score": 0.910664672730868,
+      "harmonic_score": 0.9094847300013437,
+      "official_score": 0.9100747013661059,
+      "macro_f1": 0.877907020084006,
+      "uar": 0.910664672730868
+    },
+    "hf": {
+      "eligible_recordings": 957,
+      "positive": 661,
+      "negative": 296,
+      "cas_auroc": 0.8821094165269657,
+      "score": "max window max(Wheeze,Both,Rhonchi,Stridor)"
+    },
+    "kauh": {
+      "rows": 86,
+      "confusion": [
+        [
+          29,
+          6
+        ],
+        [
+          14,
+          37
+        ]
+      ],
+      "balanced_accuracy": 0.77703081232493,
+      "normal_recall": 0.8285714285714286,
+      "abnormal_recall": 0.7254901960784313,
+      "eligible_patients": 86,
+      "filter_view_consistency": 0.4186046511627907,
+      "score": "mean B/D/E native4 scores, argmax, regroup"
+    }
+  },
+  "hf_kauh_training": false
+}
+{
+  "dcase": {
+    "method": "dcase",
+    "completed_seeds": [
+      0,
+      1,
+      42
+    ],
+    "n": 3,
+    "required_seeds": [
+      0,
+      1,
+      42
+    ],
+    "aggregate": {
+      "hf.cas_auroc": {
+        "mean": 0.8097340911259217,
+        "sample_sd": 0.0641734206707814,
+        "values": [
+          0.7873154924970356,
+          0.7597773643537638,
+          0.8821094165269657
+        ]
+      },
+      "hf.eligible_recordings": {
+        "mean": 957.0,
+        "sample_sd": 0.0,
+        "values": [
+          957.0,
+          957.0,
+          957.0
+        ]
+      },
+      "hf.negative": {
+        "mean": 296.0,
+        "sample_sd": 0.0,
+        "values": [
+          296.0,
+          296.0,
+          296.0
+        ]
+      },
+      "hf.positive": {
+        "mean": 661.0,
+        "sample_sd": 0.0,
+        "values": [
+          661.0,
+          661.0,
+          661.0
+        ]
+      },
+      "icbhi.icbhi_score": {
+        "mean": 0.544169716196848,
+        "sample_sd": 0.012535572700819647,
+        "values": [
+          0.5544643130983711,
+          0.5302101229874042,
+          0.5478347125047687
+        ]
+      },
+      "icbhi.macro_f1": {
+        "mean": 0.44593624063224535,
+        "sample_sd": 0.01678344099014988,
+        "values": [
+          0.4597063135197844,
+          0.4272413476705608,
+          0.4508610607063908
+        ]
+      },
+      "icbhi.per_class_recall.both": {
+        "mean": 0.26107226107226106,
+        "sample_sd": 0.0630664301094111,
+        "values": [
+          0.26573426573426573,
+          0.1958041958041958,
+          0.32167832167832167
+        ]
+      },
+      "icbhi.per_class_recall.crackle": {
+        "mean": 0.4725218284540318,
+        "sample_sd": 0.10753123809438593,
+        "values": [
+          0.5963020030816641,
+          0.41910631741140214,
+          0.40215716486902925
+        ]
+      },
+      "icbhi.per_class_recall.normal": {
+        "mean": 0.6700443318556047,
+        "sample_sd": 0.041927947734098595,
+        "values": [
+          0.6263457884737176,
+          0.6738442051931602,
+          0.7099430018999366
+        ]
+      },
+      "icbhi.per_class_recall.wheeze": {
+        "mean": 0.3852813852813853,
+        "sample_sd": 0.015870392017163087,
+        "values": [
+          0.37142857142857144,
+          0.4025974025974026,
+          0.38181818181818183
+        ]
+      },
+      "icbhi.rows": {
+        "mean": 2756.0,
+        "sample_sd": 0.0,
+        "values": [
+          2756.0,
+          2756.0,
+          2756.0
+        ]
+      },
+      "icbhi.sensitivity": {
+        "mean": 0.4182951005380912,
+        "sample_sd": 0.05567643421427479,
+        "values": [
+          0.4825828377230246,
+          0.38657604078164826,
+          0.3857264231096007
+        ]
+      },
+      "icbhi.specificity": {
+        "mean": 0.6700443318556047,
+        "sample_sd": 0.041927947734098595,
+        "values": [
+          0.6263457884737176,
+          0.6738442051931602,
+          0.7099430018999366
+        ]
+      },
+      "icbhi.uar": {
+        "mean": 0.44722995166582075,
+        "sample_sd": 0.02183504707729155,
+        "values": [
+          0.4649526571795547,
+          0.4228380302515402,
+          0.45389916756636733
+        ]
+      },
+      "kauh.abnormal_recall": {
+        "mean": 0.738562091503268,
+        "sample_sd": 0.05990295026086068,
+        "values": [
+          0.803921568627451,
+          0.6862745098039216,
+          0.7254901960784313
+        ]
+      },
+      "kauh.balanced_accuracy": {
+        "mean": 0.7740429505135388,
+        "sample_sd": 0.04377402379121667,
+        "values": [
+          0.8162464985994398,
+          0.7288515406162466,
+          0.77703081232493
+        ]
+      },
+      "kauh.eligible_patients": {
+        "mean": 86.0,
+        "sample_sd": 0.0,
+        "values": [
+          86.0,
+          86.0,
+          86.0
+        ]
+      },
+      "kauh.filter_view_consistency": {
+        "mean": 0.35271317829457366,
+        "sample_sd": 0.07742241998231854,
+        "values": [
+          0.37209302325581395,
+          0.26744186046511625,
+          0.4186046511627907
+        ]
+      },
+      "kauh.normal_recall": {
+        "mean": 0.8095238095238096,
+        "sample_sd": 0.03299144395369291,
+        "values": [
+          0.8285714285714286,
+          0.7714285714285715,
+          0.8285714285714286
+        ]
+      },
+      "kauh.rows": {
+        "mean": 86.0,
+        "sample_sd": 0.0,
+        "values": [
+          86.0,
+          86.0,
+          86.0
+        ]
+      },
+      "sprsound.average_score": {
+        "mean": 0.9148346351591853,
+        "sample_sd": 0.0040265634138968295,
+        "values": [
+          0.9151386691714456,
+          0.9187005635752422,
+          0.910664672730868
+        ]
+      },
+      "sprsound.harmonic_score": {
+        "mean": 0.9136602440073931,
+        "sample_sd": 0.0037424656464908564,
+        "values": [
+          0.9147837078993108,
+          0.9167122941215247,
+          0.9094847300013437
+        ]
+      },
+      "sprsound.macro_f1": {
+        "mean": 0.8832949048390043,
+        "sample_sd": 0.005731813370725346,
+        "values": [
+          0.8893177671489993,
+          0.8826599272840074,
+          0.877907020084006
+        ]
+      },
+      "sprsound.official_score": {
+        "mean": 0.9142474395832892,
+        "sample_sd": 0.0038656039975524495,
+        "values": [
+          0.9149611885353782,
+          0.9177064288483834,
+          0.9100747013661059
+        ]
+      },
+      "sprsound.rows": {
+        "mean": 1429.0,
+        "sample_sd": 0.0,
+        "values": [
+          1429.0,
+          1429.0,
+          1429.0
+        ]
+      },
+      "sprsound.sensitivity": {
+        "mean": 0.9460154241645244,
+        "sample_sd": 0.014313018927583576,
+        "values": [
+          0.9331619537275064,
+          0.961439588688946,
+          0.9434447300771208
+        ]
+      },
+      "sprsound.specificity": {
+        "mean": 0.883653846153846,
+        "sample_sd": 0.011697620250573523,
+        "values": [
+          0.8971153846153846,
+          0.8759615384615385,
+          0.8778846153846154
+        ]
+      },
+      "sprsound.uar": {
+        "mean": 0.9148346351591853,
+        "sample_sd": 0.0040265634138968295,
+        "values": [
+          0.9151386691714456,
+          0.9187005635752422,
+          0.910664672730868
+        ]
+      }
+    },
+    "boundary": "only completed independent source-training seeds are included"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "status": "complete_joint_native_union",
+  "seeds": [
+    0,
+    1,
+    42
+  ],
+  "n": 3,
+  "scale": "fraction_0_to_1",
+  "standard_deviation": "sample; ddof=1",
+  "source_directory": "/files1/Zilong/Acoustic/result/reproduce/source_transfer_baselines/DCASE_Joint_NativeUnion_5s",
+  "per_seed": [
+    {
+      "seed": 0,
+      "completed_epochs": 25,
+      "selected_epoch": 15,
+      "metrics": {
+        "icbhi_score": 0.5544643130983711,
+        "sprsound_official_score": 0.9149611885353782,
+        "hf_cas_auroc": 0.7873154924970356,
+        "kauh_balanced_accuracy": 0.8162464985994398
+      }
+    },
+    {
+      "seed": 1,
+      "completed_epochs": 26,
+      "selected_epoch": 16,
+      "metrics": {
+        "icbhi_score": 0.5302101229874042,
+        "sprsound_official_score": 0.9177064288483834,
+        "hf_cas_auroc": 0.7597773643537638,
+        "kauh_balanced_accuracy": 0.7288515406162466
+      }
+    },
+    {
+      "seed": 42,
+      "completed_epochs": 30,
+      "selected_epoch": 20,
+      "metrics": {
+        "icbhi_score": 0.5478347125047687,
+        "sprsound_official_score": 0.9100747013661059,
+        "hf_cas_auroc": 0.8821094165269657,
+        "kauh_balanced_accuracy": 0.77703081232493
+      }
+    }
+  ],
+  "aggregate": {
+    "icbhi_score": {
+      "mean": 0.544169716196848,
+      "sample_sd": 0.012535572700819647
+    },
+    "sprsound_official_score": {
+      "mean": 0.9142474395832891,
+      "sample_sd": 0.0038656039975524495
+    },
+    "hf_cas_auroc": {
+      "mean": 0.8097340911259217,
+      "sample_sd": 0.0641734206707814
+    },
+    "kauh_balanced_accuracy": {
+      "mean": 0.7740429505135388,
+      "sample_sd": 0.04377402379121667
+    }
+  }
+}

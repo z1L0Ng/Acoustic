@@ -8,6 +8,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+from .pcmcl_numerics import nonfinite_training_issue
 from .source_transfer_summary import summarize
 
 
@@ -42,6 +43,9 @@ def run_queue(repo_root: Path, methods: tuple[str, ...], device: str) -> dict[st
         )
         for seed in SEEDS:
             result_dir = repo_root / str(config["output_root"]) / f"seed_{seed}"
+            issue = nonfinite_training_issue(result_dir)
+            if issue is not None:
+                raise FloatingPointError(f"refusing to reuse {result_dir}: {issue}")
             state, resume = _seed_state(result_dir)
             if state == "complete":
                 continue

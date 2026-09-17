@@ -1,5 +1,11 @@
 # PC-MCL source transfer and DCASE joint native-union runners
 
+Current status (2026-09-17): DCASE completed three seeds. PC-MCL is stopped
+after non-finite training in all three seeds; no automatic restart is authorized.
+See `docs/baseline_design/2026-09-17_pcmcl_numerical_failure_and_source_audit_zh.md`.
+The checks added below prevent invalid updates, decoding, resume and aggregation;
+they do not establish that the convergence problem has been fixed.
+
 These scripts implement PC-MCL ICBHI-only source transfer and DCASE ICBHI+SPRSound joint
 native-union training. PC-MCL keeps its audited ICBHI official-test source
 selection. DCASE uses only the accepted internal source validation partitions;
@@ -33,7 +39,8 @@ post-processing. Its current head is the approved nine-output sigmoid union.
 
 ## Commands and execution scope
 
-The user has approved the canonical imec server runs on up to two GPUs.
+The earlier canonical imec execution authorization is now paused for PC-MCL.
+New PC-MCL execution requires a new explicit start after the recipe is settled.
 The local MPS commands below are examples and do not authorize a duplicate run.
 
 One PC-MCL seed:
@@ -83,6 +90,12 @@ resumes from that seed's `last_checkpoint.pt`; a non-empty seed directory with
 no last checkpoint is rejected rather than overwritten.  Fresh runners also
 refuse non-empty result directories.
 
+PC-MCL also checks its existing training log for non-finite loss. A failed
+numerical history cannot be resumed or treated as a completed seed. Future
+non-finite loss, gradient norms or inference logits terminate the run with
+`failed_nonfinite` in the existing run summary; previous checkpoints are kept.
+The summary excludes such runs even if an older script marked them complete.
+
 Resume restores model, optimizer, scheduler, epoch, and best-selection state.
 It also restores the consecutive no-improvement count, completed source epoch,
 and early-stop reason.  A last checkpoint already marked early-stopped or at
@@ -106,6 +119,9 @@ source and target prediction NPZs, metrics, and run summary below
 whose run status is complete.
 
 ## Server time budget (2026-09-17)
+
+The following launch-time estimate is historical and no longer a completion
+promise: the PC-MCL queue failed numerically and was stopped.
 
 The previous real CUDA run measured about 1.243 min/epoch on an L40. A fresh
 400-epoch seed therefore takes about 497 min of training and epochwise source

@@ -1,0 +1,55 @@
+{
+  "subtrain": {
+    "icbhi": {
+      "official_train_only": true,
+      "patients": 63,
+      "support": {
+        "both": 237,
+        "crackle": 677,
+        "normal": 1557,
+        "wheeze": 409
+      },
+      "units": 2880
+    },
+    "sprsound": {
+      "official_train_only": true,
+      "patients": 194,
+      "support": {
+        "Coarse Crackle": 46,
+        "Fine Crackle": 593,
+        "Normal": 4114,
+        "Rhonchi": 34,
+        "Stridor": 15,
+        "Wheeze": 396,
+        "Wheeze+Crackle": 21
+      },
+      "units": 5219
+    }
+  },
+  "validation": {
+    "icbhi": {
+      "official_train_only": true,
+      "patients": 16,
+      "support": {
+        "both": 126,
+        "crackle": 538,
+        "normal": 506,
+        "wheeze": 92
+      },
+      "units": 1262
+    },
+    "sprsound": {
+      "official_train_only": true,
+      "patients": 49,
+      "support": {
+        "Coarse Crackle": 3,
+        "Fine Crackle": 319,
+        "Normal": 1045,
+        "Rhonchi": 5,
+        "Wheeze": 56,
+        "Wheeze+Crackle": 9
+      },
+      "units": 1437
+    }
+  }
+}

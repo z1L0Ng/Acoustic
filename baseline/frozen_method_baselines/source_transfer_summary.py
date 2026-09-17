@@ -6,6 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
+from .pcmcl_numerics import nonfinite_training_issue
 from .source_transfer_common import aggregate_seed_metrics, write_json
 
 
@@ -19,8 +20,15 @@ SEEDS = (0, 1, 42)
 def summarize(repo_root: Path, method: str) -> dict[str, object]:
     root = repo_root / METHOD_ROOTS[method]
     completed = []
+    excluded = []
     for seed in SEEDS:
-        path = root / f"seed_{seed}" / "run_summary.json"
+        result_dir = root / f"seed_{seed}"
+        if method == "pcmcl":
+            issue = nonfinite_training_issue(result_dir)
+            if issue is not None:
+                excluded.append({"seed": seed, "reason": issue})
+                continue
+        path = result_dir / "run_summary.json"
         if not path.is_file():
             continue
         payload = json.loads(path.read_text())
@@ -38,6 +46,8 @@ def summarize(repo_root: Path, method: str) -> dict[str, object]:
         "aggregate": aggregate_seed_metrics([row["metrics"] for row in completed]),
         "boundary": "only completed independent source-training seeds are included",
     }
+    if method == "pcmcl":
+        summary["excluded_seeds"] = excluded
     write_json(root / "multiseed_summary.json", summary)
     return summary
 
