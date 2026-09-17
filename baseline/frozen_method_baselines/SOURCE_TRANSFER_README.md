@@ -98,6 +98,17 @@ source and target prediction NPZs, metrics, and run summary below
 `result/reproduce/source_transfer_baselines/`.  The summary includes only seeds
 whose run status is complete.
 
+## Read-only local time budget
+
+- PC-MCL three seeds at the 50-epoch upper bound: 20–30 h training, plus
+  approximately 0.75–1.5 h fixed evaluation.
+- DCASE joint frame extraction: 35–90 min; three-seed training: 10–43 h;
+  three-seed external evaluation: 0.5–2 h; DCASE total: approximately 11–47 h.
+- Both methods serially: approximately 32–79 h, or 35–87 h with a 10% local
+  load/I/O allowance. Early stopping may shorten this but is not assumed.
+
+These are log-anchored/static ranges, not measured runtime for the new recipe.
+
 The DCASE frame cache uses memory-mappable `frames.npy` plus aligned `ids.npy`
 under `.cache/frozen_method_baselines/dcase_joint_union_frames/`. Existing
 pooled BEATs caches are not accepted as frame features.

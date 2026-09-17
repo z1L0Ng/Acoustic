@@ -75,9 +75,9 @@ Selected model的固定target输入数约为：ICBHI test 2756 + SPR inter 1429 
 - **50 epochs满跑：3.3–14.2 h/seed**；
 - **三seed满跑串行：10–43 h**。
 
-DCASE同样使用patience10、min_delta0的strict ICBHI source-Score早停，cosine `T_max=50`。预算不假定早停一定触发。
+DCASE使用patience10、min_delta0的strict双源internal-validation monitor：`0.5*ICBHI native4 macro multilabel-F1@0.5 + 0.5*SPRSound native7 macro multilabel-F1@0.5`，cosine `T_max=50`。预算不假定早停一定触发。
 
-每个selected DCASE model仍需从缓存读取target BEATs frames并计算log-Mel CNN/CRNN；估**15–60 min/seed**，三seed0.75–3 h。该段无实测支撑，是静态宽区间。
+每个selected DCASE model仍需从缓存读取terminal BEATs frames并计算log-Mel CNN/CRNN；三seedexternal统一估**0.5–2 h**。该段无实测支撑，是静态宽区间。
 
 DCASE合计：frame extraction 0.6–1.5 h + 三seed满跑training 10–43 h + external evaluation 0.5–2 h，即约**11–47 h**。
 
