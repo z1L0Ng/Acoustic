@@ -1,0 +1,61 @@
+{
+  "status": "CANDIDATE_DESIGN_PENDING_USER_PROTOCOL_APPROVAL",
+  "authority": "proposed by the 2026-09-16 model-design task; not an approved replacement for existing Table 1 protocols",
+  "seeds": [0, 1, 42],
+  "seed_meaning": "trainable downstream module initialization, batch order, dropout and pair sampling; frozen encoder/cache is identical",
+  "candidate_common_optimization": {
+    "max_epochs": 50,
+    "batch_size": 128,
+    "optimizer": "Adam",
+    "learning_rate": 0.001,
+    "weight_decay": 0.000001,
+    "early_stopping_patience": 10,
+    "tie_break": "earlier_epoch"
+  },
+  "candidate_tasks": {
+    "icbhi_flat4": {
+      "unit": "annotated respiratory cycle",
+      "supervision": "target-supervised four-class CE",
+      "split": "official train/test; patient-grouped internal validation inside official train",
+      "selection": "validation ICBHI Score",
+      "terminal": "official test once after selection",
+      "metric": "ICBHI Score"
+    },
+    "spr_binary": {
+      "unit": "official BioCAS2022 respiratory event",
+      "supervision": "target-supervised Normal/Adventitious CE",
+      "split": "official train with patient-grouped internal validation; inter primary test",
+      "selection": "validation SPRSound official Score",
+      "terminal": "inter once after selection",
+      "metric": "SPRSound official Score=(AS+HS)/2"
+    },
+    "hf_cas": {
+      "unit": "15-s recording represented by mean-pooled frozen embeddings from three 5-s windows",
+      "eligibility": "recording contains at least one D/Wheeze/Rhonchi/Stridor annotation",
+      "positive": "at least one Wheeze, Rhonchi or Stridor annotation",
+      "negative": "D-only within the eligible annotated pool",
+      "excluded": "phase-only, gap-only and empty annotation records",
+      "supervision": "target-supervised binary BCE on source-train",
+      "selection": "date-proxy-grouped validation CAS AUROC",
+      "terminal": "source-test CAS AUROC once after selection",
+      "metric": "HF CAS AUROC from a dedicated CAS head, not p_W proxy"
+    },
+    "kauh_binary": {
+      "unit": "patient after mean aggregation of B/D/E frozen recording embeddings",
+      "eligible_labels": ["N", "E W", "I E W", "C", "I C", "I C E W"],
+      "excluded_labels": ["Crep", "Bronchial", "I C B"],
+      "positive": "any compatible non-N sound label",
+      "negative": "N",
+      "supervision": "target-supervised binary CE",
+      "split": "fixed five-fold patient OOF with internal validation in each development fold",
+      "selection": "validation patient balanced accuracy",
+      "terminal": "aggregate 86-patient OOF predictions",
+      "metric": "KAUH patient balanced accuracy"
+    }
+  },
+  "reporting": {
+    "per_seed": ["config", "train log", "selected epoch", "sample/patient scores", "predictions", "support", "confusion", "metric"],
+    "aggregate": "mean and sample standard deviation over downstream seeds 0/1/42",
+    "pooled_cross_dataset_score": false
+  }
+}

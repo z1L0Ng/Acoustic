@@ -1,0 +1,46 @@
+{
+  "recommended_scientific_status": "SUPERSEDED_BY_ICBHI5S_SOURCE_TRANSFER",
+  "current_authority": "pcmcl_icbhi5s_source_transfer.json",
+  "true_method_encoder": {
+    "method_id": "pcmcl_trained_encoder_frozen_target_adaptation",
+    "status": "HOLD_MISSING_TRAINED_PCMCL_CHECKPOINT_AND_MATCHED_CACHE",
+    "official_source": "https://github.com/wa976/PC-MCL",
+    "paper": "https://arxiv.org/abs/2601.17080",
+    "required_weight_history": "BEATs trained with 10-s raw multi-cycle concatenation, 3-label Normal/Crackle/Wheeze BCE and patient-matching auxiliary loss",
+    "checkpoint": null,
+    "embedding_cache": null,
+    "reason": "AudioSet-only BEATs cannot be relabeled as a PC-MCL-trained encoder"
+  },
+  "inspired_adapter": {
+    "method_id": "pcmcl_inspired_frozen_embedding_adapter",
+    "status": "SUPERSEDED_BY_ICBHI5S_SOURCE_TRANSFER",
+    "encoder": {
+      "checkpoint": ".cache/multidataset_pipeline/assets/P2/checkpoints/BEATs_iter3_plus_AS2M.pt",
+      "history": "AudioSet-only BEATs iter3+ AS2M",
+      "frozen": true,
+      "cache": ".cache/four_dataset_representation_attribution/r1_beats_as2m_audioset_only/embeddings.npz"
+    },
+    "trainable": [
+      "shared 768-to-256 adapter",
+      "dataset-native task head",
+      "3-label auxiliary head where source labels support Normal/Crackle/Wheeze",
+      "patient-pair classifier where true patient IDs and repeated units exist"
+    ],
+    "gradient_path": "native, 3-label and patient losses share the trainable 256-d adapter",
+    "multilabel_missing_policy": "explicit eligibility mask; masked_multilabel_bce; unknown entries never become negatives",
+    "patient_loss_weight": 0.1,
+    "patient_loss_weight_source": "PC-MCL paper; official CLI default is 0.5 and enable_ssl is off unless explicitly enabled",
+    "limitations": [
+      "pooled embedding pairs do not reproduce raw 10-s audio concatenation",
+      "HF date proxy is not a patient ID",
+      "KAUH B/D/E are filter views, not respiratory cycles",
+      "must be named PC-MCL-inspired rather than PC-MCL"
+    ]
+  },
+  "true_raw_concat_followup": {
+    "status": "SUPERSEDED_BY_ICBHI5S_SOURCE_TRANSFER",
+    "input": "10-s raw waveform formed by concatenating original native units before the frozen encoder",
+    "cache_granularity": "fixed pair/triple IDs plus the resulting 10-s encoder embedding, or on-the-fly frozen encoder forward",
+    "not_equivalent_to": "concatenating or averaging existing single-unit pooled embeddings"
+  }
+}

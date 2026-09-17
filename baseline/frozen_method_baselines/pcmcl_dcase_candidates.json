@@ -1,0 +1,74 @@
+{
+  "status": "PCMCL_SUPERSEDED_DCASE_CANDIDATE_RETAINED_NO_EXECUTION",
+  "pcmcl_current_authority": "pcmcl_icbhi5s_source_transfer.json",
+  "common_scope": {
+    "training_sources": [
+      "ICBHI official-train respiratory cycles",
+      "SPRSound official-train BioCAS events"
+    ],
+    "external_only": [
+      "HF source-test fixed-model readout",
+      "KAUH compatible-patient fixed-model readout"
+    ],
+    "outer_test_selection": false,
+    "seeds": [0, 1, 42],
+    "selection_candidate": "equal mean of ICBHI and SPRSound validation native Scores; no sample-count pooling",
+    "selection_status": "recommended clean candidate only; joint-core and validation-only selection remain unapproved and must not replace historical test-selected rules without user decision",
+    "hf_current_primary": {
+      "target_positive": "Wheeze or Rhonchi or Stridor annotation",
+      "target_negative": "D-only inside the annotation-eligible evaluation pool",
+      "score": "maximum across three fixed 5-s windows of weak/clip-level p_W",
+      "boundary": "Wheeze-head ranking proxy against the broad CAS union, not a semantically complete CAS detector"
+    }
+  },
+  "pcmcl_frozen_raw_concat": {
+    "status": "SUPERSEDED_BY_USER_DECISION_2026_09_16",
+    "name": "PC-MCL frozen-encoder respiratory adaptation",
+    "encoder": "AudioSet BEATs iter3+ AS2M, frozen",
+    "train_input": "two dataset-homogeneous native units, each normalized to 5 s by the paper repeat-pad/center-crop policy, then concatenated in waveform space to 10 s",
+    "label_order": ["normal", "crackle", "wheeze"],
+    "composite_label": "positive if either constituent has an observed positive; negative only if both are observed negatives; otherwise unknown",
+    "patient_pairs": "same-patient positives and different-patient hard negatives with matching supported pathology profiles, never across datasets",
+    "trainable": [
+      "shared LayerNorm(768)-Linear(768,256)-ReLU-Dropout adapter",
+      "Normal/Crackle/Wheeze head",
+      "same/different-patient head"
+    ],
+    "loss": "masked N/C/W BCE + 0.1 patient CE",
+    "cache": "new per-seed cache of pooled embeddings produced after the frozen encoder sees each deterministic 10-s raw concatenation",
+    "existing_pooled_cache_compatible": false,
+    "hf_primary_readout": "current-table maximum-window p_W proxy; p_C is excluded",
+    "claim": "historical candidate only; do not execute"
+  },
+  "dcase_respiratory": {
+    "name": "DCASE-style masked CRNN respiratory adaptation",
+    "encoder": "AudioSet BEATs frame embeddings, frozen",
+    "audio_input": "existing mono 16-kHz 5-s core unit policy",
+    "shared_label_order": ["abnormal", "crackle", "wheeze", "other"],
+    "trainable": [
+      "official-style 7-layer log-Mel CNN",
+      "BEATs/CNN frame fusion projection",
+      "bidirectional GRU",
+      "frame classifier and class-masked attention readout"
+    ],
+    "loss": "masked weak-label BCE over eligible sample/class entries",
+    "mean_teacher": "omitted because the recommended source protocol has no approved unlabeled respiratory pool",
+    "mixup": "omitted in the first matched baseline so augmentation is not an extra comparison axis",
+    "cache": "new shared frozen BEATs frame cache; existing pooled caches are incompatible",
+    "hf_primary_readout": "weak attention-pooled p_W for each fixed 5-s window, followed by maximum across the three windows",
+    "hf_secondary_diagnostic": "maximum-window max(p_W,p_Other) only if Other remains strictly Rhonchi/Stridor; report separately from the current p_W CAS column",
+    "hf_inference_mask": "all four output channels enabled for every HF recording; only padding frames are masked; target annotations never select output classes",
+    "claim": "DCASE-style respiratory adaptation; not a DCASE Task 4 reproduction"
+  },
+  "decisions_required": [
+    "PC-MCL decisions moved to pcmcl_icbhi5s_source_transfer.json",
+    "DCASE joint-core, selection, external readouts and frame preparation remain pending"
+  ],
+  "resource_plan": {
+    "current_default": "local sequential queue after explicit execution approval; cache preparation and downstream training are separate stages",
+    "pc_mcl_cache_work": "superseded; current PC-MCL source training updates the encoder and cannot use a frozen training cache",
+    "dcase_cache_work": "about 21187 shared 5-s frame-embedding inputs",
+    "downstream_work": "old 0.20M PC-MCL estimate is superseded; DCASE-style CRNN remains about 1M trainable parameters; exact runtime not measured",
+    "optional_acceleration": "future accelerator use only after resource availability is verified and separate server authorization is granted"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "method_id": "pafa_trained_encoder_frozen_target_adaptation",
+  "status": "ASSETS_PRESENT_IMPLEMENTATION_PREPARED_LOCAL_ENVIRONMENT_HOLD",
+  "encoder": {
+    "checkpoint": ".cache/checkpoints/pafa/server_epoch27/best.pth",
+    "backbone_asset": ".cache/checkpoints/pafa/server_epoch27/BEATs_iter3_plus_AS2M.pt",
+    "history": "PAFA full-fine-tuning on ICBHI; accepted source state selected by ICBHI official-test Score at epoch 27",
+    "frozen": true,
+    "embedding_definition": "mean-pooled 768-d pre-classifier BEATs frame representation",
+    "cache": ".cache/four_dataset_pafa_frozen_encoder/embeddings.npz"
+  },
+  "downstream": {
+    "separate_model_per_task": true,
+    "adapter": "LayerNorm(768)-Linear(768,256)-ReLU-Dropout(0.2)",
+    "heads": {
+      "icbhi_flat4": "Linear(256,4)",
+      "spr_binary": "Linear(256,2)",
+      "hf_cas": "Linear(256,1)",
+      "kauh_binary": "Linear(256,2)"
+    },
+    "trainable": ["adapter", "task head"],
+    "frozen": ["PAFA-trained BEATs encoder", "embedding cache"],
+    "pafa_loss_during_downstream": false
+  },
+  "training": {
+    "seeds": [0, 1, 42],
+    "seed_meaning": "adapter/head initialization, batch order and dropout only; one shared frozen encoder",
+    "max_epochs": 50,
+    "batch_size": 128,
+    "optimizer": "Adam",
+    "learning_rate": 0.001,
+    "weight_decay": 0.000001,
+    "early_stopping_patience": 10,
+    "selection": "task-native internal-validation metric; terminal test once after selection"
+  },
+  "claim_boundary": [
+    "target-supervised frozen-representation adaptation",
+    "not PAFA reproduction",
+    "not zero-target transfer",
+    "ICBHI source representation has official-test-selection history"
+  ]
+}

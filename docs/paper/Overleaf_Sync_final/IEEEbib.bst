@@ -10,6 +10,7 @@ ENTRY
     chapter
     edition
     editor
+    eid
     howpublished
     institution
     journal
@@ -439,13 +440,21 @@ number empty$
    'skip$
    {", no. " number * *}
 if$
-pages empty$
-   'skip$
-    { duplicate$ empty$
-	{ pop$ format.pages }
-	{ ", pp. " * pages n.dashify * }
-      if$
-    }
+eid empty$
+  { pages empty$
+      'skip$
+      { duplicate$ empty$
+          { pop$ format.pages }
+          { ", pp. " * pages n.dashify * }
+        if$
+      }
+    if$
+  }
+  { duplicate$ empty$
+      { pop$ "Art. no. " eid * }
+      { ", Art. no. " * eid * }
+    if$
+  }
 if$
 }
 

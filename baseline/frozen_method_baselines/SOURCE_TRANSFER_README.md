@@ -1,4 +1,4 @@
-# ICBHI-source PC-MCL and DCASE-inspired runners
+# PC-MCL source transfer and DCASE joint native-union runners
 
 These scripts are complete execution entries but have **not** been run.  They
 implement PC-MCL ICBHI-only source transfer and DCASE ICBHI+SPRSound joint
@@ -23,9 +23,10 @@ HF/KAUH and both official source tests never enter DCASE stopping.
 PC-MCL milestones 15/20 preserve the original 120/160 relative positions after
 the 400-to-50 epoch budget adaptation.  DCASE cosine uses `T_max=50`.
 
-Neither row is a reproduction of the published method: PC-MCL changes the
-paper's 10-s input to 5 s, and DCASE removes Mean Teacher/heterogeneous-label
-training in favor of ICBHI native flat4 CE.
+Both rows are respiratory-task adaptations. PC-MCL changes the paper's
+10-s input to 5 s. DCASE retains native-class-union joint training and missing-
+label masks, while omitting Mean Teacher, strong frame supervision and SED
+post-processing. Its current head is the approved nine-output sigmoid union.
 
 ## Future commands — do not run without a new start instruction
 

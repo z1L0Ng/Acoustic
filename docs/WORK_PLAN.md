@@ -1,6 +1,22 @@
 # Acoustic Work Plan
 
-## 当前周期：2026-09-14晚–2026-09-15 01:00 EDT
+## 当前周期：2026-09-15–2026-09-24
+
+最新策略（9/16本轮调整）：PAFA交由Hanlin运行，已有AST、BEATs、PANNs、OPERA-CT、HeAR五组复跑保留；项目侧集中重新规划PC-MCL和DCASE，继续负责统一协议、结果核验与论文整合。
+
+当前计划：[本地Work Plan](work_plans/2026-09-15_to_2026-09-24_baseline_extension_plan_zh.md)；[Notion Work Plan](https://app.notion.com/p/3dc309efda29810b84c1c7fd3fd21ad8)。学生材料：[PAFA交接清单](student_tasks/2026-09-16_hanlin_pafa_handoff_zh.md)及[已有baseline复跑说明](student_tasks/2026-09-16_hanlin_existing_baseline_rerun_zh.md)。原先Hanlin负责PC-MCL/DCASE、以及项目侧负责全部新增baseline的分工均被本轮替代。
+
+当前进度：PC-MCL与DCASE九输出native-union实现及三个代码/说明提交已完成。用户最新要求先完成run再决定paper整合；当前先保存并推送全部本地仓库改动，再由Acoustic服务器任务在imec canonical main同步代码，核对空闲GPU、磁盘、环境与资产并准备两组三seed。已批准的科学方案、max50/patience10及两方法不同选模保持；不恢复历史PAFA/BEATs队列。当前没有新增实验结果，本地35–87小时估算仅为备选，不代表CUDA实测耗时。
+
+时间边界继续按纽约9/24 07:00规划：9/16–17完成设计与原协议核对，随后安排项目侧实现和正式run；9/21–22核验新旧结果，9/23回填、独立审阅及四页检查，24日早晨前保留提交缓冲。原Hanlin新增六run/168小时预算已取消；新冻结方案和已有baseline复跑分别核算。
+
+已完成的主模型、核心控制、HF-on和CAS/KAUH补评估保留，不重复运行。写作分工不变：线程1负责Section1/4/5与Abstract/共享主文件，线程2负责Section2/3与对应图表；独立reviewer只由用户明确启动，DONE禁用，不例行本地编译。
+
+[昨晚Work Plan](https://app.notion.com/p/3db309efda29817f856ff55a4c82e8e3)保持Done。下方保留历史记录，当前策略以本段和最新Work Plan为准。
+
+---
+
+## 2026-09-14晚–2026-09-15 01:00 EDT（已完成；历史记录）
 
 本轮以9/14最新会议为依据，优先把已有结果组织成连贯、可读的论文。先明确overall论点、baseline定义和Table 1/2各自的takeaway，再整理Section 2/3、段落逻辑、图件与caption；主体稳定后收拢Abstract/Conclusion。23:45 EDT形成可通读稿，约09/15 01:00 EDT收口（芝加哥00:00 CDT）。
 
