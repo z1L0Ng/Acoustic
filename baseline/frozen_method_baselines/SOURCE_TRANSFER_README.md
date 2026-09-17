@@ -28,9 +28,11 @@ HF/KAUH and both official source tests never enter DCASE stopping.
 
 PC-MCL milestones 120/160 follow the public source's 400-epoch defaults, restored
 by the user's 2026-09-17 decision. DCASE cosine uses `T_max=50`.
-The failed ten-epoch PC-MCL attempt remains under `PC_MCL_ICBHI5s`; all three
-400-epoch seeds start fresh under `PC_MCL_ICBHI5s_400epoch`. Do not resume the
-old stopped checkpoint with the new config.
+The failed ten-epoch PC-MCL attempt remains under `PC_MCL_ICBHI5s`; the three
+stopped/invalid 400-epoch attempts remain under `PC_MCL_ICBHI5s_400epoch` on
+the server. Both are historical recipes and must not be resumed. A new run
+needs an agreed optimization recipe, a new output directory, and explicit
+start authorization.
 
 Both rows are respiratory-task adaptations. PC-MCL changes the paper's
 10-s input to 5 s. DCASE retains native-class-union joint training and missing-
@@ -92,9 +94,18 @@ refuse non-empty result directories.
 
 PC-MCL also checks its existing training log for non-finite loss. A failed
 numerical history cannot be resumed or treated as a completed seed. Future
-non-finite loss, gradient norms or inference logits terminate the run with
-`failed_nonfinite` in the existing run summary; previous checkpoints are kept.
+non-finite component/total loss, parameter gradient or inference logits
+terminate the run with `failed_nonfinite` in the existing run summary;
+seed/epoch/batch/sample IDs, component losses, learning rate and the first bad
+gradient tensor are localized while previous completed-epoch checkpoints are
+kept.
 The summary excludes such runs even if an older script marked them complete.
+
+The author-code alignment pass also restored the stochastic
+`icbhi_ast_sup` SpecAugment gate and upper-exclusive mask widths. Patient hard
+negatives now use two different real patients with the same actual native
+cycle class; matching only patient-level aggregate profiles is no longer used.
+These are code-contract corrections, not evidence that convergence recovered.
 
 Resume restores model, optimizer, scheduler, epoch, and best-selection state.
 It also restores the consecutive no-improvement count, completed source epoch,

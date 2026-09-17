@@ -1,6 +1,6 @@
 # PC-MCL 5-s适配：数值失效与源码差异核查
 
-日期：2026-09-17。状态：静态核查及数值失效处理已完成；没有新训练、推理、音频解码或模型forward。新运行继续暂停。
+日期：2026-09-17。状态：第二轮静态核查及代码整改已完成；没有新训练、推理、音频解码或模型forward。新运行继续暂停。
 
 ## 结论与当前证据
 
@@ -42,21 +42,35 @@
 
 ## 已完成的最小代码修复
 
-- 每次更新前检查loss和梯度范数；遇非有限值抛出异常，以非零退出码终止。有限梯度不裁剪、不改变大小。
+- 每次更新前分别检查main/patient/total loss和每个参数的gradient；遇非有限值抛出异常，以非零退出码终止。有限梯度不裁剪、不改变大小。
 - 检查推理logits及ICBHI/HF/KAUH读入概率，阻止NaN被转成Normal，或Inf经sigmoid成为貌似有效的0/1。
-- 在现有`run_summary.json`中记录`failed_nonfinite`和包含seed/epoch/batch/sample IDs的训练错误；不继续终点评测，也不覆盖上一完整epoch的checkpoint。
+- 在现有`run_summary.json`中记录`failed_nonfinite`，并保留stage、seed、epoch、batch、stable sample IDs、main/patient loss和learning rate；若gradient异常，另记录首个异常参数名。不继续终点评测，也不覆盖上一完整epoch的checkpoint。
 - 拒绝从已知非有限的训练历史恢复；队列不会跳过失败后继续补跑。
-- 汇总检查旧train_log，排除带NaN的伪complete运行，并列出原因；保留原始summary/log。DCASE路径保持原有行为。
+- 汇总检查旧train log与summary中的所有数值字段，排除带NaN/Inf的伪complete运行，并列出原因；保留原始summary/log。DCASE路径保持原有行为。
+- 将本项目SpecAugment改为公开`icbhi_ast_sup`执行语义：`p=1`与标准正态随机数比较（并非每batch必增强）、mask宽度上界不包含、frequency mask后重新计算time-mask mean。没有引入新增强策略。
+- patient hard negative现在保证两个不同真实patient的**实际cycle native class相同**，而不是只要求两位患者的总体病理profile相同后任意抽cycle；这样patient head不能利用pair内病理不匹配走捷径。positive仍是同一真实patient内的两条cycle。
 
 文件：`baseline/frozen_method_baselines/pcmcl_numerics.py`、`pcmcl_source_runner.py`、`pcmcl_source_transfer.py`、`source_transfer_queue.py`、`source_transfer_summary.py`。
 
 ## 验证与下一步判断
 
-7项直接单元/错误处理检查通过：有限读出不变；NaN/Inf预测拒绝；NaN loss更新前停止；有限loss产生无限梯度时停止；有限标量更新不变；旧伪complete排除及恢复/队列拒绝；失败状态与既有checkpoint保留。只使用标量/tensor和临时metadata，未实例化BEATs或运行训练流程。
+9项直接单元/错误处理检查通过：有限读出不变；NaN/Inf预测拒绝；NaN loss更新前停止；有限loss产生无限梯度时停止并定位参数；有限标量更新不变；SpecAugment随机gate与time/frequency轴；hard-negative实际cycle class匹配；旧伪complete排除及恢复/队列拒绝；失败状态、结构化诊断与既有checkpoint保留。只使用标量/小tensor和临时metadata，未实例化BEATs或运行训练流程。
 
 检查命令：`/opt/anaconda3/envs/Beats/bin/python -m unittest discover -s tests -p test_pcmcl_numerics.py -v`。
 
-这些修复防止数值失效后继续消耗GPU和误收录结果，不证明收敛问题已经解决。
+这些修复防止数值失效后继续消耗GPU和误收录结果，并关闭两处明确的软件语义偏差；不证明收敛问题已经解决。
+
+## 仍需用户决定的科学配方
+
+旧`pcmcl_source_run.json`及其`PC_MCL_ICBHI5s_400epoch`输出目录继续作为失败配方历史，不改写成新默认。公开CLI的Adam `1e-3`是源码默认值，不是论文正文给出的完整成功命令；三个seed都在第一次120轮降LR之前失效，因此当前最直接的解释候选是full-BEATs更新过激，但尚无首次异常batch诊断可以证明因果。
+
+若用户批准新的正式单seed，建议新输出目录并一次只改变一个优化因素：
+
+1. **首选候选：全模型Adam lr从`1e-3`降为`1e-4`，其他字段不变。** 这是最小单因素变化，直接检验高LR假设；不是已批准默认值。
+2. **次选候选：encoder `5e-5`、两个随机初始化head `1e-3`。** 它更符合预训练骨干/新head的不同更新尺度，但新增参数组，归因不如候选1简单。
+3. **低优先：保留`1e-3`并加10轮linear warmup。** 失效发生在30–45轮而非启动阶段，单独warmup的解释力较弱；EMA只能平滑评测权重，不能阻止训练参数本身变成NaN，均不建议作为第一次修复。
+
+gradient clipping、跳过坏batch、`nan_to_num`与自动重试不进入候选。当前代码已具备“新配方获批后执行一个正式seed，并在首次非有限值处立即终止和定位”的工程条件；**收敛恢复、模型有效性和三seed放行仍为HOLD**。
 
 建议保持暂停。先明确采用论文语义适配还是作者某一完整实验命令，重点确认实际输入长度、辅助loss权重、学习率/EMA/warmup、patient key和拼接策略。可向作者索取完整命令、实际BEATs来源、一个成功seed的日志/训练后权重；当前未联系作者。
 

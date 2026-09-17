@@ -19,7 +19,12 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from .pcmcl_numerics import backward_and_step, nonfinite_training_issue, require_finite
+from .pcmcl_numerics import (
+    NonFiniteTrainingError,
+    backward_and_step,
+    nonfinite_training_issue,
+    require_finite,
+)
 from .pcmcl_source_transfer import (
     NCW_ORDER,
     PCMCLSourceHeads,
@@ -79,7 +84,7 @@ def _ncw(label: int) -> torch.Tensor:
 
 
 class SourceSpecAugment(nn.Module):
-    """Dependency-light form of the audited icbhi_ast_sup masking policy."""
+    """Dependency-light form of the author ``icbhi_ast_sup`` policy."""
 
     def __init__(self, *, mask_value: str = "mean") -> None:
         super().__init__()
@@ -88,15 +93,30 @@ class SourceSpecAugment(nn.Module):
     def forward(self, value: torch.Tensor) -> torch.Tensor:
         # BEATs supplies [B,1,T,F].
         output = value.clone()
-        fill = output.mean() if self.mask_value == "mean" else output.new_zeros(())
+        # The public implementation applies p=1 against a standard-normal draw,
+        # so the transform is enabled with Phi(1), not on every batch.
+        if not bool((torch.randn((), device=output.device) <= 1.0).item()):
+            return output
         time_frames, frequency_bins = output.shape[2], output.shape[3]
+        fill = output.mean() if self.mask_value == "mean" else output.new_zeros(())
         for _ in range(2):
-            width = int(torch.randint(0, min(48, frequency_bins) + 1, ()).item())
-            start = int(torch.randint(0, frequency_bins - width + 1, ()).item())
+            width = int(
+                torch.randint(0, min(48, frequency_bins), (), device=output.device).item()
+            )
+            start = int(
+                torch.randint(
+                    0, frequency_bins - width + 1, (), device=output.device
+                ).item()
+            )
             output[..., start : start + width] = fill
+        fill = output.mean() if self.mask_value == "mean" else output.new_zeros(())
         for _ in range(2):
-            width = int(torch.randint(0, min(160, time_frames) + 1, ()).item())
-            start = int(torch.randint(0, time_frames - width + 1, ()).item())
+            width = int(
+                torch.randint(0, min(160, time_frames), (), device=output.device).item()
+            )
+            start = int(
+                torch.randint(0, time_frames - width + 1, (), device=output.device).item()
+            )
             output[:, :, start : start + width, :] = fill
         return output
 
@@ -117,26 +137,33 @@ class PCMCLTrainDataset(Dataset):
         self.patient_count = int(len(units) * patient_probability)
         self.by_patient: dict[str, list[int]] = defaultdict(list)
         self.by_class: dict[int, list[int]] = defaultdict(list)
+        self.by_patient_and_class: dict[str, dict[int, list[int]]] = {}
         for index, unit in enumerate(units):
             self.by_patient[unit.group_id].append(index)
             self.by_class[int(unit.target)].append(index)
+            self.by_patient_and_class.setdefault(unit.group_id, {}).setdefault(
+                int(unit.target), []
+            ).append(index)
         self.mixing_combinations = (
             (0, 1), (0, 2), (1, 2),
             (0, 0), (1, 1), (2, 2),
             (0, 3), (3, 1), (3, 2), (3, 3),
         )
-        self.patient_profiles = {
-            patient: tuple(
-                torch.stack([_ncw(int(units[index].target)) for index in indices])
-                .amax(dim=0)
-                .int()
-                .tolist()
+        self.hard_negative_patients = {
+            label: sorted(
+                patient
+                for patient, labels in self.by_patient_and_class.items()
+                if label in labels
             )
-            for patient, indices in self.by_patient.items()
+            for label in self.by_class
         }
-        self.profile_patients: dict[tuple[int, ...], list[str]] = defaultdict(list)
-        for patient, profile in self.patient_profiles.items():
-            self.profile_patients[profile].append(patient)
+        self.hard_negative_labels = tuple(
+            label
+            for label, patients in sorted(self.hard_negative_patients.items())
+            if len(patients) >= 2
+        )
+        if self.patient_count and not self.hard_negative_labels:
+            raise ValueError("patient hard negatives require a shared native class across patients")
 
     def set_epoch(self, epoch: int) -> None:
         self.epoch = epoch
@@ -154,6 +181,18 @@ class PCMCLTrainDataset(Dataset):
             _ncw(int(first.target)), _ncw(int(second.target))
         )
         return waveform, target
+
+    def _hard_negative_pair(self, rng: random.Random) -> tuple[int, int]:
+        """Choose different patients with the same actual native cycle class."""
+
+        label = rng.choice(self.hard_negative_labels)
+        first_patient, second_patient = rng.sample(
+            self.hard_negative_patients[label], 2
+        )
+        return (
+            rng.choice(self.by_patient_and_class[first_patient][label]),
+            rng.choice(self.by_patient_and_class[second_patient][label]),
+        )
 
     def __getitem__(self, index: int):
         rng = self._rng(index)
@@ -175,7 +214,13 @@ class PCMCLTrainDataset(Dataset):
                 first = rng.choice(self.by_class[first_class])
                 second = rng.choice(self.by_class[second_class])
             waveform, target = self._pair(first, second)
-            return waveform, target, -1, False, f"mix:{first}:{second}"
+            return (
+                waveform,
+                target,
+                -1,
+                False,
+                f"mix:{self.units[first].sample_id}|{self.units[second].sample_id}",
+            )
 
         positive = rng.random() < 0.5
         patients_with_pairs = [key for key, values in self.by_patient.items() if len(values) >= 2]
@@ -184,20 +229,16 @@ class PCMCLTrainDataset(Dataset):
             first, second = rng.sample(self.by_patient[patient], 2)
             patient_target = 1
         else:
-            eligible_profiles = [
-                profile for profile, patients in self.profile_patients.items() if len(patients) >= 2
-            ]
-            if eligible_profiles:
-                first_patient, second_patient = rng.sample(
-                    self.profile_patients[rng.choice(eligible_profiles)], 2
-                )
-            else:
-                first_patient, second_patient = rng.sample(list(self.by_patient), 2)
-            first = rng.choice(self.by_patient[first_patient])
-            second = rng.choice(self.by_patient[second_patient])
+            first, second = self._hard_negative_pair(rng)
             patient_target = 0
         waveform, target = self._pair(first, second)
-        return waveform, target, patient_target, True, f"patient:{first}:{second}"
+        return (
+            waveform,
+            target,
+            patient_target,
+            True,
+            f"patient:{self.units[first].sample_id}|{self.units[second].sample_id}",
+        )
 
 
 class SingleUnitDataset(Dataset):
@@ -335,6 +376,10 @@ def train_source(
         lr=float(config["learning_rate"]),
         weight_decay=float(config["weight_decay"]),
     )
+    named_trainable_parameters = [
+        *((f"encoder.{name}", parameter) for name, parameter in encoder.named_parameters()),
+        *((f"heads.{name}", parameter) for name, parameter in heads.named_parameters()),
+    ]
     scheduler = torch.optim.lr_scheduler.MultiStepLR(
         optimizer,
         milestones=[int(value) for value in config["lr_milestones"]],
@@ -376,7 +421,10 @@ def train_source(
         dataset.set_epoch(epoch)
         encoder.train()
         heads.train()
-        losses = []
+        total_losses = []
+        main_losses = []
+        patient_losses = []
+        epoch_max_abs_gradient = 0.0
         for batch_index, batch in enumerate(train_loader, start=1):
             waveform, pathology_target, patient_target, patient_eligible, sample_ids = batch
             waveform = waveform.to(device)
@@ -389,12 +437,25 @@ def train_source(
                 patient_eligibility=patient_eligible.to(device),
                 patient_weight=float(config["patient_loss_weight"]),
             )
-            backward_and_step(
+            update = backward_and_step(
                 loss["total"],
                 optimizer,
                 f"seed={seed}, epoch={epoch}, batch={batch_index}, sample_ids={list(sample_ids)}",
+                named_parameters=named_trainable_parameters,
+                loss_components={"main": loss["main"], "patient": loss["patient"]},
+                metadata={
+                    "seed": seed,
+                    "epoch": epoch,
+                    "batch": batch_index,
+                    "sample_ids": [str(value) for value in sample_ids],
+                },
             )
-            losses.append(float(loss["total"].detach()))
+            total_losses.append(float(loss["total"].detach()))
+            main_losses.append(float(loss["main"].detach()))
+            patient_losses.append(float(loss["patient"].detach()))
+            epoch_max_abs_gradient = max(
+                epoch_max_abs_gradient, float(update["max_abs_gradient"])
+            )
         source = _predict_ncw(encoder, heads, test_loader, device)
         prediction = icbhi_flat4_from_ncw(
             torch.from_numpy(source["probabilities"]), threshold=float(config["threshold"])
@@ -421,7 +482,10 @@ def train_source(
         )
         record = {
             "epoch": epoch,
-            "train_loss": float(np.mean(losses)),
+            "train_loss": float(np.mean(total_losses)),
+            "train_main_loss": float(np.mean(main_losses)),
+            "train_patient_loss": float(np.mean(patient_losses)),
+            "max_abs_gradient": epoch_max_abs_gradient,
             "source_test_metrics": metrics,
             "learning_rate": float(optimizer.param_groups[0]["lr"]),
             "elapsed_minutes": (time.perf_counter() - started) / 60,
@@ -659,6 +723,11 @@ def run(repo_root: Path, config_path: Path, seed: int, device: str, resume: Path
             int(config["batch_size"]),
         )
     except FloatingPointError as error:
+        diagnostics = (
+            error.diagnostics
+            if isinstance(error, NonFiniteTrainingError)
+            else {"stage": "unknown", "context": str(error)}
+        )
         write_json(
             result_dir / "run_summary.json",
             {
@@ -666,6 +735,8 @@ def run(repo_root: Path, config_path: Path, seed: int, device: str, resume: Path
                 "method": config["method"],
                 "seed": seed,
                 "error": str(error),
+                "diagnostics": diagnostics,
+                "last_checkpoint_preserved": (result_dir / "last_checkpoint.pt").is_file(),
             },
         )
         raise

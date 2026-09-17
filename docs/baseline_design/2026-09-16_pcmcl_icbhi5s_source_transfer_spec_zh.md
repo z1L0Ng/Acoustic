@@ -83,6 +83,7 @@ waveform concat --------------------> 5.0 s
 - 与官方实现的必要差异：本轮每个constituent都会规范到2.5 s，因此不再只从“原始时长短于half target”的子池选择；
 - patient-matching examples：候选保持源码`ssl_prob=0.3`；
 - positive为same-patient pair；hard negative为不同patient且病理profile匹配的pair；
+- 当前实现把hard negative收紧为“不同真实patient、实际抽取cycle的native class相同”，避免仅匹配患者总体profile后抽到病理不一致cycle；
 - additive N/C/W target为两个constituent labels的逻辑OR。
 
 ### 3.2 模型与梯度
@@ -121,7 +122,7 @@ L_source = BCEWithLogits(N,C,W) + 0.1 * CE(patient_match)
 - milestones 120/160各乘0.1，恢复公开源码默认的400轮日程；
 - mixing probability 0.5；patient sample probability 0.3；
 - N/C/W与所有迁移readout threshold固定0.5；
-- SpecAugment默认开启，固定`icbhi_ast_sup`频率/时间mask和mean填充值；依据是官方BEATs代码路径默认启用transform。该字段已显式写入运行config，不能从目标结果选择。
+- SpecAugment默认开启，固定`icbhi_ast_sup`频率/时间mask和mean填充值；执行概率沿用公开实现的`1 >= N(0,1)`，mask宽度上界不包含。依据是官方BEATs代码路径默认启用transform。该字段已显式写入运行config，不能从目标结果选择。
 
 其中优化字段来自官方代码而非论文正文，不将公开默认值当作论文完整运行命令。400轮预算已由用户批准。三个seed使用新目录`result/reproduce/source_transfer_baselines/PC_MCL_ICBHI5s_400epoch`；旧`PC_MCL_ICBHI5s`目录不覆盖、不改写checkpoint状态。
 
@@ -202,8 +203,8 @@ SPR/HF/KAUH不得训练或替换head、更新模型、重新选checkpoint、拟�
 - official train：4142 cycles；
 - originals + 0.5 mixed + 0.3 patient约为`1.8N` examples/epoch；
 - batch32、drop-last约232 updates/epoch；
-- 最多50 epochs约11600 updates/seed，三seed满跑上界约34800 updates；
-- 早停可能缩短实际epochs，但预算不得预设必在某个epoch停止；
+- 400 epochs约92800 updates/seed，三seed满跑上界约278400 updates；
+- 该400轮旧配方的三个seed均已数值失效并停止，只作为历史预算保留；新配方、新输出目录和启动均需再次批准；
 - best/last model state为BEATs量级；若保存Adam resume state，单份显著大于纯model checkpoint；
 - source training是主要成本，固定模型的三个target inference相对较小；
 - 当前没有profile，不能承诺精确小时数。
@@ -224,7 +225,7 @@ SPR/HF/KAUH不得训练或替换head、更新模型、重新选checkpoint、拟�
 
 - `baseline/frozen_method_baselines/pcmcl_source_transfer.py`：2.5 s constituent、5 s concat/single、source heads/loss和四个固定readouts；
 - `baseline/frozen_method_baselines/pcmcl_icbhi5s_source_transfer.json`：source、selection、freeze、transfer、output和预算合同。
-- `baseline/frozen_method_baselines/pcmcl_source_run.json`：max50、patience10及15/20 milestones配置；
+- `baseline/frozen_method_baselines/pcmcl_source_run.json`：失败历史的400轮、关闭early stopping、120/160 milestones配置；不得直接作为新运行授权；
 - `baseline/frozen_method_baselines/pcmcl_source_runner.py`：canonical ICBHI读取、class-conditioned pair、full BEATs训练、test-selected checkpoint、固定三目标评测和resumable best/last；
 - `baseline/frozen_method_baselines/source_transfer_queue.py`与`source_transfer_summary.py`：三seed串行和仅完整seed汇总。
 
