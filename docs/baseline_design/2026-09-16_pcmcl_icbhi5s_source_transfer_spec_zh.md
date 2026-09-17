@@ -1,8 +1,8 @@
 # PC-MCL ICBHI-only 5-s Source Transfer规格｜2026-09-16
 
-状态：**DESIGN READY / STATIC INTERFACES PREPARED / SOURCE TRAINING NOT STARTED**
+状态（2026-09-17更新）：**400轮正式预算已批准**。旧50轮预算的seed0在10轮因无合格best早停，原资产保留；三个seed在新的400轮目录从预训练初始化开始。服务器执行与15分钟报告由Acoustic服务器任务负责。
 本文件是当前PC-MCL权威候选规格，替代此前joint-core、frozen-head和pooled-cache路线。
-边界：不授权source training、forward、feature/cache构建、validation/test、target inference或服务器任务。
+执行边界：用户已明确批准两卡执行本方案及固定四列评测；不恢复其他历史队列，不执行smoke/profile。
 
 官方来源：
 
@@ -117,13 +117,13 @@ L_source = BCEWithLogits(N,C,W) + 0.1 * CE(patient_match)
 
 - batch32；FP32；
 - Adam，lr `1e-3`，weight decay `1e-4`；
-- 最多50 epochs；patience10、min_delta0的strict-improvement早停；tie保留较早best并计入无提升；
-- milestones 15/20各乘0.1；这是把原400轮的120/160按相对位置缩放到50轮预算；
+- 完整400 epochs，关闭patience早停；min_delta0的strict-improvement best选模和tie保留较早best仍保持；
+- milestones 120/160各乘0.1，恢复公开源码默认的400轮日程；
 - mixing probability 0.5；patient sample probability 0.3；
 - N/C/W与所有迁移readout threshold固定0.5；
 - SpecAugment默认开启，固定`icbhi_ast_sup`频率/时间mask和mean填充值；依据是官方BEATs代码路径默认启用transform。该字段已显式写入运行config，不能从目标结果选择。
 
-其中优化字段来自官方代码而非论文正文。它们是当前source-code-faithful候选；正式启动仍需用户批准完整配置。
+其中优化字段来自官方代码而非论文正文，不将公开默认值当作论文完整运行命令。400轮预算已由用户批准。三个seed使用新目录`result/reproduce/source_transfer_baselines/PC_MCL_ICBHI5s_400epoch`；旧`PC_MCL_ICBHI5s`目录不覆盖、不改写checkpoint状态。
 
 ### 3.4 Checkpoint selection
 
@@ -133,7 +133,7 @@ L_source = BCEWithLogits(N,C,W) + 0.1 * CE(patient_match)
 - 最大化ICBHI Score；
 - 保留源码`Se>0.1`gate；
 - 只接受strict improvement，因此tie保留更早epoch；
-- 连续10个eligible epochs没有严格提升即停止；HF/SPR/KAUH不参与monitor；
+- 不因连续无提升而提前停止，完整运行400轮；HF/SPR/KAUH不参与monitor；
 - selected checkpoint必须包含encoder、N/C/W classifier与patient classifier；
 - evidence label：`ICBHI-official-test-selected 5-s PC-MCL source diagnostic`。
 

@@ -400,6 +400,7 @@ def train_source(
             patience=int(config["early_stopping_patience"]),
             min_delta=float(config["early_stopping_min_delta"]),
             eligible=float(metrics["sensitivity"]) > 0.001,
+            enabled=bool(config["early_stopping"]) and not bool(config["run_full_epochs"]),
         )
         best_score = float(early["best_score"])
         no_improvement_epochs = int(early["no_improvement_epochs"])

@@ -10,7 +10,7 @@ from .source_transfer_common import aggregate_seed_metrics, write_json
 
 
 METHOD_ROOTS = {
-    "pcmcl": "result/reproduce/source_transfer_baselines/PC_MCL_ICBHI5s",
+    "pcmcl": "result/reproduce/source_transfer_baselines/PC_MCL_ICBHI5s_400epoch",
     "dcase": "result/reproduce/source_transfer_baselines/DCASE_Joint_NativeUnion_5s",
 }
 SEEDS = (0, 1, 42)

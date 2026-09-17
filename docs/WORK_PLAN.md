@@ -6,7 +6,7 @@
 
 当前计划：[本地Work Plan](work_plans/2026-09-15_to_2026-09-24_baseline_extension_plan_zh.md)；[Notion Work Plan](https://app.notion.com/p/3dc309efda29810b84c1c7fd3fd21ad8)。学生材料：[PAFA交接清单](student_tasks/2026-09-16_hanlin_pafa_handoff_zh.md)及[已有baseline复跑说明](student_tasks/2026-09-16_hanlin_existing_baseline_rerun_zh.md)。原先Hanlin负责PC-MCL/DCASE、以及项目侧负责全部新增baseline的分工均被本轮替代。
 
-当前进度：PC-MCL与DCASE九输出native-union实现及三个代码/说明提交已完成。用户最新要求先完成run再决定paper整合；当前先保存并推送全部本地仓库改动，再由Acoustic服务器任务在imec canonical main同步代码，核对空闲GPU、磁盘、环境与资产并准备两组三seed。已批准的科学方案、max50/patience10及两方法不同选模保持；不恢复历史PAFA/BEATs队列。当前没有新增实验结果，本地35–87小时估算仅为备选，不代表CUDA实测耗时。
+当前进度（9/17）：DCASE三个seed及四列评测已由服务器确认完成。PC-MCL旧seed0在10轮全Normal、无合格best后早停；用户现已批准完整400轮/seed，关闭patience早停、恢复120/160 LR节点，其他科学设置及Se资格保持。三个seed使用新目录从预训练初始化，旧资产保留。按CUDA实测1.243分钟/轮，两卡分两批预计训练约16.6小时，含评测和余量17–19小时。Acoustic服务器任务负责正式执行与每15分钟进度报告，管理不持续SSH轮询；PAFA/BEATs历史队列不恢复。先完成结果再讨论论文整合。
 
 时间边界继续按纽约9/24 07:00规划：9/16–17完成设计与原协议核对，随后安排项目侧实现和正式run；9/21–22核验新旧结果，9/23回填、独立审阅及四页检查，24日早晨前保留提交缓冲。原Hanlin新增六run/168小时预算已取消；新冻结方案和已有baseline复跑分别核算。
 

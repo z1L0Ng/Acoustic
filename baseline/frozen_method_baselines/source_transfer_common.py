@@ -86,8 +86,9 @@ def update_early_stopping(
     patience: int,
     min_delta: float,
     eligible: bool = True,
+    enabled: bool = True,
 ) -> dict[str, object]:
-    """Advance strict-improvement early stopping by one completed epoch."""
+    """Update strict best selection; apply patience only when enabled."""
 
     improved = eligible and score > best_score + min_delta
     next_best = score if improved else best_score
@@ -96,7 +97,7 @@ def update_early_stopping(
         "improved": improved,
         "best_score": next_best,
         "no_improvement_epochs": next_count,
-        "stopped_early": next_count >= patience,
+        "stopped_early": enabled and next_count >= patience,
     }
 
 
