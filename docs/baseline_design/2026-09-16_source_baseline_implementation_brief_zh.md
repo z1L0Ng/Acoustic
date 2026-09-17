@@ -1,7 +1,9 @@
-# PC-MCL与DCASE单源迁移脚本实现及本地预算｜2026-09-16
+# PC-MCL Source Transfer与DCASE Joint Native-Union实现及本地预算｜2026-09-16
 
 用户最新指令：让代码写作任务完成对应脚本，并估算本地需要的时间。
 接收任务为Acoustic“模型设计”019fb42d-11d9-7b53-a6ae-d0ab010609c5，main目录 /Users/zilongzeng/Research/Acoustic。
+
+当前规范说明：DCASE ICBHI-only flat4条款已被九输出ICBHI+SPRSound native-union方案替代；当前代码见`dcase_joint_union_runner.py`。本任务的Git提交授权已由用户明确给出并已完成，下面授权段中的“不改Git”只记录前版实现阶段边界，不再是当前交付状态。
 
 最新预算修订：PC-MCL与DCASE均为max50 epochs、patience10、min_delta0的strict-improvement早停；tie保留较早best并计入无提升。下文原400/100轮要求是历史，已被此修订替代。
 
