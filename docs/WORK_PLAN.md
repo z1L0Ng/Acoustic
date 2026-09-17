@@ -6,7 +6,9 @@
 
 当前计划：[本地Work Plan](work_plans/2026-09-15_to_2026-09-24_baseline_extension_plan_zh.md)；[Notion Work Plan](https://app.notion.com/p/3dc309efda29810b84c1c7fd3fd21ad8)。学生材料：[PAFA交接清单](student_tasks/2026-09-16_hanlin_pafa_handoff_zh.md)及[已有baseline复跑说明](student_tasks/2026-09-16_hanlin_existing_baseline_rerun_zh.md)。原先Hanlin负责PC-MCL/DCASE、以及项目侧负责全部新增baseline的分工均被本轮替代。
 
-当前进度（9/17）：DCASE三seed成功结果已完整拉回本地（47个原始文件及成功运行日志，含6个checkpoint），轻量原始指标/预测/日志与汇总位于[结果归档](result_exports/2026-09-17_dcase_joint_native_union/README.md)。用户明确不拉PC-MCL失败文件，本次新下载副本已清理，服务器原件保留。PC-MCL全部进程和heartbeat继续暂停；此前NaN修复及7项检查与当前文档一并纳入这次Git快照，随后由“模型设计”任务接管后续代码修改。未改科学超参数、未启动重跑，不恢复历史PAFA/BEATs队列。详见[核查与修复说明](baseline_design/2026-09-17_pcmcl_numerical_failure_and_source_audit_zh.md)。
+最新启动决定（9/17）：用户已批准修订代码下的PC-MCL全模型Adam lr=1e-4，并进一步明确三张GPU并行运行fresh seeds0/1/42，每seed完整400轮及既定固定终点评测。配置为`baseline/frozen_method_baselines/pcmcl_source_lr1e4_run.json`，新root为`result/reproduce/source_transfer_baselines/PC_MCL_ICBHI5s_lr1e4_20260917`。优先GPU0/1/2各跑独立seed；只用确实空闲卡，不足时报告资源阻塞，不抢占。服务器每15分钟只读监视，正常进度保持安静，只在新bug/阻塞或本轮结束时向管理报告；单seed失败不打断其余正常独立任务，也不自动重试。原失败目录不恢复、失败文件不拉回，DCASE保持已归档结果。
+
+前序归档与整改（9/17）：DCASE三seed成功结果已完整拉回本地（47个原始文件及成功运行日志，含6个checkpoint），轻量原始指标/预测/日志与汇总位于[结果归档](result_exports/2026-09-17_dcase_joint_native_union/README.md)，已随e46a5d7推送。用户明确不拉PC-MCL失败文件，本次新下载副本已清理，服务器原件保留。旧队列停止后，“模型设计”已完成数值诊断、SpecAugment对齐及直接检查，并恢复原patient-profile默认；本轮按上述新授权采用lr1e-4启动，不恢复历史PAFA/BEATs队列。详见[核查与修复说明](baseline_design/2026-09-17_pcmcl_numerical_failure_and_source_audit_zh.md)。
 
 时间边界继续按纽约9/24 07:00规划：9/16–17完成设计与原协议核对，随后安排项目侧实现和正式run；9/21–22核验新旧结果，9/23回填、独立审阅及四页检查，24日早晨前保留提交缓冲。原Hanlin新增六run/168小时预算已取消；新冻结方案和已有baseline复跑分别核算。
 

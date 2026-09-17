@@ -2,11 +2,13 @@
 
 Notion：[当前工作计划](https://app.notion.com/p/3dc309efda29810b84c1c7fd3fd21ad8)。
 
-状态（9/17更新）：DCASE三个seed及四列终点评测完整，成功资产已拉回本地；只将DCASE轻量指标/预测/日志与汇总加入Git，完整checkpoint留本地和服务器。按用户修正，不保留本次PC-MCL失败文件的本地导入副本。当前先提交/推送这些结果与既有代码文档快照，再由“模型设计”接管PC-MCL代码整改。全部训练和heartbeat继续暂停，没有有效PC-MCL三seed基线，不能据此断言作者方法不可复现。
+最新批准（9/17）：PC-MCL改用经复核代码及全模型Adam lr=1e-4。用户进一步批准三张GPU并行启动fresh seeds0/1/42，每seed400轮正式训练和四列固定终点评测。使用新配置`baseline/frozen_method_baselines/pcmcl_source_lr1e4_run.json`与新root `result/reproduce/source_transfer_baselines/PC_MCL_ICBHI5s_lr1e4_20260917`，旧失败记录不修改或恢复。优先GPU0/1/2，按实际空闲状态各启动独立runner；不足三张时只用可用卡并报告阻塞，不抢占。既有15分钟heartbeat仍归服务器任务，正常epoch/Score变化不报告，只在新bug/阻塞或本轮结束时报告；相同异常不重复刷屏。全部结束后暂停监控。下面的暂停与整改记录作为历史保留，本次三seed明确启动授权优先。
+
+前序状态（归档交接时，现由上述新授权覆盖）：DCASE三个seed及四列终点评测完整，成功资产已拉回本地；只将DCASE轻量指标/预测/日志与汇总加入Git，完整checkpoint留本地和服务器。按用户修正，不保留本次PC-MCL失败文件的本地导入副本。结果与代码文档快照e46a5d7已push，模型设计随后完成代码整改。旧PC-MCL三seed均数值失效，不能据此断言作者方法不可复现。
 
 ## 1. 本周期目标与责任
 
-当前优先级：保留DCASE完整结果，核查PC-MCL作者配方与5-s适配差异并确认后续方案。PC-MCL队列和监控均已停止，不自动重启。核查与修复见`docs/baseline_design/2026-09-17_pcmcl_numerical_failure_and_source_audit_zh.md`。历史PAFA/BEATs队列不恢复。
+当前优先级：按用户新授权，在新root用三张空闲卡执行PC-MCL lr1e-4的seeds0/1/42。正常监控保持安静，仅新bug/阻塞或全部结束汇报。保留DCASE完整结果，旧PC-MCL配方不恢复。核查与修复见`docs/baseline_design/2026-09-17_pcmcl_numerical_failure_and_source_audit_zh.md`。历史PAFA/BEATs队列不恢复。
 
 - 项目侧：按已批准方案完成三seed，核验四列结果，再与用户讨论论文整合。
 - 模型设计：完成当前方案、数据与标签接口、训练/选模/恢复、固定评测、三seed队列、汇总和运行说明；在main提交相关代码及设计文档，不推送，不混入并行稿件或管理文件。
