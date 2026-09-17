@@ -137,33 +137,26 @@ class PCMCLTrainDataset(Dataset):
         self.patient_count = int(len(units) * patient_probability)
         self.by_patient: dict[str, list[int]] = defaultdict(list)
         self.by_class: dict[int, list[int]] = defaultdict(list)
-        self.by_patient_and_class: dict[str, dict[int, list[int]]] = {}
         for index, unit in enumerate(units):
             self.by_patient[unit.group_id].append(index)
             self.by_class[int(unit.target)].append(index)
-            self.by_patient_and_class.setdefault(unit.group_id, {}).setdefault(
-                int(unit.target), []
-            ).append(index)
         self.mixing_combinations = (
             (0, 1), (0, 2), (1, 2),
             (0, 0), (1, 1), (2, 2),
             (0, 3), (3, 1), (3, 2), (3, 3),
         )
-        self.hard_negative_patients = {
-            label: sorted(
-                patient
-                for patient, labels in self.by_patient_and_class.items()
-                if label in labels
+        self.patient_profiles = {
+            patient: tuple(
+                torch.stack([_ncw(int(units[index].target)) for index in indices])
+                .amax(dim=0)
+                .int()
+                .tolist()
             )
-            for label in self.by_class
+            for patient, indices in self.by_patient.items()
         }
-        self.hard_negative_labels = tuple(
-            label
-            for label, patients in sorted(self.hard_negative_patients.items())
-            if len(patients) >= 2
-        )
-        if self.patient_count and not self.hard_negative_labels:
-            raise ValueError("patient hard negatives require a shared native class across patients")
+        self.profile_patients: dict[tuple[int, ...], list[str]] = defaultdict(list)
+        for patient, profile in self.patient_profiles.items():
+            self.profile_patients[profile].append(patient)
 
     def set_epoch(self, epoch: int) -> None:
         self.epoch = epoch
@@ -182,16 +175,22 @@ class PCMCLTrainDataset(Dataset):
         )
         return waveform, target
 
-    def _hard_negative_pair(self, rng: random.Random) -> tuple[int, int]:
-        """Choose different patients with the same actual native cycle class."""
+    def _profile_matched_negative_pair(self, rng: random.Random) -> tuple[int, int]:
+        """Choose different patients with the same aggregate pathology profile."""
 
-        label = rng.choice(self.hard_negative_labels)
+        profiles = [
+            profile
+            for profile, patients in self.profile_patients.items()
+            if len(patients) >= 2
+        ]
+        if not profiles:
+            raise ValueError("patient hard negatives require a shared pathology profile")
         first_patient, second_patient = rng.sample(
-            self.hard_negative_patients[label], 2
+            self.profile_patients[rng.choice(profiles)], 2
         )
         return (
-            rng.choice(self.by_patient_and_class[first_patient][label]),
-            rng.choice(self.by_patient_and_class[second_patient][label]),
+            rng.choice(self.by_patient[first_patient]),
+            rng.choice(self.by_patient[second_patient]),
         )
 
     def __getitem__(self, index: int):
@@ -229,7 +228,7 @@ class PCMCLTrainDataset(Dataset):
             first, second = rng.sample(self.by_patient[patient], 2)
             patient_target = 1
         else:
-            first, second = self._hard_negative_pair(rng)
+            first, second = self._profile_matched_negative_pair(rng)
             patient_target = 0
         waveform, target = self._pair(first, second)
         return (

@@ -103,9 +103,10 @@ The summary excludes such runs even if an older script marked them complete.
 
 The author-code alignment pass also restored the stochastic
 `icbhi_ast_sup` SpecAugment gate and upper-exclusive mask widths. Patient hard
-negatives now use two different real patients with the same actual native
-cycle class; matching only patient-level aggregate profiles is no longer used.
-These are code-contract corrections, not evidence that convergence recovered.
+negatives retain the approved default: two different real patients with the
+same aggregate pathology profile. Requiring the sampled cycles themselves to
+share one native class is only an unapproved candidate, not the runtime
+default. These code changes are not evidence that convergence recovered.
 
 Resume restores model, optimizer, scheduler, epoch, and best-selection state.
 It also restores the consecutive no-improvement count, completed source epoch,

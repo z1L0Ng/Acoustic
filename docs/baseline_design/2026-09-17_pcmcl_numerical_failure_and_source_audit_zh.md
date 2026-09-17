@@ -27,7 +27,7 @@
 | patient身份 | official split分支用录音文件名作patient key | 当前用manifest的实际patient_id；语义更贴近论文，但不同于该源码分支 |
 | patient配对 | 正例偏向录音内相邻/非相邻cycle；负例依次搜索病理组 | 当前同patient内均匀配对，在可用病理profile间随机选负组；构成不同 |
 | loss | 论文为主BCE加0.1倍辅助CE；脚本实际采用(1−w)主loss+w辅助loss，默认w=0.5，辅助任务默认关闭 | 当前遵循论文加法公式并启用辅助任务；不能把公开默认值视为完整论文命令 |
-| SpecAugment | 脚本在p≥标准正态随机数时增强；p=1时约84.1%，宽度不含上界，time mask重新取均值 | 当前每batch必增强、宽度包含上界、使用一次均值；并非逐行一致的实现 |
+| SpecAugment | 脚本在p≥标准正态随机数时增强；p=1时约84.1%，宽度不含上界，time mask重新取均值 | 整改前为每batch必增强、宽度包含上界、使用一次均值；当前已对齐这些执行语义 |
 | 优化日程 | 公开默认Adam 1e−3、wd1e−4、400轮、120/160下降；warmup和EMA需显式启用 | 当前与这些优化默认值对齐，未启用warmup/EMA；这些默认值是否产生论文结果仍未确认 |
 | 本域选模/读出 | official-test Score严格改善且Se>0.1%保存best；C/W阈值0.5还原四类 | 当前数值单位和读出一致；保留test-selected标识，未改阈值或资格 |
 | 骨干/环境 | 可见wrapper与优化器路径未冻结BEATs；入口追加仓库外models路径并导入仓库未包含的CNN6 | 当前复用P2的BEATs包装及核心。逐行对照core的差异仅为作者多出的可选FreqMixStyle分支，其默认关闭；未发现默认路径的骨干数学差异 |
@@ -48,25 +48,25 @@
 - 拒绝从已知非有限的训练历史恢复；队列不会跳过失败后继续补跑。
 - 汇总检查旧train log与summary中的所有数值字段，排除带NaN/Inf的伪complete运行，并列出原因；保留原始summary/log。DCASE路径保持原有行为。
 - 将本项目SpecAugment改为公开`icbhi_ast_sup`执行语义：`p=1`与标准正态随机数比较（并非每batch必增强）、mask宽度上界不包含、frequency mask后重新计算time-mask mean。没有引入新增强策略。
-- patient hard negative现在保证两个不同真实patient的**实际cycle native class相同**，而不是只要求两位患者的总体病理profile相同后任意抽cycle；这样patient head不能利用pair内病理不匹配走捷径。positive仍是同一真实patient内的两条cycle。
+- patient hard negative恢复已批准的默认：选择总体病理profile相同的两个不同真实patient，再分别抽取cycle；positive仍是同一真实patient内的两条cycle。实际cycle native class强制相同只保留为待用户决定的采样候选，没有进入正式默认。现有证据不足以判断两种条件是否存在或消除病理捷径。
 
 文件：`baseline/frozen_method_baselines/pcmcl_numerics.py`、`pcmcl_source_runner.py`、`pcmcl_source_transfer.py`、`source_transfer_queue.py`、`source_transfer_summary.py`。
 
 ## 验证与下一步判断
 
-9项直接单元/错误处理检查通过：有限读出不变；NaN/Inf预测拒绝；NaN loss更新前停止；有限loss产生无限梯度时停止并定位参数；有限标量更新不变；SpecAugment随机gate与time/frequency轴；hard-negative实际cycle class匹配；旧伪complete排除及恢复/队列拒绝；失败状态、结构化诊断与既有checkpoint保留。只使用标量/小tensor和临时metadata，未实例化BEATs或运行训练流程。
+9项直接单元/错误处理检查通过：有限读出不变；NaN/Inf预测拒绝；NaN loss更新前停止；有限loss产生无限梯度时停止并定位参数；有限标量更新不变；SpecAugment随机gate与time/frequency轴；hard-negative patient-profile匹配；旧伪complete排除及恢复/队列拒绝；失败状态、结构化诊断与既有checkpoint保留。只使用标量/小tensor和临时metadata，未实例化BEATs或运行训练流程。
 
 检查命令：`/opt/anaconda3/envs/Beats/bin/python -m unittest discover -s tests -p test_pcmcl_numerics.py -v`。
 
-这些修复防止数值失效后继续消耗GPU和误收录结果，并关闭两处明确的软件语义偏差；不证明收敛问题已经解决。
+这些修复防止数值失效后继续消耗GPU和误收录结果，并使SpecAugment执行语义对齐公开代码；patient-profile默认合同保持不变。它们不证明收敛问题已经解决。
 
 ## 仍需用户决定的科学配方
 
 旧`pcmcl_source_run.json`及其`PC_MCL_ICBHI5s_400epoch`输出目录继续作为失败配方历史，不改写成新默认。公开CLI的Adam `1e-3`是源码默认值，不是论文正文给出的完整成功命令；三个seed都在第一次120轮降LR之前失效，因此当前最直接的解释候选是full-BEATs更新过激，但尚无首次异常batch诊断可以证明因果。
 
-若用户批准新的正式单seed，建议新输出目录并一次只改变一个优化因素：
+若用户批准新的正式单seed，建议使用新输出目录，并从以下未批准候选中另行冻结一个；它们用于稳定训练，不构成对旧失败原因的严格因果检验：
 
-1. **首选候选：全模型Adam lr从`1e-3`降为`1e-4`，其他字段不变。** 这是最小单因素变化，直接检验高LR假设；不是已批准默认值。
+1. **首选前瞻稳定训练候选：全模型Adam lr从`1e-3`降为`1e-4`。** 不是已批准默认值。由于当前代码同时已修正SpecAugment执行语义，未来“新代码+`1e-4`”相对旧失败运行不构成严格单因素对照；即使训练成功，也不能据此证明旧NaN由LR单独导致。
 2. **次选候选：encoder `5e-5`、两个随机初始化head `1e-3`。** 它更符合预训练骨干/新head的不同更新尺度，但新增参数组，归因不如候选1简单。
 3. **低优先：保留`1e-3`并加10轮linear warmup。** 失效发生在30–45轮而非启动阶段，单独warmup的解释力较弱；EMA只能平滑评测权重，不能阻止训练参数本身变成NaN，均不建议作为第一次修复。
 

@@ -83,7 +83,7 @@ waveform concat --------------------> 5.0 s
 - 与官方实现的必要差异：本轮每个constituent都会规范到2.5 s，因此不再只从“原始时长短于half target”的子池选择；
 - patient-matching examples：候选保持源码`ssl_prob=0.3`；
 - positive为same-patient pair；hard negative为不同patient且病理profile匹配的pair；
-- 当前实现把hard negative收紧为“不同真实patient、实际抽取cycle的native class相同”，避免仅匹配患者总体profile后抽到病理不一致cycle；
+- 默认实现保持上述patient-profile匹配。强制实际抽取cycle的native class相同会改变采样分布，目前只作为待用户决定的候选；没有证据支持将其视为默认条件的“收紧”或作捷径因果结论；
 - additive N/C/W target为两个constituent labels的逻辑OR。
 
 ### 3.2 模型与梯度

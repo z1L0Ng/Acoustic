@@ -77,19 +77,24 @@ class PCMCLNumericsTest(unittest.TestCase):
         self.assertTrue(torch.equal(output[:, :, 0, :], torch.zeros(1, 1, 4)))
         self.assertTrue(torch.equal(output[:, :, 2, :], torch.zeros(1, 1, 4)))
 
-    def test_patient_hard_negative_matches_actual_cycle_class(self):
+    def test_patient_hard_negative_matches_aggregate_patient_profile(self):
         units = [
             AudioUnit("p1-c", "icbhi", Path("p1.wav"), "P1", target=1),
             AudioUnit("p1-n", "icbhi", Path("p1.wav"), "P1", target=0),
             AudioUnit("p2-c", "icbhi", Path("p2.wav"), "P2", target=1),
-            AudioUnit("p2-w", "icbhi", Path("p2.wav"), "P2", target=2),
+            AudioUnit("p2-n", "icbhi", Path("p2.wav"), "P2", target=0),
+            AudioUnit("p3-c", "icbhi", Path("p3.wav"), "P3", target=1),
+            AudioUnit("p3-w", "icbhi", Path("p3.wav"), "P3", target=2),
         ]
         dataset = runner.PCMCLTrainDataset(
             units, seed=42, mixing_probability=0.0, patient_probability=0.5
         )
-        first, second = dataset._hard_negative_pair(random.Random(42))
+        first, second = dataset._profile_matched_negative_pair(random.Random(42))
         self.assertNotEqual(units[first].group_id, units[second].group_id)
-        self.assertEqual(units[first].target, units[second].target)
+        self.assertEqual(
+            dataset.patient_profiles[units[first].group_id],
+            dataset.patient_profiles[units[second].group_id],
+        )
 
     def test_legacy_nan_run_is_excluded_and_cannot_resume_or_reenter_queue(self):
         with tempfile.TemporaryDirectory() as directory:
