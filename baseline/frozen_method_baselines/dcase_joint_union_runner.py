@@ -262,8 +262,11 @@ class DCASEJointUnionCRNN(nn.Module):
 
 
 class JointCachedDataset(Dataset):
-    def __init__(self, units: Sequence[AudioUnit], cache_dir: Path) -> None:
+    def __init__(
+        self, units: Sequence[AudioUnit], cache_dir: Path, *, include_targets: bool = True
+    ) -> None:
         self.units = tuple(units)
+        self.include_targets = include_targets
         ids = np.load(cache_dir / "ids.npy").astype(str)
         self.frames = np.load(cache_dir / "frames.npy", mmap_mode="r")
         self.index = {value: index for index, value in enumerate(ids.tolist())}
@@ -273,12 +276,18 @@ class JointCachedDataset(Dataset):
 
     def __getitem__(self, index: int):
         unit = self.units[index]
-        raw = (
-            ("normal", "crackle", "wheeze", "both")[int(unit.target)]
-            if unit.dataset == "icbhi"
-            else str(unit.metadata["raw_label"])
-        )
-        target, mask = union_target(unit.dataset, raw)
+        if self.include_targets:
+            raw = (
+                ("normal", "crackle", "wheeze", "both")[int(unit.target)]
+                if unit.dataset == "icbhi"
+                else str(unit.metadata["raw_label"])
+            )
+            target, mask = union_target(unit.dataset, raw)
+        else:
+            # Terminal prediction does not require source labels. These
+            # all-masked placeholders are not negatives or model inputs.
+            target = torch.zeros(len(LABELS), dtype=torch.float32)
+            mask = torch.zeros(len(LABELS), dtype=torch.bool)
         return (
             load_single_5s(unit),
             torch.from_numpy(np.array(self.frames[self.index[unit.sample_id]], copy=True)).float(),
@@ -459,8 +468,15 @@ def _predict(model: DCASEJointUnionCRNN, loader: DataLoader, device: torch.devic
     }
 
 
-def _loader(units: Sequence[AudioUnit], cache_root: Path, role: str, batch_size: int) -> DataLoader:
-    return DataLoader(JointCachedDataset(units, cache_root / role), batch_size=batch_size, shuffle=False)
+def _loader(
+    units: Sequence[AudioUnit], cache_root: Path, role: str, batch_size: int,
+    *, include_targets: bool = True,
+) -> DataLoader:
+    return DataLoader(
+        JointCachedDataset(units, cache_root / role, include_targets=include_targets),
+        batch_size=batch_size,
+        shuffle=False,
+    )
 
 
 def _selection(predictions: Mapping[str, dict[str, np.ndarray]]) -> dict[str, object]:
@@ -691,7 +707,7 @@ def evaluate_terminal(
     np.savez_compressed(result_dir / "icbhi_terminal_predictions.npz", **icbhi, predictions=icbhi_prediction)
 
     spr_units = load_spr_inter_units(repo_root, include_targets=False)
-    spr = _predict(model, _loader(spr_units, cache_root, "spr_inter", batch_size), device)
+    spr = _predict(model, _loader(spr_units, cache_root, "spr_inter", batch_size, include_targets=False), device)
     spr_raw_prediction = spr["scores"][:, SPR_NATIVE].argmax(axis=1)
     spr_prediction = (spr_raw_prediction != 0).astype(np.int64)
     np.savez_compressed(result_dir / "spr_predictions_label_free.npz", sample_ids=spr["sample_ids"], scores=spr["scores"], raw7_predictions=spr_raw_prediction, predictions=spr_prediction)
@@ -701,7 +717,7 @@ def evaluate_terminal(
 
     hf_units = load_hf_test_units(repo_root)
     hf_windows = _all_cache_units(repo_root, config)["hf_test_windows"]
-    hf = _predict(model, _loader(hf_windows, cache_root, "hf_test_windows", batch_size), device)
+    hf = _predict(model, _loader(hf_windows, cache_root, "hf_test_windows", batch_size, include_targets=False), device)
     window_score = hf["scores"][:, HF_CAS].max(axis=1)
     recording_score = window_score.reshape(len(hf_units), 3).max(axis=1)
     hf_ids = np.asarray([unit.sample_id for unit in hf_units])
@@ -713,7 +729,7 @@ def evaluate_terminal(
     np.savez_compressed(result_dir / "hf_predictions_scored.npz", sample_ids=hf_ids[hf_mask], scores=hf_score, targets=hf_target)
 
     kauh_units = load_kauh_units(repo_root)
-    kauh = _predict(model, _loader(kauh_units, cache_root, "kauh_all", batch_size), device)
+    kauh = _predict(model, _loader(kauh_units, cache_root, "kauh_all", batch_size, include_targets=False), device)
     np.savez_compressed(result_dir / "kauh_view_predictions.npz", sample_ids=kauh["sample_ids"], patient_ids=np.asarray([unit.group_id for unit in kauh_units]), views=np.asarray([unit.metadata["view"] for unit in kauh_units]), native_scores=kauh["scores"][:, ICBHI_NATIVE])
     by_patient: dict[str, list[int]] = defaultdict(list)
     for index, unit in enumerate(kauh_units):
