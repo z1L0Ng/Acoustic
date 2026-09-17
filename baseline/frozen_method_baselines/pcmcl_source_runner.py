@@ -9,7 +9,6 @@ from __future__ import annotations
 import argparse
 import json
 import random
-import sys
 import time
 from collections import defaultdict
 from pathlib import Path
@@ -40,6 +39,7 @@ from .source_transfer_common import (
     binary_auroc,
     binary_metrics,
     icbhi_metrics,
+    load_beats_transfer_class,
     load_hf_cas_targets,
     load_hf_test_units,
     load_hf_windows,
@@ -214,8 +214,7 @@ class SingleUnitDataset(Dataset):
 def _load_encoder(repo_root: Path, config: dict[str, object], device: torch.device) -> nn.Module:
     source = repo_root / str(config["source_repo"])
     checkpoint = repo_root / str(config["initial_checkpoint"])
-    sys.path.insert(0, str(source.resolve()))
-    from models.beats import BEATsTransferLearningModel
+    BEATsTransferLearningModel = load_beats_transfer_class(source)
 
     transform = None
     if bool(config["specaugment"]):

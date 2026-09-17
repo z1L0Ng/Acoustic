@@ -7,9 +7,11 @@ dependencies are imported only when an authorized run actually loads audio.
 from __future__ import annotations
 
 import csv
+import importlib.util
 import json
 import math
 import re
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable, Mapping, Sequence
@@ -39,6 +41,18 @@ KAUH_COMPATIBLE = {
     "I C E W": 1,
 }
 KAUH_EXCLUDED = {"Crep", "Bronchial", "I C B"}
+
+
+def load_beats_transfer_class(source: Path) -> type[torch.nn.Module]:
+    """Load the author BEATs wrapper without importing unrelated backbones."""
+
+    sys.path.insert(0, str(source.resolve()))
+    spec = importlib.util.spec_from_file_location(
+        "_acoustic_author_beats", source / "models" / "beats.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.BEATsTransferLearningModel
 
 
 @dataclass(frozen=True)
