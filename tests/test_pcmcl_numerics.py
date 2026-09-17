@@ -165,6 +165,25 @@ class PCMCLNumericsTest(unittest.TestCase):
             self.assertEqual(status["diagnostics"]["stage"], "loss")
             self.assertEqual((result_dir / "last_checkpoint.pt").read_bytes(), b"prior completed epoch")
 
+    def test_summary_accepts_explicit_relative_output_root(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            output_root = Path("result/new_pcmcl_recipe")
+            seed_dir = root / output_root / "seed_0"
+            seed_dir.mkdir(parents=True)
+            (seed_dir / "run_summary.json").write_text(
+                json.dumps(
+                    {
+                        "status": "complete_test_selected_source_transfer",
+                        "seed": 0,
+                        "metrics": {"icbhi": {"icbhi_score": 0.6}},
+                    }
+                )
+            )
+            summary = summarize(root, "pcmcl", output_root)
+            self.assertEqual(summary["completed_seeds"], [0])
+            self.assertTrue((root / output_root / "multiseed_summary.json").is_file())
+
 
 if __name__ == "__main__":
     unittest.main()

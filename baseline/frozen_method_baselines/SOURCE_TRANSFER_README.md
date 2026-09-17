@@ -42,22 +42,39 @@ post-processing. Its current head is the approved nine-output sigmoid union.
 ## Commands and execution scope
 
 The failed historical queue remains paused. The current execution authorization
-is limited to the new lr1e-4 seed-0 config below; it does not authorize the old
-queue, other seeds, or a duplicate local run.
+is limited to three independent runners for seeds 0/1/42 using the new lr1e-4
+config below; it does not authorize the old queue or a duplicate local run.
 
-The approved prospective server run is seed 0 only, using
-`pcmcl_source_lr1e4_seed0_run.json`. It keeps the 400-epoch 5-s contract and
-120/160 milestones, changes Adam learning rate to `1e-4`, and writes to
+The approved prospective server runs use `pcmcl_source_lr1e4_run.json`. They
+keep the 400-epoch 5-s contract and
+120/160 milestones, change Adam learning rate to `1e-4`, and write to
 `PC_MCL_ICBHI5s_lr1e4_20260917`. The corrected SpecAugment implementation also
 differs from the historical failed run, so this is a stability recipe rather
 than a single-factor causal experiment. Management/server task owns launch and
 monitoring; this model-design task does not start it.
 
 ```bash
-/opt/anaconda3/envs/Beats/bin/python -m baseline.frozen_method_baselines.pcmcl_source_runner \
+CUDA_VISIBLE_DEVICES=0 /opt/anaconda3/envs/Beats/bin/python -m baseline.frozen_method_baselines.pcmcl_source_runner \
   --repo-root /files1/Zilong/Acoustic \
-  --config baseline/frozen_method_baselines/pcmcl_source_lr1e4_seed0_run.json \
+  --config baseline/frozen_method_baselines/pcmcl_source_lr1e4_run.json \
   --seed 0 --device cuda:0 --run
+CUDA_VISIBLE_DEVICES=1 /opt/anaconda3/envs/Beats/bin/python -m baseline.frozen_method_baselines.pcmcl_source_runner \
+  --repo-root /files1/Zilong/Acoustic \
+  --config baseline/frozen_method_baselines/pcmcl_source_lr1e4_run.json \
+  --seed 1 --device cuda:0 --run
+CUDA_VISIBLE_DEVICES=2 /opt/anaconda3/envs/Beats/bin/python -m baseline.frozen_method_baselines.pcmcl_source_runner \
+  --repo-root /files1/Zilong/Acoustic \
+  --config baseline/frozen_method_baselines/pcmcl_source_lr1e4_run.json \
+  --seed 42 --device cuda:0 --run
+```
+
+Do not invoke the default `source_transfer_queue` for these runs. After all
+three finish, aggregate the new root explicitly:
+
+```bash
+/opt/anaconda3/envs/Beats/bin/python -m baseline.frozen_method_baselines.source_transfer_summary \
+  --repo-root /files1/Zilong/Acoustic --method pcmcl \
+  --output-root result/reproduce/source_transfer_baselines/PC_MCL_ICBHI5s_lr1e4_20260917
 ```
 
 One PC-MCL seed:

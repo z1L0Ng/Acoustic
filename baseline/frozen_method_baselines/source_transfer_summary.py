@@ -17,8 +17,11 @@ METHOD_ROOTS = {
 SEEDS = (0, 1, 42)
 
 
-def summarize(repo_root: Path, method: str) -> dict[str, object]:
-    root = repo_root / METHOD_ROOTS[method]
+def summarize(
+    repo_root: Path, method: str, output_root: Path | None = None
+) -> dict[str, object]:
+    requested_root = output_root or Path(METHOD_ROOTS[method])
+    root = requested_root if requested_root.is_absolute() else repo_root / requested_root
     completed = []
     excluded = []
     for seed in SEEDS:
@@ -56,8 +59,17 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo-root", type=Path, default=Path.cwd())
     parser.add_argument("--method", choices=tuple(METHOD_ROOTS), required=True)
+    parser.add_argument(
+        "--output-root",
+        type=Path,
+        help="explicit result root; relative paths are resolved under repo-root",
+    )
     args = parser.parse_args()
-    print(json.dumps(summarize(args.repo_root.resolve(), args.method), indent=2))
+    print(
+        json.dumps(
+            summarize(args.repo_root.resolve(), args.method, args.output_root), indent=2
+        )
+    )
 
 
 if __name__ == "__main__":

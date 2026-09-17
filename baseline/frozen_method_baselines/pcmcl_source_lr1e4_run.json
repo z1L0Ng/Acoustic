@@ -1,6 +1,6 @@
 {
-  "method": "PC-MCL ICBHI-only 5-s source transfer, prospective lr1e-4 seed0 stability recipe",
-  "seeds": [0],
+  "method": "PC-MCL ICBHI-only 5-s source transfer, prospective lr1e-4 three-seed stability recipe",
+  "seeds": [0, 1, 42],
   "sample_rate": 16000,
   "input_seconds": 5.0,
   "pair_cycle_seconds": 2.5,
