@@ -41,9 +41,24 @@ post-processing. Its current head is the approved nine-output sigmoid union.
 
 ## Commands and execution scope
 
-The earlier canonical imec execution authorization is now paused for PC-MCL.
-New PC-MCL execution requires a new explicit start after the recipe is settled.
-The local MPS commands below are examples and do not authorize a duplicate run.
+The failed historical queue remains paused. The current execution authorization
+is limited to the new lr1e-4 seed-0 config below; it does not authorize the old
+queue, other seeds, or a duplicate local run.
+
+The approved prospective server run is seed 0 only, using
+`pcmcl_source_lr1e4_seed0_run.json`. It keeps the 400-epoch 5-s contract and
+120/160 milestones, changes Adam learning rate to `1e-4`, and writes to
+`PC_MCL_ICBHI5s_lr1e4_20260917`. The corrected SpecAugment implementation also
+differs from the historical failed run, so this is a stability recipe rather
+than a single-factor causal experiment. Management/server task owns launch and
+monitoring; this model-design task does not start it.
+
+```bash
+/opt/anaconda3/envs/Beats/bin/python -m baseline.frozen_method_baselines.pcmcl_source_runner \
+  --repo-root /files1/Zilong/Acoustic \
+  --config baseline/frozen_method_baselines/pcmcl_source_lr1e4_seed0_run.json \
+  --seed 0 --device cuda:0 --run
+```
 
 One PC-MCL seed:
 
