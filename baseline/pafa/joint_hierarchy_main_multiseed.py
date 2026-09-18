@@ -110,6 +110,12 @@ def _condition(seed: int, mode: MainRunMode = FULL_MODE) -> str:
     return f"{mode.condition_prefix}_seed{seed}"
 
 
+def _cuda_amp_enabled(device: torch.device, mode: MainRunMode) -> bool:
+    """Preserve the old Full behavior; the new without-PAFA CUDA run is FP32."""
+
+    return device.type == "cuda" and mode == FULL_MODE
+
+
 def _validate_config(config: PAFAJointHierarchyConfig) -> None:
     if config.seed not in SEEDS:
         raise ValueError(f"main multiseed runner accepts only seeds {SEEDS}")
@@ -141,6 +147,7 @@ def _config_payload(
     config: PAFAJointHierarchyConfig, mode: MainRunMode = FULL_MODE
 ) -> dict[str, object]:
     payload = config.to_dict()
+    amp_enabled = _cuda_amp_enabled(torch.device(config.device), mode)
     payload.update(
         {
             "condition": _condition(config.seed, mode),
@@ -150,6 +157,13 @@ def _config_payload(
             "method_change": mode.method_change,
             "pafa_enabled": mode.pafa_enabled,
             "pcsl_gpal_criterion_called": mode.pafa_enabled,
+            "precision": "CUDA autocast" if amp_enabled else "FP32",
+            "cuda_amp_enabled": amp_enabled,
+            "backend_comparison_boundary": (
+                "new run uses CUDA; historical Full reference used MPS, so bitwise parity is not claimed"
+                if mode == WITHOUT_PAFA_MODE
+                else "existing Full runner behavior"
+            ),
             "seed_role": f"formal main-method confirmation seed {config.seed}",
             "selection": "ICBHI official-test Hard Hierarchy Score only",
             "checkpoint_selection": (
@@ -408,7 +422,8 @@ def run_seed(
         lr=config.learning_rate,
         weight_decay=config.weight_decay,
     )
-    scaler = torch.cuda.amp.GradScaler(enabled=device.type == "cuda")
+    amp_enabled = _cuda_amp_enabled(device, mode)
+    scaler = torch.cuda.amp.GradScaler(enabled=amp_enabled)
     patient_index = _patient_indices(
         [sample for rows in subtrain.values() for sample in rows]
     )
@@ -473,7 +488,7 @@ def run_seed(
                 for key, value in model.state_dict().items()
             }
             optimizer.zero_grad(set_to_none=True)
-            with torch.cuda.amp.autocast(enabled=device.type == "cuda"):
+            with torch.cuda.amp.autocast(enabled=amp_enabled):
                 logits, projected = model(waveform, training=True)
                 classification_loss, _ = hierarchical_loss(
                     logits,

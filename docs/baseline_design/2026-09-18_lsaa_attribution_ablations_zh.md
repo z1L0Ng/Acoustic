@@ -8,7 +8,7 @@
 - BEATs iter3+ AS2M全量微调；batch 32；Adam lr `5e-5`、wd `1e-6`；cosine `eta_min_ratio=1e-3`；EMA beta 0.5；
 - 最多50 epochs、patience 10、strict improvement、tie保留更早checkpoint；
 - ICBHI official-test native Score逐epoch选模；原source-internal validation只用于既有C/W threshold；SPRSound terminal在selected checkpoint后读取；
-- evidence label保留test-selected边界；CUDA新运行与历史MPS参照不承诺逐位一致；
+- evidence label保留test-selected边界；历史Full与Native+attributes参照实际使用MPS/FP32，新消融使用CUDA/FP32并显式关闭AMP，不承诺跨后端逐位一致；
 - 明确不使用PC-MCL的`lr=1e-4`、400 epochs或SpecAugment。
 
 服务器相对`--repo-root /files1/Zilong/Acoustic`解析全部依赖：
@@ -44,7 +44,7 @@ L_without_PAFA = 1.0 * L_hierarchical_classification
 PCSL/GPAL criterion called = false
 ```
 
-没有`0 * PAFA(...)`路径。selected checkpoint后输出ICBHI/SPR native结果及SPR C/W AUROC，再复用既有固定HF CAS/KAUH external evaluator；HF/KAUH不参与训练、选模或threshold。每seed保存best与last，external成功后才把总状态写为complete；external失败时training summary保持`external_pending`，三seed汇总拒绝非complete状态。
+没有`0 * PAFA(...)`路径。分类项继续直接调用正式Full的`beats_nal_protocol.hierarchical_loss`，按实际eligible节点取mean；不替换成benchmark controls的固定逐节点`1/3`聚合。selected checkpoint后输出ICBHI/SPR native结果及SPR C/W AUROC，再复用既有固定HF CAS/KAUH external evaluator；HF/KAUH不参与训练、选模或threshold。每seed保存best与last，external成功后才把总状态写为complete；external失败时training summary保持`external_pending`，三seed汇总拒绝非complete状态。
 
 输出：`result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_*`。
 

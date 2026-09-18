@@ -73,6 +73,13 @@ class LSAAAttributionAblationsTest(unittest.TestCase):
         self.assertEqual(without["pcsl_gpal_criterion_called"], False)
         self.assertEqual(without["learning_rate"], 5e-5)
         self.assertEqual(without["epochs"], 50)
+        self.assertEqual(without["precision"], "FP32")
+        self.assertEqual(without["cuda_amp_enabled"], False)
+        self.assertFalse(
+            main_runner._cuda_amp_enabled(
+                torch.device("cuda"), main_runner.WITHOUT_PAFA_MODE
+            )
+        )
         self.assertIn("LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_42", without["output_dir"])
 
     def test_aggregate_rejects_noncomplete_seed(self):
