@@ -46,6 +46,11 @@ from baseline.multidataset_pipeline.posthoc_native_readout import (
     native_metrics,
 )
 from baseline.pafa.beats_ce_reproduction import _apply_author_ema, read_official_cycles
+from baseline.pafa.attribution_split import (
+    frozen_split_reference,
+    load_attribution_source_samples,
+    split_contract_path,
+)
 from baseline.pafa.joint_hierarchy import (
     PAFAJointHierarchyConfig,
     _append_jsonl,
@@ -86,6 +91,7 @@ class MainRunMode:
     pafa_enabled: bool
     method_change: str
     completion_status: str
+    early_stopped_status: str
 
 
 FULL_MODE = MainRunMode(
@@ -95,6 +101,7 @@ FULL_MODE = MainRunMode(
     pafa_enabled=True,
     method_change="none; independent confirmation seed",
     completion_status="complete_epochwise_icbhi_test_selected",
+    early_stopped_status="early_stopped_epochwise_icbhi_test_selected",
 )
 WITHOUT_PAFA_MODE = MainRunMode(
     name="lsaa_without_pafa",
@@ -103,6 +110,7 @@ WITHOUT_PAFA_MODE = MainRunMode(
     pafa_enabled=False,
     method_change="PCSL and GPAL criteria are not called; classification path is unchanged",
     completion_status="training_and_native_terminal_complete_external_pending",
+    early_stopped_status="early_stopped_training_and_native_terminal_complete_external_pending",
 )
 
 
@@ -114,6 +122,10 @@ def _cuda_amp_enabled(device: torch.device, mode: MainRunMode) -> bool:
     """Preserve the old Full behavior; the new without-PAFA CUDA run is FP32."""
 
     return device.type == "cuda" and mode == FULL_MODE
+
+
+def _run_status(mode: MainRunMode, early_stopped: bool) -> str:
+    return mode.early_stopped_status if early_stopped else mode.completion_status
 
 
 def _validate_config(config: PAFAJointHierarchyConfig) -> None:
@@ -163,6 +175,11 @@ def _config_payload(
                 "new run uses CUDA; historical Full reference used MPS, so bitwise parity is not claimed"
                 if mode == WITHOUT_PAFA_MODE
                 else "existing Full runner behavior"
+            ),
+            "source_split_contract": (
+                str(split_contract_path(config.repo_root))
+                if mode == WITHOUT_PAFA_MODE
+                else "existing generated Full split"
             ),
             "seed_role": f"formal main-method confirmation seed {config.seed}",
             "selection": "ICBHI official-test Hard Hierarchy Score only",
@@ -381,6 +398,22 @@ def _training_objective(
     )
 
 
+def _require_finite_total(
+    total_loss: torch.Tensor,
+    mode: MainRunMode,
+    *,
+    seed: int,
+    epoch: int,
+    batch: int,
+    dataset: str,
+) -> None:
+    if not mode.pafa_enabled and not bool(torch.isfinite(total_loss.detach()).all()):
+        raise FloatingPointError(
+            "non-finite without-PAFA total loss "
+            f"seed={seed} epoch={epoch} batch={batch} dataset={dataset}"
+        )
+
+
 def run_seed(
     config: PAFAJointHierarchyConfig, mode: MainRunMode = FULL_MODE
 ) -> dict[str, object]:
@@ -392,7 +425,11 @@ def run_seed(
     config.output_dir.mkdir(parents=True, exist_ok=True)
     _write_json(config.output_dir / "config.json", _config_payload(config, mode))
 
-    selection_samples = load_selection_samples(config)
+    selection_samples = (
+        load_attribution_source_samples(config)
+        if mode == WITHOUT_PAFA_MODE
+        else load_selection_samples(config)
+    )
     subtrain = _dataset_partitions(selection_samples, "subtrain")
     validation = _dataset_partitions(selection_samples, "validation")
     _write_json(
@@ -413,6 +450,11 @@ def run_seed(
             },
         },
     )
+    if mode == WITHOUT_PAFA_MODE:
+        _write_json(
+            config.output_dir / "split_reference.json",
+            frozen_split_reference(selection_samples, config.seed),
+        )
 
     waveform_store = _prepare_waveforms(selection_samples, config)
     device = torch.device(config.device)
@@ -504,6 +546,14 @@ def run_seed(
                     pafa_criterion,
                     config,
                     mode,
+                )
+                _require_finite_total(
+                    total_loss,
+                    mode,
+                    seed=config.seed,
+                    epoch=epoch,
+                    batch=batch_index,
+                    dataset=dataset,
                 )
             scaler.scale(total_loss).backward()
             scaler.step(optimizer)
@@ -830,11 +880,7 @@ def run_seed(
     _write_json(terminal_dir / "native_metrics.json", final_terminal)
     _write_json(terminal_dir / "selected_native_metrics.json", final_terminal)
     summary = {
-        "status": (
-            f"early_stopped_{mode.completion_status}"
-            if early_stopped
-            else mode.completion_status
-        ),
+        "status": _run_status(mode, early_stopped),
         "evidence_label": mode.evidence_label,
         "condition": _condition(config.seed, mode),
         "seed": config.seed,

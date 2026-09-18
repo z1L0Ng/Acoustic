@@ -113,7 +113,12 @@ def run_seed(
         "external_evaluation": {
             "status": external_result["status"],
             "hf_metrics_path": external_result["hf_metrics_path"],
+            "hf_cas_metrics_path": external_result["hf_cas_metrics_path"],
             "kauh_metrics_path": external_result["kauh_metrics_path"],
+            "hf_cas_auroc": external_result["hf_cas_auroc"],
+            "hf_cas_support": external_result["hf_cas_support"],
+            "kauh_patient_ba": external_result["kauh_patient_ba"],
+            "kauh_patient_support": external_result["kauh_patient_support"],
             "threshold_tuning": False,
             "checkpoint_selection": False,
         },
@@ -124,6 +129,8 @@ def run_seed(
 
 def _stat(values: Sequence[float]) -> dict[str, object]:
     array = np.asarray(values, dtype=np.float64)
+    if not np.isfinite(array).all():
+        raise FloatingPointError("non-finite attribution metric cannot be aggregated")
     return {
         "n": int(array.size),
         "mean": float(array.mean()),
@@ -193,12 +200,45 @@ def aggregate(
         ]
         hf_scalars = [external._hf_scalars(row) for row in hf_rows]
         kauh_scalars = [external._kauh_scalars(row) for row in kauh_rows]
+        hf_cas_rows = [
+            json.loads(
+                Path(row["external_evaluation"]["hf_cas_metrics_path"]).read_text()
+            )
+            for row in rows
+        ]
         external_summary = {
-            "hf": {
+            "primary": {
+                "hf_cas_auroc": _stat(
+                    [float(row["hf_cas_auroc"]) for row in hf_cas_rows]
+                ),
+                "hf_cas_support": {
+                    key: [int(row[key]) for row in hf_cas_rows]
+                    for key in ("support", "positive", "negative")
+                },
+                "kauh_patient_ba": _stat(
+                    [
+                        float(
+                            row["patient_level_after_BDE_probability_mean"][
+                                "level1_binary"
+                            ]["average_score"]
+                        )
+                        for row in kauh_rows
+                    ]
+                ),
+                "kauh_compatible_patient_support": [
+                    int(
+                        row["patient_level_after_BDE_probability_mean"][
+                            "level1_binary"
+                        ]["rows"]
+                    )
+                    for row in kauh_rows
+                ],
+            },
+            "hf_d_w_diagnostic": {
                 key: _stat([row[key] for row in hf_scalars])
                 for key in sorted(hf_scalars[0])
             },
-            "kauh": {
+            "kauh_secondary": {
                 key: _stat([row[key] for row in kauh_scalars])
                 for key in sorted(kauh_scalars[0])
             },

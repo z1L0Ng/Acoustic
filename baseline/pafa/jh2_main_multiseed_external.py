@@ -25,6 +25,90 @@ OUTPUT_RELATIVE = Path(
     "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed_external_HF_KAUH"
 )
 EVIDENCE_LABEL = "posthoc_fixed_JH2_main_selected_checkpoints_HF_KAUH_external_diagnostic"
+CAS_TOKENS = {"Wheeze", "Rhonchi", "Stridor"}
+CAS_ELIGIBLE_TOKENS = {"D", "Wheeze", "Rhonchi", "Stridor"}
+
+
+def _binary_auroc(target: np.ndarray, score: np.ndarray) -> float:
+    order = np.argsort(score, kind="mergesort")
+    sorted_score = score[order]
+    ranks = np.empty(len(score), dtype=np.float64)
+    start = 0
+    while start < len(score):
+        end = start + 1
+        while end < len(score) and sorted_score[end] == sorted_score[start]:
+            end += 1
+        ranks[order[start:end]] = (start + 1 + end) / 2.0
+        start = end
+    positive = target == 1
+    n_positive = int(positive.sum())
+    n_negative = int((~positive).sum())
+    if n_positive == 0 or n_negative == 0:
+        raise ValueError("HF CAS AUROC requires positive and negative recordings")
+    return float(
+        (ranks[positive].sum() - n_positive * (n_positive + 1) / 2.0)
+        / (n_positive * n_negative)
+    )
+
+
+def hf_cas_recording_readout(
+    predictions: Mapping[str, np.ndarray],
+    annotations: Mapping[str, Mapping[str, object]],
+) -> tuple[dict[str, np.ndarray], dict[str, object]]:
+    """Paper-table CAS proxy: recording max p_W over three fixed windows."""
+
+    recording_ids = predictions["recording_ids"].astype(str)
+    window_indices = predictions["window_indices"].astype(np.int64)
+    wheeze_probability = predictions["attribute_probabilities"][:, 1].astype(
+        np.float64
+    )
+    rows = []
+    for recording_id in sorted(set(recording_ids.tolist())):
+        tokens = set(annotations[recording_id]["tokens"])
+        if not tokens & CAS_ELIGIBLE_TOKENS:
+            continue
+        indices = np.flatnonzero(recording_ids == recording_id)
+        rows.append(
+            (
+                recording_id,
+                int(bool(tokens & CAS_TOKENS)),
+                float(wheeze_probability[indices].max()),
+                int(len(indices)),
+                tuple(int(value) for value in window_indices[indices]),
+            )
+        )
+    target = np.asarray([row[1] for row in rows], dtype=np.int64)
+    score = np.asarray([row[2] for row in rows], dtype=np.float64)
+    output = {
+        "recording_ids": np.asarray([row[0] for row in rows]),
+        "cas_union_targets": target,
+        "wheeze_head_max_scores": score.astype(np.float32),
+        "window_count": np.asarray([row[3] for row in rows], dtype=np.int64),
+    }
+    metrics = {
+        "hf_cas_auroc": _binary_auroc(target, score),
+        "support": int(len(rows)),
+        "positive": int(target.sum()),
+        "negative": int((target == 0).sum()),
+        "window_count_per_recording": sorted({row[3] for row in rows}),
+        "window_indices_per_recording": [
+            list(value) for value in sorted({row[4] for row in rows})
+        ],
+        "score": "maximum Wheeze-head probability across three fixed 5-s windows",
+        "target": "Wheeze/Rhonchi/Stridor positive; D-only negative within eligible recordings",
+        "semantic_limit": "ranking proxy for CAS union, not a CAS-native head",
+    }
+    return output, metrics
+
+
+def kauh_patient_primary(metrics: Mapping[str, object]) -> dict[str, object]:
+    node = metrics["patient_level_after_BDE_probability_mean"]["level1_binary"]
+    return {
+        "kauh_patient_ba": float(node["average_score"]),
+        "kauh_patient_support": int(node["rows"]),
+        "kauh_patient_confusion": node["confusion"],
+        "kauh_patient_readout": "B/D/E probability mean then patient Level1 decision",
+    }
 
 
 def _load_selected(
@@ -192,13 +276,27 @@ def run_seed(
     hf_scored, hf_metrics = external._hf_scored_predictions(
         hf_label_free, hf_annotations, thresholds
     )
+    hf_cas_predictions, hf_cas_metrics = hf_cas_recording_readout(
+        hf_label_free, hf_annotations
+    )
+    if (
+        hf_cas_metrics["support"],
+        hf_cas_metrics["positive"],
+        hf_cas_metrics["negative"],
+    ) != (957, 661, 296):
+        raise RuntimeError("HF CAS eligible support changed")
     hf_scored_path = output_dir / "hf_predictions_scored.npz"
+    hf_cas_predictions_path = output_dir / "hf_cas_recording_predictions.npz"
     _save_predictions(hf_scored_path, hf_scored)
+    _save_predictions(hf_cas_predictions_path, hf_cas_predictions)
 
     kauh_scored, _ = external._kauh_scored_predictions(
         kauh_label_free, kauh_samples, thresholds
     )
     kauh_metrics, patient_scored = external._kauh_metrics(kauh_scored, thresholds)
+    kauh_primary = kauh_patient_primary(kauh_metrics)
+    if kauh_primary["kauh_patient_support"] != 86:
+        raise RuntimeError("KAUH compatible patient support changed")
     kauh_scored_path = output_dir / "kauh_predictions_scored.npz"
     kauh_patient_path = output_dir / "kauh_patient_predictions_scored.npz"
     _save_predictions(kauh_scored_path, kauh_scored)
@@ -207,12 +305,21 @@ def run_seed(
     hf_metrics = _augment_metrics(hf_metrics, selected, output_dir, "HF Lung source-test")
     kauh_metrics = _augment_metrics(kauh_metrics, selected, output_dir, "KAUH all-filtered external test")
     hf_metrics_path = output_dir / "hf_metrics.json"
+    hf_cas_metrics_path = output_dir / "hf_cas_metrics.json"
     kauh_metrics_path = output_dir / "kauh_metrics.json"
     _write_json(hf_metrics_path, {
         **hf_metrics,
         "label_free_predictions": str(hf_label_free_path),
         "scored_predictions": str(hf_scored_path),
     })
+    _write_json(
+        hf_cas_metrics_path,
+        {
+            **hf_cas_metrics,
+            "recording_predictions": str(hf_cas_predictions_path),
+            "source_window_predictions": str(hf_label_free_path),
+        },
+    )
     _write_json(kauh_metrics_path, {
         **kauh_metrics,
         "label_free_predictions": str(kauh_label_free_path),
@@ -232,10 +339,17 @@ def run_seed(
         "threshold_tuning": False,
         "test_accessed_datasets": ["hf_lung_source_test", "kauh_v3_all_filtered"],
         "hf_metrics_path": str(hf_metrics_path),
+        "hf_cas_metrics_path": str(hf_cas_metrics_path),
         "kauh_metrics_path": str(kauh_metrics_path),
+        "hf_cas_auroc": float(hf_cas_metrics["hf_cas_auroc"]),
+        "hf_cas_support": {
+            key: hf_cas_metrics[key] for key in ("support", "positive", "negative")
+        },
+        **kauh_primary,
         "outputs": {
             "hf_label_free": str(hf_label_free_path),
             "hf_scored": str(hf_scored_path),
+            "hf_cas_recording_predictions": str(hf_cas_predictions_path),
             "kauh_label_free": str(kauh_label_free_path),
             "kauh_scored": str(kauh_scored_path),
             "kauh_patient_scored": str(kauh_patient_path),

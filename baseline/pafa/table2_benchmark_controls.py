@@ -25,6 +25,10 @@ from baseline.four_dataset_frozen_encoder.data import (
 )
 from baseline.multidataset_pipeline.beats_nal_terminal import _attach_targets
 from baseline.pafa.beats_ce_reproduction import read_official_cycles
+from baseline.pafa.attribution_split import (
+    load_attribution_source_samples,
+    split_contract_path,
+)
 from baseline.pafa.joint_hierarchy import (
     _apply_author_ema,
     _icbhi_sample,
@@ -183,11 +187,22 @@ class BenchmarkConfig:
             payload["pafa_enabled"] = True
             payload["lambda_pcsl"] = base.lambda_pcsl
             payload["lambda_gpal"] = base.lambda_gpal
+            payload["source_split_contract"] = str(split_contract_path(self.repo_root))
+            payload["full_reference"] = (
+                "historical recipe reference only; not a runtime artifact dependency"
+            )
+            payload["reference_recipe"] = (
+                "Native+attributes benchmark with identical model construction and frozen source split"
+            )
         return payload
 
 
 def load_benchmark_training_samples(config: BenchmarkConfig) -> list[Sample]:
-    samples = load_selection_samples(config.core.base_config())
+    samples = (
+        load_attribution_source_samples(config.core.base_config())
+        if config.variant == "native_only"
+        else load_selection_samples(config.core.base_config())
+    )
     return sorted(
         [row for row in samples if row.dataset in config.active_datasets],
         key=lambda row: row.sample_id,

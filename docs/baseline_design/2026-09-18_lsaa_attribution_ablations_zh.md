@@ -19,7 +19,9 @@
 - Full参照：`result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed/seed_{0,1,42}`；
 - Native+attributes参照：既有`PAFA_BENCHMARK_4COND_* / native_attributes / seed_*`。
 
-不提交原始数据、checkpoint或历史结果；不重新划分split。
+服务器不依赖上述历史result目录。三seed原始group→partition映射与预期sample/group支持量已版本化为`baseline/pafa/lsaa_attribution_source_splits.json`：Native+attributes映射已与正式Full每seed的epoch-1 validation sample IDs逐项相等核对。新run从canonical source metadata载入实际sample IDs后直接套用该映射，在模型构造前核对支持量，并在每个新seed目录写出完整`split_reference.json`；不调用sklearn重新划分。各seed ICBHI subtrain/validation分别为3636/506、2880/1262、3174/968，SPR均为5219/1437。
+
+BEATs wrapper通过版本化的直接模块loader读取作者`models/beats.py`，不import作者`models/__init__.py`，避免无关AST/wget依赖；ProjectionHead/PAFALoss仍来自原作者PAFA模块，模型类与state keys不变。不提交原始数据、checkpoint或历史结果。
 
 ## Variant 1：Native-only
 
@@ -44,7 +46,9 @@ L_without_PAFA = 1.0 * L_hierarchical_classification
 PCSL/GPAL criterion called = false
 ```
 
-没有`0 * PAFA(...)`路径。分类项继续直接调用正式Full的`beats_nal_protocol.hierarchical_loss`，按实际eligible节点取mean；不替换成benchmark controls的固定逐节点`1/3`聚合。selected checkpoint后输出ICBHI/SPR native结果及SPR C/W AUROC，再复用既有固定HF CAS/KAUH external evaluator；HF/KAUH不参与训练、选模或threshold。每seed保存best与last，external成功后才把总状态写为complete；external失败时training summary保持`external_pending`，三seed汇总拒绝非complete状态。
+没有`0 * PAFA(...)`路径。分类项继续直接调用正式Full的`beats_nal_protocol.hierarchical_loss`，按实际eligible节点取mean；不替换成benchmark controls的固定逐节点`1/3`聚合。without-PAFA的每个total loss在backward前检查finite，异常立即终止。
+
+selected checkpoint后输出ICBHI/SPR native结果及SPR C/W AUROC，再复用现行论文表格的固定外评：HF以每条15 s recording三个5 s窗口的`max(p_W)`为score，在任一D/Wheeze/Rhonchi/Stridor标注的957条eligible recording上计算CAS AUROC（Wheeze/Rhonchi/Stridor positive 661，D-only negative 296）；KAUH以B/D/E probability mean后的86位compatible patient Level1 balanced accuracy为主列。D/W单属性指标仅作secondary diagnostic，不能改名为CAS。HF/KAUH不参与训练、选模或threshold。每seed保存best与last，CAS与KAUH主终点成功后才把总状态写为complete；external失败时training summary保持`external_pending`，三seed汇总拒绝非complete或非有限指标。原Full默认的`early_stopped_epochwise_icbhi_test_selected`状态字符串保持不变。
 
 输出：`result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_*`。
 

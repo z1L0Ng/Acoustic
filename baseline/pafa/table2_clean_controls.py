@@ -31,6 +31,9 @@ from sklearn.model_selection import StratifiedGroupKFold
 from torch import nn
 
 from baseline.four_dataset_frozen_encoder.data import Sample, load_terminal_spr_test_targets
+from baseline.frozen_method_baselines.source_transfer_common import (
+    load_beats_transfer_class,
+)
 from baseline.multidataset_pipeline.beats_nal_protocol import (
     CORE_NODES,
     decode_icbhi_hierarchical_flat4,
@@ -880,9 +883,9 @@ def _build_native_components(
     sys.path.insert(0, str(config.author_repo))
     try:
         from method.pafa import PAFALoss, ProjectionHead
-        from models.beats import BEATsTransferLearningModel
     finally:
         sys.path.pop(0)
+    BEATsTransferLearningModel = load_beats_transfer_class(config.author_repo)
     beats = BEATsTransferLearningModel(
         num_target_classes=4,
         model_path=str(config.checkpoint),
