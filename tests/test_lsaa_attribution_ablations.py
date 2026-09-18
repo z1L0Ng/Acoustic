@@ -146,6 +146,20 @@ class LSAAAttributionAblationsTest(unittest.TestCase):
         self.assertEqual(metrics["negative"], 1)
         self.assertEqual(metrics["hf_cas_auroc"], 1.0)
         self.assertEqual(rows["window_count"].tolist(), [3, 3, 3])
+        probabilities[0, 1] = float("nan")
+        with self.assertRaisesRegex(FloatingPointError, "non-finite HF CAS"):
+            hf_cas_recording_readout(
+                {
+                    "recording_ids": recording_ids,
+                    "window_indices": np.tile(np.arange(3), 3),
+                    "attribute_probabilities": probabilities,
+                },
+                {
+                    "r1": {"tokens": ["D"]},
+                    "r2": {"tokens": ["Wheeze"]},
+                    "r3": {"tokens": ["Rhonchi"]},
+                },
+            )
         kauh = kauh_patient_primary(
             {
                 "patient_level_after_BDE_probability_mean": {

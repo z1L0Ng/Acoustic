@@ -8,6 +8,7 @@ from typing import Mapping
 
 import numpy as np
 import torch
+from sklearn.metrics import roc_auc_score
 
 from baseline.pafa import jh2_hf_kauh_external as external
 from baseline.pafa.joint_hierarchy import (
@@ -27,28 +28,6 @@ OUTPUT_RELATIVE = Path(
 EVIDENCE_LABEL = "posthoc_fixed_JH2_main_selected_checkpoints_HF_KAUH_external_diagnostic"
 CAS_TOKENS = {"Wheeze", "Rhonchi", "Stridor"}
 CAS_ELIGIBLE_TOKENS = {"D", "Wheeze", "Rhonchi", "Stridor"}
-
-
-def _binary_auroc(target: np.ndarray, score: np.ndarray) -> float:
-    order = np.argsort(score, kind="mergesort")
-    sorted_score = score[order]
-    ranks = np.empty(len(score), dtype=np.float64)
-    start = 0
-    while start < len(score):
-        end = start + 1
-        while end < len(score) and sorted_score[end] == sorted_score[start]:
-            end += 1
-        ranks[order[start:end]] = (start + 1 + end) / 2.0
-        start = end
-    positive = target == 1
-    n_positive = int(positive.sum())
-    n_negative = int((~positive).sum())
-    if n_positive == 0 or n_negative == 0:
-        raise ValueError("HF CAS AUROC requires positive and negative recordings")
-    return float(
-        (ranks[positive].sum() - n_positive * (n_positive + 1) / 2.0)
-        / (n_positive * n_negative)
-    )
 
 
 def hf_cas_recording_readout(
@@ -79,6 +58,8 @@ def hf_cas_recording_readout(
         )
     target = np.asarray([row[1] for row in rows], dtype=np.int64)
     score = np.asarray([row[2] for row in rows], dtype=np.float64)
+    if not np.isfinite(score).all():
+        raise FloatingPointError("non-finite HF CAS recording score")
     output = {
         "recording_ids": np.asarray([row[0] for row in rows]),
         "cas_union_targets": target,
@@ -86,7 +67,7 @@ def hf_cas_recording_readout(
         "window_count": np.asarray([row[3] for row in rows], dtype=np.int64),
     }
     metrics = {
-        "hf_cas_auroc": _binary_auroc(target, score),
+        "hf_cas_auroc": float(roc_auc_score(target, score)),
         "support": int(len(rows)),
         "positive": int(target.sum()),
         "negative": int((target == 0).sum()),

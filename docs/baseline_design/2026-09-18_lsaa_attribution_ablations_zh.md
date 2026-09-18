@@ -48,7 +48,7 @@ PCSL/GPAL criterion called = false
 
 没有`0 * PAFA(...)`路径。分类项继续直接调用正式Full的`beats_nal_protocol.hierarchical_loss`，按实际eligible节点取mean；不替换成benchmark controls的固定逐节点`1/3`聚合。without-PAFA的每个total loss在backward前检查finite，异常立即终止。
 
-selected checkpoint后输出ICBHI/SPR native结果及SPR C/W AUROC，再复用现行论文表格的固定外评：HF以每条15 s recording三个5 s窗口的`max(p_W)`为score，在任一D/Wheeze/Rhonchi/Stridor标注的957条eligible recording上计算CAS AUROC（Wheeze/Rhonchi/Stridor positive 661，D-only negative 296）；KAUH以B/D/E probability mean后的86位compatible patient Level1 balanced accuracy为主列。D/W单属性指标仅作secondary diagnostic，不能改名为CAS。HF/KAUH不参与训练、选模或threshold。每seed保存best与last，CAS与KAUH主终点成功后才把总状态写为complete；external失败时training summary保持`external_pending`，三seed汇总拒绝非complete或非有限指标。原Full默认的`early_stopped_epochwise_icbhi_test_selected`状态字符串保持不变。
+selected checkpoint后输出ICBHI/SPR native结果及SPR C/W AUROC，再复用现行论文表格的固定外评：HF以每条15 s recording三个5 s窗口的`max(p_W)`为score，在任一D/Wheeze/Rhonchi/Stridor标注的957条eligible recording上计算CAS AUROC（Wheeze/Rhonchi/Stridor positive 661，D-only negative 296）；AUROC直接调用正式历史后处理相同的`sklearn.metrics.roc_auc_score`，调用前拒绝非有限score。KAUH以B/D/E probability mean后的86位compatible patient Level1 balanced accuracy为主列。D/W单属性指标仅作secondary diagnostic，不能改名为CAS。HF/KAUH不参与训练、选模或threshold。每seed保存best与last，CAS与KAUH主终点成功后才把总状态写为complete；external失败时training summary保持`external_pending`，三seed汇总拒绝非complete或非有限指标。原Full默认的`early_stopped_epochwise_icbhi_test_selected`状态字符串保持不变。
 
 输出：`result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_*`。
 
