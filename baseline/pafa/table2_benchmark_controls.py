@@ -54,6 +54,7 @@ from baseline.pafa.table2_clean_controls import (
     fit_attribute_thresholds,
     fixed_hierarchy_loss,
     native_attributes_loss,
+    native_only_loss,
     native_selection_scores,
     spr_attribute_auroc,
     write_json,
@@ -65,6 +66,7 @@ BENCHMARK_VARIANTS = (
     "sprsound_only",
     "coarse_spr",
     "native_attributes",
+    "native_only",
 )
 FULL_REFERENCE_ROOT_RELATIVE = Path(
     "result/reproduce/pafa_joint_hierarchy/PAFA_JH2_main_multiseed"
@@ -74,6 +76,9 @@ OUTPUT_ROOT_RELATIVE = Path(
 )
 MULTISEED_OUTPUT_ROOT_RELATIVE = Path(
     "result/reproduce/pafa_joint_hierarchy/PAFA_BENCHMARK_4COND_multiseed"
+)
+ATTRIBUTION_OUTPUT_ROOT_RELATIVE = Path(
+    "result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918"
 )
 SEED = 42
 
@@ -91,7 +96,7 @@ class BenchmarkConfig:
     def core(self) -> Table2Config:
         return Table2Config(
             repo_root=self.repo_root,
-            variant=self.variant,
+            variant=("native_attributes" if self.variant == "native_only" else self.variant),
             model_seed=self.seed,
             output_dir=self.output_dir,
             split_manifest=self.repo_root / "baseline/pafa/table2_clean_split_manifest.json",
@@ -121,6 +126,7 @@ class BenchmarkConfig:
     def to_dict(self) -> dict[str, object]:
         payload = {
             **self.core.to_dict(),
+            "variant": self.variant,
             "protocol": f"JH2_seed{self.seed}_test_selected_benchmark_control",
             "full_reference": str(self.full_reference),
             "checkpoint": str(self.core.checkpoint),
@@ -164,6 +170,19 @@ class BenchmarkConfig:
                 "c": 1.0 / 3.0,
                 "w": 1.0 / 3.0,
             }
+        elif self.variant == "native_only":
+            base = self.core.base_config()
+            payload["node_weights"] = {
+                "native": 1.0 / 3.0,
+                "c": 0.0,
+                "w": 0.0,
+            }
+            payload["attribute_supervision"] = False
+            payload["attribute_heads"] = "retained for matched initialization; not trained or reported"
+            payload["threshold_source"] = "not applicable; no supervised C/W readout"
+            payload["pafa_enabled"] = True
+            payload["lambda_pcsl"] = base.lambda_pcsl
+            payload["lambda_gpal"] = base.lambda_gpal
         return payload
 
 
@@ -279,6 +298,7 @@ def _score_selection_test(
         config.core,
         device,
         include_targets=config.selection_dataset == "icbhi",
+        variant_override=config.variant,
     )
     predictions = (
         _attach_targets(label_free, samples, spr_targets or {})
@@ -399,7 +419,9 @@ def run_benchmark_control(config: BenchmarkConfig) -> dict[str, object]:
             optimizer.zero_grad(set_to_none=True)
             logits, projected = model(waveform, training=True)
             classification = (
-                native_attributes_loss(
+                native_only_loss(logits, dataset, native_target)
+                if config.variant == "native_only"
+                else native_attributes_loss(
                     logits, dataset, native_target, targets, eligible
                 )
                 if config.variant == "native_attributes"
@@ -445,14 +467,21 @@ def run_benchmark_control(config: BenchmarkConfig) -> dict[str, object]:
             config.core,
             device,
             include_targets=True,
+            variant_override=config.variant,
         )
         _save_predictions(
             config.output_dir / "validation" / f"epoch_{epoch:03d}.npz",
             validation_predictions,
         )
-        thresholds, threshold_details = fit_attribute_thresholds(
-            validation_predictions, active_attribute_datasets(config.core)
-        )
+        if config.variant == "native_only":
+            thresholds, threshold_details = {}, {
+                "status": "not_applicable",
+                "reason": "explicit C/W supervision is disabled",
+            }
+        else:
+            thresholds, threshold_details = fit_attribute_thresholds(
+                validation_predictions, active_attribute_datasets(config.core)
+            )
         selected_predictions, selection = _score_selection_test(
             model,
             selection_test_samples,
@@ -553,6 +582,7 @@ def run_benchmark_control(config: BenchmarkConfig) -> dict[str, object]:
         config.core,
         device,
         include_targets=other_dataset == "icbhi",
+        variant_override=config.variant,
     )
     if other_dataset == "sprsound":
         _save_predictions(
@@ -593,7 +623,28 @@ def run_benchmark_control(config: BenchmarkConfig) -> dict[str, object]:
         "selection_score": best_score,
         "thresholds": best_thresholds,
         "per_native_task": final_metrics["metrics"],
-        "spr_cw": spr_attribute_auroc(combined),
+        "spr_cw": (
+            {
+                "status": "not_applicable",
+                "reason": "C/W heads were retained for initialization parity but received no supervision",
+            }
+            if config.variant == "native_only"
+            else spr_attribute_auroc(combined)
+        ),
+        **(
+            {
+                "attribute_metrics": {
+                    "status": "not_applicable",
+                    "reason": "explicit C/W supervision is disabled",
+                },
+                "hf": {
+                    "status": "not_applicable",
+                    "reason": "no supervised cross-dataset attribute readout exists",
+                },
+            }
+            if config.variant == "native_only"
+            else {}
+        ),
         "evidence_boundary": "test-selected benchmark control; not clean causal evidence",
         "other_target_access": "after source-native checkpoint and thresholds were frozen",
     }
@@ -613,12 +664,27 @@ def run_benchmark_control(config: BenchmarkConfig) -> dict[str, object]:
     return summary
 
 
-def default_config(repo_root: Path, variant: str, seed: int = SEED) -> BenchmarkConfig:
-    output_root = OUTPUT_ROOT_RELATIVE if seed == SEED else MULTISEED_OUTPUT_ROOT_RELATIVE
+def default_config(
+    repo_root: Path,
+    variant: str,
+    seed: int = SEED,
+    *,
+    device: str = "mps",
+    cpu_threads: int = 4,
+    output_root: Path | None = None,
+) -> BenchmarkConfig:
+    if output_root is None:
+        output_root = (
+            ATTRIBUTION_OUTPUT_ROOT_RELATIVE
+            if variant == "native_only"
+            else (OUTPUT_ROOT_RELATIVE if seed == SEED else MULTISEED_OUTPUT_ROOT_RELATIVE)
+        )
     return BenchmarkConfig(
         repo_root=repo_root,
         variant=variant,
         output_dir=repo_root / output_root / variant / f"seed_{seed}",
+        device=device,
+        cpu_threads=cpu_threads,
         seed=seed,
     )
 
@@ -628,9 +694,19 @@ def main() -> None:
     parser.add_argument("--repo-root", type=Path, default=Path.cwd())
     parser.add_argument("--variant", choices=BENCHMARK_VARIANTS, required=True)
     parser.add_argument("--seed", type=int, choices=MODEL_SEEDS, default=SEED)
+    parser.add_argument("--device", default="mps")
+    parser.add_argument("--cpu-threads", type=int, default=4)
+    parser.add_argument("--output-root", type=Path)
     parser.add_argument("--run", action="store_true")
     args = parser.parse_args()
-    config = default_config(args.repo_root, args.variant, args.seed)
+    config = default_config(
+        args.repo_root,
+        args.variant,
+        args.seed,
+        device=args.device,
+        cpu_threads=args.cpu_threads,
+        output_root=args.output_root,
+    )
     config.validate()
     if not args.run:
         print(

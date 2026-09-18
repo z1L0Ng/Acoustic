@@ -27,8 +27,10 @@ OUTPUT_RELATIVE = Path(
 EVIDENCE_LABEL = "posthoc_fixed_JH2_main_selected_checkpoints_HF_KAUH_external_diagnostic"
 
 
-def _load_selected(repo_root: Path, seed: int) -> dict[str, object]:
-    run_dir = repo_root / MAIN_RELATIVE / f"seed_{seed}"
+def _load_selected(
+    repo_root: Path, seed: int, main_relative: Path = MAIN_RELATIVE
+) -> dict[str, object]:
+    run_dir = repo_root / main_relative / f"seed_{seed}"
     config = json.loads((run_dir / "config.json").read_text())
     selection = json.loads((run_dir / "validation_selection.json").read_text())
     summary = json.loads((run_dir / "run_summary.json").read_text())
@@ -52,6 +54,7 @@ def _config(
     repo_root: Path,
     selected: Mapping[str, object],
     output_dir: Path,
+    device: str = "mps",
 ) -> PAFAJointHierarchyConfig:
     return PAFAJointHierarchyConfig(
         repo_root=repo_root,
@@ -61,7 +64,7 @@ def _config(
         icbhi_audio_dir=repo_root
         / "dataset/raw/icbhi_2017/source_original/ICBHI_final_database/ICBHI_final_database",
         output_dir=output_dir,
-        device="mps",
+        device=device,
         cpu_threads=4,
     )
 
@@ -70,6 +73,7 @@ def _config_payload(
     repo_root: Path,
     selected: Mapping[str, object],
     output_dir: Path,
+    device: str = "mps",
 ) -> dict[str, object]:
     return {
         "status": "fixed_selected_checkpoint_external_transfer_inference",
@@ -86,7 +90,7 @@ def _config_payload(
         "frozen_shared_thresholds": dict(selected["thresholds"]),
         "threshold_source": "same selected run validation_selection.json; no HF or KAUH tuning",
         "model": "BEATs iter3+ AS2M full fine-tuned PAFA-JH2 hierarchy",
-        "device": "mps",
+        "device": device,
         "precision": "FP32",
         "input": "mono 16 kHz; 5 s JH2 waveform geometry",
         "training": False,
@@ -146,17 +150,27 @@ def _augment_metrics(
     }
 
 
-def run_seed(repo_root: Path, seed: int, output_dir: Path) -> dict[str, object]:
+def run_seed(
+    repo_root: Path,
+    seed: int,
+    output_dir: Path,
+    *,
+    main_relative: Path = MAIN_RELATIVE,
+    device_name: str = "mps",
+) -> dict[str, object]:
     if output_dir.exists() and any(output_dir.iterdir()):
         raise FileExistsError(f"refusing to overwrite external output: {output_dir}")
     output_dir.mkdir(parents=True, exist_ok=True)
-    selected = _load_selected(repo_root, seed)
-    config = _config(repo_root, selected, output_dir)
-    _write_json(output_dir / "config.json", _config_payload(repo_root, selected, output_dir))
+    selected = _load_selected(repo_root, seed, main_relative)
+    config = _config(repo_root, selected, output_dir, device_name)
+    _write_json(
+        output_dir / "config.json",
+        _config_payload(repo_root, selected, output_dir, device_name),
+    )
 
     kauh_samples = external._load_kauh_samples(repo_root)
     hf_samples = external._load_hf_test_samples(repo_root)
-    device = torch.device("mps")
+    device = torch.device(device_name)
     model, _ = _build_components(config, device)
     checkpoint = torch.load(selected["checkpoint"], map_location="cpu")
     model.load_state_dict(checkpoint["model"], strict=True)

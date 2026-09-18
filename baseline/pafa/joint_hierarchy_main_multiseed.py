@@ -18,6 +18,7 @@ import json
 import math
 import shutil
 import time
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Mapping, Sequence
 
@@ -77,8 +78,36 @@ MULTISEED_RELATIVE = Path(
 )
 
 
-def _condition(seed: int) -> str:
-    return f"{CONDITION_PREFIX}_seed{seed}"
+@dataclass(frozen=True)
+class MainRunMode:
+    name: str
+    condition_prefix: str
+    evidence_label: str
+    pafa_enabled: bool
+    method_change: str
+    completion_status: str
+
+
+FULL_MODE = MainRunMode(
+    name="full",
+    condition_prefix=CONDITION_PREFIX,
+    evidence_label=EVIDENCE_LABEL,
+    pafa_enabled=True,
+    method_change="none; independent confirmation seed",
+    completion_status="complete_epochwise_icbhi_test_selected",
+)
+WITHOUT_PAFA_MODE = MainRunMode(
+    name="lsaa_without_pafa",
+    condition_prefix="LSAA_without_PAFA_20260918",
+    evidence_label="LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic",
+    pafa_enabled=False,
+    method_change="PCSL and GPAL criteria are not called; classification path is unchanged",
+    completion_status="training_and_native_terminal_complete_external_pending",
+)
+
+
+def _condition(seed: int, mode: MainRunMode = FULL_MODE) -> str:
+    return f"{mode.condition_prefix}_seed{seed}"
 
 
 def _validate_config(config: PAFAJointHierarchyConfig) -> None:
@@ -108,15 +137,19 @@ def _validate_config(config: PAFAJointHierarchyConfig) -> None:
         raise ValueError("cpu_threads must be positive")
 
 
-def _config_payload(config: PAFAJointHierarchyConfig) -> dict[str, object]:
+def _config_payload(
+    config: PAFAJointHierarchyConfig, mode: MainRunMode = FULL_MODE
+) -> dict[str, object]:
     payload = config.to_dict()
     payload.update(
         {
-            "condition": _condition(config.seed),
-            "evidence_label": EVIDENCE_LABEL,
+            "condition": _condition(config.seed, mode),
+            "evidence_label": mode.evidence_label,
             "training_config_reused_from": "PAFA_JH2_test_selected_seed42",
             "main_method": "JH2 Hard Hierarchy",
-            "method_change": "none; independent confirmation seed",
+            "method_change": mode.method_change,
+            "pafa_enabled": mode.pafa_enabled,
+            "pcsl_gpal_criterion_called": mode.pafa_enabled,
             "seed_role": f"formal main-method confirmation seed {config.seed}",
             "selection": "ICBHI official-test Hard Hierarchy Score only",
             "checkpoint_selection": (
@@ -292,10 +325,11 @@ def _epoch_terminal_payload(
     validation_selection: Mapping[str, object],
     thresholds: Mapping[str, float],
     metrics: Mapping[str, object],
+    mode: MainRunMode = FULL_MODE,
 ) -> dict[str, object]:
     return {
-        "status": EVIDENCE_LABEL,
-        "evidence_label": EVIDENCE_LABEL,
+        "status": mode.evidence_label,
+        "evidence_label": mode.evidence_label,
         "epoch": epoch,
         "update": update,
         "selected_epoch_for_final_report": False,
@@ -310,14 +344,39 @@ def _epoch_terminal_payload(
     }
 
 
-def run_seed(config: PAFAJointHierarchyConfig) -> dict[str, object]:
+def _training_objective(
+    classification_loss: torch.Tensor,
+    projected: torch.Tensor,
+    patients: torch.Tensor,
+    pafa_criterion: torch.nn.Module,
+    config: PAFAJointHierarchyConfig,
+    mode: MainRunMode,
+) -> tuple[torch.Tensor, torch.Tensor | None]:
+    if not mode.pafa_enabled:
+        return config.classification_weight * classification_loss, None
+    pafa_loss = pafa_criterion(
+        projected,
+        patients,
+        lambda_pcsl=config.lambda_pcsl,
+        lambda_gpal=config.lambda_gpal,
+    )
+    return (
+        config.classification_weight * classification_loss
+        + config.pafa_weight * pafa_loss,
+        pafa_loss,
+    )
+
+
+def run_seed(
+    config: PAFAJointHierarchyConfig, mode: MainRunMode = FULL_MODE
+) -> dict[str, object]:
     _validate_config(config)
     torch.set_num_threads(config.cpu_threads)
     _seed_everything(config.seed)
     if config.output_dir.exists() and any(config.output_dir.iterdir()):
         raise FileExistsError(f"refusing to overwrite existing run: {config.output_dir}")
     config.output_dir.mkdir(parents=True, exist_ok=True)
-    _write_json(config.output_dir / "config.json", _config_payload(config))
+    _write_json(config.output_dir / "config.json", _config_payload(config, mode))
 
     selection_samples = load_selection_samples(config)
     subtrain = _dataset_partitions(selection_samples, "subtrain")
@@ -325,8 +384,8 @@ def run_seed(config: PAFAJointHierarchyConfig) -> dict[str, object]:
     _write_json(
         config.output_dir / "selection_split_summary.json",
         {
-            "condition": _condition(config.seed),
-            "evidence_label": EVIDENCE_LABEL,
+            "condition": _condition(config.seed, mode),
+            "evidence_label": mode.evidence_label,
             "seed": config.seed,
             "datasets": list(CORE_DATASETS),
             "nodes": list(CORE_NODES),
@@ -381,7 +440,14 @@ def run_seed(config: PAFAJointHierarchyConfig) -> dict[str, object]:
             group["lr"] = learning_rate
         model.train()
         epoch_losses = {
-            dataset: {"classification": [], "pafa": [], "total": []}
+            dataset: {
+                name: []
+                for name in (
+                    ("classification", "pafa", "total")
+                    if mode.pafa_enabled
+                    else ("classification", "total")
+                )
+            }
             for dataset in CORE_DATASETS
         }
         batches = _balanced_epoch_batches(
@@ -416,15 +482,13 @@ def run_seed(config: PAFAJointHierarchyConfig) -> dict[str, object]:
                     HierarchicalLossConfig(mode="ce_bce"),
                     collect_named=False,
                 )
-                pafa_loss = pafa_criterion(
+                total_loss, pafa_loss = _training_objective(
+                    classification_loss,
                     projected,
                     patients,
-                    lambda_pcsl=config.lambda_pcsl,
-                    lambda_gpal=config.lambda_gpal,
-                )
-                total_loss = (
-                    config.classification_weight * classification_loss
-                    + config.pafa_weight * pafa_loss
+                    pafa_criterion,
+                    config,
+                    mode,
                 )
             scaler.scale(total_loss).backward()
             scaler.step(optimizer)
@@ -434,9 +498,10 @@ def run_seed(config: PAFAJointHierarchyConfig) -> dict[str, object]:
             epoch_losses[dataset]["classification"].append(
                 float(classification_loss.detach().cpu())
             )
-            epoch_losses[dataset]["pafa"].append(
-                float(pafa_loss.detach().cpu())
-            )
+            if pafa_loss is not None:
+                epoch_losses[dataset]["pafa"].append(
+                    float(pafa_loss.detach().cpu())
+                )
             epoch_losses[dataset]["total"].append(
                 float(total_loss.detach().cpu())
             )
@@ -516,6 +581,7 @@ def run_seed(config: PAFAJointHierarchyConfig) -> dict[str, object]:
             validation_selection=validation_selection,
             thresholds=thresholds,
             metrics=icbhi_metrics,
+            mode=mode,
         )
         _write_json(epoch_terminal_dir / "native_metrics.json", terminal_payload)
         icbhi_score = float(icbhi_metrics["icbhi_flat4"]["official_score"])
@@ -549,7 +615,7 @@ def run_seed(config: PAFAJointHierarchyConfig) -> dict[str, object]:
             "terminal_test": {
                 "icbhi_official_score": icbhi_score,
                 "sprsound_official_inter_test_accessed": False,
-                "evidence_label": EVIDENCE_LABEL,
+                "evidence_label": mode.evidence_label,
             },
             "elapsed_minutes": (time.perf_counter() - started_seconds) / 60.0,
             "early_stopping": {
@@ -575,7 +641,7 @@ def run_seed(config: PAFAJointHierarchyConfig) -> dict[str, object]:
                     "model": copy.deepcopy(model.state_dict()),
                     "icbhi_hard_hierarchy_official_score": best_score,
                     "selection_loss": float(validation_selection["selection_loss"]),
-                    "config": _config_payload(config),
+                    "config": _config_payload(config, mode),
                 },
                 config.output_dir / "best_checkpoint.pt",
             )
@@ -594,6 +660,17 @@ def run_seed(config: PAFAJointHierarchyConfig) -> dict[str, object]:
         else:
             no_improvement_epochs = next_no_improvement_epochs
         completed_epochs = epoch
+        if not mode.pafa_enabled:
+            torch.save(
+                {
+                    "epoch": epoch,
+                    "update": global_update,
+                    "seed": config.seed,
+                    "model": model.state_dict(),
+                    "config": _config_payload(config, mode),
+                },
+                config.output_dir / "last_checkpoint.pt",
+            )
         _append_jsonl(
             progress_path,
             {
@@ -611,7 +688,7 @@ def run_seed(config: PAFAJointHierarchyConfig) -> dict[str, object]:
         print(
             json.dumps(
                 {
-                    "evidence_label": EVIDENCE_LABEL,
+                    "evidence_label": mode.evidence_label,
                     "seed": config.seed,
                     "epoch": epoch,
                     "update": global_update,
@@ -636,13 +713,15 @@ def run_seed(config: PAFAJointHierarchyConfig) -> dict[str, object]:
             break
 
     if best_selection is None or best_terminal is None:
-        raise RuntimeError(f"{_condition(config.seed)} completed no selectable epoch")
+        raise RuntimeError(
+            f"{_condition(config.seed, mode)} completed no selectable epoch"
+        )
     _write_json(
         config.output_dir / "validation_selection.json",
         {
-            "status": EVIDENCE_LABEL,
-            "evidence_label": EVIDENCE_LABEL,
-            "condition": _condition(config.seed),
+            "status": mode.evidence_label,
+            "evidence_label": mode.evidence_label,
+            "condition": _condition(config.seed, mode),
             "seed": config.seed,
             "selected_epoch": best_epoch,
             "selection_loss": float(best_selection["selection_loss"]),
@@ -698,12 +777,17 @@ def run_seed(config: PAFAJointHierarchyConfig) -> dict[str, object]:
         spr_scored,
     )
     spr_metrics = _score_spr_terminal(spr_scored)
+    spr_cw = None
+    if not mode.pafa_enabled:
+        from baseline.pafa.table2_clean_controls import spr_attribute_auroc
+
+        spr_cw = spr_attribute_auroc(spr_scored)
     selected_icbhi = best_terminal["icbhi_flat4"]
     final_terminal = {
         **best_terminal,
-        "status": EVIDENCE_LABEL,
-        "evidence_label": EVIDENCE_LABEL,
-        "condition": _condition(config.seed),
+        "status": mode.evidence_label,
+        "evidence_label": mode.evidence_label,
+        "condition": _condition(config.seed, mode),
         "seed": config.seed,
         "selected_epoch_for_final_report": True,
         "selected_epoch": best_epoch,
@@ -724,6 +808,7 @@ def run_seed(config: PAFAJointHierarchyConfig) -> dict[str, object]:
         "early_stopped": early_stopped,
         "completed_training_epochs": completed_epochs,
         "sprsound_inter_task1_1": spr_metrics,
+        **({"sprsound_cw_auroc": spr_cw} if spr_cw is not None else {}),
         "hf_auxiliary": False,
         "kauh_evaluation": False,
     }
@@ -731,15 +816,17 @@ def run_seed(config: PAFAJointHierarchyConfig) -> dict[str, object]:
     _write_json(terminal_dir / "selected_native_metrics.json", final_terminal)
     summary = {
         "status": (
-            "early_stopped_epochwise_icbhi_test_selected"
+            f"early_stopped_{mode.completion_status}"
             if early_stopped
-            else "complete_epochwise_icbhi_test_selected"
+            else mode.completion_status
         ),
-        "evidence_label": EVIDENCE_LABEL,
-        "condition": _condition(config.seed),
+        "evidence_label": mode.evidence_label,
+        "condition": _condition(config.seed, mode),
         "seed": config.seed,
         "training_config_reused_from": "PAFA_JH2_test_selected_seed42",
         "main_method": "JH2 Hard Hierarchy",
+        "pafa_enabled": mode.pafa_enabled,
+        "pcsl_gpal_criterion_called": mode.pafa_enabled,
         "hf_auxiliary": False,
         "kauh_evaluation": False,
         "completed_training_epochs": completed_epochs,
@@ -759,7 +846,8 @@ def run_seed(config: PAFAJointHierarchyConfig) -> dict[str, object]:
         "checkpoint_selection": (
             "maximum ICBHI official test Hard Hierarchy Score; exact ties retain the earlier epoch"
         ),
-        "best_only_checkpoint": True,
+        "best_only_checkpoint": mode.pafa_enabled,
+        "last_checkpoint_saved": not mode.pafa_enabled,
         "early_stopping": {
             "patience": EARLY_STOPPING_PATIENCE,
             "monitor": EARLY_STOPPING_MONITOR,
@@ -772,6 +860,7 @@ def run_seed(config: PAFAJointHierarchyConfig) -> dict[str, object]:
                 "icbhi_flat4_bits_only_ablation"
             ],
             "sprsound_inter_task1_1": spr_metrics,
+            **({"sprsound_cw_auroc": spr_cw} if spr_cw is not None else {}),
         },
         "test_access_order": final_terminal["test_access_order"],
         "changed_files": ["baseline/pafa/joint_hierarchy_main_multiseed.py"],

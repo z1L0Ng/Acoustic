@@ -483,8 +483,10 @@ class Table2Config:
             raise ValueError(f"model seed must be one of {MODEL_SEEDS}")
         if self.batch_size != 32 or self.updates_per_point != 326:
             raise ValueError("Table 2 batch/cadence contract changed")
-        if self.device != "mps" or self.cpu_threads != 4:
-            raise ValueError("local Table 2 preparation freezes MPS FP32 and cpu_threads=4")
+        if self.device != "mps" and not self.device.startswith("cuda"):
+            raise ValueError("Table 2 controls support only MPS or CUDA FP32")
+        if self.cpu_threads <= 0:
+            raise ValueError("cpu_threads must be positive")
 
     def base_config(self) -> PAFAJointHierarchyConfig:
         return PAFAJointHierarchyConfig(
@@ -601,6 +603,18 @@ def native_attributes_loss(
     return NODE_WEIGHT * (native + attributes[0] + attributes[1])
 
 
+def native_only_loss(
+    logits: Mapping[str, torch.Tensor],
+    dataset: str,
+    native_target: torch.Tensor,
+) -> torch.Tensor:
+    """Keep the frozen one-third native CE coefficient without C/W terms."""
+
+    return NODE_WEIGHT * F.cross_entropy(
+        logits[f"{dataset}_native"], native_target.long()
+    )
+
+
 def apply_variant_eligibility(
     eligible: torch.Tensor, dataset: str, variant: str
 ) -> torch.Tensor:
@@ -701,7 +715,7 @@ def native_selection_scores(
             [ICBHI_LABELS.index(str(value)) for value in predictions["raw_ground_truth"][mask]],
             dtype=np.int64,
         )
-        if variant == "native_attributes":
+        if variant in {"native_attributes", "native_only"}:
             predicted = predictions["native_predictions"][mask].astype(np.int64)
         else:
             predicted = decode_icbhi_hierarchical_flat4(
@@ -902,7 +916,10 @@ def _infer(
     device: torch.device,
     *,
     include_targets: bool,
+    variant_override: str | None = None,
 ) -> dict[str, np.ndarray]:
+    variant = variant_override or config.variant
+    include_attributes = variant != "native_only"
     fields: dict[str, list[np.ndarray]] = {
         "prediction_ids": [],
         "sample_ids": [],
@@ -912,13 +929,13 @@ def _infer(
         "level1_logits": [],
         "level1_probabilities": [],
         "level1_predictions": [],
-        "attribute_logits": [],
-        "attribute_probabilities": [],
         "native_logits": [],
         "native_probabilities": [],
         "native_class_count": [],
         "native_predictions": [],
     }
+    if include_attributes:
+        fields.update({"attribute_logits": [], "attribute_probabilities": []})
     if include_targets:
         fields.update({"raw_ground_truth": [], "targets": [], "eligible": []})
     model.eval()
@@ -930,10 +947,11 @@ def _infer(
                     [waveform_store[row.sample_id] for row in current]
                 ).to(device)
                 output, _ = model(waveform, training=False)
-                attributes = torch.stack(
-                    (output["crackle"], output["wheeze"]), dim=-1
-                ).float().cpu()
-                if config.variant == "native_attributes":
+                if include_attributes:
+                    attributes = torch.stack(
+                        (output["crackle"], output["wheeze"]), dim=-1
+                    ).float().cpu()
+                if variant in {"native_attributes", "native_only"}:
                     native = output[f"{dataset}_native"].float().cpu()
                     native_probability = torch.softmax(native, dim=-1)
                     native_prediction = native.argmax(dim=-1)
@@ -970,8 +988,11 @@ def _infer(
                 fields["level1_logits"].append(level1_logits.numpy())
                 fields["level1_probabilities"].append(level1_probability.numpy())
                 fields["level1_predictions"].append(level1_prediction.numpy())
-                fields["attribute_logits"].append(attributes.numpy())
-                fields["attribute_probabilities"].append(torch.sigmoid(attributes).numpy())
+                if include_attributes:
+                    fields["attribute_logits"].append(attributes.numpy())
+                    fields["attribute_probabilities"].append(
+                        torch.sigmoid(attributes).numpy()
+                    )
                 fields["native_logits"].append(padded_logits.numpy())
                 fields["native_probabilities"].append(padded_probability.numpy())
                 fields["native_class_count"].append(
@@ -980,7 +1001,7 @@ def _infer(
                 fields["native_predictions"].append(native_prediction.numpy())
                 if include_targets:
                     targets, eligible, raw = mapped_targets(current)
-                    if config.variant == "coarse_spr" and dataset == "sprsound":
+                    if variant == "coarse_spr" and dataset == "sprsound":
                         eligible[:, 1:] = False
                     fields["raw_ground_truth"].append(np.asarray(raw))
                     fields["targets"].append(targets.numpy())
@@ -997,6 +1018,8 @@ def _seed_everything(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
 
 
 def _learning_rate(update: int) -> float:
