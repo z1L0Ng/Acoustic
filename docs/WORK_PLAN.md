@@ -2,13 +2,15 @@
 
 ## 当前周期：2026-09-15–2026-09-24
 
-最新执行决定（9/18）：PC-MCL与DCASE三seed均已完成。用户新增批准两组贡献归因消融：**Native-only三seed**和**LSAA without PAFA三seed**，均为0/1/42；先保存当前repo，再实现、提交并push代码，由服务器同步后使用两张真实空闲GPU并行执行。初始main快照`ac627c9`已推送；实现及定点复核已由`d38bc17`、`c13c744`、`7551994`、`f4b9914`保存，当前等待本次统一push及服务器同步，尚未启动本轮训练。服务器任务自行监视，仅新问题或全部结束时反馈；管理不持续监视。
+最新执行决定（9/18）：PC-MCL与DCASE三seed均已完成。用户新增批准两组贡献归因消融：**Native-only三seed**和**LSAA without PAFA三seed**，均为0/1/42；先保存当前repo，再实现、提交并push代码，由服务器同步后使用两张真实空闲GPU并行执行。初始main快照`ac627c9`已推送；实现及定点复核由`d38bc17`、`c13c744`、`7551994`、`f4b9914`保存，连同执行授权已推送至`4ac5c20`。服务器已fast-forward且clean，真实环境CAS/KAUH纯函数检查1项通过；两组已正式启动。服务器任务自行监视，仅新问题或全部结束时反馈；管理不持续监视。
 
 Native-only与既有Native+attributes匹配，仅关闭辅助C/W损失，保留原生分类头、原生CE系数1/3及PAFA，主报ICBHI/SPR原生Score；未训练的C/W头不能作为属性或HF评测结果。LSAA without PAFA与正式Full匹配，仅关闭PCSL/GPAL，保留A/C/W分类、阈值和固定读出，HF辅助关闭。共同预算沿用LSAA的最多50轮、patience10、Adam5e-5及既有test-selected协议，不套用PC-MCL预算。使用全新`LSAA_ATTRIBUTION_20260918`输出目录，不覆盖历史结果。用户本轮已授权正式运行，无需再次征求逐seed开跑许可；代码同步和实际资源核对仍是启动前置步骤。
 
 论文主线继续为落实Arian的C1–C4、整合已完成两组baseline，并等待核验Hanlin的五组frozen参照和PAFA。新增两组是有限补证，不改变写作分工、不自动重写论文、不新增Notion Work Plan。
 
 9/18只读准备：服务器数据、BEATs初始化与作者代码入口存在，约2.7TB磁盘可用；当时只有GPU0空闲，GPU1/2/3为其他用户任务。启动时重新核对；若仍只有一张，先Native-only，without-PAFA由服务器任务等到空闲卡后启动，始终最多两张卡，不抢占。版本化轻量输入已固定本地原始JH2三seed划分，管理核对其验证patient集合与Native+attributes一致；服务器不再依赖缺失的历史训练目录。CAS终点、FP32和BEATs直接加载均已对齐。正式执行前在服务器健康依赖中运行本轮直接相关纯函数检查，不做模型forward/smoke。精确入口和指标见[实现说明](baseline_design/2026-09-18_lsaa_attribution_ablations_zh.md)。
+
+启动回执（9/18 CDT）：资源重新核对后GPU0/1均可用。Native-only于15:23:10在GPU0启动，PID3777581，tmux `acoustic_lsaa_native_only_20260918`；seed0完成epoch1/update326，ICBHI/SPR训练loss分别0.541762/0.468625、数值有限，ICBHI选择Score0.5，仅为初期进度。without-PAFA于15:24:30在GPU1启动，PID3778290，tmux `acoustic_lsaa_without_pafa_20260918`，回执时处于初始化/首epoch前且未见错误。两个variant各按0→1→42独立队列继续。已复用原15分钟heartbeat并改为本轮LSAA六seed静默监视，target仍为服务器任务，问题或全部结束才汇报，结束后暂停；本轮只使用GPU0/1，未操作其他用户任务。尚无本轮完整seed或新论文结果。
 
 最新策略（9/16本轮调整）：PAFA交由Hanlin运行，已有AST、BEATs、PANNs、OPERA-CT、HeAR五组复跑保留；项目侧集中重新规划PC-MCL和DCASE，继续负责统一协议、结果核验与论文整合。
 
