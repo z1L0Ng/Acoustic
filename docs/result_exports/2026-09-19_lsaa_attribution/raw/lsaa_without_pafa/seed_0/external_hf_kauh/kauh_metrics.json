@@ -1,0 +1,650 @@
+{
+  "checkpoint_selection": false,
+  "checkpoint_source": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_0/best_checkpoint.pt",
+  "compatible_overlay_only": true,
+  "compatible_raw_sounds": [
+    "C",
+    "E W",
+    "I C",
+    "I C E W",
+    "I E W",
+    "N"
+  ],
+  "compatible_recording_support": 258,
+  "evidence_label": "posthoc_fixed_JH2_main_selected_checkpoints_HF_KAUH_external_diagnostic",
+  "external_evaluation_kind": "KAUH all-filtered external test",
+  "filter_support": {
+    "B": 112,
+    "D": 112,
+    "E": 112
+  },
+  "label_free_predictions": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_0/external_hf_kauh/kauh_predictions_label_free.npz",
+  "native_raw9_reproduction": false,
+  "patient_level_after_BDE_probability_mean": {
+    "flat4": {
+      "average_score": 0.6789915966386555,
+      "confusion": [
+        [
+          29,
+          4,
+          2,
+          0
+        ],
+        [
+          3,
+          5,
+          0,
+          0
+        ],
+        [
+          11,
+          2,
+          21,
+          7
+        ],
+        [
+          0,
+          0,
+          1,
+          1
+        ]
+      ],
+      "harmonic_score": 0.6460396039603961,
+      "icbhi_score": 0.6789915966386555,
+      "macro_f1": 0.5290148448043185,
+      "official_score": 0.6789915966386555,
+      "per_class": {
+        "both": {
+          "f1": 0.2,
+          "precision": 0.125,
+          "recall": 0.5,
+          "support": 2
+        },
+        "crackle": {
+          "f1": 0.5263157894736842,
+          "precision": 0.45454545454545453,
+          "recall": 0.625,
+          "support": 8
+        },
+        "normal": {
+          "f1": 0.7435897435897436,
+          "precision": 0.6744186046511628,
+          "recall": 0.8285714285714286,
+          "support": 35
+        },
+        "wheeze": {
+          "f1": 0.6461538461538462,
+          "precision": 0.875,
+          "recall": 0.5121951219512195,
+          "support": 41
+        }
+      },
+      "rows": 86,
+      "scale": "fraction_0_to_1",
+      "sensitivity": 0.5294117647058824,
+      "specificity": 0.8285714285714286,
+      "task": "KAUH compatible patient-level shared-overlay flat4 after B/D/E probability mean",
+      "uar": 0.6164416376306621
+    },
+    "level1_binary": {
+      "average_score": 0.77703081232493,
+      "confusion": [
+        [
+          29,
+          6
+        ],
+        [
+          14,
+          37
+        ]
+      ],
+      "harmonic_score": 0.7736121124729631,
+      "icbhi_score": 0.77703081232493,
+      "macro_f1": 0.7654118930714675,
+      "official_score": 0.77703081232493,
+      "per_class": {
+        "abnormal": {
+          "f1": 0.7872340425531915,
+          "precision": 0.8604651162790697,
+          "recall": 0.7254901960784313,
+          "support": 51
+        },
+        "normal": {
+          "f1": 0.7435897435897436,
+          "precision": 0.6744186046511628,
+          "recall": 0.8285714285714286,
+          "support": 35
+        }
+      },
+      "rows": 86,
+      "scale": "fraction_0_to_1",
+      "sensitivity": 0.7254901960784313,
+      "specificity": 0.8285714285714286,
+      "task": "KAUH compatible patient-level Level1 binary after B/D/E probability mean",
+      "uar": 0.77703081232493
+    }
+  },
+  "patient_predictions": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_0/external_hf_kauh/kauh_patient_predictions_scored.npz",
+  "patient_support": 112,
+  "per_filter_BDE_audit": {
+    "B": {
+      "compatible_recordings": 86,
+      "flat4": {
+        "average_score": 0.65406162464986,
+        "confusion": [
+          [
+            30,
+            3,
+            2,
+            0
+          ],
+          [
+            8,
+            0,
+            0,
+            0
+          ],
+          [
+            14,
+            0,
+            23,
+            4
+          ],
+          [
+            0,
+            0,
+            2,
+            0
+          ]
+        ],
+        "harmonic_score": 0.5910064239828693,
+        "icbhi_score": 0.65406162464986,
+        "macro_f1": 0.3415314401622718,
+        "official_score": 0.65406162464986,
+        "per_class": {
+          "both": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "support": 2
+          },
+          "crackle": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "support": 8
+          },
+          "normal": {
+            "f1": 0.6896551724137931,
+            "precision": 0.5769230769230769,
+            "recall": 0.8571428571428571,
+            "support": 35
+          },
+          "wheeze": {
+            "f1": 0.6764705882352942,
+            "precision": 0.8518518518518519,
+            "recall": 0.5609756097560976,
+            "support": 41
+          }
+        },
+        "rows": 86,
+        "scale": "fraction_0_to_1",
+        "sensitivity": 0.45098039215686275,
+        "specificity": 0.8571428571428571,
+        "task": "KAUH B-filter compatible shared-overlay flat4",
+        "uar": 0.3545296167247387
+      },
+      "level1_binary": {
+        "average_score": 0.7128851540616246,
+        "confusion": [
+          [
+            30,
+            5
+          ],
+          [
+            22,
+            29
+          ]
+        ],
+        "harmonic_score": 0.6836935166994106,
+        "icbhi_score": 0.7128851540616246,
+        "macro_f1": 0.6860040567951319,
+        "official_score": 0.7128851540616246,
+        "per_class": {
+          "abnormal": {
+            "f1": 0.6823529411764706,
+            "precision": 0.8529411764705882,
+            "recall": 0.5686274509803921,
+            "support": 51
+          },
+          "normal": {
+            "f1": 0.6896551724137931,
+            "precision": 0.5769230769230769,
+            "recall": 0.8571428571428571,
+            "support": 35
+          }
+        },
+        "rows": 86,
+        "scale": "fraction_0_to_1",
+        "sensitivity": 0.5686274509803921,
+        "specificity": 0.8571428571428571,
+        "task": "KAUH B-filter compatible Level1 binary",
+        "uar": 0.7128851540616246
+      },
+      "raw_sound_support": {
+        "Bronchial": 1,
+        "C": 7,
+        "Crep": 23,
+        "E W": 39,
+        "I C": 1,
+        "I C B": 2,
+        "I C E W": 2,
+        "I E W": 2,
+        "N": 35
+      },
+      "recordings": 112
+    },
+    "D": {
+      "compatible_recordings": 86,
+      "flat4": {
+        "average_score": 0.6638655462184874,
+        "confusion": [
+          [
+            30,
+            3,
+            2,
+            0
+          ],
+          [
+            3,
+            5,
+            0,
+            0
+          ],
+          [
+            11,
+            4,
+            18,
+            8
+          ],
+          [
+            1,
+            0,
+            0,
+            1
+          ]
+        ],
+        "harmonic_score": 0.6075949367088607,
+        "icbhi_score": 0.6638655462184874,
+        "macro_f1": 0.5054955290611028,
+        "official_score": 0.6638655462184874,
+        "per_class": {
+          "both": {
+            "f1": 0.18181818181818182,
+            "precision": 0.1111111111111111,
+            "recall": 0.5,
+            "support": 2
+          },
+          "crackle": {
+            "f1": 0.5,
+            "precision": 0.4166666666666667,
+            "recall": 0.625,
+            "support": 8
+          },
+          "normal": {
+            "f1": 0.75,
+            "precision": 0.6666666666666666,
+            "recall": 0.8571428571428571,
+            "support": 35
+          },
+          "wheeze": {
+            "f1": 0.5901639344262295,
+            "precision": 0.9,
+            "recall": 0.43902439024390244,
+            "support": 41
+          }
+        },
+        "rows": 86,
+        "scale": "fraction_0_to_1",
+        "sensitivity": 0.47058823529411764,
+        "specificity": 0.8571428571428571,
+        "task": "KAUH D-filter compatible shared-overlay flat4",
+        "uar": 0.6052918118466899
+      },
+      "level1_binary": {
+        "average_score": 0.7815126050420168,
+        "confusion": [
+          [
+            30,
+            5
+          ],
+          [
+            15,
+            36
+          ]
+        ],
+        "harmonic_score": 0.7741935483870968,
+        "icbhi_score": 0.7815126050420168,
+        "macro_f1": 0.7663043478260869,
+        "official_score": 0.7815126050420168,
+        "per_class": {
+          "abnormal": {
+            "f1": 0.782608695652174,
+            "precision": 0.8780487804878049,
+            "recall": 0.7058823529411765,
+            "support": 51
+          },
+          "normal": {
+            "f1": 0.75,
+            "precision": 0.6666666666666666,
+            "recall": 0.8571428571428571,
+            "support": 35
+          }
+        },
+        "rows": 86,
+        "scale": "fraction_0_to_1",
+        "sensitivity": 0.7058823529411765,
+        "specificity": 0.8571428571428571,
+        "task": "KAUH D-filter compatible Level1 binary",
+        "uar": 0.7815126050420168
+      },
+      "raw_sound_support": {
+        "Bronchial": 1,
+        "C": 7,
+        "Crep": 23,
+        "E W": 39,
+        "I C": 1,
+        "I C B": 2,
+        "I C E W": 2,
+        "I E W": 2,
+        "N": 35
+      },
+      "recordings": 112
+    },
+    "E": {
+      "compatible_recordings": 86,
+      "flat4": {
+        "average_score": 0.49075630252100844,
+        "confusion": [
+          [
+            22,
+            11,
+            1,
+            1
+          ],
+          [
+            1,
+            7,
+            0,
+            0
+          ],
+          [
+            13,
+            1,
+            10,
+            17
+          ],
+          [
+            0,
+            1,
+            0,
+            1
+          ]
+        ],
+        "harmonic_score": 0.452054794520548,
+        "icbhi_score": 0.49075630252100844,
+        "macro_f1": 0.39989294742815873,
+        "official_score": 0.49075630252100844,
+        "per_class": {
+          "both": {
+            "f1": 0.09523809523809523,
+            "precision": 0.05263157894736842,
+            "recall": 0.5,
+            "support": 2
+          },
+          "crackle": {
+            "f1": 0.5,
+            "precision": 0.35,
+            "recall": 0.875,
+            "support": 8
+          },
+          "normal": {
+            "f1": 0.6197183098591549,
+            "precision": 0.6111111111111112,
+            "recall": 0.6285714285714286,
+            "support": 35
+          },
+          "wheeze": {
+            "f1": 0.38461538461538464,
+            "precision": 0.9090909090909091,
+            "recall": 0.24390243902439024,
+            "support": 41
+          }
+        },
+        "rows": 86,
+        "scale": "fraction_0_to_1",
+        "sensitivity": 0.35294117647058826,
+        "specificity": 0.6285714285714286,
+        "task": "KAUH E-filter compatible shared-overlay flat4",
+        "uar": 0.5618684668989546
+      },
+      "level1_binary": {
+        "average_score": 0.67703081232493,
+        "confusion": [
+          [
+            22,
+            13
+          ],
+          [
+            14,
+            37
+          ]
+        ],
+        "harmonic_score": 0.6735622672734795,
+        "icbhi_score": 0.67703081232493,
+        "macro_f1": 0.6761957885929437,
+        "official_score": 0.67703081232493,
+        "per_class": {
+          "abnormal": {
+            "f1": 0.7326732673267327,
+            "precision": 0.74,
+            "recall": 0.7254901960784313,
+            "support": 51
+          },
+          "normal": {
+            "f1": 0.6197183098591549,
+            "precision": 0.6111111111111112,
+            "recall": 0.6285714285714286,
+            "support": 35
+          }
+        },
+        "rows": 86,
+        "scale": "fraction_0_to_1",
+        "sensitivity": 0.7254901960784313,
+        "specificity": 0.6285714285714286,
+        "task": "KAUH E-filter compatible Level1 binary",
+        "uar": 0.67703081232493
+      },
+      "raw_sound_support": {
+        "Bronchial": 1,
+        "C": 7,
+        "Crep": 23,
+        "E W": 39,
+        "I C": 1,
+        "I C B": 2,
+        "I C E W": 2,
+        "I E W": 2,
+        "N": 35
+      },
+      "recordings": 112
+    }
+  },
+  "posthoc_output_dir": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_0/external_hf_kauh",
+  "prediction_distribution_all_recordings": {
+    "flat4": {
+      "both": 34,
+      "crackle": 55,
+      "normal": 179,
+      "wheeze": 68
+    },
+    "level1": {
+      "abnormal": 157,
+      "normal": 179
+    }
+  },
+  "raw_sound_support_recordings": {
+    "Bronchial": 3,
+    "C": 21,
+    "Crep": 69,
+    "E W": 117,
+    "I C": 3,
+    "I C B": 6,
+    "I C E W": 6,
+    "I E W": 6,
+    "N": 105
+  },
+  "recording_level": {
+    "flat4": {
+      "average_score": 0.6028944911297852,
+      "confusion": [
+        [
+          82,
+          17,
+          5,
+          1
+        ],
+        [
+          12,
+          12,
+          0,
+          0
+        ],
+        [
+          38,
+          5,
+          51,
+          29
+        ],
+        [
+          1,
+          1,
+          2,
+          2
+        ]
+      ],
+      "harmonic_score": 0.5503071601879097,
+      "icbhi_score": 0.6028944911297852,
+      "macro_f1": 0.4411635901914992,
+      "official_score": 0.6028944911297852,
+      "per_class": {
+        "both": {
+          "f1": 0.10526315789473684,
+          "precision": 0.0625,
+          "recall": 0.3333333333333333,
+          "support": 6
+        },
+        "crackle": {
+          "f1": 0.4067796610169492,
+          "precision": 0.34285714285714286,
+          "recall": 0.5,
+          "support": 24
+        },
+        "normal": {
+          "f1": 0.6890756302521008,
+          "precision": 0.6165413533834586,
+          "recall": 0.780952380952381,
+          "support": 105
+        },
+        "wheeze": {
+          "f1": 0.56353591160221,
+          "precision": 0.8793103448275862,
+          "recall": 0.4146341463414634,
+          "support": 123
+        }
+      },
+      "rows": 258,
+      "scale": "fraction_0_to_1",
+      "sensitivity": 0.42483660130718953,
+      "specificity": 0.780952380952381,
+      "task": "KAUH compatible recording-level shared-overlay flat4",
+      "uar": 0.5072299651567944
+    },
+    "level1_binary": {
+      "average_score": 0.7238095238095238,
+      "confusion": [
+        [
+          82,
+          23
+        ],
+        [
+          51,
+          102
+        ]
+      ],
+      "harmonic_score": 0.719298245614035,
+      "icbhi_score": 0.7238095238095238,
+      "macro_f1": 0.7114442899461944,
+      "official_score": 0.7238095238095238,
+      "per_class": {
+        "abnormal": {
+          "f1": 0.7338129496402878,
+          "precision": 0.816,
+          "recall": 0.6666666666666666,
+          "support": 153
+        },
+        "normal": {
+          "f1": 0.6890756302521008,
+          "precision": 0.6165413533834586,
+          "recall": 0.780952380952381,
+          "support": 105
+        }
+      },
+      "rows": 258,
+      "scale": "fraction_0_to_1",
+      "sensitivity": 0.6666666666666666,
+      "specificity": 0.780952380952381,
+      "task": "KAUH compatible recording-level Level1 binary",
+      "uar": 0.7238095238095238
+    }
+  },
+  "recording_support": 336,
+  "scored_predictions": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_0/external_hf_kauh/kauh_predictions_scored.npz",
+  "seed": 0,
+  "selected_epoch": 11,
+  "shared_attribute_thresholds": {
+    "crackle": 0.5701518654823303,
+    "wheeze": 0.48591989278793335
+  },
+  "source_run": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_0",
+  "status": "kauh_external_diagnostic_complete",
+  "threshold_source": "selected run validation thresholds; no external tuning",
+  "threshold_tuning": false,
+  "training": false,
+  "unresolved_raw_sounds": {
+    "Bronchial": {
+      "prediction_distribution_level1": {
+        "abnormal": 1,
+        "normal": 2
+      },
+      "recording_support": 3,
+      "status": "HOLD_raw_unresolved_not_scored"
+    },
+    "Crep": {
+      "prediction_distribution_level1": {
+        "abnormal": 30,
+        "normal": 39
+      },
+      "recording_support": 69,
+      "status": "HOLD_raw_unresolved_not_scored"
+    },
+    "I C B": {
+      "prediction_distribution_level1": {
+        "abnormal": 1,
+        "normal": 5
+      },
+      "recording_support": 6,
+      "status": "HOLD_raw_unresolved_not_scored"
+    }
+  },
+  "unsupported_labels_are_not_mapped": true
+}

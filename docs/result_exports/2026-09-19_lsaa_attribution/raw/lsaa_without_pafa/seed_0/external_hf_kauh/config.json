@@ -1,0 +1,64 @@
+{
+  "backbone_checkpoint_for_model_construction": "/files1/Zilong/Acoustic/.cache/multidataset_pipeline/assets/P2/checkpoints/BEATs_iter3_plus_AS2M.pt",
+  "checkpoint": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_0/best_checkpoint.pt",
+  "checkpoint_selection": false,
+  "claim_boundary": "post-hoc external transfer diagnostic; not HF/KAUH native reproduction, not checkpoint reselection, and not a paper claim",
+  "device": "cuda",
+  "evidence_label": "posthoc_fixed_JH2_main_selected_checkpoints_HF_KAUH_external_diagnostic",
+  "frozen_shared_thresholds": {
+    "crackle": 0.5701518654823303,
+    "wheeze": 0.48591989278793335
+  },
+  "hf_policy": {
+    "compatible_attributes": {
+      "D": "Crackle",
+      "Wheeze": "Wheeze"
+    },
+    "gap_unknown_excluded": true,
+    "source_split": "test only",
+    "unsupported": [
+      "Rhonchi",
+      "Stridor",
+      "I",
+      "E",
+      "CAS",
+      "DAS"
+    ],
+    "windows": "exactly [0,5], [5,10], [10,15] seconds"
+  },
+  "input": "mono 16 kHz; 5 s JH2 waveform geometry",
+  "kauh_policy": {
+    "compatible_overlay": {
+      "C": "Crackle",
+      "E W": "Wheeze",
+      "I C": "Crackle",
+      "I C E W": "Both",
+      "I E W": "Wheeze",
+      "N": "Normal"
+    },
+    "filters": [
+      "B",
+      "D",
+      "E"
+    ],
+    "patients": 112,
+    "recordings": 336,
+    "unresolved": [
+      "Crep",
+      "Bronchial",
+      "I C B"
+    ],
+    "window_to_recording_to_patient": "recording readout, then B/D/E probability mean at patient level"
+  },
+  "model": "BEATs iter3+ AS2M full fine-tuned PAFA-JH2 hierarchy",
+  "output_dir": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_0/external_hf_kauh",
+  "precision": "FP32",
+  "repo_root": "/files1/Zilong/Acoustic",
+  "seed": 0,
+  "selected_epoch": 11,
+  "source_run": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_0",
+  "status": "fixed_selected_checkpoint_external_transfer_inference",
+  "threshold_source": "same selected run validation_selection.json; no HF or KAUH tuning",
+  "threshold_tuning": false,
+  "training": false
+}

@@ -1,6 +1,8 @@
 # 2026-09-15–09-24 Working Plan：PC-MCL与DCASE补证，Hanlin负责PAFA与既有对照
 
-Notion：[当前工作计划](https://app.notion.com/p/3dc309efda29810b84c1c7fd3fd21ad8)。
+状态：**本周期于2026-09-18结束，Notion已标Done**。PC-MCL/DCASE三seed补证已完成；未完成的修稿、结果入稿、Hanlin回报核验和新消融整合转入[9/18–9/19工作计划](2026-09-18_to_2026-09-19_paper_revision_work_plan_zh.md)。结束周期不等于未完成任务全部完成；已授权Native-only/without-PAFA队列继续，不暂停或重启。下方原授权、失败和运行状态均作为历史保留。
+
+Notion：[已结束周期](https://app.notion.com/p/3dc309efda29810b84c1c7fd3fd21ad8)；[当前工作计划](https://app.notion.com/p/3df309efda2981a68624c85b689f596b)。
 
 最新批准（9/17）：PC-MCL改用经复核代码及全模型Adam lr=1e-4。用户进一步批准三张GPU并行启动fresh seeds0/1/42，每seed400轮正式训练和四列固定终点评测。使用新配置`baseline/frozen_method_baselines/pcmcl_source_lr1e4_run.json`与新root `result/reproduce/source_transfer_baselines/PC_MCL_ICBHI5s_lr1e4_20260917`，旧失败记录不修改或恢复。优先GPU0/1/2，按实际空闲状态各启动独立runner；不足三张时只用可用卡并报告阻塞，不抢占。既有15分钟heartbeat仍归服务器任务，正常epoch/Score变化不报告，只在新bug/阻塞或本轮结束时报告；相同异常不重复刷屏。全部结束后暂停监控。下面的暂停与整改记录作为历史保留，本次三seed明确启动授权优先。
 
@@ -147,9 +149,9 @@ HF的DCASE分数显式覆盖R/S，PC-MCL和LSAA现有分数是Wheeze proxy；该
 - [x] 用户批准中断PC-MCL，核验进程/GPU释放并暂停原heartbeat；全部产物保留。
 - [x] 完成PC-MCL源代码差异核查、NaN终止/预测/旧结果排除修复及7项直接检查。
 - [x] 仅导入成功DCASE的47个原始文件及成功运行日志，核对路径/大小与三seed有限训练记录；清理本次PC-MCL导入副本，服务器原件保留。
-- [ ] 完成DCASE结果与当前工作区Git快照推送后，将后续代码整改交给“模型设计”。
-- [ ] 明确下一轮PC-MCL配方、是否先完成一个正式seed及启动授权；当前不重跑、不改科学超参数。
-- [ ] 明确Hanlin PAFA具体recipe/seed含义并核验PAFA及已有五组复跑产物。
-- [ ] 根据实际结果更新Table1、讨论、Abstract/Conclusion和最终稿。
+- [x] 已完成DCASE结果快照推送与模型设计整改交接。
+- [x] 已完成新版PC-MCL lr1e-4三seed正式运行、四列评测与核验。
+- [ ] 已转入9/18–9/19计划：明确Hanlin PAFA具体recipe/seed含义并核验PAFA及已有五组复跑产物。
+- [ ] 已转入9/18–9/19计划：根据实际结果更新Table1、讨论、Abstract/Conclusion和最终稿。
 
 已完成的LSAA主模型、核心控制、HF-on和CAS/KAUH结果继续复用，不重复训练。9/14夜间计划保持Done：[9/14夜间计划](https://app.notion.com/p/3db309efda29817f856ff55a4c82e8e3)。学生交接入口：`docs/student_tasks/2026-09-16_hanlin_pafa_handoff_zh.md`、`docs/student_tasks/2026-09-16_hanlin_existing_baseline_rerun_zh.md`。

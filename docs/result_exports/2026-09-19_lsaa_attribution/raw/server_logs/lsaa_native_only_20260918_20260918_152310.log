@@ -1,0 +1,1389 @@
+/files1/Zilong/miniconda3/envs/acoustic-addrsc/lib/python3.10/site-packages/torch/nn/utils/weight_norm.py:28: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+{"epoch": 1, "event": "epoch_start", "next_update": 1, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 1, "event": "training_progress", "loss": 2.568626642227173, "seed": 0, "update": 1, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 1, "event": "training_progress", "loss": 0.5579718947410583, "seed": 0, "update": 32, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 1.0004146099090576, "seed": 0, "update": 64, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.30089014768600464, "seed": 0, "update": 96, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.47277653217315674, "seed": 0, "update": 128, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 1, "event": "training_progress", "loss": 0.3631818890571594, "seed": 0, "update": 160, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 1, "event": "training_progress", "loss": 0.41730499267578125, "seed": 0, "update": 192, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 1, "event": "training_progress", "loss": 0.5446012020111084, "seed": 0, "update": 224, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.7932010293006897, "seed": 0, "update": 256, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.44883742928504944, "seed": 0, "update": 288, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.7632439136505127, "seed": 0, "update": 320, "variant": "native_only"}
+{"epoch": 2, "event": "epoch_start", "next_update": 327, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 2, "event": "training_progress", "loss": 0.44313135743141174, "seed": 0, "update": 352, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 2, "event": "training_progress", "loss": 0.3479679226875305, "seed": 0, "update": 384, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 2, "event": "training_progress", "loss": 0.24931366741657257, "seed": 0, "update": 416, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 2, "event": "training_progress", "loss": 0.3665902614593506, "seed": 0, "update": 448, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 2, "event": "training_progress", "loss": 0.39830103516578674, "seed": 0, "update": 480, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 2, "event": "training_progress", "loss": 0.32998228073120117, "seed": 0, "update": 512, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 2, "event": "training_progress", "loss": 0.20933181047439575, "seed": 0, "update": 544, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 2, "event": "training_progress", "loss": 0.7206106185913086, "seed": 0, "update": 576, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 2, "event": "training_progress", "loss": 0.3676221966743469, "seed": 0, "update": 608, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 2, "event": "training_progress", "loss": 0.5785644054412842, "seed": 0, "update": 640, "variant": "native_only"}
+{"epoch": 3, "event": "epoch_start", "next_update": 653, "seed": 0, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 3, "event": "training_progress", "loss": 0.389577716588974, "seed": 0, "update": 672, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 3, "event": "training_progress", "loss": 0.32294541597366333, "seed": 0, "update": 704, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 3, "event": "training_progress", "loss": 0.2635279893875122, "seed": 0, "update": 736, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.3905653953552246, "seed": 0, "update": 768, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.3934222161769867, "seed": 0, "update": 800, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 3, "event": "training_progress", "loss": 0.3995155990123749, "seed": 0, "update": 832, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.3916562795639038, "seed": 0, "update": 864, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 3, "event": "training_progress", "loss": 0.29274874925613403, "seed": 0, "update": 896, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.43961700797080994, "seed": 0, "update": 928, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.3573741018772125, "seed": 0, "update": 960, "variant": "native_only"}
+{"epoch": 4, "event": "epoch_start", "next_update": 979, "seed": 0, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 4, "event": "training_progress", "loss": 0.2961790859699249, "seed": 0, "update": 992, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 4, "event": "training_progress", "loss": 0.3301677107810974, "seed": 0, "update": 1024, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 4, "event": "training_progress", "loss": 0.352756142616272, "seed": 0, "update": 1056, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 4, "event": "training_progress", "loss": 0.3462084233760834, "seed": 0, "update": 1088, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 4, "event": "training_progress", "loss": 0.4005281925201416, "seed": 0, "update": 1120, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 4, "event": "training_progress", "loss": 0.45645666122436523, "seed": 0, "update": 1152, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 4, "event": "training_progress", "loss": 0.16554515063762665, "seed": 0, "update": 1184, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 4, "event": "training_progress", "loss": 0.6646395921707153, "seed": 0, "update": 1216, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 4, "event": "training_progress", "loss": 0.4104742705821991, "seed": 0, "update": 1248, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 4, "event": "training_progress", "loss": 0.3945334851741791, "seed": 0, "update": 1280, "variant": "native_only"}
+{"epoch": 5, "event": "epoch_start", "next_update": 1305, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 5, "event": "training_progress", "loss": 0.39594516158103943, "seed": 0, "update": 1312, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 5, "event": "training_progress", "loss": 0.4451454281806946, "seed": 0, "update": 1344, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 5, "event": "training_progress", "loss": 0.4990833103656769, "seed": 0, "update": 1376, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 5, "event": "training_progress", "loss": 0.227716863155365, "seed": 0, "update": 1408, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 5, "event": "training_progress", "loss": 0.39855799078941345, "seed": 0, "update": 1440, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 5, "event": "training_progress", "loss": 0.3047480285167694, "seed": 0, "update": 1472, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 5, "event": "training_progress", "loss": 0.4576071500778198, "seed": 0, "update": 1504, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 5, "event": "training_progress", "loss": 0.39087626338005066, "seed": 0, "update": 1536, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 5, "event": "training_progress", "loss": 0.3750835657119751, "seed": 0, "update": 1568, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 5, "event": "training_progress", "loss": 0.4137844443321228, "seed": 0, "update": 1600, "variant": "native_only"}
+{"epoch": 6, "event": "epoch_start", "next_update": 1631, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 6, "event": "training_progress", "loss": 0.3821117877960205, "seed": 0, "update": 1632, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.5111135244369507, "seed": 0, "update": 1664, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 6, "event": "training_progress", "loss": 0.4453296363353729, "seed": 0, "update": 1696, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 6, "event": "training_progress", "loss": 0.36326584219932556, "seed": 0, "update": 1728, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 6, "event": "training_progress", "loss": 0.37378689646720886, "seed": 0, "update": 1760, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.17519189417362213, "seed": 0, "update": 1792, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 6, "event": "training_progress", "loss": 0.41023436188697815, "seed": 0, "update": 1824, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 6, "event": "training_progress", "loss": 0.37960973381996155, "seed": 0, "update": 1856, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.20703564584255219, "seed": 0, "update": 1888, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 6, "event": "training_progress", "loss": 0.3866989016532898, "seed": 0, "update": 1920, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 6, "event": "training_progress", "loss": 0.3361198306083679, "seed": 0, "update": 1952, "variant": "native_only"}
+{"epoch": 7, "event": "epoch_start", "next_update": 1957, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.4834051728248596, "seed": 0, "update": 1984, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.45499709248542786, "seed": 0, "update": 2016, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.35225704312324524, "seed": 0, "update": 2048, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 7, "event": "training_progress", "loss": 0.2209300696849823, "seed": 0, "update": 2080, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 7, "event": "training_progress", "loss": 0.28692445158958435, "seed": 0, "update": 2112, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 7, "event": "training_progress", "loss": 0.25363269448280334, "seed": 0, "update": 2144, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.43049103021621704, "seed": 0, "update": 2176, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 7, "event": "training_progress", "loss": 0.1712595820426941, "seed": 0, "update": 2208, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 7, "event": "training_progress", "loss": 0.3270759880542755, "seed": 0, "update": 2240, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 7, "event": "training_progress", "loss": 0.2307702749967575, "seed": 0, "update": 2272, "variant": "native_only"}
+{"epoch": 8, "event": "epoch_start", "next_update": 2283, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 8, "event": "training_progress", "loss": 0.37892600893974304, "seed": 0, "update": 2304, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 8, "event": "training_progress", "loss": 0.3393380641937256, "seed": 0, "update": 2336, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 8, "event": "training_progress", "loss": 0.34014275670051575, "seed": 0, "update": 2368, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 8, "event": "training_progress", "loss": 0.25867071747779846, "seed": 0, "update": 2400, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 8, "event": "training_progress", "loss": 0.20107313990592957, "seed": 0, "update": 2432, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 8, "event": "training_progress", "loss": 0.39135923981666565, "seed": 0, "update": 2464, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 8, "event": "training_progress", "loss": 0.18610252439975739, "seed": 0, "update": 2496, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 8, "event": "training_progress", "loss": 0.30718687176704407, "seed": 0, "update": 2528, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 8, "event": "training_progress", "loss": 0.34373539686203003, "seed": 0, "update": 2560, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 8, "event": "training_progress", "loss": 0.456316202878952, "seed": 0, "update": 2592, "variant": "native_only"}
+{"epoch": 9, "event": "epoch_start", "next_update": 2609, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 9, "event": "training_progress", "loss": 0.3311960995197296, "seed": 0, "update": 2624, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 9, "event": "training_progress", "loss": 0.18889069557189941, "seed": 0, "update": 2656, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 9, "event": "training_progress", "loss": 0.42562922835350037, "seed": 0, "update": 2688, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 9, "event": "training_progress", "loss": 0.3978763222694397, "seed": 0, "update": 2720, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 9, "event": "training_progress", "loss": 0.22501009702682495, "seed": 0, "update": 2752, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 9, "event": "training_progress", "loss": 0.4298846423625946, "seed": 0, "update": 2784, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 9, "event": "training_progress", "loss": 0.15497656166553497, "seed": 0, "update": 2816, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 9, "event": "training_progress", "loss": 1.1788493394851685, "seed": 0, "update": 2848, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 9, "event": "training_progress", "loss": 0.3882733881473541, "seed": 0, "update": 2880, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 9, "event": "training_progress", "loss": 0.3344396650791168, "seed": 0, "update": 2912, "variant": "native_only"}
+{"epoch": 10, "event": "epoch_start", "next_update": 2935, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 10, "event": "training_progress", "loss": 0.4116867482662201, "seed": 0, "update": 2944, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.2673184871673584, "seed": 0, "update": 2976, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.2960246503353119, "seed": 0, "update": 3008, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.5009070038795471, "seed": 0, "update": 3040, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.12140977382659912, "seed": 0, "update": 3072, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.3338848054409027, "seed": 0, "update": 3104, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 10, "event": "training_progress", "loss": 0.26233887672424316, "seed": 0, "update": 3136, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 10, "event": "training_progress", "loss": 0.34450268745422363, "seed": 0, "update": 3168, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.10468848049640656, "seed": 0, "update": 3200, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.0530402734875679, "seed": 0, "update": 3232, "variant": "native_only"}
+{"epoch": 11, "event": "epoch_start", "next_update": 3261, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 11, "event": "training_progress", "loss": 0.2487170249223709, "seed": 0, "update": 3264, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.16662077605724335, "seed": 0, "update": 3296, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 11, "event": "training_progress", "loss": 0.30055665969848633, "seed": 0, "update": 3328, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 11, "event": "training_progress", "loss": 0.2441895455121994, "seed": 0, "update": 3360, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.07019250839948654, "seed": 0, "update": 3392, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.03127070516347885, "seed": 0, "update": 3424, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 11, "event": "training_progress", "loss": 0.24197012186050415, "seed": 0, "update": 3456, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.13785076141357422, "seed": 0, "update": 3488, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 11, "event": "training_progress", "loss": 0.3790809214115143, "seed": 0, "update": 3520, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.15205399692058563, "seed": 0, "update": 3552, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 11, "event": "training_progress", "loss": 0.3553124666213989, "seed": 0, "update": 3584, "variant": "native_only"}
+{"epoch": 12, "event": "epoch_start", "next_update": 3587, "seed": 0, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 12, "event": "training_progress", "loss": 0.3388611078262329, "seed": 0, "update": 3616, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 12, "event": "training_progress", "loss": 0.11660858988761902, "seed": 0, "update": 3648, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 12, "event": "training_progress", "loss": 0.2755633592605591, "seed": 0, "update": 3680, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 12, "event": "training_progress", "loss": 0.09415322542190552, "seed": 0, "update": 3712, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 12, "event": "training_progress", "loss": 0.21352867782115936, "seed": 0, "update": 3744, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 12, "event": "training_progress", "loss": 0.2794550359249115, "seed": 0, "update": 3776, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 12, "event": "training_progress", "loss": 0.32089895009994507, "seed": 0, "update": 3808, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 12, "event": "training_progress", "loss": 0.31604957580566406, "seed": 0, "update": 3840, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 12, "event": "training_progress", "loss": 0.23722630739212036, "seed": 0, "update": 3872, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 12, "event": "training_progress", "loss": 0.41951096057891846, "seed": 0, "update": 3904, "variant": "native_only"}
+{"epoch": 13, "event": "epoch_start", "next_update": 3913, "seed": 0, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 13, "event": "training_progress", "loss": 0.13323061168193817, "seed": 0, "update": 3936, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 13, "event": "training_progress", "loss": 0.3040216565132141, "seed": 0, "update": 3968, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 13, "event": "training_progress", "loss": 0.3656654357910156, "seed": 0, "update": 4000, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 13, "event": "training_progress", "loss": 0.3252657949924469, "seed": 0, "update": 4032, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 13, "event": "training_progress", "loss": 0.09441227465867996, "seed": 0, "update": 4064, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 13, "event": "training_progress", "loss": 0.22896289825439453, "seed": 0, "update": 4096, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 13, "event": "training_progress", "loss": 0.3362065851688385, "seed": 0, "update": 4128, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 13, "event": "training_progress", "loss": 0.09609733521938324, "seed": 0, "update": 4160, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 13, "event": "training_progress", "loss": 0.17455706000328064, "seed": 0, "update": 4192, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 13, "event": "training_progress", "loss": 0.02009267546236515, "seed": 0, "update": 4224, "variant": "native_only"}
+{"epoch": 14, "event": "epoch_start", "next_update": 4239, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.248487189412117, "seed": 0, "update": 4256, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 14, "event": "training_progress", "loss": 0.06954555958509445, "seed": 0, "update": 4288, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.22285057604312897, "seed": 0, "update": 4320, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.2586977183818817, "seed": 0, "update": 4352, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 14, "event": "training_progress", "loss": 0.07700009644031525, "seed": 0, "update": 4384, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 14, "event": "training_progress", "loss": 0.1306505799293518, "seed": 0, "update": 4416, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 14, "event": "training_progress", "loss": 0.18846096098423004, "seed": 0, "update": 4448, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.30606645345687866, "seed": 0, "update": 4480, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.23202480375766754, "seed": 0, "update": 4512, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 14, "event": "training_progress", "loss": 0.2009212076663971, "seed": 0, "update": 4544, "variant": "native_only"}
+{"epoch": 15, "event": "epoch_start", "next_update": 4565, "seed": 0, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 15, "event": "training_progress", "loss": 0.13494011759757996, "seed": 0, "update": 4576, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 15, "event": "training_progress", "loss": 0.2820766568183899, "seed": 0, "update": 4608, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 15, "event": "training_progress", "loss": 0.24798618257045746, "seed": 0, "update": 4640, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 15, "event": "training_progress", "loss": 0.22880174219608307, "seed": 0, "update": 4672, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 15, "event": "training_progress", "loss": 0.2605912387371063, "seed": 0, "update": 4704, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 15, "event": "training_progress", "loss": 0.15480747818946838, "seed": 0, "update": 4736, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 15, "event": "training_progress", "loss": 0.1913248598575592, "seed": 0, "update": 4768, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 15, "event": "training_progress", "loss": 0.18579643964767456, "seed": 0, "update": 4800, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 15, "event": "training_progress", "loss": 0.2266523689031601, "seed": 0, "update": 4832, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 15, "event": "training_progress", "loss": 0.19296777248382568, "seed": 0, "update": 4864, "variant": "native_only"}
+{"epoch": 16, "event": "epoch_start", "next_update": 4891, "seed": 0, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.29428747296333313, "seed": 0, "update": 4896, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 16, "event": "training_progress", "loss": 0.2400827705860138, "seed": 0, "update": 4928, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 16, "event": "training_progress", "loss": 0.20102658867835999, "seed": 0, "update": 4960, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 16, "event": "training_progress", "loss": 0.21656224131584167, "seed": 0, "update": 4992, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.0847196877002716, "seed": 0, "update": 5024, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.2046453207731247, "seed": 0, "update": 5056, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.019744141027331352, "seed": 0, "update": 5088, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.08660862594842911, "seed": 0, "update": 5120, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.14663885533809662, "seed": 0, "update": 5152, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 16, "event": "training_progress", "loss": 0.2803775370121002, "seed": 0, "update": 5184, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.3240567743778229, "seed": 0, "update": 5216, "variant": "native_only"}
+{"epoch": 17, "event": "epoch_start", "next_update": 5217, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.21374666690826416, "seed": 0, "update": 5248, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.24381907284259796, "seed": 0, "update": 5280, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 17, "event": "training_progress", "loss": 0.0999138355255127, "seed": 0, "update": 5312, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 17, "event": "training_progress", "loss": 0.05005961284041405, "seed": 0, "update": 5344, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.2822551429271698, "seed": 0, "update": 5376, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.2226133495569229, "seed": 0, "update": 5408, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 17, "event": "training_progress", "loss": 0.08099473267793655, "seed": 0, "update": 5440, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.23036740720272064, "seed": 0, "update": 5472, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 17, "event": "training_progress", "loss": 0.16128826141357422, "seed": 0, "update": 5504, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 17, "event": "training_progress", "loss": 0.06086866557598114, "seed": 0, "update": 5536, "variant": "native_only"}
+{"epoch": 18, "event": "epoch_start", "next_update": 5543, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 18, "event": "training_progress", "loss": 0.1945013403892517, "seed": 0, "update": 5568, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.14857065677642822, "seed": 0, "update": 5600, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 18, "event": "training_progress", "loss": 0.17130526900291443, "seed": 0, "update": 5632, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 18, "event": "training_progress", "loss": 0.15120704472064972, "seed": 0, "update": 5664, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.60651695728302, "seed": 0, "update": 5696, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.11308133602142334, "seed": 0, "update": 5728, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.061589065939188004, "seed": 0, "update": 5760, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 18, "event": "training_progress", "loss": 0.30544933676719666, "seed": 0, "update": 5792, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.15055151283740997, "seed": 0, "update": 5824, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.3238027095794678, "seed": 0, "update": 5856, "variant": "native_only"}
+{"epoch": 19, "event": "epoch_start", "next_update": 5869, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 19, "event": "training_progress", "loss": 0.21860142052173615, "seed": 0, "update": 5888, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.24539969861507416, "seed": 0, "update": 5920, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.05803541839122772, "seed": 0, "update": 5952, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 19, "event": "training_progress", "loss": 0.2803015410900116, "seed": 0, "update": 5984, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.17211636900901794, "seed": 0, "update": 6016, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 19, "event": "training_progress", "loss": 0.2297338843345642, "seed": 0, "update": 6048, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.028792141005396843, "seed": 0, "update": 6080, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.1767071932554245, "seed": 0, "update": 6112, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 19, "event": "training_progress", "loss": 0.14456382393836975, "seed": 0, "update": 6144, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.26065418124198914, "seed": 0, "update": 6176, "variant": "native_only"}
+{"epoch": 20, "event": "epoch_start", "next_update": 6195, "seed": 0, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 20, "event": "training_progress", "loss": 0.05364999547600746, "seed": 0, "update": 6208, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 20, "event": "training_progress", "loss": 0.09962225705385208, "seed": 0, "update": 6240, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 20, "event": "training_progress", "loss": 0.14347533881664276, "seed": 0, "update": 6272, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.2552672028541565, "seed": 0, "update": 6304, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.2335262894630432, "seed": 0, "update": 6336, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.17023129761219025, "seed": 0, "update": 6368, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 20, "event": "training_progress", "loss": 0.1305498480796814, "seed": 0, "update": 6400, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.22329622507095337, "seed": 0, "update": 6432, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 20, "event": "training_progress", "loss": 0.14611707627773285, "seed": 0, "update": 6464, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 20, "event": "training_progress", "loss": 0.14877593517303467, "seed": 0, "update": 6496, "variant": "native_only"}
+{"epoch": 21, "event": "epoch_start", "next_update": 6521, "seed": 0, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 21, "event": "training_progress", "loss": 0.19825200736522675, "seed": 0, "update": 6528, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 21, "event": "training_progress", "loss": 0.049883123487234116, "seed": 0, "update": 6560, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.13503871858119965, "seed": 0, "update": 6592, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.2712773084640503, "seed": 0, "update": 6624, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.19589149951934814, "seed": 0, "update": 6656, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.15387433767318726, "seed": 0, "update": 6688, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.14148709177970886, "seed": 0, "update": 6720, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.11830522119998932, "seed": 0, "update": 6752, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 21, "event": "training_progress", "loss": 0.3894253969192505, "seed": 0, "update": 6784, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.15076526999473572, "seed": 0, "update": 6816, "variant": "native_only"}
+{"epoch": 22, "event": "epoch_start", "next_update": 6847, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.17790603637695312, "seed": 0, "update": 6848, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.2490648776292801, "seed": 0, "update": 6880, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.18026909232139587, "seed": 0, "update": 6912, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 22, "event": "training_progress", "loss": 0.12760894000530243, "seed": 0, "update": 6944, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.14146766066551208, "seed": 0, "update": 6976, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 22, "event": "training_progress", "loss": 0.2820886969566345, "seed": 0, "update": 7008, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.24240408837795258, "seed": 0, "update": 7040, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.15343256294727325, "seed": 0, "update": 7072, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 22, "event": "training_progress", "loss": 0.030011199414730072, "seed": 0, "update": 7104, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 22, "event": "training_progress", "loss": 0.02509244531393051, "seed": 0, "update": 7136, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 22, "event": "training_progress", "loss": 0.3045850694179535, "seed": 0, "update": 7168, "variant": "native_only"}
+{"epoch": 23, "event": "epoch_start", "next_update": 7173, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 23, "event": "training_progress", "loss": 0.14304326474666595, "seed": 0, "update": 7200, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 23, "event": "training_progress", "loss": 0.3519960939884186, "seed": 0, "update": 7232, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 23, "event": "training_progress", "loss": 0.17057785391807556, "seed": 0, "update": 7264, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 23, "event": "training_progress", "loss": 0.04028916731476784, "seed": 0, "update": 7296, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 23, "event": "training_progress", "loss": 0.12735861539840698, "seed": 0, "update": 7328, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 23, "event": "training_progress", "loss": 0.2889961004257202, "seed": 0, "update": 7360, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 23, "event": "training_progress", "loss": 0.14210522174835205, "seed": 0, "update": 7392, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 23, "event": "training_progress", "loss": 0.1731024980545044, "seed": 0, "update": 7424, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 23, "event": "training_progress", "loss": 0.09939473867416382, "seed": 0, "update": 7456, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 23, "event": "training_progress", "loss": 0.12278425693511963, "seed": 0, "update": 7488, "variant": "native_only"}
+{"epoch": 24, "event": "epoch_start", "next_update": 7499, "seed": 0, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.07643000781536102, "seed": 0, "update": 7520, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 24, "event": "training_progress", "loss": 0.13465000689029694, "seed": 0, "update": 7552, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.07429417222738266, "seed": 0, "update": 7584, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.02649294212460518, "seed": 0, "update": 7616, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 24, "event": "training_progress", "loss": 0.19857701659202576, "seed": 0, "update": 7648, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.03011362999677658, "seed": 0, "update": 7680, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 24, "event": "training_progress", "loss": 0.1403225213289261, "seed": 0, "update": 7712, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 24, "event": "training_progress", "loss": 0.15935926139354706, "seed": 0, "update": 7744, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.09353271871805191, "seed": 0, "update": 7776, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 24, "event": "training_progress", "loss": 0.15347795188426971, "seed": 0, "update": 7808, "variant": "native_only"}
+{"epoch": 25, "event": "epoch_start", "next_update": 7825, "seed": 0, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 25, "event": "training_progress", "loss": 0.05641740560531616, "seed": 0, "update": 7840, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 25, "event": "training_progress", "loss": 0.023013293743133545, "seed": 0, "update": 7872, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 25, "event": "training_progress", "loss": 0.14230778813362122, "seed": 0, "update": 7904, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 25, "event": "training_progress", "loss": 0.1568896323442459, "seed": 0, "update": 7936, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 25, "event": "training_progress", "loss": 0.2064126580953598, "seed": 0, "update": 7968, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 25, "event": "training_progress", "loss": 0.11975862830877304, "seed": 0, "update": 8000, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 25, "event": "training_progress", "loss": 0.017758911475539207, "seed": 0, "update": 8032, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 25, "event": "training_progress", "loss": 0.11804115027189255, "seed": 0, "update": 8064, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 25, "event": "training_progress", "loss": 0.10470565408468246, "seed": 0, "update": 8096, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 25, "event": "training_progress", "loss": 0.16308258473873138, "seed": 0, "update": 8128, "variant": "native_only"}
+{"epoch": 26, "event": "epoch_start", "next_update": 8151, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 26, "event": "training_progress", "loss": 0.16504356265068054, "seed": 0, "update": 8160, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 26, "event": "training_progress", "loss": 0.012787812389433384, "seed": 0, "update": 8192, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 26, "event": "training_progress", "loss": 0.1805700957775116, "seed": 0, "update": 8224, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 26, "event": "training_progress", "loss": 0.05055889114737511, "seed": 0, "update": 8256, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 26, "event": "training_progress", "loss": 0.1441287249326706, "seed": 0, "update": 8288, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 26, "event": "training_progress", "loss": 0.08572576940059662, "seed": 0, "update": 8320, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 26, "event": "training_progress", "loss": 0.28736305236816406, "seed": 0, "update": 8352, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 26, "event": "training_progress", "loss": 0.1829299032688141, "seed": 0, "update": 8384, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 26, "event": "training_progress", "loss": 0.04353608191013336, "seed": 0, "update": 8416, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 26, "event": "training_progress", "loss": 0.14390145242214203, "seed": 0, "update": 8448, "variant": "native_only"}
+{"epoch": 27, "event": "epoch_start", "next_update": 8477, "seed": 0, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 27, "event": "training_progress", "loss": 0.30101680755615234, "seed": 0, "update": 8480, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 27, "event": "training_progress", "loss": 0.13777261972427368, "seed": 0, "update": 8512, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 27, "event": "training_progress", "loss": 0.0686359703540802, "seed": 0, "update": 8544, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 27, "event": "training_progress", "loss": 0.2025192826986313, "seed": 0, "update": 8576, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 27, "event": "training_progress", "loss": 0.02547835372388363, "seed": 0, "update": 8608, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 27, "event": "training_progress", "loss": 0.0511397123336792, "seed": 0, "update": 8640, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 27, "event": "training_progress", "loss": 0.16529792547225952, "seed": 0, "update": 8672, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 27, "event": "training_progress", "loss": 0.10499931126832962, "seed": 0, "update": 8704, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 27, "event": "training_progress", "loss": 0.16744239628314972, "seed": 0, "update": 8736, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 27, "event": "training_progress", "loss": 0.033390339463949203, "seed": 0, "update": 8768, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 27, "event": "training_progress", "loss": 0.1814408302307129, "seed": 0, "update": 8800, "variant": "native_only"}
+{"epoch": 28, "event": "epoch_start", "next_update": 8803, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 28, "event": "training_progress", "loss": 0.047231435775756836, "seed": 0, "update": 8832, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 28, "event": "training_progress", "loss": 0.10666187852621078, "seed": 0, "update": 8864, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 28, "event": "training_progress", "loss": 0.13793136179447174, "seed": 0, "update": 8896, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 28, "event": "training_progress", "loss": 0.04092996194958687, "seed": 0, "update": 8928, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 28, "event": "training_progress", "loss": 0.20005664229393005, "seed": 0, "update": 8960, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 28, "event": "training_progress", "loss": 0.05089632421731949, "seed": 0, "update": 8992, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 28, "event": "training_progress", "loss": 0.1444181352853775, "seed": 0, "update": 9024, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 28, "event": "training_progress", "loss": 0.0676710307598114, "seed": 0, "update": 9056, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 28, "event": "training_progress", "loss": 0.07980411499738693, "seed": 0, "update": 9088, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 28, "event": "training_progress", "loss": 0.1672838181257248, "seed": 0, "update": 9120, "variant": "native_only"}
+{"epoch": 29, "event": "epoch_start", "next_update": 9129, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 29, "event": "training_progress", "loss": 0.07136189192533493, "seed": 0, "update": 9152, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 29, "event": "training_progress", "loss": 0.027342356741428375, "seed": 0, "update": 9184, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 29, "event": "training_progress", "loss": 0.028870370239019394, "seed": 0, "update": 9216, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 29, "event": "training_progress", "loss": 0.08789379149675369, "seed": 0, "update": 9248, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 29, "event": "training_progress", "loss": 0.03465257212519646, "seed": 0, "update": 9280, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 29, "event": "training_progress", "loss": 0.13111595809459686, "seed": 0, "update": 9312, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 29, "event": "training_progress", "loss": 0.1237870454788208, "seed": 0, "update": 9344, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 29, "event": "training_progress", "loss": 0.0324283093214035, "seed": 0, "update": 9376, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 29, "event": "training_progress", "loss": 0.06970971822738647, "seed": 0, "update": 9408, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 29, "event": "training_progress", "loss": 0.049928199499845505, "seed": 0, "update": 9440, "variant": "native_only"}
+{"epoch": 30, "event": "epoch_start", "next_update": 9455, "seed": 0, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 30, "event": "training_progress", "loss": 0.032598093152046204, "seed": 0, "update": 9472, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 30, "event": "training_progress", "loss": 0.16489875316619873, "seed": 0, "update": 9504, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 30, "event": "training_progress", "loss": 0.08401358127593994, "seed": 0, "update": 9536, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 30, "event": "training_progress", "loss": 0.0695410668849945, "seed": 0, "update": 9568, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 30, "event": "training_progress", "loss": 0.09501110017299652, "seed": 0, "update": 9600, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 30, "event": "training_progress", "loss": 0.04286741465330124, "seed": 0, "update": 9632, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 30, "event": "training_progress", "loss": 0.07940974086523056, "seed": 0, "update": 9664, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 30, "event": "training_progress", "loss": 0.008541228249669075, "seed": 0, "update": 9696, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 30, "event": "training_progress", "loss": 0.06541034579277039, "seed": 0, "update": 9728, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 30, "event": "training_progress", "loss": 0.1584347039461136, "seed": 0, "update": 9760, "variant": "native_only"}
+{"epoch": 31, "event": "epoch_start", "next_update": 9781, "seed": 0, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 31, "event": "training_progress", "loss": 0.09253562986850739, "seed": 0, "update": 9792, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 31, "event": "training_progress", "loss": 0.0684097558259964, "seed": 0, "update": 9824, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 31, "event": "training_progress", "loss": 0.4026521146297455, "seed": 0, "update": 9856, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 31, "event": "training_progress", "loss": 0.13159571588039398, "seed": 0, "update": 9888, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 31, "event": "training_progress", "loss": 0.18014034628868103, "seed": 0, "update": 9920, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 31, "event": "training_progress", "loss": 0.029939256608486176, "seed": 0, "update": 9952, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 31, "event": "training_progress", "loss": 0.059763018041849136, "seed": 0, "update": 9984, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 31, "event": "training_progress", "loss": 0.07235105335712433, "seed": 0, "update": 10016, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 31, "event": "training_progress", "loss": 0.016513273119926453, "seed": 0, "update": 10048, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 31, "event": "training_progress", "loss": 0.04117156192660332, "seed": 0, "update": 10080, "variant": "native_only"}
+{"epoch": 32, "event": "epoch_start", "next_update": 10107, "seed": 0, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 32, "event": "training_progress", "loss": 0.009252460673451424, "seed": 0, "update": 10112, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 32, "event": "training_progress", "loss": 0.07674401253461838, "seed": 0, "update": 10144, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 32, "event": "training_progress", "loss": 0.02598201483488083, "seed": 0, "update": 10176, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 32, "event": "training_progress", "loss": 0.12334653735160828, "seed": 0, "update": 10208, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 32, "event": "training_progress", "loss": 0.04272400215268135, "seed": 0, "update": 10240, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 32, "event": "training_progress", "loss": 0.028249749913811684, "seed": 0, "update": 10272, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 32, "event": "training_progress", "loss": 0.06498119980096817, "seed": 0, "update": 10304, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 32, "event": "training_progress", "loss": 0.041943784803152084, "seed": 0, "update": 10336, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 32, "event": "training_progress", "loss": 0.10507854074239731, "seed": 0, "update": 10368, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 32, "event": "training_progress", "loss": 0.05962854623794556, "seed": 0, "update": 10400, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 32, "event": "training_progress", "loss": 0.1459749937057495, "seed": 0, "update": 10432, "variant": "native_only"}
+{"epoch": 33, "event": "epoch_start", "next_update": 10433, "seed": 0, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 33, "event": "training_progress", "loss": 0.10169556736946106, "seed": 0, "update": 10464, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 33, "event": "training_progress", "loss": 0.06216908246278763, "seed": 0, "update": 10496, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 33, "event": "training_progress", "loss": 0.062121983617544174, "seed": 0, "update": 10528, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 33, "event": "training_progress", "loss": 0.14108723402023315, "seed": 0, "update": 10560, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 33, "event": "training_progress", "loss": 0.08959885686635971, "seed": 0, "update": 10592, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 33, "event": "training_progress", "loss": 0.07142223417758942, "seed": 0, "update": 10624, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 33, "event": "training_progress", "loss": 0.032233767211437225, "seed": 0, "update": 10656, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 33, "event": "training_progress", "loss": 0.03260445222258568, "seed": 0, "update": 10688, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 33, "event": "training_progress", "loss": 0.0989951565861702, "seed": 0, "update": 10720, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 33, "event": "training_progress", "loss": 0.05007801949977875, "seed": 0, "update": 10752, "variant": "native_only"}
+/files1/Zilong/miniconda3/envs/acoustic-addrsc/lib/python3.10/site-packages/torch/nn/utils/weight_norm.py:28: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+{"epoch": 1, "event": "epoch_start", "next_update": 1, "seed": 1, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.6690609455108643, "seed": 1, "update": 1, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.21369712054729462, "seed": 1, "update": 32, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 1, "event": "training_progress", "loss": 0.4588300883769989, "seed": 1, "update": 64, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 1, "event": "training_progress", "loss": 0.4511837959289551, "seed": 1, "update": 96, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.3386540710926056, "seed": 1, "update": 128, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 1, "event": "training_progress", "loss": 0.4210028648376465, "seed": 1, "update": 160, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 1, "event": "training_progress", "loss": 0.4682653844356537, "seed": 1, "update": 192, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 1, "event": "training_progress", "loss": 0.41739028692245483, "seed": 1, "update": 224, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.29565009474754333, "seed": 1, "update": 256, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.40888601541519165, "seed": 1, "update": 288, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 1, "event": "training_progress", "loss": 0.43668466806411743, "seed": 1, "update": 320, "variant": "native_only"}
+{"epoch": 2, "event": "epoch_start", "next_update": 327, "seed": 1, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 2, "event": "training_progress", "loss": 0.3648158311843872, "seed": 1, "update": 352, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 2, "event": "training_progress", "loss": 0.2859345078468323, "seed": 1, "update": 384, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 2, "event": "training_progress", "loss": 0.4169713258743286, "seed": 1, "update": 416, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 2, "event": "training_progress", "loss": 0.2614647150039673, "seed": 1, "update": 448, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 2, "event": "training_progress", "loss": 0.40354111790657043, "seed": 1, "update": 480, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 2, "event": "training_progress", "loss": 0.22401362657546997, "seed": 1, "update": 512, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 2, "event": "training_progress", "loss": 0.27025601267814636, "seed": 1, "update": 544, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 2, "event": "training_progress", "loss": 0.4160030484199524, "seed": 1, "update": 576, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 2, "event": "training_progress", "loss": 0.4528890550136566, "seed": 1, "update": 608, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 2, "event": "training_progress", "loss": 0.19019094109535217, "seed": 1, "update": 640, "variant": "native_only"}
+{"epoch": 3, "event": "epoch_start", "next_update": 653, "seed": 1, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 3, "event": "training_progress", "loss": 1.8556512594223022, "seed": 1, "update": 672, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 3, "event": "training_progress", "loss": 0.32802119851112366, "seed": 1, "update": 704, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.36794722080230713, "seed": 1, "update": 736, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.4598693251609802, "seed": 1, "update": 768, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.3531338572502136, "seed": 1, "update": 800, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.4314653277397156, "seed": 1, "update": 832, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.37822961807250977, "seed": 1, "update": 864, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 3, "event": "training_progress", "loss": 0.4972514510154724, "seed": 1, "update": 896, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.44520726799964905, "seed": 1, "update": 928, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 3, "event": "training_progress", "loss": 0.2847481369972229, "seed": 1, "update": 960, "variant": "native_only"}
+{"epoch": 4, "event": "epoch_start", "next_update": 979, "seed": 1, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 4, "event": "training_progress", "loss": 0.17197969555854797, "seed": 1, "update": 992, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 4, "event": "training_progress", "loss": 0.5226593017578125, "seed": 1, "update": 1024, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 4, "event": "training_progress", "loss": 0.3789222836494446, "seed": 1, "update": 1056, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 4, "event": "training_progress", "loss": 0.3469666838645935, "seed": 1, "update": 1088, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 4, "event": "training_progress", "loss": 0.2790619432926178, "seed": 1, "update": 1120, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 4, "event": "training_progress", "loss": 0.414397656917572, "seed": 1, "update": 1152, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 4, "event": "training_progress", "loss": 0.4468604028224945, "seed": 1, "update": 1184, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 4, "event": "training_progress", "loss": 0.3675006628036499, "seed": 1, "update": 1216, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 4, "event": "training_progress", "loss": 0.35530325770378113, "seed": 1, "update": 1248, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 4, "event": "training_progress", "loss": 0.16480600833892822, "seed": 1, "update": 1280, "variant": "native_only"}
+{"epoch": 5, "event": "epoch_start", "next_update": 1305, "seed": 1, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 5, "event": "training_progress", "loss": 0.21514838933944702, "seed": 1, "update": 1312, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 5, "event": "training_progress", "loss": 0.11585599184036255, "seed": 1, "update": 1344, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 5, "event": "training_progress", "loss": 0.42461133003234863, "seed": 1, "update": 1376, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 5, "event": "training_progress", "loss": 0.4419182240962982, "seed": 1, "update": 1408, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 5, "event": "training_progress", "loss": 0.2948487401008606, "seed": 1, "update": 1440, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 5, "event": "training_progress", "loss": 0.2734971046447754, "seed": 1, "update": 1472, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 5, "event": "training_progress", "loss": 0.3800596296787262, "seed": 1, "update": 1504, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 5, "event": "training_progress", "loss": 0.4069119691848755, "seed": 1, "update": 1536, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 5, "event": "training_progress", "loss": 0.3912566900253296, "seed": 1, "update": 1568, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 5, "event": "training_progress", "loss": 0.23674091696739197, "seed": 1, "update": 1600, "variant": "native_only"}
+{"epoch": 6, "event": "epoch_start", "next_update": 1631, "seed": 1, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 6, "event": "training_progress", "loss": 0.4247419238090515, "seed": 1, "update": 1632, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.18226799368858337, "seed": 1, "update": 1664, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.2999677360057831, "seed": 1, "update": 1696, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 6, "event": "training_progress", "loss": 0.4133540689945221, "seed": 1, "update": 1728, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 6, "event": "training_progress", "loss": 0.4106813371181488, "seed": 1, "update": 1760, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.05947501212358475, "seed": 1, "update": 1792, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.15474462509155273, "seed": 1, "update": 1824, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 6, "event": "training_progress", "loss": 0.43267929553985596, "seed": 1, "update": 1856, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.3357390761375427, "seed": 1, "update": 1888, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.14538592100143433, "seed": 1, "update": 1920, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.18469801545143127, "seed": 1, "update": 1952, "variant": "native_only"}
+{"epoch": 7, "event": "epoch_start", "next_update": 1957, "seed": 1, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.3964722454547882, "seed": 1, "update": 1984, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 7, "event": "training_progress", "loss": 0.21271681785583496, "seed": 1, "update": 2016, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.509122371673584, "seed": 1, "update": 2048, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 7, "event": "training_progress", "loss": 0.11692554503679276, "seed": 1, "update": 2080, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 7, "event": "training_progress", "loss": 0.3819335401058197, "seed": 1, "update": 2112, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.40294110774993896, "seed": 1, "update": 2144, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.3856396973133087, "seed": 1, "update": 2176, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.4450637400150299, "seed": 1, "update": 2208, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 7, "event": "training_progress", "loss": 0.3618517518043518, "seed": 1, "update": 2240, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.36971694231033325, "seed": 1, "update": 2272, "variant": "native_only"}
+{"epoch": 8, "event": "epoch_start", "next_update": 2283, "seed": 1, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 8, "event": "training_progress", "loss": 0.3687037229537964, "seed": 1, "update": 2304, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 8, "event": "training_progress", "loss": 0.1585157811641693, "seed": 1, "update": 2336, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 8, "event": "training_progress", "loss": 0.4331837594509125, "seed": 1, "update": 2368, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 8, "event": "training_progress", "loss": 0.5912384390830994, "seed": 1, "update": 2400, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 8, "event": "training_progress", "loss": 0.04839230328798294, "seed": 1, "update": 2432, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 8, "event": "training_progress", "loss": 0.42962661385536194, "seed": 1, "update": 2464, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 8, "event": "training_progress", "loss": 0.5854114294052124, "seed": 1, "update": 2496, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 8, "event": "training_progress", "loss": 0.04439430683851242, "seed": 1, "update": 2528, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 8, "event": "training_progress", "loss": 0.43157365918159485, "seed": 1, "update": 2560, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 8, "event": "training_progress", "loss": 0.48254597187042236, "seed": 1, "update": 2592, "variant": "native_only"}
+{"epoch": 9, "event": "epoch_start", "next_update": 2609, "seed": 1, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 9, "event": "training_progress", "loss": 0.3312033414840698, "seed": 1, "update": 2624, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 9, "event": "training_progress", "loss": 0.10390131920576096, "seed": 1, "update": 2656, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 9, "event": "training_progress", "loss": 0.036907996982336044, "seed": 1, "update": 2688, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 9, "event": "training_progress", "loss": 0.22427527606487274, "seed": 1, "update": 2720, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 9, "event": "training_progress", "loss": 0.2817680537700653, "seed": 1, "update": 2752, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 9, "event": "training_progress", "loss": 0.08826662600040436, "seed": 1, "update": 2784, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 9, "event": "training_progress", "loss": 0.27289071679115295, "seed": 1, "update": 2816, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 9, "event": "training_progress", "loss": 0.7523232102394104, "seed": 1, "update": 2848, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 9, "event": "training_progress", "loss": 0.26573890447616577, "seed": 1, "update": 2880, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 9, "event": "training_progress", "loss": 0.2632848620414734, "seed": 1, "update": 2912, "variant": "native_only"}
+{"epoch": 10, "event": "epoch_start", "next_update": 2935, "seed": 1, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.09334977716207504, "seed": 1, "update": 2944, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.0620306059718132, "seed": 1, "update": 2976, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.3551214933395386, "seed": 1, "update": 3008, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 10, "event": "training_progress", "loss": 0.25625747442245483, "seed": 1, "update": 3040, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 10, "event": "training_progress", "loss": 0.2797327935695648, "seed": 1, "update": 3072, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 10, "event": "training_progress", "loss": 0.27334165573120117, "seed": 1, "update": 3104, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.13361069560050964, "seed": 1, "update": 3136, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.08504429459571838, "seed": 1, "update": 3168, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.26376211643218994, "seed": 1, "update": 3200, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.11151289939880371, "seed": 1, "update": 3232, "variant": "native_only"}
+{"epoch": 11, "event": "epoch_start", "next_update": 3261, "seed": 1, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.3228265047073364, "seed": 1, "update": 3264, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.1776081919670105, "seed": 1, "update": 3296, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.1647457778453827, "seed": 1, "update": 3328, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 11, "event": "training_progress", "loss": 0.2219090759754181, "seed": 1, "update": 3360, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 11, "event": "training_progress", "loss": 0.17599022388458252, "seed": 1, "update": 3392, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.13725505769252777, "seed": 1, "update": 3424, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 11, "event": "training_progress", "loss": 0.2418244183063507, "seed": 1, "update": 3456, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.30216333270072937, "seed": 1, "update": 3488, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.07384613156318665, "seed": 1, "update": 3520, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.041294775903224945, "seed": 1, "update": 3552, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.2481190264225006, "seed": 1, "update": 3584, "variant": "native_only"}
+{"epoch": 12, "event": "epoch_start", "next_update": 3587, "seed": 1, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 12, "event": "training_progress", "loss": 0.24180665612220764, "seed": 1, "update": 3616, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 12, "event": "training_progress", "loss": 0.2213551551103592, "seed": 1, "update": 3648, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 12, "event": "training_progress", "loss": 0.20838351547718048, "seed": 1, "update": 3680, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 12, "event": "training_progress", "loss": 0.219429612159729, "seed": 1, "update": 3712, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 12, "event": "training_progress", "loss": 0.0979512631893158, "seed": 1, "update": 3744, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 12, "event": "training_progress", "loss": 0.17791467905044556, "seed": 1, "update": 3776, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 12, "event": "training_progress", "loss": 0.19106829166412354, "seed": 1, "update": 3808, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 12, "event": "training_progress", "loss": 0.1838521808385849, "seed": 1, "update": 3840, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 12, "event": "training_progress", "loss": 0.1067575216293335, "seed": 1, "update": 3872, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 12, "event": "training_progress", "loss": 0.15117767453193665, "seed": 1, "update": 3904, "variant": "native_only"}
+{"epoch": 13, "event": "epoch_start", "next_update": 3913, "seed": 1, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 13, "event": "training_progress", "loss": 0.23352472484111786, "seed": 1, "update": 3936, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 13, "event": "training_progress", "loss": 0.1905471831560135, "seed": 1, "update": 3968, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 13, "event": "training_progress", "loss": 0.06642573326826096, "seed": 1, "update": 4000, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 13, "event": "training_progress", "loss": 0.25237393379211426, "seed": 1, "update": 4032, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 13, "event": "training_progress", "loss": 0.2273392528295517, "seed": 1, "update": 4064, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 13, "event": "training_progress", "loss": 0.3722018599510193, "seed": 1, "update": 4096, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 13, "event": "training_progress", "loss": 0.20805098116397858, "seed": 1, "update": 4128, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 13, "event": "training_progress", "loss": 0.05570486932992935, "seed": 1, "update": 4160, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 13, "event": "training_progress", "loss": 0.2079855054616928, "seed": 1, "update": 4192, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 13, "event": "training_progress", "loss": 0.24492760002613068, "seed": 1, "update": 4224, "variant": "native_only"}
+{"epoch": 14, "event": "epoch_start", "next_update": 4239, "seed": 1, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 14, "event": "training_progress", "loss": 0.10178401321172714, "seed": 1, "update": 4256, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.2550179362297058, "seed": 1, "update": 4288, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.1705816388130188, "seed": 1, "update": 4320, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 14, "event": "training_progress", "loss": 0.10198554396629333, "seed": 1, "update": 4352, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.18858544528484344, "seed": 1, "update": 4384, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 14, "event": "training_progress", "loss": 0.093863345682621, "seed": 1, "update": 4416, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.20009024441242218, "seed": 1, "update": 4448, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.15361610054969788, "seed": 1, "update": 4480, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 14, "event": "training_progress", "loss": 0.15682779252529144, "seed": 1, "update": 4512, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.11576944589614868, "seed": 1, "update": 4544, "variant": "native_only"}
+{"epoch": 15, "event": "epoch_start", "next_update": 4565, "seed": 1, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 15, "event": "training_progress", "loss": 0.1251547485589981, "seed": 1, "update": 4576, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 15, "event": "training_progress", "loss": 0.11294898390769958, "seed": 1, "update": 4608, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 15, "event": "training_progress", "loss": 0.17375807464122772, "seed": 1, "update": 4640, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 15, "event": "training_progress", "loss": 0.31979119777679443, "seed": 1, "update": 4672, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 15, "event": "training_progress", "loss": 0.15962374210357666, "seed": 1, "update": 4704, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 15, "event": "training_progress", "loss": 0.1591077446937561, "seed": 1, "update": 4736, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 15, "event": "training_progress", "loss": 0.17926926910877228, "seed": 1, "update": 4768, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 15, "event": "training_progress", "loss": 0.1577722430229187, "seed": 1, "update": 4800, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 15, "event": "training_progress", "loss": 0.12906859815120697, "seed": 1, "update": 4832, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 15, "event": "training_progress", "loss": 0.14953261613845825, "seed": 1, "update": 4864, "variant": "native_only"}
+{"epoch": 16, "event": "epoch_start", "next_update": 4891, "seed": 1, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.11794621497392654, "seed": 1, "update": 4896, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 16, "event": "training_progress", "loss": 0.12381971627473831, "seed": 1, "update": 4928, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.06959381699562073, "seed": 1, "update": 4960, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 16, "event": "training_progress", "loss": 0.1353033483028412, "seed": 1, "update": 4992, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 16, "event": "training_progress", "loss": 0.09591183811426163, "seed": 1, "update": 5024, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.07970114052295685, "seed": 1, "update": 5056, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 16, "event": "training_progress", "loss": 0.12903240323066711, "seed": 1, "update": 5088, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 16, "event": "training_progress", "loss": 0.15425187349319458, "seed": 1, "update": 5120, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 16, "event": "training_progress", "loss": 0.18126656115055084, "seed": 1, "update": 5152, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 16, "event": "training_progress", "loss": 0.15861546993255615, "seed": 1, "update": 5184, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 16, "event": "training_progress", "loss": 0.2587708532810211, "seed": 1, "update": 5216, "variant": "native_only"}
+{"epoch": 17, "event": "epoch_start", "next_update": 5217, "seed": 1, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.11724842339754105, "seed": 1, "update": 5248, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.15047922730445862, "seed": 1, "update": 5280, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.11026966571807861, "seed": 1, "update": 5312, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.1618001013994217, "seed": 1, "update": 5344, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 17, "event": "training_progress", "loss": 0.10398596525192261, "seed": 1, "update": 5376, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.19901660084724426, "seed": 1, "update": 5408, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.1037481352686882, "seed": 1, "update": 5440, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.1446215957403183, "seed": 1, "update": 5472, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.141477569937706, "seed": 1, "update": 5504, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 17, "event": "training_progress", "loss": 0.13044343888759613, "seed": 1, "update": 5536, "variant": "native_only"}
+{"epoch": 18, "event": "epoch_start", "next_update": 5543, "seed": 1, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 18, "event": "training_progress", "loss": 0.18074296414852142, "seed": 1, "update": 5568, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.03498215973377228, "seed": 1, "update": 5600, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.034921541810035706, "seed": 1, "update": 5632, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.09632831811904907, "seed": 1, "update": 5664, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.13082686066627502, "seed": 1, "update": 5696, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.035840198397636414, "seed": 1, "update": 5728, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.19235539436340332, "seed": 1, "update": 5760, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 18, "event": "training_progress", "loss": 0.15878774225711823, "seed": 1, "update": 5792, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 18, "event": "training_progress", "loss": 0.16840118169784546, "seed": 1, "update": 5824, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.09182878583669662, "seed": 1, "update": 5856, "variant": "native_only"}
+{"epoch": 19, "event": "epoch_start", "next_update": 5869, "seed": 1, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 19, "event": "training_progress", "loss": 0.2251529097557068, "seed": 1, "update": 5888, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.2654479742050171, "seed": 1, "update": 5920, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 19, "event": "training_progress", "loss": 0.042960695922374725, "seed": 1, "update": 5952, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 19, "event": "training_progress", "loss": 0.0759042501449585, "seed": 1, "update": 5984, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 19, "event": "training_progress", "loss": 0.10352487862110138, "seed": 1, "update": 6016, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.18923023343086243, "seed": 1, "update": 6048, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 19, "event": "training_progress", "loss": 0.7506199479103088, "seed": 1, "update": 6080, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.004995288792997599, "seed": 1, "update": 6112, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.22457434237003326, "seed": 1, "update": 6144, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.14103975892066956, "seed": 1, "update": 6176, "variant": "native_only"}
+{"epoch": 20, "event": "epoch_start", "next_update": 6195, "seed": 1, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.13754655420780182, "seed": 1, "update": 6208, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 20, "event": "training_progress", "loss": 0.04489467293024063, "seed": 1, "update": 6240, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.1994909942150116, "seed": 1, "update": 6272, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 20, "event": "training_progress", "loss": 0.21119199693202972, "seed": 1, "update": 6304, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.20155757665634155, "seed": 1, "update": 6336, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 20, "event": "training_progress", "loss": 0.3104413151741028, "seed": 1, "update": 6368, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.11998499929904938, "seed": 1, "update": 6400, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.20617902278900146, "seed": 1, "update": 6432, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 20, "event": "training_progress", "loss": 0.7547197341918945, "seed": 1, "update": 6464, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.08997049182653427, "seed": 1, "update": 6496, "variant": "native_only"}
+{"epoch": 21, "event": "epoch_start", "next_update": 6521, "seed": 1, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.07043859362602234, "seed": 1, "update": 6528, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.14243939518928528, "seed": 1, "update": 6560, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.10903474688529968, "seed": 1, "update": 6592, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.12062318623065948, "seed": 1, "update": 6624, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.07654326409101486, "seed": 1, "update": 6656, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 21, "event": "training_progress", "loss": 0.02748369425535202, "seed": 1, "update": 6688, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.23695120215415955, "seed": 1, "update": 6720, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 21, "event": "training_progress", "loss": 0.07042701542377472, "seed": 1, "update": 6752, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 21, "event": "training_progress", "loss": 0.28022468090057373, "seed": 1, "update": 6784, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.07182690501213074, "seed": 1, "update": 6816, "variant": "native_only"}
+{"epoch": 22, "event": "epoch_start", "next_update": 6847, "seed": 1, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.11124563217163086, "seed": 1, "update": 6848, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 22, "event": "training_progress", "loss": 0.08614522218704224, "seed": 1, "update": 6880, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.16363483667373657, "seed": 1, "update": 6912, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.11428171396255493, "seed": 1, "update": 6944, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 22, "event": "training_progress", "loss": 0.02683965675532818, "seed": 1, "update": 6976, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.16641469299793243, "seed": 1, "update": 7008, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.05541517958045006, "seed": 1, "update": 7040, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.07066351175308228, "seed": 1, "update": 7072, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.15468424558639526, "seed": 1, "update": 7104, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.08599203824996948, "seed": 1, "update": 7136, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 22, "event": "training_progress", "loss": 1.0258607864379883, "seed": 1, "update": 7168, "variant": "native_only"}
+{"epoch": 23, "event": "epoch_start", "next_update": 7173, "seed": 1, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 23, "event": "training_progress", "loss": 0.06105716526508331, "seed": 1, "update": 7200, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 23, "event": "training_progress", "loss": 0.12058116495609283, "seed": 1, "update": 7232, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 23, "event": "training_progress", "loss": 0.09513281285762787, "seed": 1, "update": 7264, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 23, "event": "training_progress", "loss": 0.04466637223958969, "seed": 1, "update": 7296, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 23, "event": "training_progress", "loss": 0.04995759576559067, "seed": 1, "update": 7328, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 23, "event": "training_progress", "loss": 0.10169202089309692, "seed": 1, "update": 7360, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 23, "event": "training_progress", "loss": 0.04088630899786949, "seed": 1, "update": 7392, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 23, "event": "training_progress", "loss": 0.1185881718993187, "seed": 1, "update": 7424, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 23, "event": "training_progress", "loss": 0.09939306974411011, "seed": 1, "update": 7456, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 23, "event": "training_progress", "loss": 0.07123981416225433, "seed": 1, "update": 7488, "variant": "native_only"}
+{"epoch": 24, "event": "epoch_start", "next_update": 7499, "seed": 1, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.1983344852924347, "seed": 1, "update": 7520, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 24, "event": "training_progress", "loss": 0.04457797482609749, "seed": 1, "update": 7552, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.04600149393081665, "seed": 1, "update": 7584, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.07473372668027878, "seed": 1, "update": 7616, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.028850402683019638, "seed": 1, "update": 7648, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.01647724024951458, "seed": 1, "update": 7680, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 24, "event": "training_progress", "loss": 0.20327971875667572, "seed": 1, "update": 7712, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 24, "event": "training_progress", "loss": 0.05792785808444023, "seed": 1, "update": 7744, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.061467766761779785, "seed": 1, "update": 7776, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 24, "event": "training_progress", "loss": 0.14698615670204163, "seed": 1, "update": 7808, "variant": "native_only"}
+{"epoch": 25, "event": "epoch_start", "next_update": 7825, "seed": 1, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 25, "event": "training_progress", "loss": 0.03491909056901932, "seed": 1, "update": 7840, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 25, "event": "training_progress", "loss": 0.047543421387672424, "seed": 1, "update": 7872, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 25, "event": "training_progress", "loss": 0.05035685747861862, "seed": 1, "update": 7904, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 25, "event": "training_progress", "loss": 0.024056047201156616, "seed": 1, "update": 7936, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 25, "event": "training_progress", "loss": 0.009243231266736984, "seed": 1, "update": 7968, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 25, "event": "training_progress", "loss": 0.021509608253836632, "seed": 1, "update": 8000, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 25, "event": "training_progress", "loss": 0.03420894593000412, "seed": 1, "update": 8032, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 25, "event": "training_progress", "loss": 0.06004582345485687, "seed": 1, "update": 8064, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 25, "event": "training_progress", "loss": 0.0721065104007721, "seed": 1, "update": 8096, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 25, "event": "training_progress", "loss": 0.11065953969955444, "seed": 1, "update": 8128, "variant": "native_only"}
+/files1/Zilong/miniconda3/envs/acoustic-addrsc/lib/python3.10/site-packages/torch/nn/utils/weight_norm.py:28: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+{"epoch": 1, "event": "epoch_start", "next_update": 1, "seed": 42, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.8935859203338623, "seed": 42, "update": 1, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.5344486236572266, "seed": 42, "update": 32, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 1, "event": "training_progress", "loss": 1.4003663063049316, "seed": 42, "update": 64, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.447081595659256, "seed": 42, "update": 96, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.22790780663490295, "seed": 42, "update": 128, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 1, "event": "training_progress", "loss": 0.461429238319397, "seed": 42, "update": 160, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 1, "event": "training_progress", "loss": 0.5212287902832031, "seed": 42, "update": 192, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 1, "event": "training_progress", "loss": 0.5547319650650024, "seed": 42, "update": 224, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.31925225257873535, "seed": 42, "update": 256, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.27345794439315796, "seed": 42, "update": 288, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 1, "event": "training_progress", "loss": 0.23057778179645538, "seed": 42, "update": 320, "variant": "native_only"}
+{"epoch": 2, "event": "epoch_start", "next_update": 327, "seed": 42, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 2, "event": "training_progress", "loss": 0.42869824171066284, "seed": 42, "update": 352, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 2, "event": "training_progress", "loss": 0.4031343460083008, "seed": 42, "update": 384, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 2, "event": "training_progress", "loss": 0.6415941715240479, "seed": 42, "update": 416, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 2, "event": "training_progress", "loss": 0.23467221856117249, "seed": 42, "update": 448, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 2, "event": "training_progress", "loss": 1.0430922508239746, "seed": 42, "update": 480, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 2, "event": "training_progress", "loss": 0.5623806715011597, "seed": 42, "update": 512, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 2, "event": "training_progress", "loss": 0.6837921738624573, "seed": 42, "update": 544, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 2, "event": "training_progress", "loss": 0.3977852463722229, "seed": 42, "update": 576, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 2, "event": "training_progress", "loss": 0.18316799402236938, "seed": 42, "update": 608, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 2, "event": "training_progress", "loss": 0.40017393231391907, "seed": 42, "update": 640, "variant": "native_only"}
+{"epoch": 3, "event": "epoch_start", "next_update": 653, "seed": 42, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.37239813804626465, "seed": 42, "update": 672, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 3, "event": "training_progress", "loss": 0.4056544899940491, "seed": 42, "update": 704, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 3, "event": "training_progress", "loss": 0.6957094073295593, "seed": 42, "update": 736, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.42085859179496765, "seed": 42, "update": 768, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.35686737298965454, "seed": 42, "update": 800, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.4297723174095154, "seed": 42, "update": 832, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.37485557794570923, "seed": 42, "update": 864, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.46628880500793457, "seed": 42, "update": 896, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.4061379134654999, "seed": 42, "update": 928, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 3, "event": "training_progress", "loss": 0.4790996313095093, "seed": 42, "update": 960, "variant": "native_only"}
+{"epoch": 4, "event": "epoch_start", "next_update": 979, "seed": 42, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 4, "event": "training_progress", "loss": 0.3560282289981842, "seed": 42, "update": 992, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 4, "event": "training_progress", "loss": 0.30858930945396423, "seed": 42, "update": 1024, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 4, "event": "training_progress", "loss": 0.39836469292640686, "seed": 42, "update": 1056, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 4, "event": "training_progress", "loss": 0.4452972114086151, "seed": 42, "update": 1088, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 4, "event": "training_progress", "loss": 0.3044726550579071, "seed": 42, "update": 1120, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 4, "event": "training_progress", "loss": 0.3965975046157837, "seed": 42, "update": 1152, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 4, "event": "training_progress", "loss": 0.36190661787986755, "seed": 42, "update": 1184, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 4, "event": "training_progress", "loss": 0.4963333010673523, "seed": 42, "update": 1216, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 4, "event": "training_progress", "loss": 0.24101309478282928, "seed": 42, "update": 1248, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 4, "event": "training_progress", "loss": 0.23376953601837158, "seed": 42, "update": 1280, "variant": "native_only"}
+{"epoch": 5, "event": "epoch_start", "next_update": 1305, "seed": 42, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 5, "event": "training_progress", "loss": 0.2233184427022934, "seed": 42, "update": 1312, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 5, "event": "training_progress", "loss": 0.3636794686317444, "seed": 42, "update": 1344, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 5, "event": "training_progress", "loss": 0.2642080783843994, "seed": 42, "update": 1376, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 5, "event": "training_progress", "loss": 0.4866180717945099, "seed": 42, "update": 1408, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 5, "event": "training_progress", "loss": 0.3474281132221222, "seed": 42, "update": 1440, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 5, "event": "training_progress", "loss": 0.16077378392219543, "seed": 42, "update": 1472, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 5, "event": "training_progress", "loss": 0.4066495895385742, "seed": 42, "update": 1504, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 5, "event": "training_progress", "loss": 0.39270925521850586, "seed": 42, "update": 1536, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 5, "event": "training_progress", "loss": 0.4288500249385834, "seed": 42, "update": 1568, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 5, "event": "training_progress", "loss": 0.2313908040523529, "seed": 42, "update": 1600, "variant": "native_only"}
+{"epoch": 6, "event": "epoch_start", "next_update": 1631, "seed": 42, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 6, "event": "training_progress", "loss": 0.3986181914806366, "seed": 42, "update": 1632, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 6, "event": "training_progress", "loss": 0.3653886914253235, "seed": 42, "update": 1664, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.32422566413879395, "seed": 42, "update": 1696, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.44279372692108154, "seed": 42, "update": 1728, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.29305577278137207, "seed": 42, "update": 1760, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.13414894044399261, "seed": 42, "update": 1792, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.17185169458389282, "seed": 42, "update": 1824, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.34612587094306946, "seed": 42, "update": 1856, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.6867165565490723, "seed": 42, "update": 1888, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 6, "event": "training_progress", "loss": 0.3584872782230377, "seed": 42, "update": 1920, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 6, "event": "training_progress", "loss": 0.1620810478925705, "seed": 42, "update": 1952, "variant": "native_only"}
+{"epoch": 7, "event": "epoch_start", "next_update": 1957, "seed": 42, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 7, "event": "training_progress", "loss": 0.35101473331451416, "seed": 42, "update": 1984, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.44583284854888916, "seed": 42, "update": 2016, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.3522803485393524, "seed": 42, "update": 2048, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 7, "event": "training_progress", "loss": 0.15682439506053925, "seed": 42, "update": 2080, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.35956454277038574, "seed": 42, "update": 2112, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.37766826152801514, "seed": 42, "update": 2144, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.43772485852241516, "seed": 42, "update": 2176, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.36394795775413513, "seed": 42, "update": 2208, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 7, "event": "training_progress", "loss": 0.3549981713294983, "seed": 42, "update": 2240, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 7, "event": "training_progress", "loss": 0.3850152790546417, "seed": 42, "update": 2272, "variant": "native_only"}
+{"epoch": 8, "event": "epoch_start", "next_update": 2283, "seed": 42, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 8, "event": "training_progress", "loss": 0.3466304540634155, "seed": 42, "update": 2304, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 8, "event": "training_progress", "loss": 0.3441183567047119, "seed": 42, "update": 2336, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 8, "event": "training_progress", "loss": 0.21802741289138794, "seed": 42, "update": 2368, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 8, "event": "training_progress", "loss": 0.30544692277908325, "seed": 42, "update": 2400, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 8, "event": "training_progress", "loss": 0.08960004150867462, "seed": 42, "update": 2432, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 8, "event": "training_progress", "loss": 0.3487164080142975, "seed": 42, "update": 2464, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 8, "event": "training_progress", "loss": 0.36302003264427185, "seed": 42, "update": 2496, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 8, "event": "training_progress", "loss": 0.3461402356624603, "seed": 42, "update": 2528, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 8, "event": "training_progress", "loss": 0.375659704208374, "seed": 42, "update": 2560, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 8, "event": "training_progress", "loss": 0.13894763588905334, "seed": 42, "update": 2592, "variant": "native_only"}
+{"epoch": 9, "event": "epoch_start", "next_update": 2609, "seed": 42, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 9, "event": "training_progress", "loss": 0.1297782063484192, "seed": 42, "update": 2624, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 9, "event": "training_progress", "loss": 0.21354728937149048, "seed": 42, "update": 2656, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 9, "event": "training_progress", "loss": 0.44983798265457153, "seed": 42, "update": 2688, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 9, "event": "training_progress", "loss": 0.39750218391418457, "seed": 42, "update": 2720, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 9, "event": "training_progress", "loss": 0.22626374661922455, "seed": 42, "update": 2752, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 9, "event": "training_progress", "loss": 0.34349802136421204, "seed": 42, "update": 2784, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 9, "event": "training_progress", "loss": 0.395336776971817, "seed": 42, "update": 2816, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 9, "event": "training_progress", "loss": 0.33017247915267944, "seed": 42, "update": 2848, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 9, "event": "training_progress", "loss": 0.050782859325408936, "seed": 42, "update": 2880, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 9, "event": "training_progress", "loss": 0.2132548689842224, "seed": 42, "update": 2912, "variant": "native_only"}
+{"epoch": 10, "event": "epoch_start", "next_update": 2935, "seed": 42, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.6664064526557922, "seed": 42, "update": 2944, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 10, "event": "training_progress", "loss": 0.375289648771286, "seed": 42, "update": 2976, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.44490575790405273, "seed": 42, "update": 3008, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 10, "event": "training_progress", "loss": 0.34078702330589294, "seed": 42, "update": 3040, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 10, "event": "training_progress", "loss": 0.11504384875297546, "seed": 42, "update": 3072, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 10, "event": "training_progress", "loss": 0.43465685844421387, "seed": 42, "update": 3104, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 10, "event": "training_progress", "loss": 0.33837270736694336, "seed": 42, "update": 3136, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 10, "event": "training_progress", "loss": 0.3899672329425812, "seed": 42, "update": 3168, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 10, "event": "training_progress", "loss": 0.3998839259147644, "seed": 42, "update": 3200, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 10, "event": "training_progress", "loss": 0.36197391152381897, "seed": 42, "update": 3232, "variant": "native_only"}
+{"epoch": 11, "event": "epoch_start", "next_update": 3261, "seed": 42, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.2142585664987564, "seed": 42, "update": 3264, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 11, "event": "training_progress", "loss": 0.37957632541656494, "seed": 42, "update": 3296, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 11, "event": "training_progress", "loss": 0.3948010504245758, "seed": 42, "update": 3328, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.09532678127288818, "seed": 42, "update": 3360, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 11, "event": "training_progress", "loss": 0.3237048387527466, "seed": 42, "update": 3392, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 11, "event": "training_progress", "loss": 0.3597780466079712, "seed": 42, "update": 3424, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.13956928253173828, "seed": 42, "update": 3456, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.355689138174057, "seed": 42, "update": 3488, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.11881089955568314, "seed": 42, "update": 3520, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.13228194415569305, "seed": 42, "update": 3552, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 11, "event": "training_progress", "loss": 0.2781040370464325, "seed": 42, "update": 3584, "variant": "native_only"}
+{"epoch": 12, "event": "epoch_start", "next_update": 3587, "seed": 42, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 12, "event": "training_progress", "loss": 0.3363538086414337, "seed": 42, "update": 3616, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 12, "event": "training_progress", "loss": 0.3691583573818207, "seed": 42, "update": 3648, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 12, "event": "training_progress", "loss": 0.12901932001113892, "seed": 42, "update": 3680, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 12, "event": "training_progress", "loss": 0.2444433867931366, "seed": 42, "update": 3712, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 12, "event": "training_progress", "loss": 0.31027600169181824, "seed": 42, "update": 3744, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 12, "event": "training_progress", "loss": 0.3598025143146515, "seed": 42, "update": 3776, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 12, "event": "training_progress", "loss": 0.05621417611837387, "seed": 42, "update": 3808, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 12, "event": "training_progress", "loss": 0.27572906017303467, "seed": 42, "update": 3840, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 12, "event": "training_progress", "loss": 0.5480924844741821, "seed": 42, "update": 3872, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 12, "event": "training_progress", "loss": 0.2836925685405731, "seed": 42, "update": 3904, "variant": "native_only"}
+{"epoch": 13, "event": "epoch_start", "next_update": 3913, "seed": 42, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 13, "event": "training_progress", "loss": 0.2504841685295105, "seed": 42, "update": 3936, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 13, "event": "training_progress", "loss": 0.2896563410758972, "seed": 42, "update": 3968, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 13, "event": "training_progress", "loss": 0.2855844497680664, "seed": 42, "update": 4000, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 13, "event": "training_progress", "loss": 0.2852124273777008, "seed": 42, "update": 4032, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 13, "event": "training_progress", "loss": 0.13273881375789642, "seed": 42, "update": 4064, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 13, "event": "training_progress", "loss": 0.4176485240459442, "seed": 42, "update": 4096, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 13, "event": "training_progress", "loss": 0.5093016624450684, "seed": 42, "update": 4128, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 13, "event": "training_progress", "loss": 0.08452793955802917, "seed": 42, "update": 4160, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 13, "event": "training_progress", "loss": 0.1342504769563675, "seed": 42, "update": 4192, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 13, "event": "training_progress", "loss": 0.25795724987983704, "seed": 42, "update": 4224, "variant": "native_only"}
+{"epoch": 14, "event": "epoch_start", "next_update": 4239, "seed": 42, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.23156198859214783, "seed": 42, "update": 4256, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.2239694595336914, "seed": 42, "update": 4288, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.26096490025520325, "seed": 42, "update": 4320, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.2149256020784378, "seed": 42, "update": 4352, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.21267355978488922, "seed": 42, "update": 4384, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 14, "event": "training_progress", "loss": 0.050280507653951645, "seed": 42, "update": 4416, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 14, "event": "training_progress", "loss": 0.08886661380529404, "seed": 42, "update": 4448, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.20765502750873566, "seed": 42, "update": 4480, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 14, "event": "training_progress", "loss": 0.16999831795692444, "seed": 42, "update": 4512, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 14, "event": "training_progress", "loss": 0.18829956650733948, "seed": 42, "update": 4544, "variant": "native_only"}
+{"epoch": 15, "event": "epoch_start", "next_update": 4565, "seed": 42, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 15, "event": "training_progress", "loss": 0.14376556873321533, "seed": 42, "update": 4576, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 15, "event": "training_progress", "loss": 0.2234015315771103, "seed": 42, "update": 4608, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 15, "event": "training_progress", "loss": 0.20636433362960815, "seed": 42, "update": 4640, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 15, "event": "training_progress", "loss": 0.1559779793024063, "seed": 42, "update": 4672, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 15, "event": "training_progress", "loss": 0.20142599940299988, "seed": 42, "update": 4704, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 15, "event": "training_progress", "loss": 0.21156322956085205, "seed": 42, "update": 4736, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 15, "event": "training_progress", "loss": 0.34751763939857483, "seed": 42, "update": 4768, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 15, "event": "training_progress", "loss": 0.2386946827173233, "seed": 42, "update": 4800, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 15, "event": "training_progress", "loss": 0.22136616706848145, "seed": 42, "update": 4832, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 15, "event": "training_progress", "loss": 0.030644096434116364, "seed": 42, "update": 4864, "variant": "native_only"}
+{"epoch": 16, "event": "epoch_start", "next_update": 4891, "seed": 42, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.2762499451637268, "seed": 42, "update": 4896, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.06622084975242615, "seed": 42, "update": 4928, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.208206906914711, "seed": 42, "update": 4960, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.23325984179973602, "seed": 42, "update": 4992, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.33694228529930115, "seed": 42, "update": 5024, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 16, "event": "training_progress", "loss": 0.19699813425540924, "seed": 42, "update": 5056, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.08460132032632828, "seed": 42, "update": 5088, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.10434074699878693, "seed": 42, "update": 5120, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.07807333767414093, "seed": 42, "update": 5152, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.22368238866329193, "seed": 42, "update": 5184, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 16, "event": "training_progress", "loss": 0.19742846488952637, "seed": 42, "update": 5216, "variant": "native_only"}
+{"epoch": 17, "event": "epoch_start", "next_update": 5217, "seed": 42, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.2923743724822998, "seed": 42, "update": 5248, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 17, "event": "training_progress", "loss": 0.11121335625648499, "seed": 42, "update": 5280, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 17, "event": "training_progress", "loss": 0.1092769205570221, "seed": 42, "update": 5312, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.17975473403930664, "seed": 42, "update": 5344, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.2694331109523773, "seed": 42, "update": 5376, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.2328873723745346, "seed": 42, "update": 5408, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 17, "event": "training_progress", "loss": 0.15297292172908783, "seed": 42, "update": 5440, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.21174949407577515, "seed": 42, "update": 5472, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.1963040828704834, "seed": 42, "update": 5504, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 17, "event": "training_progress", "loss": 0.19495923817157745, "seed": 42, "update": 5536, "variant": "native_only"}
+{"epoch": 18, "event": "epoch_start", "next_update": 5543, "seed": 42, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 18, "event": "training_progress", "loss": 0.2542068660259247, "seed": 42, "update": 5568, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.10204899311065674, "seed": 42, "update": 5600, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.14936836063861847, "seed": 42, "update": 5632, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.09788969904184341, "seed": 42, "update": 5664, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.05683976411819458, "seed": 42, "update": 5696, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 18, "event": "training_progress", "loss": 0.16955432295799255, "seed": 42, "update": 5728, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.0666215717792511, "seed": 42, "update": 5760, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 18, "event": "training_progress", "loss": 0.191020667552948, "seed": 42, "update": 5792, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.08431339263916016, "seed": 42, "update": 5824, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 18, "event": "training_progress", "loss": 0.3044622242450714, "seed": 42, "update": 5856, "variant": "native_only"}
+{"epoch": 19, "event": "epoch_start", "next_update": 5869, "seed": 42, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.10141970217227936, "seed": 42, "update": 5888, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.4183282256126404, "seed": 42, "update": 5920, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.24580228328704834, "seed": 42, "update": 5952, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.06771774590015411, "seed": 42, "update": 5984, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 19, "event": "training_progress", "loss": 0.15223722159862518, "seed": 42, "update": 6016, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 19, "event": "training_progress", "loss": 0.09033646434545517, "seed": 42, "update": 6048, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 19, "event": "training_progress", "loss": 0.15023429691791534, "seed": 42, "update": 6080, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.749549150466919, "seed": 42, "update": 6112, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 19, "event": "training_progress", "loss": 0.10759399831295013, "seed": 42, "update": 6144, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 19, "event": "training_progress", "loss": 0.027319882065057755, "seed": 42, "update": 6176, "variant": "native_only"}
+{"epoch": 20, "event": "epoch_start", "next_update": 6195, "seed": 42, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.15414020419120789, "seed": 42, "update": 6208, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.161433145403862, "seed": 42, "update": 6240, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 20, "event": "training_progress", "loss": 0.09176427870988846, "seed": 42, "update": 6272, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 20, "event": "training_progress", "loss": 0.07539694011211395, "seed": 42, "update": 6304, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.19405460357666016, "seed": 42, "update": 6336, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.10819721221923828, "seed": 42, "update": 6368, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.09763940423727036, "seed": 42, "update": 6400, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 20, "event": "training_progress", "loss": 0.10920664668083191, "seed": 42, "update": 6432, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.11696003377437592, "seed": 42, "update": 6464, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 20, "event": "training_progress", "loss": 0.19514398276805878, "seed": 42, "update": 6496, "variant": "native_only"}
+{"epoch": 21, "event": "epoch_start", "next_update": 6521, "seed": 42, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.1060737892985344, "seed": 42, "update": 6528, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 21, "event": "training_progress", "loss": 0.05019533261656761, "seed": 42, "update": 6560, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 21, "event": "training_progress", "loss": 0.2462644726037979, "seed": 42, "update": 6592, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 21, "event": "training_progress", "loss": 0.11202900111675262, "seed": 42, "update": 6624, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.20349135994911194, "seed": 42, "update": 6656, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 21, "event": "training_progress", "loss": 0.08470897376537323, "seed": 42, "update": 6688, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.18293246626853943, "seed": 42, "update": 6720, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 21, "event": "training_progress", "loss": 0.29400545358657837, "seed": 42, "update": 6752, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 21, "event": "training_progress", "loss": 0.1625056266784668, "seed": 42, "update": 6784, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 21, "event": "training_progress", "loss": 0.06859546154737473, "seed": 42, "update": 6816, "variant": "native_only"}
+{"epoch": 22, "event": "epoch_start", "next_update": 6847, "seed": 42, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 22, "event": "training_progress", "loss": 0.22752612829208374, "seed": 42, "update": 6848, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 22, "event": "training_progress", "loss": 0.07743245363235474, "seed": 42, "update": 6880, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.1032879427075386, "seed": 42, "update": 6912, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.21264299750328064, "seed": 42, "update": 6944, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 22, "event": "training_progress", "loss": 0.02297685295343399, "seed": 42, "update": 6976, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 22, "event": "training_progress", "loss": 0.08356007933616638, "seed": 42, "update": 7008, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.12567688524723053, "seed": 42, "update": 7040, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.12572745978832245, "seed": 42, "update": 7072, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 22, "event": "training_progress", "loss": 0.1899421513080597, "seed": 42, "update": 7104, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.28666722774505615, "seed": 42, "update": 7136, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 22, "event": "training_progress", "loss": 0.1668165922164917, "seed": 42, "update": 7168, "variant": "native_only"}
+{"epoch": 23, "event": "epoch_start", "next_update": 7173, "seed": 42, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 23, "event": "training_progress", "loss": 0.014600245282053947, "seed": 42, "update": 7200, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 23, "event": "training_progress", "loss": 0.07048577815294266, "seed": 42, "update": 7232, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 23, "event": "training_progress", "loss": 0.024921894073486328, "seed": 42, "update": 7264, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 23, "event": "training_progress", "loss": 0.09838225692510605, "seed": 42, "update": 7296, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 23, "event": "training_progress", "loss": 0.14784929156303406, "seed": 42, "update": 7328, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 23, "event": "training_progress", "loss": 0.13433131575584412, "seed": 42, "update": 7360, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 23, "event": "training_progress", "loss": 0.12629097700119019, "seed": 42, "update": 7392, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 23, "event": "training_progress", "loss": 0.09194143861532211, "seed": 42, "update": 7424, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 23, "event": "training_progress", "loss": 0.04948355257511139, "seed": 42, "update": 7456, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 23, "event": "training_progress", "loss": 0.11326676607131958, "seed": 42, "update": 7488, "variant": "native_only"}
+{"epoch": 24, "event": "epoch_start", "next_update": 7499, "seed": 42, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.048605483025312424, "seed": 42, "update": 7520, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 24, "event": "training_progress", "loss": 0.1529429852962494, "seed": 42, "update": 7552, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.12169045954942703, "seed": 42, "update": 7584, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 24, "event": "training_progress", "loss": 0.11233554780483246, "seed": 42, "update": 7616, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.16003470122814178, "seed": 42, "update": 7648, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.04517029970884323, "seed": 42, "update": 7680, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 24, "event": "training_progress", "loss": 0.12865430116653442, "seed": 42, "update": 7712, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.044387850910425186, "seed": 42, "update": 7744, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.11271210014820099, "seed": 42, "update": 7776, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 24, "event": "training_progress", "loss": 0.09065252542495728, "seed": 42, "update": 7808, "variant": "native_only"}
+{"epoch": 25, "event": "epoch_start", "next_update": 7825, "seed": 42, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 25, "event": "training_progress", "loss": 0.035159267485141754, "seed": 42, "update": 7840, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 25, "event": "training_progress", "loss": 0.23813535273075104, "seed": 42, "update": 7872, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 25, "event": "training_progress", "loss": 0.24445177614688873, "seed": 42, "update": 7904, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 25, "event": "training_progress", "loss": 0.00737055204808712, "seed": 42, "update": 7936, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 25, "event": "training_progress", "loss": 0.5214667320251465, "seed": 42, "update": 7968, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 25, "event": "training_progress", "loss": 0.0037830634973943233, "seed": 42, "update": 8000, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 25, "event": "training_progress", "loss": 0.022801782935857773, "seed": 42, "update": 8032, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 25, "event": "training_progress", "loss": 0.10990257561206818, "seed": 42, "update": 8064, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 25, "event": "training_progress", "loss": 0.2178860753774643, "seed": 42, "update": 8096, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 25, "event": "training_progress", "loss": 0.07413214445114136, "seed": 42, "update": 8128, "variant": "native_only"}
+{"epoch": 26, "event": "epoch_start", "next_update": 8151, "seed": 42, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 26, "event": "training_progress", "loss": 0.027284855023026466, "seed": 42, "update": 8160, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 26, "event": "training_progress", "loss": 0.0445270873606205, "seed": 42, "update": 8192, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 26, "event": "training_progress", "loss": 0.1376478523015976, "seed": 42, "update": 8224, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 26, "event": "training_progress", "loss": 0.25301864743232727, "seed": 42, "update": 8256, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 26, "event": "training_progress", "loss": 0.11952604353427887, "seed": 42, "update": 8288, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 26, "event": "training_progress", "loss": 0.10333596915006638, "seed": 42, "update": 8320, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 26, "event": "training_progress", "loss": 0.04620590806007385, "seed": 42, "update": 8352, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 26, "event": "training_progress", "loss": 0.050487715750932693, "seed": 42, "update": 8384, "variant": "native_only"}
+{"dataset": "sprsound", "epoch": 26, "event": "training_progress", "loss": 0.06659557670354843, "seed": 42, "update": 8416, "variant": "native_only"}
+{"dataset": "icbhi", "epoch": 26, "event": "training_progress", "loss": 0.08793475478887558, "seed": 42, "update": 8448, "variant": "native_only"}
+{
+  "status": "complete_native_only_three_seed_attribution",
+  "variant": "native_only",
+  "seeds": [
+    0,
+    1,
+    42
+  ],
+  "n": 3,
+  "sample_sd_ddof": 1,
+  "metrics": {
+    "icbhi_score": {
+      "n": 3,
+      "mean": 0.6386941213165075,
+      "sample_sd": 0.014270712837837483,
+      "values": [
+        0.6487342095676958,
+        0.6449900268121904,
+        0.6223581275696362
+      ]
+    },
+    "spr_official_score": {
+      "n": 3,
+      "mean": 0.8892879782704822,
+      "sample_sd": 0.03356062095556332,
+      "values": [
+        0.8909074283814599,
+        0.8549469497072779,
+        0.922009556722709
+      ]
+    }
+  },
+  "per_seed": [
+    {
+      "completed_epochs": 33,
+      "elapsed_minutes": 125.45173411399979,
+      "seed": 0,
+      "selected_epoch": 23,
+      "selection_dataset": "icbhi",
+      "status": "complete_test_selected_benchmark_control",
+      "terminal": {
+        "attribute_metrics": {
+          "reason": "explicit C/W supervision is disabled",
+          "status": "not_applicable"
+        },
+        "evidence_boundary": "test-selected benchmark control; not clean causal evidence",
+        "hf": {
+          "reason": "no supervised cross-dataset attribute readout exists",
+          "status": "not_applicable"
+        },
+        "other_target_access": "after source-native checkpoint and thresholds were frozen",
+        "per_native_task": {
+          "icbhi": {
+            "average_score": 0.6487342095676958,
+            "confusion": [
+              [
+                1335,
+                122,
+                104,
+                18
+              ],
+              [
+                320,
+                301,
+                18,
+                10
+              ],
+              [
+                121,
+                27,
+                192,
+                45
+              ],
+              [
+                30,
+                17,
+                57,
+                39
+              ]
+            ],
+            "harmonic_score": 0.5890708129935309,
+            "icbhi_score": 0.6487342095676958,
+            "macro_f1": 0.5355048467823462,
+            "per_class": {
+              "both": {
+                "f1": 0.3058823529411765,
+                "precision": 0.3482142857142857,
+                "recall": 0.2727272727272727,
+                "support": 143
+              },
+              "crackle": {
+                "f1": 0.5394265232974911,
+                "precision": 0.6445396145610278,
+                "recall": 0.4637904468412943,
+                "support": 649
+              },
+              "normal": {
+                "f1": 0.7887740029542097,
+                "precision": 0.739202657807309,
+                "recall": 0.8454718176060798,
+                "support": 1579
+              },
+              "wheeze": {
+                "f1": 0.5079365079365079,
+                "precision": 0.5175202156334232,
+                "recall": 0.4987012987012987,
+                "support": 385
+              }
+            },
+            "rows": 2756,
+            "scale": "fraction_0_to_1",
+            "sensitivity": 0.4519966015293118,
+            "specificity": 0.8454718176060798,
+            "uar": 0.5201727089689864
+          },
+          "sprsound": {
+            "average_score": 0.8946818766066837,
+            "confusion": [
+              [
+                845,
+                195
+              ],
+              [
+                9,
+                380
+              ]
+            ],
+            "harmonic_score": 0.887132980156236,
+            "icbhi_score": 0.8946818766066837,
+            "macro_f1": 0.8403365947061479,
+            "official_score": 0.8909074283814599,
+            "per_class": {
+              "abnormal": {
+                "f1": 0.7883817427385892,
+                "precision": 0.6608695652173913,
+                "recall": 0.9768637532133676,
+                "support": 389
+              },
+              "normal": {
+                "f1": 0.8922914466737064,
+                "precision": 0.9894613583138173,
+                "recall": 0.8125,
+                "support": 1040
+              }
+            },
+            "rows": 1429,
+            "scale": "fraction_0_to_1",
+            "sensitivity": 0.9768637532133676,
+            "specificity": 0.8125,
+            "uar": 0.8946818766066837
+          }
+        },
+        "seed": 0,
+        "selected_epoch": 23,
+        "selection_dataset": "icbhi",
+        "selection_score": 0.6487342095676958,
+        "spr_cw": {
+          "reason": "C/W heads were retained for initialization parity but received no supervision",
+          "status": "not_applicable"
+        },
+        "status": "benchmark_control_terminal_complete",
+        "thresholds": {},
+        "variant": "native_only"
+      },
+      "updates": 10758,
+      "variant": "native_only"
+    },
+    {
+      "completed_epochs": 25,
+      "elapsed_minutes": 152.50480106381778,
+      "seed": 1,
+      "selected_epoch": 15,
+      "selection_dataset": "icbhi",
+      "status": "complete_test_selected_benchmark_control",
+      "terminal": {
+        "attribute_metrics": {
+          "reason": "explicit C/W supervision is disabled",
+          "status": "not_applicable"
+        },
+        "evidence_boundary": "test-selected benchmark control; not clean causal evidence",
+        "hf": {
+          "reason": "no supervised cross-dataset attribute readout exists",
+          "status": "not_applicable"
+        },
+        "other_target_access": "after source-native checkpoint and thresholds were frozen",
+        "per_native_task": {
+          "icbhi": {
+            "average_score": 0.6449900268121904,
+            "confusion": [
+              [
+                1240,
+                226,
+                98,
+                15
+              ],
+              [
+                217,
+                401,
+                18,
+                13
+              ],
+              [
+                129,
+                28,
+                171,
+                57
+              ],
+              [
+                28,
+                26,
+                67,
+                22
+              ]
+            ],
+            "harmonic_score": 0.6144641333174271,
+            "icbhi_score": 0.6449900268121904,
+            "macro_f1": 0.5046235246668638,
+            "per_class": {
+              "both": {
+                "f1": 0.176,
+                "precision": 0.205607476635514,
+                "recall": 0.15384615384615385,
+                "support": 143
+              },
+              "crackle": {
+                "f1": 0.6030075187969924,
+                "precision": 0.5888399412628488,
+                "recall": 0.6178736517719569,
+                "support": 649
+              },
+              "normal": {
+                "f1": 0.7766990291262136,
+                "precision": 0.7682775712515489,
+                "recall": 0.7853071564281191,
+                "support": 1579
+              },
+              "wheeze": {
+                "f1": 0.462787550744249,
+                "precision": 0.4830508474576271,
+                "recall": 0.44415584415584414,
+                "support": 385
+              }
+            },
+            "rows": 2756,
+            "scale": "fraction_0_to_1",
+            "sensitivity": 0.5046728971962616,
+            "specificity": 0.7853071564281191,
+            "uar": 0.5002957015505185
+          },
+          "sprsound": {
+            "average_score": 0.8647369982202887,
+            "confusion": [
+              [
+                764,
+                276
+              ],
+              [
+                2,
+                387
+              ]
+            ],
+            "harmonic_score": 0.8451569011942671,
+            "icbhi_score": 0.8647369982202887,
+            "macro_f1": 0.7909050524445342,
+            "official_score": 0.8549469497072779,
+            "per_class": {
+              "abnormal": {
+                "f1": 0.7357414448669202,
+                "precision": 0.583710407239819,
+                "recall": 0.9948586118251928,
+                "support": 389
+              },
+              "normal": {
+                "f1": 0.8460686600221484,
+                "precision": 0.9973890339425587,
+                "recall": 0.7346153846153847,
+                "support": 1040
+              }
+            },
+            "rows": 1429,
+            "scale": "fraction_0_to_1",
+            "sensitivity": 0.9948586118251928,
+            "specificity": 0.7346153846153847,
+            "uar": 0.8647369982202887
+          }
+        },
+        "seed": 1,
+        "selected_epoch": 15,
+        "selection_dataset": "icbhi",
+        "selection_score": 0.6449900268121904,
+        "spr_cw": {
+          "reason": "C/W heads were retained for initialization parity but received no supervision",
+          "status": "not_applicable"
+        },
+        "status": "benchmark_control_terminal_complete",
+        "thresholds": {},
+        "variant": "native_only"
+      },
+      "updates": 8150,
+      "variant": "native_only"
+    },
+    {
+      "completed_epochs": 26,
+      "elapsed_minutes": 150.02492715391563,
+      "seed": 42,
+      "selected_epoch": 16,
+      "selection_dataset": "icbhi",
+      "status": "complete_test_selected_benchmark_control",
+      "terminal": {
+        "attribute_metrics": {
+          "reason": "explicit C/W supervision is disabled",
+          "status": "not_applicable"
+        },
+        "evidence_boundary": "test-selected benchmark control; not clean causal evidence",
+        "hf": {
+          "reason": "no supervised cross-dataset attribute readout exists",
+          "status": "not_applicable"
+        },
+        "other_target_access": "after source-native checkpoint and thresholds were frozen",
+        "per_native_task": {
+          "icbhi": {
+            "average_score": 0.6223581275696362,
+            "confusion": [
+              [
+                1300,
+                179,
+                87,
+                13
+              ],
+              [
+                310,
+                318,
+                12,
+                9
+              ],
+              [
+                152,
+                47,
+                154,
+                32
+              ],
+              [
+                38,
+                16,
+                65,
+                24
+              ]
+            ],
+            "harmonic_score": 0.557475865479552,
+            "icbhi_score": 0.6223581275696362,
+            "macro_f1": 0.4877074783041063,
+            "per_class": {
+              "both": {
+                "f1": 0.2171945701357466,
+                "precision": 0.3076923076923077,
+                "recall": 0.16783216783216784,
+                "support": 143
+              },
+              "crackle": {
+                "f1": 0.5260545905707196,
+                "precision": 0.5678571428571428,
+                "recall": 0.4899845916795069,
+                "support": 649
+              },
+              "normal": {
+                "f1": 0.7694584196507842,
+                "precision": 0.7222222222222222,
+                "recall": 0.8233058898036733,
+                "support": 1579
+              },
+              "wheeze": {
+                "f1": 0.43812233285917496,
+                "precision": 0.48427672955974843,
+                "recall": 0.4,
+                "support": 385
+              }
+            },
+            "rows": 2756,
+            "scale": "fraction_0_to_1",
+            "sensitivity": 0.421410365335599,
+            "specificity": 0.8233058898036733,
+            "uar": 0.47028066232883703
+          },
+          "sprsound": {
+            "average_score": 0.9225368301364445,
+            "confusion": [
+              [
+                927,
+                113
+              ],
+              [
+                18,
+                371
+              ]
+            ],
+            "harmonic_score": 0.9214822833089735,
+            "icbhi_score": 0.9225368301364445,
+            "macro_f1": 0.8919738820073806,
+            "official_score": 0.922009556722709,
+            "per_class": {
+              "abnormal": {
+                "f1": 0.849942726231386,
+                "precision": 0.7665289256198347,
+                "recall": 0.9537275064267352,
+                "support": 389
+              },
+              "normal": {
+                "f1": 0.9340050377833753,
+                "precision": 0.9809523809523809,
+                "recall": 0.8913461538461539,
+                "support": 1040
+              }
+            },
+            "rows": 1429,
+            "scale": "fraction_0_to_1",
+            "sensitivity": 0.9537275064267352,
+            "specificity": 0.8913461538461539,
+            "uar": 0.9225368301364445
+          }
+        },
+        "seed": 42,
+        "selected_epoch": 16,
+        "selection_dataset": "icbhi",
+        "selection_score": 0.6223581275696362,
+        "spr_cw": {
+          "reason": "C/W heads were retained for initialization parity but received no supervision",
+          "status": "not_applicable"
+        },
+        "status": "benchmark_control_terminal_complete",
+        "thresholds": {},
+        "variant": "native_only"
+      },
+      "updates": 8476,
+      "variant": "native_only"
+    }
+  ],
+  "external": {
+    "status": "not_applicable",
+    "reason": "C/W heads receive no supervision; no HF/readout is reported"
+  },
+  "evidence_boundary": "test-selected three-seed attribution diagnostic"
+}

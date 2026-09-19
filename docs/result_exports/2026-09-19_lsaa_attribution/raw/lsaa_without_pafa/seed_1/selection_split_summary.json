@@ -1,0 +1,25 @@
+{
+  "condition": "LSAA_without_PAFA_20260918_seed1",
+  "datasets": [
+    "icbhi",
+    "sprsound"
+  ],
+  "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic",
+  "groups": {
+    "icbhi": {
+      "subtrain": 63,
+      "validation": 16
+    },
+    "sprsound": {
+      "subtrain": 194,
+      "validation": 49
+    }
+  },
+  "nodes": [
+    "level1",
+    "crackle",
+    "wheeze"
+  ],
+  "seed": 1,
+  "training_only": true
+}

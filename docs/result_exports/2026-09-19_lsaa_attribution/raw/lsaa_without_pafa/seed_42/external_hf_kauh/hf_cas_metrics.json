@@ -1,0 +1,21 @@
+{
+  "hf_cas_auroc": 0.8827917365171526,
+  "negative": 296,
+  "positive": 661,
+  "recording_predictions": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_42/external_hf_kauh/hf_cas_recording_predictions.npz",
+  "score": "maximum Wheeze-head probability across three fixed 5-s windows",
+  "semantic_limit": "ranking proxy for CAS union, not a CAS-native head",
+  "source_window_predictions": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_42/external_hf_kauh/hf_predictions_label_free.npz",
+  "support": 957,
+  "target": "Wheeze/Rhonchi/Stridor positive; D-only negative within eligible recordings",
+  "window_count_per_recording": [
+    3
+  ],
+  "window_indices_per_recording": [
+    [
+      0,
+      1,
+      2
+    ]
+  ]
+}

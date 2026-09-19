@@ -1,0 +1,39 @@
+{
+  "average_score": 0.7263305322128851,
+  "confusion": [
+    [
+      33,
+      2
+    ],
+    [
+      25,
+      26
+    ]
+  ],
+  "harmonic_score": 0.6617817200154261,
+  "icbhi_score": 0.7263305322128851,
+  "kauh_patient_ba": 0.7263305322128851,
+  "macro_f1": 0.6839526337280523,
+  "per_class": {
+    "abnormal": {
+      "f1": 0.6582278481012658,
+      "precision": 0.9285714285714286,
+      "recall": 0.5098039215686274,
+      "support": 51
+    },
+    "normal": {
+      "f1": 0.7096774193548387,
+      "precision": 0.5689655172413793,
+      "recall": 0.9428571428571428,
+      "support": 35
+    }
+  },
+  "rows": 86,
+  "scale": "fraction_0_to_1",
+  "score_source": "mean over B/D/E of 1-P(Normal) from ICBHI native softmax",
+  "sensitivity": 0.5098039215686274,
+  "specificity": 0.9428571428571428,
+  "threshold": 0.5,
+  "tie_policy": "score == 0.5 predicts Normal",
+  "uar": 0.7263305322128851
+}

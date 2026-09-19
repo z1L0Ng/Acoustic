@@ -1,0 +1,8 @@
+{
+  "hf_cas_auroc": 0.8316024042196509,
+  "negative": 296,
+  "positive": 661,
+  "score_source": "ICBHI native softmax P(Wheeze)+P(Both), maximum over three windows",
+  "semantic_limit": "fixed ranking proxy for CAS union; not a trained CAS/Rhonchi/Stridor head",
+  "support": 957
+}

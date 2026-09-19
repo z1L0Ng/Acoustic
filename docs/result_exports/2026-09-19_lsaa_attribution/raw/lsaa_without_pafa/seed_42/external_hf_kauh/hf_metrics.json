@@ -1,0 +1,213 @@
+{
+  "annotation_interval_support": {
+    "D": 1812,
+    "E": 2748,
+    "I": 6872,
+    "Rhonchi": 960,
+    "Stridor": 29,
+    "Wheeze": 1430
+  },
+  "annotation_recording_support": {
+    "D": 368,
+    "E": 950,
+    "I": 1935,
+    "Rhonchi": 296,
+    "Stridor": 12,
+    "Wheeze": 405
+  },
+  "annotation_status_counts": {
+    "eligible_presence": 957,
+    "empty_annotation": 4,
+    "phase_only_or_not_annotated": 995
+  },
+  "checkpoint_selection": false,
+  "checkpoint_source": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_42/best_checkpoint.pt",
+  "event_localization_claim": false,
+  "evidence_label": "posthoc_fixed_JH2_main_selected_checkpoints_HF_KAUH_external_diagnostic",
+  "exact_windows_per_recording": 3,
+  "external_evaluation_kind": "HF Lung source-test",
+  "label_free_predictions": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_42/external_hf_kauh/hf_predictions_label_free.npz",
+  "native_temporal_IE_CAS_DAS_reproduction": false,
+  "normal_detection_claim": false,
+  "positive_interval_coverage": {
+    "D": {
+      "max_probability_mean": 0.43927537561586466,
+      "positive_interval_support": 1812,
+      "positive_recall": 0.7428256070640177,
+      "threshold": 0.004038591869175434,
+      "thresholded_hits": 1346
+    },
+    "Wheeze": {
+      "max_probability_mean": 0.8717304993695303,
+      "positive_interval_support": 1430,
+      "positive_recall": 0.8832167832167832,
+      "threshold": 0.31510335206985474,
+      "thresholded_hits": 1263
+    }
+  },
+  "posthoc_output_dir": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_42/external_hf_kauh",
+  "prediction_distribution": {
+    "probability_summary": {
+      "crackle": {
+        "mean": 0.36608046293258667,
+        "p05": 1.9209093807148747e-05,
+        "p50": 0.036491818726062775,
+        "p95": 0.9998235702514648
+      },
+      "level1_abnormal": {
+        "mean": 0.49161237478256226,
+        "p05": 1.232123850058997e-05,
+        "p50": 0.4400494694709778,
+        "p95": 0.9999923706054688
+      },
+      "wheeze": {
+        "mean": 0.2783460319042206,
+        "p05": 4.359545982879354e-06,
+        "p50": 0.0005300053162500262,
+        "p95": 0.999995231628418
+      }
+    },
+    "window_attribute_thresholded": {
+      "crackle": 3570,
+      "wheeze": 1706
+    },
+    "window_level1_argmax": {
+      "abnormal": 2880,
+      "normal": 2988
+    }
+  },
+  "recording_presence_pool": {
+    "eligible_definition": "recording contains at least one D/Wheeze/Rhonchi/Stridor interval",
+    "empty_and_NA_excluded": true,
+    "gap_unknown_not_in_denominator": true,
+    "metrics": {
+      "D": {
+        "curve": {
+          "auprc": 0.30933506249952203,
+          "auroc": 0.3778073558721488,
+          "negative": 589,
+          "positive": 368,
+          "status": "complete",
+          "support": 957
+        },
+        "eligible_recordings": 957,
+        "thresholded": {
+          "average_score": 0.4770590352107478,
+          "confusion": [
+            [
+              45,
+              544
+            ],
+            [
+              45,
+              323
+            ]
+          ],
+          "harmonic_score": 0.14056584158176463,
+          "icbhi_score": 0.4770590352107478,
+          "macro_f1": 0.32781239379177524,
+          "official_score": 0.4770590352107478,
+          "per_class": {
+            "negative": {
+              "f1": 0.1325478645066274,
+              "precision": 0.5,
+              "recall": 0.07640067911714771,
+              "support": 589
+            },
+            "positive": {
+              "f1": 0.5230769230769231,
+              "precision": 0.37254901960784315,
+              "recall": 0.8777173913043478,
+              "support": 368
+            }
+          },
+          "rows": 957,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.8777173913043478,
+          "specificity": 0.07640067911714771,
+          "threshold": 0.004038591869175434,
+          "uar": 0.4770590352107478
+        }
+      },
+      "Wheeze": {
+        "curve": {
+          "auprc": 0.8538774893731853,
+          "auroc": 0.8736625514403292,
+          "negative": 552,
+          "positive": 405,
+          "status": "complete",
+          "support": 957
+        },
+        "eligible_recordings": 957,
+        "thresholded": {
+          "average_score": 0.7400563607085346,
+          "confusion": [
+            [
+              310,
+              242
+            ],
+            [
+              33,
+              372
+            ]
+          ],
+          "harmonic_score": 0.6970207982012367,
+          "icbhi_score": 0.7400563607085346,
+          "macro_f1": 0.7114325031112768,
+          "official_score": 0.7400563607085346,
+          "per_class": {
+            "negative": {
+              "f1": 0.6927374301675978,
+              "precision": 0.9037900874635568,
+              "recall": 0.5615942028985508,
+              "support": 552
+            },
+            "positive": {
+              "f1": 0.7301275760549558,
+              "precision": 0.6058631921824105,
+              "recall": 0.9185185185185185,
+              "support": 405
+            }
+          },
+          "rows": 957,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.9185185185185185,
+          "specificity": 0.5615942028985508,
+          "threshold": 0.31510335206985474,
+          "uar": 0.7400563607085346
+        }
+      }
+    }
+  },
+  "scored_predictions": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_42/external_hf_kauh/hf_predictions_scored.npz",
+  "seed": 42,
+  "selected_epoch": 24,
+  "shared_attribute_thresholds": {
+    "crackle": 0.004038591869175434,
+    "wheeze": 0.31510335206985474
+  },
+  "source_run": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_42",
+  "source_test_recordings": 1956,
+  "status": "hf_external_diagnostic_complete",
+  "threshold_source": "selected run validation thresholds; no external tuning",
+  "threshold_tuning": false,
+  "training": false,
+  "unsupported_native_tasks": {
+    "CAS_DAS": {
+      "status": "HOLD_not_a_JH2_head"
+    },
+    "I_E_phase": {
+      "status": "HOLD_not_a_JH2_attribute_task"
+    },
+    "Level1_normal_detection": {
+      "status": "HOLD_no_HF_normal_target_mapping"
+    },
+    "Rhonchi_Stridor": {
+      "interval_support": 989,
+      "recording_support": 308,
+      "status": "HOLD_not_a_JH2_compatible_attribute"
+    }
+  },
+  "window_geometry": "[0,5], [5,10], [10,15] seconds; continuous and non-overlapping",
+  "window_source_time_map_preserved": true
+}

@@ -1,0 +1,1385 @@
+/files1/Zilong/miniconda3/envs/acoustic-addrsc/lib/python3.10/site-packages/torch/nn/utils/weight_norm.py:28: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+{"current_best_epoch": 1, "current_best_icbhi_official_score": 0.4940887272038539, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 1.785069005001181, "epoch": 1, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.4940887272038539, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.4205523207783699, "thresholds": {"crackle": 0.7559974193572998, "wheeze": 0.40892571210861206}, "update": 326, "validation_selection_loss": 0.47482943907380104}
+{"current_best_epoch": 2, "current_best_icbhi_official_score": 0.5495081203325508, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 3.512681333449048, "epoch": 2, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5495081203325508, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.09485360731681187, "thresholds": {"crackle": 0.18111832439899445, "wheeze": 0.3621792793273926}, "update": 652, "validation_selection_loss": 0.36141326899329823}
+{"current_best_epoch": 3, "current_best_icbhi_official_score": 0.5798602946596767, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 5.252181677233117, "epoch": 3, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5798602946596767, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.09816721143821876, "thresholds": {"crackle": 0.23881636559963226, "wheeze": 0.39227864146232605}, "update": 978, "validation_selection_loss": 0.35869730046639836}
+{"current_best_epoch": 3, "current_best_icbhi_official_score": 0.5798602946596767, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 1, "early_stopping_patience": 10, "elapsed_minutes": 6.989483878699442, "epoch": 4, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5420867449419768, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.09741202245155971, "thresholds": {"crackle": 0.19713513553142548, "wheeze": 0.4544418752193451}, "update": 1304, "validation_selection_loss": 0.44068704669674236}
+{"current_best_epoch": 3, "current_best_icbhi_official_score": 0.5798602946596767, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 2, "early_stopping_patience": 10, "elapsed_minutes": 8.738714420748874, "epoch": 5, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5672887510943065, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.13377369567751884, "thresholds": {"crackle": 0.6088847517967224, "wheeze": 0.3381863832473755}, "update": 1630, "validation_selection_loss": 0.44034798505405587}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5929290179140729, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 10.485215420566965, "epoch": 6, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5929290179140729, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.11511581515272458, "thresholds": {"crackle": 0.272024542093277, "wheeze": 0.2708657681941986}, "update": 1956, "validation_selection_loss": 0.5018983948975801}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5929290179140729, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 1, "early_stopping_patience": 10, "elapsed_minutes": 12.228885565015178, "epoch": 7, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5674294572508869, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.17826300238569578, "thresholds": {"crackle": 0.02145073004066944, "wheeze": 0.030271869152784348}, "update": 2282, "validation_selection_loss": 0.5328318644315004}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5929290179140729, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 2, "early_stopping_patience": 10, "elapsed_minutes": 13.97304641486844, "epoch": 8, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5816520786038937, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.1789646496375402, "thresholds": {"crackle": 0.27144479751586914, "wheeze": 0.9820826053619385}, "update": 2608, "validation_selection_loss": 0.5758857106169065}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5929290179140729, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 3, "early_stopping_patience": 10, "elapsed_minutes": 15.720406402034374, "epoch": 9, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5563206658333706, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.12499805664022763, "thresholds": {"crackle": 0.45072200894355774, "wheeze": 0.04312337189912796}, "update": 2934, "validation_selection_loss": 0.5925239740560452}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5929290179140729, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 4, "early_stopping_patience": 10, "elapsed_minutes": 17.460780694917776, "epoch": 10, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5758274356020474, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.1740099291006724, "thresholds": {"crackle": 0.09089674800634384, "wheeze": 0.9655115008354187}, "update": 3260, "validation_selection_loss": 0.6786382446686428}
+{"current_best_epoch": 11, "current_best_icbhi_official_score": 0.593731823212803, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 19.196436383132824, "epoch": 11, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.593731823212803, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.14248445505897203, "thresholds": {"crackle": 0.5701518654823303, "wheeze": 0.48591989278793335}, "update": 3586, "validation_selection_loss": 0.6537343207746744}
+{"current_best_epoch": 11, "current_best_icbhi_official_score": 0.593731823212803, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 1, "early_stopping_patience": 10, "elapsed_minutes": 20.94939237726697, "epoch": 12, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5571624814431986, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.1647228275736173, "thresholds": {"crackle": 0.1458437740802765, "wheeze": 0.0634823590517044}, "update": 3912, "validation_selection_loss": 0.7774400648971398}
+{"current_best_epoch": 11, "current_best_icbhi_official_score": 0.593731823212803, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 2, "early_stopping_patience": 10, "elapsed_minutes": 22.673425071818443, "epoch": 13, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5664993976269893, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.15390477826197943, "thresholds": {"crackle": 0.018546564504504204, "wheeze": 0.2954331338405609}, "update": 4238, "validation_selection_loss": 0.7634148113429546}
+{"current_best_epoch": 11, "current_best_icbhi_official_score": 0.593731823212803, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 3, "early_stopping_patience": 10, "elapsed_minutes": 24.407927494550435, "epoch": 14, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5438093864727307, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.18481656163930893, "thresholds": {"crackle": 0.4079229235649109, "wheeze": 0.6603914499282837}, "update": 4564, "validation_selection_loss": 0.738551260282596}
+{"current_best_epoch": 11, "current_best_icbhi_official_score": 0.593731823212803, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 4, "early_stopping_patience": 10, "elapsed_minutes": 26.133453793567604, "epoch": 15, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5830279319208194, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.17649593080083528, "thresholds": {"crackle": 0.476777583360672, "wheeze": 0.7137309908866882}, "update": 4890, "validation_selection_loss": 0.8108780489613613}
+{"current_best_epoch": 11, "current_best_icbhi_official_score": 0.593731823212803, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 5, "early_stopping_patience": 10, "elapsed_minutes": 27.87039009106811, "epoch": 16, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.555099777614323, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.2034679427742958, "thresholds": {"crackle": 0.08464395999908447, "wheeze": 0.9743373394012451}, "update": 5216, "validation_selection_loss": 0.8491545803844929}
+{"current_best_epoch": 11, "current_best_icbhi_official_score": 0.593731823212803, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 6, "early_stopping_patience": 10, "elapsed_minutes": 29.606617875917195, "epoch": 17, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5653175197190397, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.1963241584599018, "thresholds": {"crackle": 0.019382191821932793, "wheeze": 0.4483356773853302}, "update": 5542, "validation_selection_loss": 0.8672228300323089}
+{"current_best_epoch": 11, "current_best_icbhi_official_score": 0.593731823212803, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 7, "early_stopping_patience": 10, "elapsed_minutes": 31.337679651818082, "epoch": 18, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5702992709645447, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.2057081274688244, "thresholds": {"crackle": 0.16694685816764832, "wheeze": 0.4661772549152374}, "update": 5868, "validation_selection_loss": 0.9367494092633327}
+{"current_best_epoch": 11, "current_best_icbhi_official_score": 0.593731823212803, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 8, "early_stopping_patience": 10, "elapsed_minutes": 33.159895345099116, "epoch": 19, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5656164194130374, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.19155321518580118, "thresholds": {"crackle": 0.4380037784576416, "wheeze": 0.0016040891641750932}, "update": 6194, "validation_selection_loss": 0.9021026591459911}
+{"current_best_epoch": 11, "current_best_icbhi_official_score": 0.593731823212803, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 9, "early_stopping_patience": 10, "elapsed_minutes": 36.3540592429849, "epoch": 20, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5719740239754683, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.18551461771130562, "thresholds": {"crackle": 0.01923425868153572, "wheeze": 0.13730095326900482}, "update": 6520, "validation_selection_loss": 0.8766881072272857}
+{"current_best_epoch": 11, "current_best_icbhi_official_score": 0.593731823212803, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 10, "early_stopping_patience": 10, "elapsed_minutes": 41.1362341995157, "epoch": 21, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.566976668605524, "seed": 0, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.22090475261211395, "thresholds": {"crackle": 0.00216576736420393, "wheeze": 0.7861306667327881}, "update": 6846, "validation_selection_loss": 0.9491657639543215}
+/files1/Zilong/miniconda3/envs/acoustic-addrsc/lib/python3.10/site-packages/torch/nn/utils/weight_norm.py:28: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+KAUH label-free recordings: 32/336
+KAUH label-free recordings: 336/336
+HF label-free recordings: 32/1956
+HF label-free recordings: 800/1956
+HF label-free recordings: 1600/1956
+HF label-free recordings: 1956/1956
+/files1/Zilong/miniconda3/envs/acoustic-addrsc/lib/python3.10/site-packages/torch/nn/utils/weight_norm.py:28: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+{"current_best_epoch": 1, "current_best_icbhi_official_score": 0.5284516995850917, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 5.000299004500266, "epoch": 1, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5284516995850917, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.14282324413458505, "thresholds": {"crackle": 0.18742996454238892, "wheeze": 0.63680499792099}, "update": 326, "validation_selection_loss": 0.3447923089067141}
+{"current_best_epoch": 2, "current_best_icbhi_official_score": 0.5651480266432354, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 9.999815511067087, "epoch": 2, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5651480266432354, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.12881047278642654, "thresholds": {"crackle": 0.3080861568450928, "wheeze": 0.576780378818512}, "update": 652, "validation_selection_loss": 0.3352164390186469}
+{"current_best_epoch": 2, "current_best_icbhi_official_score": 0.5651480266432354, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 1, "early_stopping_patience": 10, "elapsed_minutes": 14.980001205531881, "epoch": 3, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5411034160656837, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.10422841707865398, "thresholds": {"crackle": 0.12189465761184692, "wheeze": 0.5151168704032898}, "update": 978, "validation_selection_loss": 0.3526042650143305}
+{"current_best_epoch": 4, "current_best_icbhi_official_score": 0.5849324422122775, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 19.937587410149476, "epoch": 4, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5849324422122775, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.09810168544451396, "thresholds": {"crackle": 0.056340090930461884, "wheeze": 0.8002240657806396}, "update": 1304, "validation_selection_loss": 0.43942831953366596}
+{"current_best_epoch": 4, "current_best_icbhi_official_score": 0.5849324422122775, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 1, "early_stopping_patience": 10, "elapsed_minutes": 24.957448107015807, "epoch": 5, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5561100101534424, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.1770500292380651, "thresholds": {"crackle": 0.06418264657258987, "wheeze": 0.9377830028533936}, "update": 1630, "validation_selection_loss": 0.506827416519324}
+{"current_best_epoch": 4, "current_best_icbhi_official_score": 0.5849324422122775, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 2, "early_stopping_patience": 10, "elapsed_minutes": 29.91674340321527, "epoch": 6, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5473294617168949, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.096062071621418, "thresholds": {"crackle": 0.19977594912052155, "wheeze": 0.9008791446685791}, "update": 1956, "validation_selection_loss": 0.49663641427954036}
+{"current_best_epoch": 4, "current_best_icbhi_official_score": 0.5849324422122775, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 3, "early_stopping_patience": 10, "elapsed_minutes": 34.89104435930106, "epoch": 7, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5787698892053358, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.11586353555321693, "thresholds": {"crackle": 0.0497734472155571, "wheeze": 0.8836382627487183}, "update": 2282, "validation_selection_loss": 0.5990075040608644}
+{"current_best_epoch": 4, "current_best_icbhi_official_score": 0.5849324422122775, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 4, "early_stopping_patience": 10, "elapsed_minutes": 39.85597151461601, "epoch": 8, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5640732253133335, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.13078885525465012, "thresholds": {"crackle": 0.1108555942773819, "wheeze": 0.9897116422653198}, "update": 2608, "validation_selection_loss": 0.658951378117005}
+{"current_best_epoch": 9, "current_best_icbhi_official_score": 0.5967735513319197, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 44.830282059047995, "epoch": 9, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5967735513319197, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.14094398667414984, "thresholds": {"crackle": 0.16013464331626892, "wheeze": 0.8626990914344788}, "update": 2934, "validation_selection_loss": 0.7158115915954113}
+{"current_best_epoch": 9, "current_best_icbhi_official_score": 0.5967735513319197, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 1, "early_stopping_patience": 10, "elapsed_minutes": 49.81210976354778, "epoch": 10, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5320153587630342, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.16788199295600256, "thresholds": {"crackle": 0.0022606407292187214, "wheeze": 0.974190354347229}, "update": 3260, "validation_selection_loss": 0.8534711586932341}
+{"current_best_epoch": 9, "current_best_icbhi_official_score": 0.5967735513319197, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 2, "early_stopping_patience": 10, "elapsed_minutes": 54.78798692413451, "epoch": 11, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5648313705317725, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.15276136994361877, "thresholds": {"crackle": 0.31352484226226807, "wheeze": 0.851212203502655}, "update": 3586, "validation_selection_loss": 0.6768234570821127}
+{"current_best_epoch": 9, "current_best_icbhi_official_score": 0.5967735513319197, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 3, "early_stopping_patience": 10, "elapsed_minutes": 59.79306925074973, "epoch": 12, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5547529894004949, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.18780350933472315, "thresholds": {"crackle": 0.2780607044696808, "wheeze": 0.9785493016242981}, "update": 3912, "validation_selection_loss": 0.7740727079411348}
+{"current_best_epoch": 9, "current_best_icbhi_official_score": 0.5967735513319197, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 4, "early_stopping_patience": 10, "elapsed_minutes": 64.76678142601547, "epoch": 13, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5536838378397866, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.17380885034799576, "thresholds": {"crackle": 0.015365341678261757, "wheeze": 0.9750121831893921}, "update": 4238, "validation_selection_loss": 0.8867771414419016}
+{"current_best_epoch": 9, "current_best_icbhi_official_score": 0.5967735513319197, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 5, "early_stopping_patience": 10, "elapsed_minutes": 69.71136167103347, "epoch": 14, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5781745111469946, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.19292386869589487, "thresholds": {"crackle": 0.010902374051511288, "wheeze": 0.8407825827598572}, "update": 4564, "validation_selection_loss": 0.9266862198710442}
+{"current_best_epoch": 9, "current_best_icbhi_official_score": 0.5967735513319197, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 6, "early_stopping_patience": 10, "elapsed_minutes": 74.67485919508229, "epoch": 15, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5858444763820815, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.18727297460039458, "thresholds": {"crackle": 0.001964661292731762, "wheeze": 0.6082450747489929}, "update": 4890, "validation_selection_loss": 0.9285305980592966}
+{"current_best_epoch": 9, "current_best_icbhi_official_score": 0.5967735513319197, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 7, "early_stopping_patience": 10, "elapsed_minutes": 79.64203800231529, "epoch": 16, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5733331970214417, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.16348256294926009, "thresholds": {"crackle": 0.011869121342897415, "wheeze": 0.8660192489624023}, "update": 5216, "validation_selection_loss": 0.9045339605460564}
+{"current_best_epoch": 9, "current_best_icbhi_official_score": 0.5967735513319197, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 8, "early_stopping_patience": 10, "elapsed_minutes": 84.65095770003197, "epoch": 17, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5589276307612177, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.20454134792089462, "thresholds": {"crackle": 0.002540992572903633, "wheeze": 0.9876639246940613}, "update": 5542, "validation_selection_loss": 1.0259193989137807}
+{"current_best_epoch": 9, "current_best_icbhi_official_score": 0.5967735513319197, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 9, "early_stopping_patience": 10, "elapsed_minutes": 89.63013486750036, "epoch": 18, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5774809347193384, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.18231877808769545, "thresholds": {"crackle": 0.01411789283156395, "wheeze": 0.5929612517356873}, "update": 5868, "validation_selection_loss": 1.029572154705723}
+{"current_best_epoch": 9, "current_best_icbhi_official_score": 0.5967735513319197, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 10, "early_stopping_patience": 10, "elapsed_minutes": 94.60819005620046, "epoch": 19, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5667057487208653, "seed": 1, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.1876505228380362, "thresholds": {"crackle": 0.0012399961706250906, "wheeze": 0.5105651617050171}, "update": 6194, "validation_selection_loss": 1.0095218227555354}
+/files1/Zilong/miniconda3/envs/acoustic-addrsc/lib/python3.10/site-packages/torch/nn/utils/weight_norm.py:28: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+KAUH label-free recordings: 32/336
+KAUH label-free recordings: 336/336
+HF label-free recordings: 32/1956
+HF label-free recordings: 800/1956
+HF label-free recordings: 1600/1956
+HF label-free recordings: 1956/1956
+/files1/Zilong/miniconda3/envs/acoustic-addrsc/lib/python3.10/site-packages/torch/nn/utils/weight_norm.py:28: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+{"current_best_epoch": 1, "current_best_icbhi_official_score": 0.49373090848826706, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 5.018032276533389, "epoch": 1, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.49373090848826706, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.3985215922196706, "thresholds": {"crackle": 0.35231319069862366, "wheeze": 0.907312273979187}, "update": 326, "validation_selection_loss": 0.5107904275258383}
+{"current_best_epoch": 2, "current_best_icbhi_official_score": 0.5162145685486497, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 9.994261192301444, "epoch": 2, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5162145685486497, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.10865012432138126, "thresholds": {"crackle": 0.20529620349407196, "wheeze": 0.8054792284965515}, "update": 652, "validation_selection_loss": 0.3992286454886198}
+{"current_best_epoch": 2, "current_best_icbhi_official_score": 0.5162145685486497, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 1, "early_stopping_patience": 10, "elapsed_minutes": 14.988695849319145, "epoch": 3, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.49858459829872, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.13809658586978912, "thresholds": {"crackle": 0.21683959662914276, "wheeze": 0.8885655403137207}, "update": 978, "validation_selection_loss": 0.3890204504132271}
+{"current_best_epoch": 4, "current_best_icbhi_official_score": 0.5294283025456783, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 19.96383219443572, "epoch": 4, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5294283025456783, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.10505265866716702, "thresholds": {"crackle": 0.1650540828704834, "wheeze": 0.06681232154369354}, "update": 1304, "validation_selection_loss": 0.46829437650740147}
+{"current_best_epoch": 4, "current_best_icbhi_official_score": 0.5294283025456783, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 1, "early_stopping_patience": 10, "elapsed_minutes": 24.969525214102273, "epoch": 5, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5275205638146812, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.10272687921921413, "thresholds": {"crackle": 0.2747403681278229, "wheeze": 0.5335493683815002}, "update": 1630, "validation_selection_loss": 0.4763843330244223}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5448710050078478, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 29.953614606902313, "epoch": 6, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5448710050078478, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.10066466157635053, "thresholds": {"crackle": 0.728168785572052, "wheeze": 0.48209381103515625}, "update": 1956, "validation_selection_loss": 0.541661941135923}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5448710050078478, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 1, "early_stopping_patience": 10, "elapsed_minutes": 35.873798158566935, "epoch": 7, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5421470091467073, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.11810233195622762, "thresholds": {"crackle": 0.3903596103191376, "wheeze": 0.966663122177124}, "update": 2282, "validation_selection_loss": 0.5659197916587193}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5448710050078478, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 2, "early_stopping_patience": 10, "elapsed_minutes": 42.502812364452986, "epoch": 8, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5220359831109567, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.109543743232886, "thresholds": {"crackle": 0.23318208754062653, "wheeze": 0.7772998809814453}, "update": 2608, "validation_selection_loss": 0.7317596835394701}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5448710050078478, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 3, "early_stopping_patience": 10, "elapsed_minutes": 49.13295704368502, "epoch": 9, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5119508760639726, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.11646826813618343, "thresholds": {"crackle": 0.24382245540618896, "wheeze": 0.129733145236969}, "update": 2934, "validation_selection_loss": 0.6957457847893238}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5448710050078478, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 4, "early_stopping_patience": 10, "elapsed_minutes": 55.73818321471723, "epoch": 10, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5236873299352214, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.1315845437347889, "thresholds": {"crackle": 0.31732046604156494, "wheeze": 0.9076402187347412}, "update": 3260, "validation_selection_loss": 0.7179573569446802}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5448710050078478, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 5, "early_stopping_patience": 10, "elapsed_minutes": 62.368289094468736, "epoch": 11, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5213381020972481, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.14606668055057526, "thresholds": {"crackle": 0.02964751049876213, "wheeze": 0.8768454790115356}, "update": 3586, "validation_selection_loss": 0.7446913992365202}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5448710050078478, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 6, "early_stopping_patience": 10, "elapsed_minutes": 69.00712991273419, "epoch": 12, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.4980314589910158, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.20085813850164413, "thresholds": {"crackle": 0.010902374051511288, "wheeze": 0.986151397228241}, "update": 3912, "validation_selection_loss": 0.9428683035075665}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5448710050078478, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 7, "early_stopping_patience": 10, "elapsed_minutes": 75.6235432640533, "epoch": 13, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5440671235626046, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.16727175439397493, "thresholds": {"crackle": 0.010611421428620815, "wheeze": 0.18242552876472473}, "update": 4238, "validation_selection_loss": 0.83362392646571}
+{"current_best_epoch": 14, "current_best_icbhi_official_score": 0.551716911050572, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 82.2560609691854, "epoch": 14, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.551716911050572, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.15519611413280168, "thresholds": {"crackle": 0.03817827254533768, "wheeze": 0.07463503628969193}, "update": 4564, "validation_selection_loss": 0.9287441987544298}
+{"current_best_epoch": 14, "current_best_icbhi_official_score": 0.551716911050572, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 1, "early_stopping_patience": 10, "elapsed_minutes": 88.88107959548555, "epoch": 15, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.4997274658955718, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.15323740740617117, "thresholds": {"crackle": 0.02722090296447277, "wheeze": 0.609117329120636}, "update": 4890, "validation_selection_loss": 0.8930412158370018}
+{"current_best_epoch": 14, "current_best_icbhi_official_score": 0.551716911050572, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 2, "early_stopping_patience": 10, "elapsed_minutes": 94.48240297468534, "epoch": 16, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.497081490656627, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.21114260206619898, "thresholds": {"crackle": 0.003899620845913887, "wheeze": 0.995685338973999}, "update": 5216, "validation_selection_loss": 1.0363863321642082}
+{"current_best_epoch": 14, "current_best_icbhi_official_score": 0.551716911050572, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 3, "early_stopping_patience": 10, "elapsed_minutes": 99.42832005488454, "epoch": 17, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.534430231538303, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.1845394236346086, "thresholds": {"crackle": 0.004755199886858463, "wheeze": 0.1594790518283844}, "update": 5542, "validation_selection_loss": 1.0558832120150328}
+{"current_best_epoch": 14, "current_best_icbhi_official_score": 0.551716911050572, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 4, "early_stopping_patience": 10, "elapsed_minutes": 104.3872867970184, "epoch": 18, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5512843001523285, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.19015741099913916, "thresholds": {"crackle": 0.774071455001831, "wheeze": 0.08494710177183151}, "update": 5868, "validation_selection_loss": 1.040639975418647}
+{"current_best_epoch": 19, "current_best_icbhi_official_score": 0.555331687187884, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 109.34562779281987, "epoch": 19, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.555331687187884, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.19071732833981514, "thresholds": {"crackle": 0.006265534088015556, "wheeze": 0.9253649115562439}, "update": 6194, "validation_selection_loss": 1.040795648470521}
+{"current_best_epoch": 20, "current_best_icbhi_official_score": 0.5621108721467993, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 114.29803552556938, "epoch": 20, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5621108721467993, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.17642324169476828, "thresholds": {"crackle": 0.002278330735862255, "wheeze": 0.8814108967781067}, "update": 6520, "validation_selection_loss": 1.0169654935598373}
+{"current_best_epoch": 20, "current_best_icbhi_official_score": 0.5621108721467993, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 1, "early_stopping_patience": 10, "elapsed_minutes": 119.28116391576671, "epoch": 21, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5394822013437841, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.1955995336174965, "thresholds": {"crackle": 0.002191240666434169, "wheeze": 0.9376689791679382}, "update": 6846, "validation_selection_loss": 1.183868307620287}
+{"current_best_epoch": 20, "current_best_icbhi_official_score": 0.5621108721467993, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 2, "early_stopping_patience": 10, "elapsed_minutes": 124.2265129439688, "epoch": 22, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5381620386089084, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.28229359289010364, "thresholds": {"crackle": 0.18476749956607819, "wheeze": 0.9994946718215942}, "update": 7172, "validation_selection_loss": 1.2420246377587318}
+{"current_best_epoch": 20, "current_best_icbhi_official_score": 0.5621108721467993, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 3, "early_stopping_patience": 10, "elapsed_minutes": 129.19772486852017, "epoch": 23, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5426108282938289, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.24010236809651056, "thresholds": {"crackle": 0.0014048677403479815, "wheeze": 0.9916841983795166}, "update": 7498, "validation_selection_loss": 1.3099320319791634}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 0, "early_stopping_patience": 10, "elapsed_minutes": 134.16853759726897, "epoch": 24, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5676323108685956, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.24799078702926636, "thresholds": {"crackle": 0.004038591869175434, "wheeze": 0.31510335206985474}, "update": 7824, "validation_selection_loss": 1.1946699917316437}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 1, "early_stopping_patience": 10, "elapsed_minutes": 139.15114570848334, "epoch": 25, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5459390804220432, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.23353014141321182, "thresholds": {"crackle": 0.00418249424546957, "wheeze": 0.9916519522666931}, "update": 8150, "validation_selection_loss": 1.142039317637682}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 2, "early_stopping_patience": 10, "elapsed_minutes": 144.1325971632342, "epoch": 26, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5415293010482205, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.2447203646103541, "thresholds": {"crackle": 0.04296246916055679, "wheeze": 0.9950177073478699}, "update": 8476, "validation_selection_loss": 1.2952550773819287}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 3, "early_stopping_patience": 10, "elapsed_minutes": 149.0984329066666, "epoch": 27, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5542813681911538, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.22820943345626196, "thresholds": {"crackle": 0.060640547424554825, "wheeze": 0.08678673207759857}, "update": 8802, "validation_selection_loss": 1.3562368539472422}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 4, "early_stopping_patience": 10, "elapsed_minutes": 154.05640481338682, "epoch": 28, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5637175588907728, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.24513159692287445, "thresholds": {"crackle": 0.0034834241960197687, "wheeze": 0.29128316044807434}, "update": 9128, "validation_selection_loss": 1.2949381098151207}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 5, "early_stopping_patience": 10, "elapsed_minutes": 159.0609183003505, "epoch": 29, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5537015942572517, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.25197912255922955, "thresholds": {"crackle": 0.0991208553314209, "wheeze": 0.9662834405899048}, "update": 9454, "validation_selection_loss": 1.2236340989669163}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 6, "early_stopping_patience": 10, "elapsed_minutes": 164.0335011134351, "epoch": 30, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5441863067889241, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.2444449638326963, "thresholds": {"crackle": 0.002278330735862255, "wheeze": 0.9982109069824219}, "update": 9780, "validation_selection_loss": 1.3134179202218852}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 7, "early_stopping_patience": 10, "elapsed_minutes": 168.9989904809355, "epoch": 31, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5567600026473204, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.21841414272785187, "thresholds": {"crackle": 0.006641112733632326, "wheeze": 0.73829185962677}, "update": 10106, "validation_selection_loss": 1.345670538643996}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 8, "early_stopping_patience": 10, "elapsed_minutes": 173.97902916948468, "epoch": 32, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5452288237234346, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.21685806661844254, "thresholds": {"crackle": 0.0061929901130497456, "wheeze": 0.9589241147041321}, "update": 10432, "validation_selection_loss": 1.2771392452220123}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 9, "early_stopping_patience": 10, "elapsed_minutes": 178.9463360941348, "epoch": 33, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5351805746945224, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.2225501984357834, "thresholds": {"crackle": 0.001642066752538085, "wheeze": 0.9951514005661011}, "update": 10758, "validation_selection_loss": 1.3046787107984226}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_monitor": "icbhi_official_test_score", "early_stopping_no_improvement_epochs": 10, "early_stopping_patience": 10, "elapsed_minutes": 183.95017819866771, "epoch": 34, "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic", "icbhi_official_score": 0.5451050668744347, "seed": 42, "sprsound_official_inter_test_accessed": false, "sprsound_validation_loss": 0.2180978705485662, "thresholds": {"crackle": 0.00391482375562191, "wheeze": 0.9967268705368042}, "update": 11084, "validation_selection_loss": 1.3348274553815525}
+/files1/Zilong/miniconda3/envs/acoustic-addrsc/lib/python3.10/site-packages/torch/nn/utils/weight_norm.py:28: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+KAUH label-free recordings: 32/336
+KAUH label-free recordings: 336/336
+HF label-free recordings: 32/1956
+HF label-free recordings: 800/1956
+HF label-free recordings: 1600/1956
+HF label-free recordings: 1956/1956
+{
+  "status": "complete_lsaa_without_pafa_three_seed_attribution",
+  "variant": "lsaa_without_pafa",
+  "seeds": [
+    0,
+    1,
+    42
+  ],
+  "n": 3,
+  "sample_sd_ddof": 1,
+  "metrics": {
+    "icbhi_score": {
+      "n": 3,
+      "mean": 0.5860458951377727,
+      "sample_sd": 0.01601899159486089,
+      "values": [
+        0.593731823212803,
+        0.5967735513319197,
+        0.5676323108685956
+      ]
+    },
+    "spr_official_score": {
+      "n": 3,
+      "mean": 0.9103875531301506,
+      "sample_sd": 0.005053253340462293,
+      "values": [
+        0.9047068864444168,
+        0.9120733784275334,
+        0.9143823945185019
+      ]
+    },
+    "spr_mean_cw_auroc": {
+      "n": 3,
+      "mean": 0.9681543922064256,
+      "sample_sd": 0.002789912969186431,
+      "values": [
+        0.9672285101706266,
+        0.9712895366629639,
+        0.9659451297856863
+      ]
+    }
+  },
+  "per_seed": [
+    {
+      "best_only_checkpoint": false,
+      "changed_files": [
+        "baseline/pafa/joint_hierarchy_main_multiseed.py"
+      ],
+      "checkpoint_selection": "maximum ICBHI official test Hard Hierarchy Score; exact ties retain the earlier epoch",
+      "claim_boundary": "ICBHI-test-selected/non-clean main-method confirmation; SPRSound is selected-only terminal evidence; not a paper result",
+      "completed_training_epochs": 21,
+      "condition": "LSAA_without_PAFA_20260918_seed0",
+      "core_updates_per_epoch": 326,
+      "early_stopping": {
+        "early_stopped": true,
+        "monitor": "icbhi_official_test_score",
+        "no_improvement_epochs_at_stop": 10,
+        "patience": 10
+      },
+      "elapsed_minutes": 41.417633090750314,
+      "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic",
+      "external_evaluation": {
+        "checkpoint_selection": false,
+        "hf_cas_auroc": 0.8467003311935233,
+        "hf_cas_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_0/external_hf_kauh/hf_cas_metrics.json",
+        "hf_cas_support": {
+          "negative": 296,
+          "positive": 661,
+          "support": 957
+        },
+        "hf_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_0/external_hf_kauh/hf_metrics.json",
+        "kauh_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_0/external_hf_kauh/kauh_metrics.json",
+        "kauh_patient_ba": 0.77703081232493,
+        "kauh_patient_support": 86,
+        "status": "posthoc_external_evaluation_complete",
+        "threshold_tuning": false
+      },
+      "git_commit": false,
+      "hf_auxiliary": false,
+      "icbhi_official_score": 0.593731823212803,
+      "kauh_evaluation": false,
+      "last_checkpoint_saved": true,
+      "main_method": "JH2 Hard Hierarchy",
+      "max_epochs": 50,
+      "outer_test_accessed": true,
+      "pafa_enabled": false,
+      "pcsl_gpal_criterion_called": false,
+      "seed": 0,
+      "selected_epoch": 11,
+      "selected_metrics": {
+        "icbhi_flat4": {
+          "average_score": 0.593731823212803,
+          "class_collapse": false,
+          "confusion": [
+            [
+              1003,
+              262,
+              297,
+              17
+            ],
+            [
+              228,
+              386,
+              23,
+              12
+            ],
+            [
+              82,
+              31,
+              226,
+              46
+            ],
+            [
+              30,
+              18,
+              57,
+              38
+            ]
+          ],
+          "decoder": "Level1 Normal->Normal; Level1 Abnormal->Crackle/Wheeze/Both from shared validation thresholds; neither attribute over threshold->larger probability-minus-threshold margin; Crackle wins ties",
+          "harmonic_score": 0.590833851032294,
+          "icbhi_score": 0.593731823212803,
+          "macro_f1": 0.5036080566043426,
+          "official_score": 0.593731823212803,
+          "per_class": {
+            "both": {
+              "f1": 0.296875,
+              "precision": 0.336283185840708,
+              "recall": 0.26573426573426573,
+              "support": 143
+            },
+            "crackle": {
+              "f1": 0.5735512630014858,
+              "precision": 0.5538020086083214,
+              "recall": 0.5947611710323575,
+              "support": 649
+            },
+            "normal": {
+              "f1": 0.6865160848733745,
+              "precision": 0.7468354430379747,
+              "recall": 0.6352121595946801,
+              "support": 1579
+            },
+            "wheeze": {
+              "f1": 0.4574898785425101,
+              "precision": 0.3747927031509121,
+              "recall": 0.587012987012987,
+              "support": 385
+            }
+          },
+          "predicted_class_counts": [
+            1343,
+            697,
+            603,
+            113
+          ],
+          "protocol": "official recording split 60/40; 2756 respiratory cycles",
+          "rows": 2756,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.5522514868309261,
+          "specificity": 0.6352121595946801,
+          "task": "ICBHI official-test flat4 Hard Hierarchy main readout",
+          "thresholds": {
+            "crackle": 0.5701518654823303,
+            "wheeze": 0.48591989278793335
+          },
+          "uar": 0.5206801458435726
+        },
+        "icbhi_flat4_bits_only_ablation": {
+          "average_score": 0.6039261591308611,
+          "class_collapse": false,
+          "confusion": [
+            [
+              1058,
+              228,
+              276,
+              17
+            ],
+            [
+              249,
+              368,
+              20,
+              12
+            ],
+            [
+              84,
+              28,
+              227,
+              46
+            ],
+            [
+              32,
+              17,
+              56,
+              38
+            ]
+          ],
+          "decoder": "Crackle/Wheeze bits only: 00 Normal, 10 Crackle, 01 Wheeze, 11 Both",
+          "harmonic_score": 0.5966875047053756,
+          "icbhi_score": 0.6039261591308611,
+          "macro_f1": 0.510808854222283,
+          "official_score": 0.6039261591308611,
+          "per_class": {
+            "both": {
+              "f1": 0.296875,
+              "precision": 0.336283185840708,
+              "recall": 0.26573426573426573,
+              "support": 143
+            },
+            "crackle": {
+              "f1": 0.5705426356589147,
+              "precision": 0.5741029641185648,
+              "recall": 0.5670261941448382,
+              "support": 649
+            },
+            "normal": {
+              "f1": 0.7048634243837442,
+              "precision": 0.7434996486296557,
+              "recall": 0.6700443318556049,
+              "support": 1579
+            },
+            "wheeze": {
+              "f1": 0.470954356846473,
+              "precision": 0.3920552677029361,
+              "recall": 0.5896103896103896,
+              "support": 385
+            }
+          },
+          "predicted_class_counts": [
+            1423,
+            641,
+            579,
+            113
+          ],
+          "rows": 2756,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.5378079864061173,
+          "specificity": 0.6700443318556049,
+          "task": "ICBHI official-test flat4 bits-only diagnostic",
+          "thresholds": {
+            "crackle": 0.5701518654823303,
+            "wheeze": 0.48591989278793335
+          },
+          "uar": 0.5231037953362746
+        },
+        "sprsound_cw_auroc": {
+          "mean_cw_auroc": 0.9672285101706266,
+          "per_attribute": {
+            "crackle": 0.9557134006018765,
+            "wheeze": 0.9787436197393768
+          },
+          "support": {
+            "crackle": {
+              "eligible": 1429,
+              "negative": 1345,
+              "positive": 84
+            },
+            "wheeze": {
+              "eligible": 1429,
+              "negative": 1123,
+              "positive": 306
+            }
+          }
+        },
+        "sprsound_inter_task1_1": {
+          "average_score": 0.9070150286731264,
+          "average_score_as": 0.9070150286731264,
+          "confusion": [
+            [
+              876,
+              164
+            ],
+            [
+              11,
+              378
+            ]
+          ],
+          "harmonic_score": 0.9023987442157071,
+          "harmonic_score_hs": 0.9023987442157071,
+          "icbhi_score": 0.9070150286731264,
+          "macro_f1": 0.8606076686266783,
+          "official_score": 0.9047068864444168,
+          "per_class": {
+            "abnormal": {
+              "f1": 0.8120300751879699,
+              "precision": 0.6974169741697417,
+              "recall": 0.9717223650385605,
+              "support": 389
+            },
+            "normal": {
+              "f1": 0.9091852620653866,
+              "precision": 0.9875986471251409,
+              "recall": 0.8423076923076923,
+              "support": 1040
+            }
+          },
+          "protocol": "official inter-subject test; 1429 respiratory events",
+          "rows": 1429,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.9717223650385605,
+          "specificity": 0.8423076923076923,
+          "task": "SPRSound BioCAS2022 Task1-1 Normal/Adventitious",
+          "task1_2_raw7": "not produced by the shared three-node head",
+          "uar": 0.9070150286731264
+        }
+      },
+      "selection_loss": 0.6537343207746744,
+      "sprsound_task1_1_official_score": 0.9047068864444168,
+      "status": "complete_lsaa_without_pafa_native_hf_kauh_terminal",
+      "test_access_counts": {
+        "icbhi_official_test": 21,
+        "sprsound_official_inter_test": 1
+      },
+      "test_access_order": "Each epoch: core validation predictions and threshold freeze, then label-free/scored ICBHI official test; after selected checkpoint: label-free SPRSound inter predictions, then SPR targets",
+      "training_config_reused_from": "PAFA_JH2_test_selected_seed42",
+      "updates": 6846,
+      "validation_thresholds_test_tuned": false
+    },
+    {
+      "best_only_checkpoint": false,
+      "changed_files": [
+        "baseline/pafa/joint_hierarchy_main_multiseed.py"
+      ],
+      "checkpoint_selection": "maximum ICBHI official test Hard Hierarchy Score; exact ties retain the earlier epoch",
+      "claim_boundary": "ICBHI-test-selected/non-clean main-method confirmation; SPRSound is selected-only terminal evidence; not a paper result",
+      "completed_training_epochs": 19,
+      "condition": "LSAA_without_PAFA_20260918_seed1",
+      "core_updates_per_epoch": 326,
+      "early_stopping": {
+        "early_stopped": true,
+        "monitor": "icbhi_official_test_score",
+        "no_improvement_epochs_at_stop": 10,
+        "patience": 10
+      },
+      "elapsed_minutes": 94.89163425013345,
+      "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic",
+      "external_evaluation": {
+        "checkpoint_selection": false,
+        "hf_cas_auroc": 0.8704384225375148,
+        "hf_cas_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1/external_hf_kauh/hf_cas_metrics.json",
+        "hf_cas_support": {
+          "negative": 296,
+          "positive": 661,
+          "support": 957
+        },
+        "hf_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1/external_hf_kauh/hf_metrics.json",
+        "kauh_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1/external_hf_kauh/kauh_metrics.json",
+        "kauh_patient_ba": 0.7672268907563026,
+        "kauh_patient_support": 86,
+        "status": "posthoc_external_evaluation_complete",
+        "threshold_tuning": false
+      },
+      "git_commit": false,
+      "hf_auxiliary": false,
+      "icbhi_official_score": 0.5967735513319197,
+      "kauh_evaluation": false,
+      "last_checkpoint_saved": true,
+      "main_method": "JH2 Hard Hierarchy",
+      "max_epochs": 50,
+      "outer_test_accessed": true,
+      "pafa_enabled": false,
+      "pcsl_gpal_criterion_called": false,
+      "seed": 1,
+      "selected_epoch": 9,
+      "selected_metrics": {
+        "icbhi_flat4": {
+          "average_score": 0.5967735513319197,
+          "class_collapse": false,
+          "confusion": [
+            [
+              1077,
+              292,
+              196,
+              14
+            ],
+            [
+              208,
+              420,
+              11,
+              10
+            ],
+            [
+              107,
+              52,
+              139,
+              87
+            ],
+            [
+              28,
+              32,
+              40,
+              43
+            ]
+          ],
+          "decoder": "Level1 Normal->Normal; Level1 Abnormal->Crackle/Wheeze/Both from shared validation thresholds; neither attribute over threshold->larger probability-minus-threshold margin; Crackle wins ties",
+          "harmonic_score": 0.5845801097923664,
+          "icbhi_score": 0.5967735513319197,
+          "macro_f1": 0.48742181725291805,
+          "official_score": 0.5967735513319197,
+          "per_class": {
+            "both": {
+              "f1": 0.2895622895622896,
+              "precision": 0.2792207792207792,
+              "recall": 0.3006993006993007,
+              "support": 143
+            },
+            "crackle": {
+              "f1": 0.5813148788927336,
+              "precision": 0.5276381909547738,
+              "recall": 0.6471494607087828,
+              "support": 649
+            },
+            "normal": {
+              "f1": 0.7182394131377126,
+              "precision": 0.7584507042253521,
+              "recall": 0.682077264091197,
+              "support": 1579
+            },
+            "wheeze": {
+              "f1": 0.36057068741893644,
+              "precision": 0.3601036269430052,
+              "recall": 0.36103896103896105,
+              "support": 385
+            }
+          },
+          "predicted_class_counts": [
+            1420,
+            796,
+            386,
+            154
+          ],
+          "protocol": "official recording split 60/40; 2756 respiratory cycles",
+          "rows": 2756,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.5114698385726423,
+          "specificity": 0.682077264091197,
+          "task": "ICBHI official-test flat4 Hard Hierarchy main readout",
+          "thresholds": {
+            "crackle": 0.16013464331626892,
+            "wheeze": 0.8626990914344788
+          },
+          "uar": 0.4977412466345604
+        },
+        "icbhi_flat4_bits_only_ablation": {
+          "average_score": 0.5943027189379726,
+          "class_collapse": false,
+          "confusion": [
+            [
+              1037,
+              352,
+              176,
+              14
+            ],
+            [
+              177,
+              451,
+              11,
+              10
+            ],
+            [
+              118,
+              48,
+              132,
+              87
+            ],
+            [
+              26,
+              35,
+              39,
+              43
+            ]
+          ],
+          "decoder": "Crackle/Wheeze bits only: 00 Normal, 10 Crackle, 01 Wheeze, 11 Both",
+          "harmonic_score": 0.5877420718758642,
+          "icbhi_score": 0.5943027189379726,
+          "macro_f1": 0.4846658689589347,
+          "official_score": 0.5943027189379726,
+          "per_class": {
+            "both": {
+              "f1": 0.2895622895622896,
+              "precision": 0.2792207792207792,
+              "recall": 0.3006993006993007,
+              "support": 143
+            },
+            "crackle": {
+              "f1": 0.5876221498371336,
+              "precision": 0.5090293453724605,
+              "recall": 0.6949152542372882,
+              "support": 649
+            },
+            "normal": {
+              "f1": 0.7061627511065713,
+              "precision": 0.7636229749631811,
+              "recall": 0.6567447751741609,
+              "support": 1579
+            },
+            "wheeze": {
+              "f1": 0.3553162853297443,
+              "precision": 0.3687150837988827,
+              "recall": 0.34285714285714286,
+              "support": 385
+            }
+          },
+          "predicted_class_counts": [
+            1358,
+            886,
+            358,
+            154
+          ],
+          "rows": 2756,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.5318606627017842,
+          "specificity": 0.6567447751741609,
+          "task": "ICBHI official-test flat4 bits-only diagnostic",
+          "thresholds": {
+            "crackle": 0.16013464331626892,
+            "wheeze": 0.8626990914344788
+          },
+          "uar": 0.4988041182419732
+        },
+        "sprsound_cw_auroc": {
+          "mean_cw_auroc": 0.9712895366629639,
+          "per_attribute": {
+            "crackle": 0.9640246061249779,
+            "wheeze": 0.9785544672009499
+          },
+          "support": {
+            "crackle": {
+              "eligible": 1429,
+              "negative": 1345,
+              "positive": 84
+            },
+            "wheeze": {
+              "eligible": 1429,
+              "negative": 1123,
+              "positive": 306
+            }
+          }
+        },
+        "sprsound_inter_task1_1": {
+          "average_score": 0.9145602630017797,
+          "average_score_as": 0.9145602630017797,
+          "confusion": [
+            [
+              881,
+              159
+            ],
+            [
+              7,
+              382
+            ]
+          ],
+          "harmonic_score": 0.909586493853287,
+          "harmonic_score_hs": 0.909586493853287,
+          "icbhi_score": 0.9145602630017797,
+          "macro_f1": 0.8677028956409227,
+          "official_score": 0.9120733784275334,
+          "per_class": {
+            "abnormal": {
+              "f1": 0.821505376344086,
+              "precision": 0.7060998151571165,
+              "recall": 0.9820051413881749,
+              "support": 389
+            },
+            "normal": {
+              "f1": 0.9139004149377593,
+              "precision": 0.9921171171171171,
+              "recall": 0.8471153846153846,
+              "support": 1040
+            }
+          },
+          "protocol": "official inter-subject test; 1429 respiratory events",
+          "rows": 1429,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.9820051413881749,
+          "specificity": 0.8471153846153846,
+          "task": "SPRSound BioCAS2022 Task1-1 Normal/Adventitious",
+          "task1_2_raw7": "not produced by the shared three-node head",
+          "uar": 0.9145602630017797
+        }
+      },
+      "selection_loss": 0.7158115915954113,
+      "sprsound_task1_1_official_score": 0.9120733784275334,
+      "status": "complete_lsaa_without_pafa_native_hf_kauh_terminal",
+      "test_access_counts": {
+        "icbhi_official_test": 19,
+        "sprsound_official_inter_test": 1
+      },
+      "test_access_order": "Each epoch: core validation predictions and threshold freeze, then label-free/scored ICBHI official test; after selected checkpoint: label-free SPRSound inter predictions, then SPR targets",
+      "training_config_reused_from": "PAFA_JH2_test_selected_seed42",
+      "updates": 6194,
+      "validation_thresholds_test_tuned": false
+    },
+    {
+      "best_only_checkpoint": false,
+      "changed_files": [
+        "baseline/pafa/joint_hierarchy_main_multiseed.py"
+      ],
+      "checkpoint_selection": "maximum ICBHI official test Hard Hierarchy Score; exact ties retain the earlier epoch",
+      "claim_boundary": "ICBHI-test-selected/non-clean main-method confirmation; SPRSound is selected-only terminal evidence; not a paper result",
+      "completed_training_epochs": 34,
+      "condition": "LSAA_without_PAFA_20260918_seed42",
+      "core_updates_per_epoch": 326,
+      "early_stopping": {
+        "early_stopped": true,
+        "monitor": "icbhi_official_test_score",
+        "no_improvement_epochs_at_stop": 10,
+        "patience": 10
+      },
+      "elapsed_minutes": 184.22988299368492,
+      "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic",
+      "external_evaluation": {
+        "checkpoint_selection": false,
+        "hf_cas_auroc": 0.8827917365171526,
+        "hf_cas_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_42/external_hf_kauh/hf_cas_metrics.json",
+        "hf_cas_support": {
+          "negative": 296,
+          "positive": 661,
+          "support": 957
+        },
+        "hf_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_42/external_hf_kauh/hf_metrics.json",
+        "kauh_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_42/external_hf_kauh/kauh_metrics.json",
+        "kauh_patient_ba": 0.8047619047619048,
+        "kauh_patient_support": 86,
+        "status": "posthoc_external_evaluation_complete",
+        "threshold_tuning": false
+      },
+      "git_commit": false,
+      "hf_auxiliary": false,
+      "icbhi_official_score": 0.5676323108685956,
+      "kauh_evaluation": false,
+      "last_checkpoint_saved": true,
+      "main_method": "JH2 Hard Hierarchy",
+      "max_epochs": 50,
+      "outer_test_accessed": true,
+      "pafa_enabled": false,
+      "pcsl_gpal_criterion_called": false,
+      "seed": 42,
+      "selected_epoch": 24,
+      "selected_metrics": {
+        "icbhi_flat4": {
+          "average_score": 0.5676323108685956,
+          "class_collapse": false,
+          "confusion": [
+            [
+              1044,
+              346,
+              141,
+              48
+            ],
+            [
+              220,
+              404,
+              5,
+              20
+            ],
+            [
+              108,
+              58,
+              88,
+              131
+            ],
+            [
+              28,
+              34,
+              15,
+              66
+            ]
+          ],
+          "decoder": "Level1 Normal->Normal; Level1 Abnormal->Crackle/Wheeze/Both from shared validation thresholds; neither attribute over threshold->larger probability-minus-threshold margin; Crackle wins ties",
+          "harmonic_score": 0.5522160133088768,
+          "icbhi_score": 0.5676323108685956,
+          "macro_f1": 0.4609891138889702,
+          "official_score": 0.5676323108685956,
+          "per_class": {
+            "both": {
+              "f1": 0.3235294117647059,
+              "precision": 0.2490566037735849,
+              "recall": 0.46153846153846156,
+              "support": 143
+            },
+            "crackle": {
+              "f1": 0.5419181757209927,
+              "precision": 0.47980997624703087,
+              "recall": 0.6224961479198767,
+              "support": 649
+            },
+            "normal": {
+              "f1": 0.7009063444108762,
+              "precision": 0.7457142857142857,
+              "recall": 0.6611779607346422,
+              "support": 1579
+            },
+            "wheeze": {
+              "f1": 0.277602523659306,
+              "precision": 0.3534136546184739,
+              "recall": 0.22857142857142856,
+              "support": 385
+            }
+          },
+          "predicted_class_counts": [
+            1400,
+            842,
+            249,
+            265
+          ],
+          "protocol": "official recording split 60/40; 2756 respiratory cycles",
+          "rows": 2756,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.47408666100254887,
+          "specificity": 0.6611779607346422,
+          "task": "ICBHI official-test flat4 Hard Hierarchy main readout",
+          "thresholds": {
+            "crackle": 0.004038591869175434,
+            "wheeze": 0.31510335206985474
+          },
+          "uar": 0.49344599969110226
+        },
+        "icbhi_flat4_bits_only_ablation": {
+          "average_score": 0.5374439798480803,
+          "class_collapse": false,
+          "confusion": [
+            [
+              840,
+              538,
+              153,
+              48
+            ],
+            [
+              142,
+              482,
+              5,
+              20
+            ],
+            [
+              87,
+              76,
+              91,
+              131
+            ],
+            [
+              18,
+              43,
+              16,
+              66
+            ]
+          ],
+          "decoder": "Crackle/Wheeze bits only: 00 Normal, 10 Crackle, 01 Wheeze, 11 Both",
+          "harmonic_score": 0.5373884758224745,
+          "icbhi_score": 0.5374439798480803,
+          "macro_f1": 0.44320920982318224,
+          "official_score": 0.5374439798480803,
+          "per_class": {
+            "both": {
+              "f1": 0.3235294117647059,
+              "precision": 0.2490566037735849,
+              "recall": 0.46153846153846156,
+              "support": 143
+            },
+            "crackle": {
+              "f1": 0.5391498881431768,
+              "precision": 0.4231782265144864,
+              "recall": 0.7426810477657936,
+              "support": 649
+            },
+            "normal": {
+              "f1": 0.6301575393848462,
+              "precision": 0.7727690892364305,
+              "recall": 0.5319822672577581,
+              "support": 1579
+            },
+            "wheeze": {
+              "f1": 0.28,
+              "precision": 0.3433962264150943,
+              "recall": 0.23636363636363636,
+              "support": 385
+            }
+          },
+          "predicted_class_counts": [
+            1087,
+            1139,
+            265,
+            265
+          ],
+          "rows": 2756,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.5429056924384027,
+          "specificity": 0.5319822672577581,
+          "task": "ICBHI official-test flat4 bits-only diagnostic",
+          "thresholds": {
+            "crackle": 0.004038591869175434,
+            "wheeze": 0.31510335206985474
+          },
+          "uar": 0.4931413532314124
+        },
+        "sprsound_cw_auroc": {
+          "mean_cw_auroc": 0.9659451297856863,
+          "per_attribute": {
+            "crackle": 0.9551734820322181,
+            "wheeze": 0.9767167775391545
+          },
+          "support": {
+            "crackle": {
+              "eligible": 1429,
+              "negative": 1345,
+              "positive": 84
+            },
+            "wheeze": {
+              "eligible": 1429,
+              "negative": 1123,
+              "positive": 306
+            }
+          }
+        },
+        "sprsound_inter_task1_1": {
+          "average_score": 0.9156589875420209,
+          "average_score_as": 0.9156589875420209,
+          "confusion": [
+            [
+              902,
+              138
+            ],
+            [
+              14,
+              375
+            ]
+          ],
+          "harmonic_score": 0.913105801494983,
+          "harmonic_score_hs": 0.913105801494983,
+          "icbhi_score": 0.9156589875420209,
+          "macro_f1": 0.8768879880656029,
+          "official_score": 0.9143823945185019,
+          "per_class": {
+            "abnormal": {
+              "f1": 0.8314855875831486,
+              "precision": 0.7309941520467836,
+              "recall": 0.9640102827763496,
+              "support": 389
+            },
+            "normal": {
+              "f1": 0.9222903885480572,
+              "precision": 0.9847161572052402,
+              "recall": 0.8673076923076923,
+              "support": 1040
+            }
+          },
+          "protocol": "official inter-subject test; 1429 respiratory events",
+          "rows": 1429,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.9640102827763496,
+          "specificity": 0.8673076923076923,
+          "task": "SPRSound BioCAS2022 Task1-1 Normal/Adventitious",
+          "task1_2_raw7": "not produced by the shared three-node head",
+          "uar": 0.9156589875420209
+        }
+      },
+      "selection_loss": 1.1946699917316437,
+      "sprsound_task1_1_official_score": 0.9143823945185019,
+      "status": "complete_lsaa_without_pafa_native_hf_kauh_terminal",
+      "test_access_counts": {
+        "icbhi_official_test": 34,
+        "sprsound_official_inter_test": 1
+      },
+      "test_access_order": "Each epoch: core validation predictions and threshold freeze, then label-free/scored ICBHI official test; after selected checkpoint: label-free SPRSound inter predictions, then SPR targets",
+      "training_config_reused_from": "PAFA_JH2_test_selected_seed42",
+      "updates": 11084,
+      "validation_thresholds_test_tuned": false
+    }
+  ],
+  "external": {
+    "primary": {
+      "hf_cas_auroc": {
+        "n": 3,
+        "mean": 0.8666434967493969,
+        "sample_sd": 0.01834253201882489,
+        "values": [
+          0.8467003311935233,
+          0.8704384225375148,
+          0.8827917365171526
+        ]
+      },
+      "hf_cas_support": {
+        "support": [
+          957,
+          957,
+          957
+        ],
+        "positive": [
+          661,
+          661,
+          661
+        ],
+        "negative": [
+          296,
+          296,
+          296
+        ]
+      },
+      "kauh_patient_ba": {
+        "n": 3,
+        "mean": 0.7830065359477124,
+        "sample_sd": 0.019467955047002213,
+        "values": [
+          0.77703081232493,
+          0.7672268907563026,
+          0.8047619047619048
+        ]
+      },
+      "kauh_compatible_patient_support": [
+        86,
+        86,
+        86
+      ]
+    },
+    "hf_d_w_diagnostic": {
+      "d_positive_interval_recall": {
+        "n": 3,
+        "mean": 0.6199411331861663,
+        "sample_sd": 0.14671437467300402,
+        "values": [
+          0.4575055187637969,
+          0.6594922737306843,
+          0.7428256070640177
+        ]
+      },
+      "d_recording_auprc": {
+        "n": 3,
+        "mean": 0.40427826134850964,
+        "sample_sd": 0.08266035244333007,
+        "values": [
+          0.4602395963576218,
+          0.44326012518838526,
+          0.30933506249952203
+        ]
+      },
+      "d_recording_auroc": {
+        "n": 3,
+        "mean": 0.5122636315543416,
+        "sample_sd": 0.1165483196860091,
+        "values": [
+          0.5844559681110209,
+          0.5745275706798553,
+          0.3778073558721488
+        ]
+      },
+      "d_recording_average_score": {
+        "n": 3,
+        "mean": 0.5220313230481534,
+        "sample_sd": 0.04315002451787105,
+        "values": [
+          0.5630928434339706,
+          0.5259420904997416,
+          0.4770590352107478
+        ]
+      },
+      "d_recording_macro_f1": {
+        "n": 3,
+        "mean": 0.442049018592946,
+        "sample_sd": 0.11034929986472926,
+        "values": [
+          0.5480494662390721,
+          0.45028519574799064,
+          0.32781239379177524
+        ]
+      },
+      "d_recording_sensitivity": {
+        "n": 3,
+        "mean": 0.7644927536231884,
+        "sample_sd": 0.133797607525165,
+        "values": [
+          0.6168478260869565,
+          0.7989130434782609,
+          0.8777173913043478
+        ]
+      },
+      "d_recording_specificity": {
+        "n": 3,
+        "mean": 0.27956989247311825,
+        "sample_sd": 0.21769076953444721,
+        "values": [
+          0.5093378607809848,
+          0.2529711375212224,
+          0.07640067911714771
+        ]
+      },
+      "d_recording_uar": {
+        "n": 3,
+        "mean": 0.5220313230481534,
+        "sample_sd": 0.04315002451787105,
+        "values": [
+          0.5630928434339706,
+          0.5259420904997416,
+          0.4770590352107478
+        ]
+      },
+      "wheeze_positive_interval_recall": {
+        "n": 3,
+        "mean": 0.8095571095571096,
+        "sample_sd": 0.06382563619698275,
+        "values": [
+          0.7706293706293706,
+          0.7748251748251749,
+          0.8832167832167832
+        ]
+      },
+      "wheeze_recording_auprc": {
+        "n": 3,
+        "mean": 0.8559908241411307,
+        "sample_sd": 0.01174822558579811,
+        "values": [
+          0.8454427008534133,
+          0.8686522821967936,
+          0.8538774893731853
+        ]
+      },
+      "wheeze_recording_auroc": {
+        "n": 3,
+        "mean": 0.8712866046400668,
+        "sample_sd": 0.014050435767803552,
+        "values": [
+          0.8561996779388084,
+          0.8839975845410628,
+          0.8736625514403292
+        ]
+      },
+      "wheeze_recording_average_score": {
+        "n": 3,
+        "mean": 0.7701310610127035,
+        "sample_sd": 0.029665313963493766,
+        "values": [
+          0.7709675254965109,
+          0.799369296833065,
+          0.7400563607085346
+        ]
+      },
+      "wheeze_recording_macro_f1": {
+        "n": 3,
+        "mean": 0.7570759191285811,
+        "sample_sd": 0.041995220501230696,
+        "values": [
+          0.7657163903910792,
+          0.7940788638833869,
+          0.7114325031112768
+        ]
+      },
+      "wheeze_recording_sensitivity": {
+        "n": 3,
+        "mean": 0.842798353909465,
+        "sample_sd": 0.06722823985732392,
+        "values": [
+          0.7901234567901234,
+          0.8197530864197531,
+          0.9185185185185185
+        ]
+      },
+      "wheeze_recording_specificity": {
+        "n": 3,
+        "mean": 0.697463768115942,
+        "sample_sd": 0.1184483408570835,
+        "values": [
+          0.7518115942028986,
+          0.7789855072463768,
+          0.5615942028985508
+        ]
+      },
+      "wheeze_recording_uar": {
+        "n": 3,
+        "mean": 0.7701310610127035,
+        "sample_sd": 0.029665313963493766,
+        "values": [
+          0.7709675254965109,
+          0.799369296833065,
+          0.7400563607085346
+        ]
+      }
+    },
+    "kauh_secondary": {
+      "patient_flat4_average_score": {
+        "n": 3,
+        "mean": 0.5640522875816995,
+        "sample_sd": 0.10231582126041466,
+        "values": [
+          0.6789915966386555,
+          0.4829131652661065,
+          0.5302521008403361
+        ]
+      },
+      "patient_flat4_macro_f1": {
+        "n": 3,
+        "mean": 0.3985414391105562,
+        "sample_sd": 0.11792017041519831,
+        "values": [
+          0.5290148448043185,
+          0.2995751588018598,
+          0.36703431372549017
+        ]
+      },
+      "patient_flat4_sensitivity": {
+        "n": 3,
+        "mean": 0.26143790849673204,
+        "sample_sd": 0.23227915874401125,
+        "values": [
+          0.5294117647058824,
+          0.13725490196078433,
+          0.11764705882352941
+        ]
+      },
+      "patient_flat4_specificity": {
+        "n": 3,
+        "mean": 0.8666666666666667,
+        "sample_sd": 0.06598288790738575,
+        "values": [
+          0.8285714285714286,
+          0.8285714285714286,
+          0.9428571428571428
+        ]
+      },
+      "patient_flat4_uar": {
+        "n": 3,
+        "mean": 0.5342479674796748,
+        "sample_sd": 0.0750594153337042,
+        "values": [
+          0.6164416376306621,
+          0.4693379790940767,
+          0.5169642857142858
+        ]
+      },
+      "patient_level1_binary_average_score": {
+        "n": 3,
+        "mean": 0.7830065359477124,
+        "sample_sd": 0.019467955047002213,
+        "values": [
+          0.77703081232493,
+          0.7672268907563026,
+          0.8047619047619048
+        ]
+      },
+      "patient_level1_binary_macro_f1": {
+        "n": 3,
+        "mean": 0.7662123888929164,
+        "sample_sd": 0.01244657633173998,
+        "values": [
+          0.7654118930714675,
+          0.7541853817884852,
+          0.7790398918187965
+        ]
+      },
+      "patient_level1_binary_sensitivity": {
+        "n": 3,
+        "mean": 0.6993464052287582,
+        "sample_sd": 0.029951475130430342,
+        "values": [
+          0.7254901960784313,
+          0.7058823529411765,
+          0.6666666666666666
+        ]
+      },
+      "patient_level1_binary_specificity": {
+        "n": 3,
+        "mean": 0.8666666666666667,
+        "sample_sd": 0.06598288790738575,
+        "values": [
+          0.8285714285714286,
+          0.8285714285714286,
+          0.9428571428571428
+        ]
+      },
+      "patient_level1_binary_uar": {
+        "n": 3,
+        "mean": 0.7830065359477124,
+        "sample_sd": 0.019467955047002213,
+        "values": [
+          0.77703081232493,
+          0.7672268907563026,
+          0.8047619047619048
+        ]
+      },
+      "recording_flat4_average_score": {
+        "n": 3,
+        "mean": 0.5524120759414877,
+        "sample_sd": 0.04638524776472628,
+        "values": [
+          0.6028944911297852,
+          0.5116713352007469,
+          0.5426704014939309
+        ]
+      },
+      "recording_flat4_macro_f1": {
+        "n": 3,
+        "mean": 0.39119463631694246,
+        "sample_sd": 0.0433244860511747,
+        "values": [
+          0.4411635901914992,
+          0.3641271739955951,
+          0.36829314476373304
+        ]
+      },
+      "recording_flat4_sensitivity": {
+        "n": 3,
+        "mean": 0.2984749455337691,
+        "sample_sd": 0.11251199419324928,
+        "values": [
+          0.42483660130718953,
+          0.26143790849673204,
+          0.20915032679738563
+        ]
+      },
+      "recording_flat4_specificity": {
+        "n": 3,
+        "mean": 0.8063492063492063,
+        "sample_sd": 0.06122952864122513,
+        "values": [
+          0.780952380952381,
+          0.7619047619047619,
+          0.8761904761904762
+        ]
+      },
+      "recording_flat4_uar": {
+        "n": 3,
+        "mean": 0.47707849399922564,
+        "sample_sd": 0.026185663575095768,
+        "values": [
+          0.5072299651567944,
+          0.4600391986062717,
+          0.4639663182346109
+        ]
+      },
+      "recording_level1_binary_average_score": {
+        "n": 3,
+        "mean": 0.7343292872704638,
+        "sample_sd": 0.012780646747771646,
+        "values": [
+          0.7238095238095238,
+          0.73062558356676,
+          0.7485527544351074
+        ]
+      },
+      "recording_level1_binary_macro_f1": {
+        "n": 3,
+        "mean": 0.7193240736042537,
+        "sample_sd": 0.006988085286057894,
+        "values": [
+          0.7114442899461944,
+          0.7217589428115744,
+          0.7247689880549921
+        ]
+      },
+      "recording_level1_binary_sensitivity": {
+        "n": 3,
+        "mean": 0.6623093681917211,
+        "sample_sd": 0.03939682204798499,
+        "values": [
+          0.6666666666666666,
+          0.6993464052287581,
+          0.6209150326797386
+        ]
+      },
+      "recording_level1_binary_specificity": {
+        "n": 3,
+        "mean": 0.8063492063492063,
+        "sample_sd": 0.06122952864122513,
+        "values": [
+          0.780952380952381,
+          0.7619047619047619,
+          0.8761904761904762
+        ]
+      },
+      "recording_level1_binary_uar": {
+        "n": 3,
+        "mean": 0.7343292872704638,
+        "sample_sd": 0.012780646747771646,
+        "values": [
+          0.7238095238095238,
+          0.73062558356676,
+          0.7485527544351074
+        ]
+      }
+    }
+  },
+  "evidence_boundary": "test-selected three-seed attribution diagnostic"
+}

@@ -1,0 +1,186 @@
+{
+  "status": "complete_local_import_with_independent_native_only_posthoc",
+  "seeds": [
+    0,
+    1,
+    42
+  ],
+  "n": 3,
+  "scale": "fraction_0_to_1",
+  "standard_deviation": "sample; ddof=1",
+  "raw_local_directory": "/Users/zilongzeng/Research/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918",
+  "original_file_count": 694,
+  "original_total_bytes": 4460601154,
+  "checkpoint_count": 12,
+  "native_only_primary": {
+    "icbhi_score": {
+      "mean": 0.6386941213165075,
+      "n": 3,
+      "sample_sd": 0.014270712837837483,
+      "values": [
+        0.6487342095676958,
+        0.6449900268121904,
+        0.6223581275696362
+      ]
+    },
+    "spr_official_score": {
+      "mean": 0.8892879782704822,
+      "n": 3,
+      "sample_sd": 0.03356062095556332,
+      "values": [
+        0.8909074283814599,
+        0.8549469497072779,
+        0.922009556722709
+      ]
+    }
+  },
+  "native_only_independent_posthoc": {
+    "hf_cas_auroc": {
+      "mean": 0.8162029275871938,
+      "n": 3,
+      "sample_sd": 0.0368896049561305,
+      "values": [
+        0.8316024042196509,
+        0.774108639653269,
+        0.8428977388886617
+      ]
+    },
+    "kauh_patient_ba": {
+      "mean": 0.7559290382819794,
+      "n": 3,
+      "sample_sd": 0.05618766475963971,
+      "values": [
+        0.7207282913165266,
+        0.8207282913165266,
+        0.7263305322128851
+      ]
+    },
+    "support": {
+      "hf": [
+        {
+          "negative": 296,
+          "positive": 661,
+          "support": 957
+        },
+        {
+          "negative": 296,
+          "positive": 661,
+          "support": 957
+        },
+        {
+          "negative": 296,
+          "positive": 661,
+          "support": 957
+        }
+      ],
+      "kauh_compatible_patients": [
+        86,
+        86,
+        86
+      ]
+    }
+  },
+  "lsaa_without_pafa_primary": {
+    "icbhi_score": {
+      "mean": 0.5860458951377727,
+      "n": 3,
+      "sample_sd": 0.01601899159486089,
+      "values": [
+        0.593731823212803,
+        0.5967735513319197,
+        0.5676323108685956
+      ]
+    },
+    "spr_mean_cw_auroc": {
+      "mean": 0.9681543922064256,
+      "n": 3,
+      "sample_sd": 0.002789912969186431,
+      "values": [
+        0.9672285101706266,
+        0.9712895366629639,
+        0.9659451297856863
+      ]
+    },
+    "spr_official_score": {
+      "mean": 0.9103875531301506,
+      "n": 3,
+      "sample_sd": 0.005053253340462293,
+      "values": [
+        0.9047068864444168,
+        0.9120733784275334,
+        0.9143823945185019
+      ]
+    }
+  },
+  "lsaa_without_pafa_external": {
+    "hf_cas_auroc": {
+      "mean": 0.8666434967493969,
+      "n": 3,
+      "sample_sd": 0.01834253201882489,
+      "values": [
+        0.8467003311935233,
+        0.8704384225375148,
+        0.8827917365171526
+      ]
+    },
+    "hf_cas_support": {
+      "negative": [
+        296,
+        296,
+        296
+      ],
+      "positive": [
+        661,
+        661,
+        661
+      ],
+      "support": [
+        957,
+        957,
+        957
+      ]
+    },
+    "kauh_compatible_patient_support": [
+      86,
+      86,
+      86
+    ],
+    "kauh_patient_ba": {
+      "mean": 0.7830065359477124,
+      "n": 3,
+      "sample_sd": 0.019467955047002213,
+      "values": [
+        0.77703081232493,
+        0.7672268907563026,
+        0.8047619047619048
+      ]
+    }
+  },
+  "native_only_readout": {
+    "source_head": "ICBHI four-class softmax: Normal, Crackle, Wheeze, Both",
+    "hf": "max across three fixed 5s windows of P(Wheeze)+P(Both)",
+    "kauh": "mean across B/D/E of 1-P(Normal); >0.5 abnormal; tie Normal",
+    "hf_support": {
+      "eligible": 957,
+      "positive": 661,
+      "negative": 296
+    },
+    "kauh_compatible_patients": 86,
+    "target_training": false,
+    "target_selection": false,
+    "target_threshold_fitting": false,
+    "primary_native_summary_modified": false
+  },
+  "source_summaries": {
+    "native_only": "/Users/zilongzeng/Research/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/native_only/multiseed_summary.json",
+    "lsaa_without_pafa": "/Users/zilongzeng/Research/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/multiseed_summary.json",
+    "native_only_posthoc": "/Users/zilongzeng/Research/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/native_only_external_posthoc/multiseed_summary.json"
+  },
+  "git_lightweight_archive": {
+    "relative_path": "docs/result_exports/2026-09-19_lsaa_attribution/raw",
+    "original_file_count": 682,
+    "total_bytes": 58025578,
+    "model_weights_in_git": false,
+    "full_checkpoints_preserved_locally": 12
+  }
+}

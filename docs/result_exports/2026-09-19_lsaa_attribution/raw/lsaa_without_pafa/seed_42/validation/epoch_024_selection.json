@@ -1,0 +1,45 @@
+{
+  "dataset_losses": {
+    "icbhi": 2.141349196434021,
+    "sprsound": 0.24799078702926636
+  },
+  "dataset_node_losses": {
+    "icbhi": {
+      "crackle": 2.9360060691833496,
+      "level1": 2.553150177001953,
+      "wheeze": 0.9348913431167603
+    },
+    "sprsound": {
+      "crackle": 0.3528973460197449,
+      "level1": 0.3167078197002411,
+      "wheeze": 0.07436719536781311
+    }
+  },
+  "epoch": 24,
+  "selection_definition": "equal mean of ICBHI and SPRSound validation eligible-node loss",
+  "selection_loss": 1.1946699917316437,
+  "sprsound_official_inter_test_accessed": false,
+  "test_accessed_for_this_epoch_after_freeze": true,
+  "threshold_details": {
+    "crackle": {
+      "equal_core_dataset_mean_f1": 0.6749608462240685,
+      "f1_by_dataset": {
+        "icbhi": 0.48661233993015135,
+        "sprsound": 0.8633093525179856
+      },
+      "threshold": 0.004038591869175434
+    },
+    "wheeze": {
+      "equal_core_dataset_mean_f1": 0.8183852289613474,
+      "f1_by_dataset": {
+        "icbhi": 0.754880694143167,
+        "sprsound": 0.8818897637795275
+      },
+      "threshold": 0.31510335206985474
+    }
+  },
+  "thresholds": {
+    "crackle": 0.004038591869175434,
+    "wheeze": 0.31510335206985474
+  }
+}

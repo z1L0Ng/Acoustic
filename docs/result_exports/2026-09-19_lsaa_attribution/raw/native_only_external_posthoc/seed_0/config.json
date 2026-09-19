@@ -1,0 +1,22 @@
+{
+  "checkpoint": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/native_only/seed_0/best_checkpoint.pt",
+  "class_order": [
+    "Normal",
+    "Crackle",
+    "Wheeze",
+    "Both"
+  ],
+  "device": "cuda",
+  "hf_score": "per-window P(Wheeze)+P(Both), then recording max over three windows",
+  "kauh_score": "per-view 1-P(Normal), then patient B/D/E mean; >0.5 abnormal",
+  "precision": "FP32",
+  "seed": 0,
+  "selected_epoch": 23,
+  "source_evidence_boundary": "ICBHI-official-test-selected Native-only source checkpoint",
+  "source_head": "icbhi_native",
+  "source_run": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/native_only/seed_0",
+  "status": "approved_fixed_native_head_external_posthoc",
+  "target_selection": false,
+  "target_threshold_fit": false,
+  "target_training": false
+}

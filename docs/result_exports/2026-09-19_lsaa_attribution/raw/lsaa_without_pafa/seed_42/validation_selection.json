@@ -1,0 +1,42 @@
+{
+  "checkpoint_selection": "maximum ICBHI official test Hard Hierarchy Score; exact ties retain the earlier epoch",
+  "completed_training_epochs": 34,
+  "condition": "LSAA_without_PAFA_20260918_seed42",
+  "early_stopped": true,
+  "early_stopping_monitor": "icbhi_official_test_score",
+  "early_stopping_patience": 10,
+  "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic",
+  "hf_auxiliary": false,
+  "icbhi_official_test_accesses": 34,
+  "kauh_evaluation": false,
+  "outer_test_accessed": true,
+  "seed": 42,
+  "selected_epoch": 24,
+  "selection_loss": 1.1946699917316437,
+  "shared_attribute_thresholds": {
+    "crackle": 0.004038591869175434,
+    "wheeze": 0.31510335206985474
+  },
+  "sprsound_official_inter_test_accesses": 1,
+  "status": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic",
+  "threshold_details": {
+    "crackle": {
+      "equal_core_dataset_mean_f1": 0.6749608462240685,
+      "f1_by_dataset": {
+        "icbhi": 0.48661233993015135,
+        "sprsound": 0.8633093525179856
+      },
+      "threshold": 0.004038591869175434
+    },
+    "wheeze": {
+      "equal_core_dataset_mean_f1": 0.8183852289613474,
+      "f1_by_dataset": {
+        "icbhi": 0.754880694143167,
+        "sprsound": 0.8818897637795275
+      },
+      "threshold": 0.31510335206985474
+    }
+  },
+  "threshold_source": "selected epoch core validation predictions only; no test tuning",
+  "validation_selection_test_accessed": false
+}

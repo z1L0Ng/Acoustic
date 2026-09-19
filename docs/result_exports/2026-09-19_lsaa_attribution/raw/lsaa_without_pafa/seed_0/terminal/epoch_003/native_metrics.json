@@ -1,0 +1,174 @@
+{
+  "epoch": 3,
+  "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic",
+  "icbhi_flat4": {
+    "average_score": 0.5798602946596767,
+    "class_collapse": false,
+    "confusion": [
+      [
+        982,
+        286,
+        284,
+        27
+      ],
+      [
+        216,
+        399,
+        11,
+        23
+      ],
+      [
+        66,
+        48,
+        182,
+        89
+      ],
+      [
+        23,
+        35,
+        33,
+        52
+      ]
+    ],
+    "decoder": "Level1 Normal->Normal; Level1 Abnormal->Crackle/Wheeze/Both from shared validation thresholds; neither attribute over threshold->larger probability-minus-threshold margin; Crackle wins ties",
+    "harmonic_score": 0.5768106003699681,
+    "icbhi_score": 0.5798602946596767,
+    "macro_f1": 0.4916296026639073,
+    "official_score": 0.5798602946596767,
+    "per_class": {
+      "both": {
+        "f1": 0.31137724550898205,
+        "precision": 0.27225130890052357,
+        "recall": 0.36363636363636365,
+        "support": 143
+      },
+      "crackle": {
+        "f1": 0.5631616090331687,
+        "precision": 0.51953125,
+        "recall": 0.6147919876733436,
+        "support": 649
+      },
+      "normal": {
+        "f1": 0.6852756454989533,
+        "precision": 0.763014763014763,
+        "recall": 0.6219126029132362,
+        "support": 1579
+      },
+      "wheeze": {
+        "f1": 0.40670391061452515,
+        "precision": 0.3568627450980392,
+        "recall": 0.4727272727272727,
+        "support": 385
+      }
+    },
+    "predicted_class_counts": [
+      1287,
+      768,
+      510,
+      191
+    ],
+    "protocol": "official recording split 60/40; 2756 respiratory cycles",
+    "rows": 2756,
+    "scale": "fraction_0_to_1",
+    "sensitivity": 0.5378079864061173,
+    "specificity": 0.6219126029132362,
+    "task": "ICBHI official-test flat4 Hard Hierarchy main readout",
+    "thresholds": {
+      "crackle": 0.23881636559963226,
+      "wheeze": 0.39227864146232605
+    },
+    "uar": 0.518267056737554
+  },
+  "icbhi_flat4_bits_only_ablation": {
+    "average_score": 0.5303258087375564,
+    "class_collapse": false,
+    "confusion": [
+      [
+        678,
+        594,
+        279,
+        28
+      ],
+      [
+        104,
+        512,
+        10,
+        23
+      ],
+      [
+        58,
+        59,
+        179,
+        89
+      ],
+      [
+        19,
+        39,
+        33,
+        52
+      ]
+    ],
+    "decoder": "Crackle/Wheeze bits only: 00 Normal, 10 Crackle, 01 Wheeze, 11 Both",
+    "harmonic_score": 0.5111132643365498,
+    "icbhi_score": 0.5303258087375564,
+    "macro_f1": 0.45583048628757705,
+    "official_score": 0.5303258087375564,
+    "per_class": {
+      "both": {
+        "f1": 0.31044776119402984,
+        "precision": 0.2708333333333333,
+        "recall": 0.36363636363636365,
+        "support": 143
+      },
+      "crackle": {
+        "f1": 0.5526173772261198,
+        "precision": 0.42524916943521596,
+        "recall": 0.7889060092449923,
+        "support": 649
+      },
+      "normal": {
+        "f1": 0.5561936013125512,
+        "precision": 0.789289871944121,
+        "recall": 0.42938568714376185,
+        "support": 1579
+      },
+      "wheeze": {
+        "f1": 0.4040632054176072,
+        "precision": 0.35728542914171657,
+        "recall": 0.4649350649350649,
+        "support": 385
+      }
+    },
+    "predicted_class_counts": [
+      859,
+      1204,
+      501,
+      192
+    ],
+    "rows": 2756,
+    "scale": "fraction_0_to_1",
+    "sensitivity": 0.6312659303313509,
+    "specificity": 0.42938568714376185,
+    "task": "ICBHI official-test flat4 bits-only diagnostic",
+    "thresholds": {
+      "crackle": 0.23881636559963226,
+      "wheeze": 0.39227864146232605
+    },
+    "uar": 0.5117157812400457
+  },
+  "outer_test_accessed": true,
+  "prediction_support": {
+    "icbhi": 2756
+  },
+  "selected_epoch_for_final_report": false,
+  "shared_attribute_thresholds": {
+    "crackle": 0.23881636559963226,
+    "wheeze": 0.39227864146232605
+  },
+  "sprsound_official_inter_test_accessed": false,
+  "status": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic",
+  "test_selection_metric": "icbhi_flat4.official_score",
+  "threshold_source": "same-epoch core validation predictions only; frozen before ICBHI test access",
+  "update": 978,
+  "validation_selection_loss": 0.35869730046639836
+}

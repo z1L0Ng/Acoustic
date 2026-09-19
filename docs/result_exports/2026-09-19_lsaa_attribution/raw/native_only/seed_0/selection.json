@@ -1,0 +1,15 @@
+{
+  "early_stopping_patience": 10,
+  "seed": 0,
+  "selected_epoch": 23,
+  "selected_update": 7498,
+  "selection_dataset": "icbhi",
+  "selection_score": 0.6487342095676958,
+  "status": "test_selected_benchmark_control",
+  "threshold_details": {
+    "reason": "explicit C/W supervision is disabled",
+    "status": "not_applicable"
+  },
+  "thresholds": {},
+  "variant": "native_only"
+}

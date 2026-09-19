@@ -1,0 +1,1281 @@
+{
+  "evidence_boundary": "test-selected three-seed attribution diagnostic",
+  "external": {
+    "hf_d_w_diagnostic": {
+      "d_positive_interval_recall": {
+        "mean": 0.6199411331861663,
+        "n": 3,
+        "sample_sd": 0.14671437467300402,
+        "values": [
+          0.4575055187637969,
+          0.6594922737306843,
+          0.7428256070640177
+        ]
+      },
+      "d_recording_auprc": {
+        "mean": 0.40427826134850964,
+        "n": 3,
+        "sample_sd": 0.08266035244333007,
+        "values": [
+          0.4602395963576218,
+          0.44326012518838526,
+          0.30933506249952203
+        ]
+      },
+      "d_recording_auroc": {
+        "mean": 0.5122636315543416,
+        "n": 3,
+        "sample_sd": 0.1165483196860091,
+        "values": [
+          0.5844559681110209,
+          0.5745275706798553,
+          0.3778073558721488
+        ]
+      },
+      "d_recording_average_score": {
+        "mean": 0.5220313230481534,
+        "n": 3,
+        "sample_sd": 0.04315002451787105,
+        "values": [
+          0.5630928434339706,
+          0.5259420904997416,
+          0.4770590352107478
+        ]
+      },
+      "d_recording_macro_f1": {
+        "mean": 0.442049018592946,
+        "n": 3,
+        "sample_sd": 0.11034929986472926,
+        "values": [
+          0.5480494662390721,
+          0.45028519574799064,
+          0.32781239379177524
+        ]
+      },
+      "d_recording_sensitivity": {
+        "mean": 0.7644927536231884,
+        "n": 3,
+        "sample_sd": 0.133797607525165,
+        "values": [
+          0.6168478260869565,
+          0.7989130434782609,
+          0.8777173913043478
+        ]
+      },
+      "d_recording_specificity": {
+        "mean": 0.27956989247311825,
+        "n": 3,
+        "sample_sd": 0.21769076953444721,
+        "values": [
+          0.5093378607809848,
+          0.2529711375212224,
+          0.07640067911714771
+        ]
+      },
+      "d_recording_uar": {
+        "mean": 0.5220313230481534,
+        "n": 3,
+        "sample_sd": 0.04315002451787105,
+        "values": [
+          0.5630928434339706,
+          0.5259420904997416,
+          0.4770590352107478
+        ]
+      },
+      "wheeze_positive_interval_recall": {
+        "mean": 0.8095571095571096,
+        "n": 3,
+        "sample_sd": 0.06382563619698275,
+        "values": [
+          0.7706293706293706,
+          0.7748251748251749,
+          0.8832167832167832
+        ]
+      },
+      "wheeze_recording_auprc": {
+        "mean": 0.8559908241411307,
+        "n": 3,
+        "sample_sd": 0.01174822558579811,
+        "values": [
+          0.8454427008534133,
+          0.8686522821967936,
+          0.8538774893731853
+        ]
+      },
+      "wheeze_recording_auroc": {
+        "mean": 0.8712866046400668,
+        "n": 3,
+        "sample_sd": 0.014050435767803552,
+        "values": [
+          0.8561996779388084,
+          0.8839975845410628,
+          0.8736625514403292
+        ]
+      },
+      "wheeze_recording_average_score": {
+        "mean": 0.7701310610127035,
+        "n": 3,
+        "sample_sd": 0.029665313963493766,
+        "values": [
+          0.7709675254965109,
+          0.799369296833065,
+          0.7400563607085346
+        ]
+      },
+      "wheeze_recording_macro_f1": {
+        "mean": 0.7570759191285811,
+        "n": 3,
+        "sample_sd": 0.041995220501230696,
+        "values": [
+          0.7657163903910792,
+          0.7940788638833869,
+          0.7114325031112768
+        ]
+      },
+      "wheeze_recording_sensitivity": {
+        "mean": 0.842798353909465,
+        "n": 3,
+        "sample_sd": 0.06722823985732392,
+        "values": [
+          0.7901234567901234,
+          0.8197530864197531,
+          0.9185185185185185
+        ]
+      },
+      "wheeze_recording_specificity": {
+        "mean": 0.697463768115942,
+        "n": 3,
+        "sample_sd": 0.1184483408570835,
+        "values": [
+          0.7518115942028986,
+          0.7789855072463768,
+          0.5615942028985508
+        ]
+      },
+      "wheeze_recording_uar": {
+        "mean": 0.7701310610127035,
+        "n": 3,
+        "sample_sd": 0.029665313963493766,
+        "values": [
+          0.7709675254965109,
+          0.799369296833065,
+          0.7400563607085346
+        ]
+      }
+    },
+    "kauh_secondary": {
+      "patient_flat4_average_score": {
+        "mean": 0.5640522875816995,
+        "n": 3,
+        "sample_sd": 0.10231582126041466,
+        "values": [
+          0.6789915966386555,
+          0.4829131652661065,
+          0.5302521008403361
+        ]
+      },
+      "patient_flat4_macro_f1": {
+        "mean": 0.3985414391105562,
+        "n": 3,
+        "sample_sd": 0.11792017041519831,
+        "values": [
+          0.5290148448043185,
+          0.2995751588018598,
+          0.36703431372549017
+        ]
+      },
+      "patient_flat4_sensitivity": {
+        "mean": 0.26143790849673204,
+        "n": 3,
+        "sample_sd": 0.23227915874401125,
+        "values": [
+          0.5294117647058824,
+          0.13725490196078433,
+          0.11764705882352941
+        ]
+      },
+      "patient_flat4_specificity": {
+        "mean": 0.8666666666666667,
+        "n": 3,
+        "sample_sd": 0.06598288790738575,
+        "values": [
+          0.8285714285714286,
+          0.8285714285714286,
+          0.9428571428571428
+        ]
+      },
+      "patient_flat4_uar": {
+        "mean": 0.5342479674796748,
+        "n": 3,
+        "sample_sd": 0.0750594153337042,
+        "values": [
+          0.6164416376306621,
+          0.4693379790940767,
+          0.5169642857142858
+        ]
+      },
+      "patient_level1_binary_average_score": {
+        "mean": 0.7830065359477124,
+        "n": 3,
+        "sample_sd": 0.019467955047002213,
+        "values": [
+          0.77703081232493,
+          0.7672268907563026,
+          0.8047619047619048
+        ]
+      },
+      "patient_level1_binary_macro_f1": {
+        "mean": 0.7662123888929164,
+        "n": 3,
+        "sample_sd": 0.01244657633173998,
+        "values": [
+          0.7654118930714675,
+          0.7541853817884852,
+          0.7790398918187965
+        ]
+      },
+      "patient_level1_binary_sensitivity": {
+        "mean": 0.6993464052287582,
+        "n": 3,
+        "sample_sd": 0.029951475130430342,
+        "values": [
+          0.7254901960784313,
+          0.7058823529411765,
+          0.6666666666666666
+        ]
+      },
+      "patient_level1_binary_specificity": {
+        "mean": 0.8666666666666667,
+        "n": 3,
+        "sample_sd": 0.06598288790738575,
+        "values": [
+          0.8285714285714286,
+          0.8285714285714286,
+          0.9428571428571428
+        ]
+      },
+      "patient_level1_binary_uar": {
+        "mean": 0.7830065359477124,
+        "n": 3,
+        "sample_sd": 0.019467955047002213,
+        "values": [
+          0.77703081232493,
+          0.7672268907563026,
+          0.8047619047619048
+        ]
+      },
+      "recording_flat4_average_score": {
+        "mean": 0.5524120759414877,
+        "n": 3,
+        "sample_sd": 0.04638524776472628,
+        "values": [
+          0.6028944911297852,
+          0.5116713352007469,
+          0.5426704014939309
+        ]
+      },
+      "recording_flat4_macro_f1": {
+        "mean": 0.39119463631694246,
+        "n": 3,
+        "sample_sd": 0.0433244860511747,
+        "values": [
+          0.4411635901914992,
+          0.3641271739955951,
+          0.36829314476373304
+        ]
+      },
+      "recording_flat4_sensitivity": {
+        "mean": 0.2984749455337691,
+        "n": 3,
+        "sample_sd": 0.11251199419324928,
+        "values": [
+          0.42483660130718953,
+          0.26143790849673204,
+          0.20915032679738563
+        ]
+      },
+      "recording_flat4_specificity": {
+        "mean": 0.8063492063492063,
+        "n": 3,
+        "sample_sd": 0.06122952864122513,
+        "values": [
+          0.780952380952381,
+          0.7619047619047619,
+          0.8761904761904762
+        ]
+      },
+      "recording_flat4_uar": {
+        "mean": 0.47707849399922564,
+        "n": 3,
+        "sample_sd": 0.026185663575095768,
+        "values": [
+          0.5072299651567944,
+          0.4600391986062717,
+          0.4639663182346109
+        ]
+      },
+      "recording_level1_binary_average_score": {
+        "mean": 0.7343292872704638,
+        "n": 3,
+        "sample_sd": 0.012780646747771646,
+        "values": [
+          0.7238095238095238,
+          0.73062558356676,
+          0.7485527544351074
+        ]
+      },
+      "recording_level1_binary_macro_f1": {
+        "mean": 0.7193240736042537,
+        "n": 3,
+        "sample_sd": 0.006988085286057894,
+        "values": [
+          0.7114442899461944,
+          0.7217589428115744,
+          0.7247689880549921
+        ]
+      },
+      "recording_level1_binary_sensitivity": {
+        "mean": 0.6623093681917211,
+        "n": 3,
+        "sample_sd": 0.03939682204798499,
+        "values": [
+          0.6666666666666666,
+          0.6993464052287581,
+          0.6209150326797386
+        ]
+      },
+      "recording_level1_binary_specificity": {
+        "mean": 0.8063492063492063,
+        "n": 3,
+        "sample_sd": 0.06122952864122513,
+        "values": [
+          0.780952380952381,
+          0.7619047619047619,
+          0.8761904761904762
+        ]
+      },
+      "recording_level1_binary_uar": {
+        "mean": 0.7343292872704638,
+        "n": 3,
+        "sample_sd": 0.012780646747771646,
+        "values": [
+          0.7238095238095238,
+          0.73062558356676,
+          0.7485527544351074
+        ]
+      }
+    },
+    "primary": {
+      "hf_cas_auroc": {
+        "mean": 0.8666434967493969,
+        "n": 3,
+        "sample_sd": 0.01834253201882489,
+        "values": [
+          0.8467003311935233,
+          0.8704384225375148,
+          0.8827917365171526
+        ]
+      },
+      "hf_cas_support": {
+        "negative": [
+          296,
+          296,
+          296
+        ],
+        "positive": [
+          661,
+          661,
+          661
+        ],
+        "support": [
+          957,
+          957,
+          957
+        ]
+      },
+      "kauh_compatible_patient_support": [
+        86,
+        86,
+        86
+      ],
+      "kauh_patient_ba": {
+        "mean": 0.7830065359477124,
+        "n": 3,
+        "sample_sd": 0.019467955047002213,
+        "values": [
+          0.77703081232493,
+          0.7672268907563026,
+          0.8047619047619048
+        ]
+      }
+    }
+  },
+  "metrics": {
+    "icbhi_score": {
+      "mean": 0.5860458951377727,
+      "n": 3,
+      "sample_sd": 0.01601899159486089,
+      "values": [
+        0.593731823212803,
+        0.5967735513319197,
+        0.5676323108685956
+      ]
+    },
+    "spr_mean_cw_auroc": {
+      "mean": 0.9681543922064256,
+      "n": 3,
+      "sample_sd": 0.002789912969186431,
+      "values": [
+        0.9672285101706266,
+        0.9712895366629639,
+        0.9659451297856863
+      ]
+    },
+    "spr_official_score": {
+      "mean": 0.9103875531301506,
+      "n": 3,
+      "sample_sd": 0.005053253340462293,
+      "values": [
+        0.9047068864444168,
+        0.9120733784275334,
+        0.9143823945185019
+      ]
+    }
+  },
+  "n": 3,
+  "per_seed": [
+    {
+      "best_only_checkpoint": false,
+      "changed_files": [
+        "baseline/pafa/joint_hierarchy_main_multiseed.py"
+      ],
+      "checkpoint_selection": "maximum ICBHI official test Hard Hierarchy Score; exact ties retain the earlier epoch",
+      "claim_boundary": "ICBHI-test-selected/non-clean main-method confirmation; SPRSound is selected-only terminal evidence; not a paper result",
+      "completed_training_epochs": 21,
+      "condition": "LSAA_without_PAFA_20260918_seed0",
+      "core_updates_per_epoch": 326,
+      "early_stopping": {
+        "early_stopped": true,
+        "monitor": "icbhi_official_test_score",
+        "no_improvement_epochs_at_stop": 10,
+        "patience": 10
+      },
+      "elapsed_minutes": 41.417633090750314,
+      "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic",
+      "external_evaluation": {
+        "checkpoint_selection": false,
+        "hf_cas_auroc": 0.8467003311935233,
+        "hf_cas_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_0/external_hf_kauh/hf_cas_metrics.json",
+        "hf_cas_support": {
+          "negative": 296,
+          "positive": 661,
+          "support": 957
+        },
+        "hf_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_0/external_hf_kauh/hf_metrics.json",
+        "kauh_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_0/external_hf_kauh/kauh_metrics.json",
+        "kauh_patient_ba": 0.77703081232493,
+        "kauh_patient_support": 86,
+        "status": "posthoc_external_evaluation_complete",
+        "threshold_tuning": false
+      },
+      "git_commit": false,
+      "hf_auxiliary": false,
+      "icbhi_official_score": 0.593731823212803,
+      "kauh_evaluation": false,
+      "last_checkpoint_saved": true,
+      "main_method": "JH2 Hard Hierarchy",
+      "max_epochs": 50,
+      "outer_test_accessed": true,
+      "pafa_enabled": false,
+      "pcsl_gpal_criterion_called": false,
+      "seed": 0,
+      "selected_epoch": 11,
+      "selected_metrics": {
+        "icbhi_flat4": {
+          "average_score": 0.593731823212803,
+          "class_collapse": false,
+          "confusion": [
+            [
+              1003,
+              262,
+              297,
+              17
+            ],
+            [
+              228,
+              386,
+              23,
+              12
+            ],
+            [
+              82,
+              31,
+              226,
+              46
+            ],
+            [
+              30,
+              18,
+              57,
+              38
+            ]
+          ],
+          "decoder": "Level1 Normal->Normal; Level1 Abnormal->Crackle/Wheeze/Both from shared validation thresholds; neither attribute over threshold->larger probability-minus-threshold margin; Crackle wins ties",
+          "harmonic_score": 0.590833851032294,
+          "icbhi_score": 0.593731823212803,
+          "macro_f1": 0.5036080566043426,
+          "official_score": 0.593731823212803,
+          "per_class": {
+            "both": {
+              "f1": 0.296875,
+              "precision": 0.336283185840708,
+              "recall": 0.26573426573426573,
+              "support": 143
+            },
+            "crackle": {
+              "f1": 0.5735512630014858,
+              "precision": 0.5538020086083214,
+              "recall": 0.5947611710323575,
+              "support": 649
+            },
+            "normal": {
+              "f1": 0.6865160848733745,
+              "precision": 0.7468354430379747,
+              "recall": 0.6352121595946801,
+              "support": 1579
+            },
+            "wheeze": {
+              "f1": 0.4574898785425101,
+              "precision": 0.3747927031509121,
+              "recall": 0.587012987012987,
+              "support": 385
+            }
+          },
+          "predicted_class_counts": [
+            1343,
+            697,
+            603,
+            113
+          ],
+          "protocol": "official recording split 60/40; 2756 respiratory cycles",
+          "rows": 2756,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.5522514868309261,
+          "specificity": 0.6352121595946801,
+          "task": "ICBHI official-test flat4 Hard Hierarchy main readout",
+          "thresholds": {
+            "crackle": 0.5701518654823303,
+            "wheeze": 0.48591989278793335
+          },
+          "uar": 0.5206801458435726
+        },
+        "icbhi_flat4_bits_only_ablation": {
+          "average_score": 0.6039261591308611,
+          "class_collapse": false,
+          "confusion": [
+            [
+              1058,
+              228,
+              276,
+              17
+            ],
+            [
+              249,
+              368,
+              20,
+              12
+            ],
+            [
+              84,
+              28,
+              227,
+              46
+            ],
+            [
+              32,
+              17,
+              56,
+              38
+            ]
+          ],
+          "decoder": "Crackle/Wheeze bits only: 00 Normal, 10 Crackle, 01 Wheeze, 11 Both",
+          "harmonic_score": 0.5966875047053756,
+          "icbhi_score": 0.6039261591308611,
+          "macro_f1": 0.510808854222283,
+          "official_score": 0.6039261591308611,
+          "per_class": {
+            "both": {
+              "f1": 0.296875,
+              "precision": 0.336283185840708,
+              "recall": 0.26573426573426573,
+              "support": 143
+            },
+            "crackle": {
+              "f1": 0.5705426356589147,
+              "precision": 0.5741029641185648,
+              "recall": 0.5670261941448382,
+              "support": 649
+            },
+            "normal": {
+              "f1": 0.7048634243837442,
+              "precision": 0.7434996486296557,
+              "recall": 0.6700443318556049,
+              "support": 1579
+            },
+            "wheeze": {
+              "f1": 0.470954356846473,
+              "precision": 0.3920552677029361,
+              "recall": 0.5896103896103896,
+              "support": 385
+            }
+          },
+          "predicted_class_counts": [
+            1423,
+            641,
+            579,
+            113
+          ],
+          "rows": 2756,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.5378079864061173,
+          "specificity": 0.6700443318556049,
+          "task": "ICBHI official-test flat4 bits-only diagnostic",
+          "thresholds": {
+            "crackle": 0.5701518654823303,
+            "wheeze": 0.48591989278793335
+          },
+          "uar": 0.5231037953362746
+        },
+        "sprsound_cw_auroc": {
+          "mean_cw_auroc": 0.9672285101706266,
+          "per_attribute": {
+            "crackle": 0.9557134006018765,
+            "wheeze": 0.9787436197393768
+          },
+          "support": {
+            "crackle": {
+              "eligible": 1429,
+              "negative": 1345,
+              "positive": 84
+            },
+            "wheeze": {
+              "eligible": 1429,
+              "negative": 1123,
+              "positive": 306
+            }
+          }
+        },
+        "sprsound_inter_task1_1": {
+          "average_score": 0.9070150286731264,
+          "average_score_as": 0.9070150286731264,
+          "confusion": [
+            [
+              876,
+              164
+            ],
+            [
+              11,
+              378
+            ]
+          ],
+          "harmonic_score": 0.9023987442157071,
+          "harmonic_score_hs": 0.9023987442157071,
+          "icbhi_score": 0.9070150286731264,
+          "macro_f1": 0.8606076686266783,
+          "official_score": 0.9047068864444168,
+          "per_class": {
+            "abnormal": {
+              "f1": 0.8120300751879699,
+              "precision": 0.6974169741697417,
+              "recall": 0.9717223650385605,
+              "support": 389
+            },
+            "normal": {
+              "f1": 0.9091852620653866,
+              "precision": 0.9875986471251409,
+              "recall": 0.8423076923076923,
+              "support": 1040
+            }
+          },
+          "protocol": "official inter-subject test; 1429 respiratory events",
+          "rows": 1429,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.9717223650385605,
+          "specificity": 0.8423076923076923,
+          "task": "SPRSound BioCAS2022 Task1-1 Normal/Adventitious",
+          "task1_2_raw7": "not produced by the shared three-node head",
+          "uar": 0.9070150286731264
+        }
+      },
+      "selection_loss": 0.6537343207746744,
+      "sprsound_task1_1_official_score": 0.9047068864444168,
+      "status": "complete_lsaa_without_pafa_native_hf_kauh_terminal",
+      "test_access_counts": {
+        "icbhi_official_test": 21,
+        "sprsound_official_inter_test": 1
+      },
+      "test_access_order": "Each epoch: core validation predictions and threshold freeze, then label-free/scored ICBHI official test; after selected checkpoint: label-free SPRSound inter predictions, then SPR targets",
+      "training_config_reused_from": "PAFA_JH2_test_selected_seed42",
+      "updates": 6846,
+      "validation_thresholds_test_tuned": false
+    },
+    {
+      "best_only_checkpoint": false,
+      "changed_files": [
+        "baseline/pafa/joint_hierarchy_main_multiseed.py"
+      ],
+      "checkpoint_selection": "maximum ICBHI official test Hard Hierarchy Score; exact ties retain the earlier epoch",
+      "claim_boundary": "ICBHI-test-selected/non-clean main-method confirmation; SPRSound is selected-only terminal evidence; not a paper result",
+      "completed_training_epochs": 19,
+      "condition": "LSAA_without_PAFA_20260918_seed1",
+      "core_updates_per_epoch": 326,
+      "early_stopping": {
+        "early_stopped": true,
+        "monitor": "icbhi_official_test_score",
+        "no_improvement_epochs_at_stop": 10,
+        "patience": 10
+      },
+      "elapsed_minutes": 94.89163425013345,
+      "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic",
+      "external_evaluation": {
+        "checkpoint_selection": false,
+        "hf_cas_auroc": 0.8704384225375148,
+        "hf_cas_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1/external_hf_kauh/hf_cas_metrics.json",
+        "hf_cas_support": {
+          "negative": 296,
+          "positive": 661,
+          "support": 957
+        },
+        "hf_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1/external_hf_kauh/hf_metrics.json",
+        "kauh_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1/external_hf_kauh/kauh_metrics.json",
+        "kauh_patient_ba": 0.7672268907563026,
+        "kauh_patient_support": 86,
+        "status": "posthoc_external_evaluation_complete",
+        "threshold_tuning": false
+      },
+      "git_commit": false,
+      "hf_auxiliary": false,
+      "icbhi_official_score": 0.5967735513319197,
+      "kauh_evaluation": false,
+      "last_checkpoint_saved": true,
+      "main_method": "JH2 Hard Hierarchy",
+      "max_epochs": 50,
+      "outer_test_accessed": true,
+      "pafa_enabled": false,
+      "pcsl_gpal_criterion_called": false,
+      "seed": 1,
+      "selected_epoch": 9,
+      "selected_metrics": {
+        "icbhi_flat4": {
+          "average_score": 0.5967735513319197,
+          "class_collapse": false,
+          "confusion": [
+            [
+              1077,
+              292,
+              196,
+              14
+            ],
+            [
+              208,
+              420,
+              11,
+              10
+            ],
+            [
+              107,
+              52,
+              139,
+              87
+            ],
+            [
+              28,
+              32,
+              40,
+              43
+            ]
+          ],
+          "decoder": "Level1 Normal->Normal; Level1 Abnormal->Crackle/Wheeze/Both from shared validation thresholds; neither attribute over threshold->larger probability-minus-threshold margin; Crackle wins ties",
+          "harmonic_score": 0.5845801097923664,
+          "icbhi_score": 0.5967735513319197,
+          "macro_f1": 0.48742181725291805,
+          "official_score": 0.5967735513319197,
+          "per_class": {
+            "both": {
+              "f1": 0.2895622895622896,
+              "precision": 0.2792207792207792,
+              "recall": 0.3006993006993007,
+              "support": 143
+            },
+            "crackle": {
+              "f1": 0.5813148788927336,
+              "precision": 0.5276381909547738,
+              "recall": 0.6471494607087828,
+              "support": 649
+            },
+            "normal": {
+              "f1": 0.7182394131377126,
+              "precision": 0.7584507042253521,
+              "recall": 0.682077264091197,
+              "support": 1579
+            },
+            "wheeze": {
+              "f1": 0.36057068741893644,
+              "precision": 0.3601036269430052,
+              "recall": 0.36103896103896105,
+              "support": 385
+            }
+          },
+          "predicted_class_counts": [
+            1420,
+            796,
+            386,
+            154
+          ],
+          "protocol": "official recording split 60/40; 2756 respiratory cycles",
+          "rows": 2756,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.5114698385726423,
+          "specificity": 0.682077264091197,
+          "task": "ICBHI official-test flat4 Hard Hierarchy main readout",
+          "thresholds": {
+            "crackle": 0.16013464331626892,
+            "wheeze": 0.8626990914344788
+          },
+          "uar": 0.4977412466345604
+        },
+        "icbhi_flat4_bits_only_ablation": {
+          "average_score": 0.5943027189379726,
+          "class_collapse": false,
+          "confusion": [
+            [
+              1037,
+              352,
+              176,
+              14
+            ],
+            [
+              177,
+              451,
+              11,
+              10
+            ],
+            [
+              118,
+              48,
+              132,
+              87
+            ],
+            [
+              26,
+              35,
+              39,
+              43
+            ]
+          ],
+          "decoder": "Crackle/Wheeze bits only: 00 Normal, 10 Crackle, 01 Wheeze, 11 Both",
+          "harmonic_score": 0.5877420718758642,
+          "icbhi_score": 0.5943027189379726,
+          "macro_f1": 0.4846658689589347,
+          "official_score": 0.5943027189379726,
+          "per_class": {
+            "both": {
+              "f1": 0.2895622895622896,
+              "precision": 0.2792207792207792,
+              "recall": 0.3006993006993007,
+              "support": 143
+            },
+            "crackle": {
+              "f1": 0.5876221498371336,
+              "precision": 0.5090293453724605,
+              "recall": 0.6949152542372882,
+              "support": 649
+            },
+            "normal": {
+              "f1": 0.7061627511065713,
+              "precision": 0.7636229749631811,
+              "recall": 0.6567447751741609,
+              "support": 1579
+            },
+            "wheeze": {
+              "f1": 0.3553162853297443,
+              "precision": 0.3687150837988827,
+              "recall": 0.34285714285714286,
+              "support": 385
+            }
+          },
+          "predicted_class_counts": [
+            1358,
+            886,
+            358,
+            154
+          ],
+          "rows": 2756,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.5318606627017842,
+          "specificity": 0.6567447751741609,
+          "task": "ICBHI official-test flat4 bits-only diagnostic",
+          "thresholds": {
+            "crackle": 0.16013464331626892,
+            "wheeze": 0.8626990914344788
+          },
+          "uar": 0.4988041182419732
+        },
+        "sprsound_cw_auroc": {
+          "mean_cw_auroc": 0.9712895366629639,
+          "per_attribute": {
+            "crackle": 0.9640246061249779,
+            "wheeze": 0.9785544672009499
+          },
+          "support": {
+            "crackle": {
+              "eligible": 1429,
+              "negative": 1345,
+              "positive": 84
+            },
+            "wheeze": {
+              "eligible": 1429,
+              "negative": 1123,
+              "positive": 306
+            }
+          }
+        },
+        "sprsound_inter_task1_1": {
+          "average_score": 0.9145602630017797,
+          "average_score_as": 0.9145602630017797,
+          "confusion": [
+            [
+              881,
+              159
+            ],
+            [
+              7,
+              382
+            ]
+          ],
+          "harmonic_score": 0.909586493853287,
+          "harmonic_score_hs": 0.909586493853287,
+          "icbhi_score": 0.9145602630017797,
+          "macro_f1": 0.8677028956409227,
+          "official_score": 0.9120733784275334,
+          "per_class": {
+            "abnormal": {
+              "f1": 0.821505376344086,
+              "precision": 0.7060998151571165,
+              "recall": 0.9820051413881749,
+              "support": 389
+            },
+            "normal": {
+              "f1": 0.9139004149377593,
+              "precision": 0.9921171171171171,
+              "recall": 0.8471153846153846,
+              "support": 1040
+            }
+          },
+          "protocol": "official inter-subject test; 1429 respiratory events",
+          "rows": 1429,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.9820051413881749,
+          "specificity": 0.8471153846153846,
+          "task": "SPRSound BioCAS2022 Task1-1 Normal/Adventitious",
+          "task1_2_raw7": "not produced by the shared three-node head",
+          "uar": 0.9145602630017797
+        }
+      },
+      "selection_loss": 0.7158115915954113,
+      "sprsound_task1_1_official_score": 0.9120733784275334,
+      "status": "complete_lsaa_without_pafa_native_hf_kauh_terminal",
+      "test_access_counts": {
+        "icbhi_official_test": 19,
+        "sprsound_official_inter_test": 1
+      },
+      "test_access_order": "Each epoch: core validation predictions and threshold freeze, then label-free/scored ICBHI official test; after selected checkpoint: label-free SPRSound inter predictions, then SPR targets",
+      "training_config_reused_from": "PAFA_JH2_test_selected_seed42",
+      "updates": 6194,
+      "validation_thresholds_test_tuned": false
+    },
+    {
+      "best_only_checkpoint": false,
+      "changed_files": [
+        "baseline/pafa/joint_hierarchy_main_multiseed.py"
+      ],
+      "checkpoint_selection": "maximum ICBHI official test Hard Hierarchy Score; exact ties retain the earlier epoch",
+      "claim_boundary": "ICBHI-test-selected/non-clean main-method confirmation; SPRSound is selected-only terminal evidence; not a paper result",
+      "completed_training_epochs": 34,
+      "condition": "LSAA_without_PAFA_20260918_seed42",
+      "core_updates_per_epoch": 326,
+      "early_stopping": {
+        "early_stopped": true,
+        "monitor": "icbhi_official_test_score",
+        "no_improvement_epochs_at_stop": 10,
+        "patience": 10
+      },
+      "elapsed_minutes": 184.22988299368492,
+      "evidence_label": "LSAA_without_PAFA_icbhi-test-selected_multiseed_diagnostic",
+      "external_evaluation": {
+        "checkpoint_selection": false,
+        "hf_cas_auroc": 0.8827917365171526,
+        "hf_cas_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_42/external_hf_kauh/hf_cas_metrics.json",
+        "hf_cas_support": {
+          "negative": 296,
+          "positive": 661,
+          "support": 957
+        },
+        "hf_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_42/external_hf_kauh/hf_metrics.json",
+        "kauh_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_42/external_hf_kauh/kauh_metrics.json",
+        "kauh_patient_ba": 0.8047619047619048,
+        "kauh_patient_support": 86,
+        "status": "posthoc_external_evaluation_complete",
+        "threshold_tuning": false
+      },
+      "git_commit": false,
+      "hf_auxiliary": false,
+      "icbhi_official_score": 0.5676323108685956,
+      "kauh_evaluation": false,
+      "last_checkpoint_saved": true,
+      "main_method": "JH2 Hard Hierarchy",
+      "max_epochs": 50,
+      "outer_test_accessed": true,
+      "pafa_enabled": false,
+      "pcsl_gpal_criterion_called": false,
+      "seed": 42,
+      "selected_epoch": 24,
+      "selected_metrics": {
+        "icbhi_flat4": {
+          "average_score": 0.5676323108685956,
+          "class_collapse": false,
+          "confusion": [
+            [
+              1044,
+              346,
+              141,
+              48
+            ],
+            [
+              220,
+              404,
+              5,
+              20
+            ],
+            [
+              108,
+              58,
+              88,
+              131
+            ],
+            [
+              28,
+              34,
+              15,
+              66
+            ]
+          ],
+          "decoder": "Level1 Normal->Normal; Level1 Abnormal->Crackle/Wheeze/Both from shared validation thresholds; neither attribute over threshold->larger probability-minus-threshold margin; Crackle wins ties",
+          "harmonic_score": 0.5522160133088768,
+          "icbhi_score": 0.5676323108685956,
+          "macro_f1": 0.4609891138889702,
+          "official_score": 0.5676323108685956,
+          "per_class": {
+            "both": {
+              "f1": 0.3235294117647059,
+              "precision": 0.2490566037735849,
+              "recall": 0.46153846153846156,
+              "support": 143
+            },
+            "crackle": {
+              "f1": 0.5419181757209927,
+              "precision": 0.47980997624703087,
+              "recall": 0.6224961479198767,
+              "support": 649
+            },
+            "normal": {
+              "f1": 0.7009063444108762,
+              "precision": 0.7457142857142857,
+              "recall": 0.6611779607346422,
+              "support": 1579
+            },
+            "wheeze": {
+              "f1": 0.277602523659306,
+              "precision": 0.3534136546184739,
+              "recall": 0.22857142857142856,
+              "support": 385
+            }
+          },
+          "predicted_class_counts": [
+            1400,
+            842,
+            249,
+            265
+          ],
+          "protocol": "official recording split 60/40; 2756 respiratory cycles",
+          "rows": 2756,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.47408666100254887,
+          "specificity": 0.6611779607346422,
+          "task": "ICBHI official-test flat4 Hard Hierarchy main readout",
+          "thresholds": {
+            "crackle": 0.004038591869175434,
+            "wheeze": 0.31510335206985474
+          },
+          "uar": 0.49344599969110226
+        },
+        "icbhi_flat4_bits_only_ablation": {
+          "average_score": 0.5374439798480803,
+          "class_collapse": false,
+          "confusion": [
+            [
+              840,
+              538,
+              153,
+              48
+            ],
+            [
+              142,
+              482,
+              5,
+              20
+            ],
+            [
+              87,
+              76,
+              91,
+              131
+            ],
+            [
+              18,
+              43,
+              16,
+              66
+            ]
+          ],
+          "decoder": "Crackle/Wheeze bits only: 00 Normal, 10 Crackle, 01 Wheeze, 11 Both",
+          "harmonic_score": 0.5373884758224745,
+          "icbhi_score": 0.5374439798480803,
+          "macro_f1": 0.44320920982318224,
+          "official_score": 0.5374439798480803,
+          "per_class": {
+            "both": {
+              "f1": 0.3235294117647059,
+              "precision": 0.2490566037735849,
+              "recall": 0.46153846153846156,
+              "support": 143
+            },
+            "crackle": {
+              "f1": 0.5391498881431768,
+              "precision": 0.4231782265144864,
+              "recall": 0.7426810477657936,
+              "support": 649
+            },
+            "normal": {
+              "f1": 0.6301575393848462,
+              "precision": 0.7727690892364305,
+              "recall": 0.5319822672577581,
+              "support": 1579
+            },
+            "wheeze": {
+              "f1": 0.28,
+              "precision": 0.3433962264150943,
+              "recall": 0.23636363636363636,
+              "support": 385
+            }
+          },
+          "predicted_class_counts": [
+            1087,
+            1139,
+            265,
+            265
+          ],
+          "rows": 2756,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.5429056924384027,
+          "specificity": 0.5319822672577581,
+          "task": "ICBHI official-test flat4 bits-only diagnostic",
+          "thresholds": {
+            "crackle": 0.004038591869175434,
+            "wheeze": 0.31510335206985474
+          },
+          "uar": 0.4931413532314124
+        },
+        "sprsound_cw_auroc": {
+          "mean_cw_auroc": 0.9659451297856863,
+          "per_attribute": {
+            "crackle": 0.9551734820322181,
+            "wheeze": 0.9767167775391545
+          },
+          "support": {
+            "crackle": {
+              "eligible": 1429,
+              "negative": 1345,
+              "positive": 84
+            },
+            "wheeze": {
+              "eligible": 1429,
+              "negative": 1123,
+              "positive": 306
+            }
+          }
+        },
+        "sprsound_inter_task1_1": {
+          "average_score": 0.9156589875420209,
+          "average_score_as": 0.9156589875420209,
+          "confusion": [
+            [
+              902,
+              138
+            ],
+            [
+              14,
+              375
+            ]
+          ],
+          "harmonic_score": 0.913105801494983,
+          "harmonic_score_hs": 0.913105801494983,
+          "icbhi_score": 0.9156589875420209,
+          "macro_f1": 0.8768879880656029,
+          "official_score": 0.9143823945185019,
+          "per_class": {
+            "abnormal": {
+              "f1": 0.8314855875831486,
+              "precision": 0.7309941520467836,
+              "recall": 0.9640102827763496,
+              "support": 389
+            },
+            "normal": {
+              "f1": 0.9222903885480572,
+              "precision": 0.9847161572052402,
+              "recall": 0.8673076923076923,
+              "support": 1040
+            }
+          },
+          "protocol": "official inter-subject test; 1429 respiratory events",
+          "rows": 1429,
+          "scale": "fraction_0_to_1",
+          "sensitivity": 0.9640102827763496,
+          "specificity": 0.8673076923076923,
+          "task": "SPRSound BioCAS2022 Task1-1 Normal/Adventitious",
+          "task1_2_raw7": "not produced by the shared three-node head",
+          "uar": 0.9156589875420209
+        }
+      },
+      "selection_loss": 1.1946699917316437,
+      "sprsound_task1_1_official_score": 0.9143823945185019,
+      "status": "complete_lsaa_without_pafa_native_hf_kauh_terminal",
+      "test_access_counts": {
+        "icbhi_official_test": 34,
+        "sprsound_official_inter_test": 1
+      },
+      "test_access_order": "Each epoch: core validation predictions and threshold freeze, then label-free/scored ICBHI official test; after selected checkpoint: label-free SPRSound inter predictions, then SPR targets",
+      "training_config_reused_from": "PAFA_JH2_test_selected_seed42",
+      "updates": 11084,
+      "validation_thresholds_test_tuned": false
+    }
+  ],
+  "sample_sd_ddof": 1,
+  "seeds": [
+    0,
+    1,
+    42
+  ],
+  "status": "complete_lsaa_without_pafa_three_seed_attribution",
+  "variant": "lsaa_without_pafa"
+}

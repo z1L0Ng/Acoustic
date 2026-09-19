@@ -1,0 +1,69 @@
+{
+  "checkpoint": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/native_only/seed_1/best_checkpoint.pt",
+  "hf_cas": {
+    "hf_cas_auroc": 0.774108639653269,
+    "negative": 296,
+    "positive": 661,
+    "score_source": "ICBHI native softmax P(Wheeze)+P(Both), maximum over three windows",
+    "semantic_limit": "fixed ranking proxy for CAS union; not a trained CAS/Rhonchi/Stridor head",
+    "support": 957
+  },
+  "kauh_patient": {
+    "average_score": 0.8207282913165266,
+    "confusion": [
+      [
+        30,
+        5
+      ],
+      [
+        11,
+        40
+      ]
+    ],
+    "harmonic_score": 0.8191126279863481,
+    "icbhi_score": 0.8207282913165266,
+    "kauh_patient_ba": 0.8207282913165266,
+    "macro_f1": 0.8114035087719298,
+    "per_class": {
+      "abnormal": {
+        "f1": 0.8333333333333334,
+        "precision": 0.8888888888888888,
+        "recall": 0.7843137254901961,
+        "support": 51
+      },
+      "normal": {
+        "f1": 0.7894736842105263,
+        "precision": 0.7317073170731707,
+        "recall": 0.8571428571428571,
+        "support": 35
+      }
+    },
+    "rows": 86,
+    "scale": "fraction_0_to_1",
+    "score_source": "mean over B/D/E of 1-P(Normal) from ICBHI native softmax",
+    "sensitivity": 0.7843137254901961,
+    "specificity": 0.8571428571428571,
+    "threshold": 0.5,
+    "tie_policy": "score == 0.5 predicts Normal",
+    "uar": 0.8207282913165266
+  },
+  "outputs": {
+    "hf_recording_label_free": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/native_only_external_posthoc/seed_1/hf_recording_predictions_label_free.npz",
+    "hf_recording_scored": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/native_only_external_posthoc/seed_1/hf_recording_predictions_scored.npz",
+    "hf_windows_label_free": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/native_only_external_posthoc/seed_1/hf_window_predictions_label_free.npz",
+    "kauh_patients_label_free": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/native_only_external_posthoc/seed_1/kauh_patient_predictions_label_free.npz",
+    "kauh_patients_scored": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/native_only_external_posthoc/seed_1/kauh_patient_predictions_scored.npz",
+    "kauh_views_label_free": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/native_only_external_posthoc/seed_1/kauh_view_predictions_label_free.npz",
+    "kauh_views_scored": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/native_only_external_posthoc/seed_1/kauh_view_predictions_scored.npz"
+  },
+  "seed": 1,
+  "selected_epoch": 15,
+  "source_run": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/native_only/seed_1",
+  "status": "complete_native_only_fixed_head_external_posthoc",
+  "zero_target_boundary": {
+    "labels_loaded_after_label_free_prediction_write": true,
+    "target_selection": false,
+    "target_threshold_fit": false,
+    "target_training": false
+  }
+}

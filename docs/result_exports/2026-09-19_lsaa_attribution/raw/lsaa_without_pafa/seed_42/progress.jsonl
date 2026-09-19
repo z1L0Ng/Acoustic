@@ -1,0 +1,144 @@
+{"elapsed_minutes": 1.2152246284026964, "epoch": 1, "epoch_batch": 100, "epoch_batches": 326, "update": 100}
+{"elapsed_minutes": 2.4375945004013677, "epoch": 1, "epoch_batch": 200, "epoch_batches": 326, "update": 200}
+{"elapsed_minutes": 3.6662359150359407, "epoch": 1, "epoch_batch": 300, "epoch_batches": 326, "update": 300}
+{"current_best_epoch": 1, "current_best_icbhi_official_score": 0.49373090848826706, "early_stopping_no_improvement_epochs": 0, "elapsed_minutes": 5.018032276533389, "epoch": 1, "epoch_complete": true, "icbhi_official_score": 0.49373090848826706, "seed": 42, "update": 326}
+{"elapsed_minutes": 5.936091396266905, "epoch": 2, "epoch_batch": 74, "epoch_batches": 326, "update": 400}
+{"elapsed_minutes": 7.173980457518095, "epoch": 2, "epoch_batch": 174, "epoch_batches": 326, "update": 500}
+{"elapsed_minutes": 8.400767366417373, "epoch": 2, "epoch_batch": 274, "epoch_batches": 326, "update": 600}
+{"current_best_epoch": 2, "current_best_icbhi_official_score": 0.5162145685486497, "early_stopping_no_improvement_epochs": 0, "elapsed_minutes": 9.994261192301444, "epoch": 2, "epoch_complete": true, "icbhi_official_score": 0.5162145685486497, "seed": 42, "update": 652}
+{"elapsed_minutes": 10.605156326984677, "epoch": 3, "epoch_batch": 48, "epoch_batches": 326, "update": 700}
+{"elapsed_minutes": 11.83005193596861, "epoch": 3, "epoch_batch": 148, "epoch_batches": 326, "update": 800}
+{"elapsed_minutes": 13.063326594633205, "epoch": 3, "epoch_batch": 248, "epoch_batches": 326, "update": 900}
+{"current_best_epoch": 2, "current_best_icbhi_official_score": 0.5162145685486497, "early_stopping_no_improvement_epochs": 1, "elapsed_minutes": 14.988695849319145, "epoch": 3, "epoch_complete": true, "icbhi_official_score": 0.49858459829872, "seed": 42, "update": 978}
+{"elapsed_minutes": 15.27092530108445, "epoch": 4, "epoch_batch": 22, "epoch_batches": 326, "update": 1000}
+{"elapsed_minutes": 16.50562136458466, "epoch": 4, "epoch_batch": 122, "epoch_batches": 326, "update": 1100}
+{"elapsed_minutes": 17.746148566668854, "epoch": 4, "epoch_batch": 222, "epoch_batches": 326, "update": 1200}
+{"elapsed_minutes": 18.967378509153303, "epoch": 4, "epoch_batch": 322, "epoch_batches": 326, "update": 1300}
+{"current_best_epoch": 4, "current_best_icbhi_official_score": 0.5294283025456783, "early_stopping_no_improvement_epochs": 0, "elapsed_minutes": 19.96383219443572, "epoch": 4, "epoch_complete": true, "icbhi_official_score": 0.5294283025456783, "seed": 42, "update": 1304}
+{"elapsed_minutes": 21.17598319836737, "epoch": 5, "epoch_batch": 96, "epoch_batches": 326, "update": 1400}
+{"elapsed_minutes": 22.410124076534217, "epoch": 5, "epoch_batch": 196, "epoch_batches": 326, "update": 1500}
+{"elapsed_minutes": 23.647486735736795, "epoch": 5, "epoch_batch": 296, "epoch_batches": 326, "update": 1600}
+{"current_best_epoch": 4, "current_best_icbhi_official_score": 0.5294283025456783, "early_stopping_no_improvement_epochs": 1, "elapsed_minutes": 24.969525214102273, "epoch": 5, "epoch_complete": true, "icbhi_official_score": 0.5275205638146812, "seed": 42, "update": 1630}
+{"elapsed_minutes": 25.834570319900134, "epoch": 6, "epoch_batch": 70, "epoch_batches": 326, "update": 1700}
+{"elapsed_minutes": 27.068015208502764, "epoch": 6, "epoch_batch": 170, "epoch_batches": 326, "update": 1800}
+{"elapsed_minutes": 28.298353102519954, "epoch": 6, "epoch_batch": 270, "epoch_batches": 326, "update": 1900}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5448710050078478, "early_stopping_no_improvement_epochs": 0, "elapsed_minutes": 29.953614606902313, "epoch": 6, "epoch_complete": true, "icbhi_official_score": 0.5448710050078478, "seed": 42, "update": 1956}
+{"elapsed_minutes": 30.510957123168435, "epoch": 7, "epoch_batch": 44, "epoch_batches": 326, "update": 2000}
+{"elapsed_minutes": 31.73626043428667, "epoch": 7, "epoch_batch": 144, "epoch_batches": 326, "update": 2100}
+{"elapsed_minutes": 33.21456913690005, "epoch": 7, "epoch_batch": 244, "epoch_batches": 326, "update": 2200}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5448710050078478, "early_stopping_no_improvement_epochs": 1, "elapsed_minutes": 35.873798158566935, "epoch": 7, "epoch_complete": true, "icbhi_official_score": 0.5421470091467073, "seed": 42, "update": 2282}
+{"elapsed_minutes": 36.17604750923347, "epoch": 8, "epoch_batch": 18, "epoch_batches": 326, "update": 2300}
+{"elapsed_minutes": 37.813265914920095, "epoch": 8, "epoch_batch": 118, "epoch_batches": 326, "update": 2400}
+{"elapsed_minutes": 39.43823994349999, "epoch": 8, "epoch_batch": 218, "epoch_batches": 326, "update": 2500}
+{"elapsed_minutes": 41.07538443423497, "epoch": 8, "epoch_batch": 318, "epoch_batches": 326, "update": 2600}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5448710050078478, "early_stopping_no_improvement_epochs": 2, "elapsed_minutes": 42.502812364452986, "epoch": 8, "epoch_complete": true, "icbhi_official_score": 0.5220359831109567, "seed": 42, "update": 2608}
+{"elapsed_minutes": 43.99696391050238, "epoch": 9, "epoch_batch": 92, "epoch_batches": 326, "update": 2700}
+{"elapsed_minutes": 45.63059394846981, "epoch": 9, "epoch_batch": 192, "epoch_batches": 326, "update": 2800}
+{"elapsed_minutes": 47.25452898805185, "epoch": 9, "epoch_batch": 292, "epoch_batches": 326, "update": 2900}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5448710050078478, "early_stopping_no_improvement_epochs": 3, "elapsed_minutes": 49.13295704368502, "epoch": 9, "epoch_complete": true, "icbhi_official_score": 0.5119508760639726, "seed": 42, "update": 2934}
+{"elapsed_minutes": 50.20543265098628, "epoch": 10, "epoch_batch": 66, "epoch_batches": 326, "update": 3000}
+{"elapsed_minutes": 51.82834174390106, "epoch": 10, "epoch_batch": 166, "epoch_batches": 326, "update": 3100}
+{"elapsed_minutes": 53.44970229538546, "epoch": 10, "epoch_batch": 266, "epoch_batches": 326, "update": 3200}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5448710050078478, "early_stopping_no_improvement_epochs": 4, "elapsed_minutes": 55.73818321471723, "epoch": 10, "epoch_complete": true, "icbhi_official_score": 0.5236873299352214, "seed": 42, "update": 3260}
+{"elapsed_minutes": 56.397913758817594, "epoch": 11, "epoch_batch": 40, "epoch_batches": 326, "update": 3300}
+{"elapsed_minutes": 58.04296960458547, "epoch": 11, "epoch_batch": 140, "epoch_batches": 326, "update": 3400}
+{"elapsed_minutes": 59.68017188200029, "epoch": 11, "epoch_batch": 240, "epoch_batches": 326, "update": 3500}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5448710050078478, "early_stopping_no_improvement_epochs": 5, "elapsed_minutes": 62.368289094468736, "epoch": 11, "epoch_complete": true, "icbhi_official_score": 0.5213381020972481, "seed": 42, "update": 3586}
+{"elapsed_minutes": 62.60420874535339, "epoch": 12, "epoch_batch": 14, "epoch_batches": 326, "update": 3600}
+{"elapsed_minutes": 64.23728868750234, "epoch": 12, "epoch_batch": 114, "epoch_batches": 326, "update": 3700}
+{"elapsed_minutes": 65.87608260925238, "epoch": 12, "epoch_batch": 214, "epoch_batches": 326, "update": 3800}
+{"elapsed_minutes": 67.50898731636893, "epoch": 12, "epoch_batch": 314, "epoch_batches": 326, "update": 3900}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5448710050078478, "early_stopping_no_improvement_epochs": 6, "elapsed_minutes": 69.00712991273419, "epoch": 12, "epoch_complete": true, "icbhi_official_score": 0.4980314589910158, "seed": 42, "update": 3912}
+{"elapsed_minutes": 70.44419754665189, "epoch": 13, "epoch_batch": 88, "epoch_batches": 326, "update": 4000}
+{"elapsed_minutes": 72.0861549851019, "epoch": 13, "epoch_batch": 188, "epoch_batches": 326, "update": 4100}
+{"elapsed_minutes": 73.71595274048546, "epoch": 13, "epoch_batch": 288, "epoch_batches": 326, "update": 4200}
+{"current_best_epoch": 6, "current_best_icbhi_official_score": 0.5448710050078478, "early_stopping_no_improvement_epochs": 7, "elapsed_minutes": 75.6235432640533, "epoch": 13, "epoch_complete": true, "icbhi_official_score": 0.5440671235626046, "seed": 42, "update": 4238}
+{"elapsed_minutes": 76.64463836795184, "epoch": 14, "epoch_batch": 62, "epoch_batches": 326, "update": 4300}
+{"elapsed_minutes": 78.28558804159984, "epoch": 14, "epoch_batch": 162, "epoch_batches": 326, "update": 4400}
+{"elapsed_minutes": 79.93812856130147, "epoch": 14, "epoch_batch": 262, "epoch_batches": 326, "update": 4500}
+{"current_best_epoch": 14, "current_best_icbhi_official_score": 0.551716911050572, "early_stopping_no_improvement_epochs": 0, "elapsed_minutes": 82.2560609691854, "epoch": 14, "epoch_complete": true, "icbhi_official_score": 0.551716911050572, "seed": 42, "update": 4564}
+{"elapsed_minutes": 82.85687239008645, "epoch": 15, "epoch_batch": 36, "epoch_batches": 326, "update": 4600}
+{"elapsed_minutes": 84.48652366128518, "epoch": 15, "epoch_batch": 136, "epoch_batches": 326, "update": 4700}
+{"elapsed_minutes": 86.11777321810368, "epoch": 15, "epoch_batch": 236, "epoch_batches": 326, "update": 4800}
+{"current_best_epoch": 14, "current_best_icbhi_official_score": 0.551716911050572, "early_stopping_no_improvement_epochs": 1, "elapsed_minutes": 88.88107959548555, "epoch": 15, "epoch_complete": true, "icbhi_official_score": 0.4997274658955718, "seed": 42, "update": 4890}
+{"elapsed_minutes": 89.05670675786678, "epoch": 16, "epoch_batch": 10, "epoch_batches": 326, "update": 4900}
+{"elapsed_minutes": 90.6767320914194, "epoch": 16, "epoch_batch": 110, "epoch_batches": 326, "update": 5000}
+{"elapsed_minutes": 92.11187979183548, "epoch": 16, "epoch_batch": 210, "epoch_batches": 326, "update": 5100}
+{"elapsed_minutes": 93.34044076678498, "epoch": 16, "epoch_batch": 310, "epoch_batches": 326, "update": 5200}
+{"current_best_epoch": 14, "current_best_icbhi_official_score": 0.551716911050572, "early_stopping_no_improvement_epochs": 2, "elapsed_minutes": 94.48240297468534, "epoch": 16, "epoch_complete": true, "icbhi_official_score": 0.497081490656627, "seed": 42, "update": 5216}
+{"elapsed_minutes": 95.52503731215062, "epoch": 17, "epoch_batch": 84, "epoch_batches": 326, "update": 5300}
+{"elapsed_minutes": 96.7519477762864, "epoch": 17, "epoch_batch": 184, "epoch_batches": 326, "update": 5400}
+{"elapsed_minutes": 97.98146105763347, "epoch": 17, "epoch_batch": 284, "epoch_batches": 326, "update": 5500}
+{"current_best_epoch": 14, "current_best_icbhi_official_score": 0.551716911050572, "early_stopping_no_improvement_epochs": 3, "elapsed_minutes": 99.42832005488454, "epoch": 17, "epoch_complete": true, "icbhi_official_score": 0.534430231538303, "seed": 42, "update": 5542}
+{"elapsed_minutes": 100.1587295767696, "epoch": 18, "epoch_batch": 58, "epoch_batches": 326, "update": 5600}
+{"elapsed_minutes": 101.3876786290862, "epoch": 18, "epoch_batch": 158, "epoch_batches": 326, "update": 5700}
+{"elapsed_minutes": 102.61336814083624, "epoch": 18, "epoch_batch": 258, "epoch_batches": 326, "update": 5800}
+{"current_best_epoch": 14, "current_best_icbhi_official_score": 0.551716911050572, "early_stopping_no_improvement_epochs": 4, "elapsed_minutes": 104.3872867970184, "epoch": 18, "epoch_complete": true, "icbhi_official_score": 0.5512843001523285, "seed": 42, "update": 5868}
+{"elapsed_minutes": 104.78970574545286, "epoch": 19, "epoch_batch": 32, "epoch_batches": 326, "update": 5900}
+{"elapsed_minutes": 106.02150781623398, "epoch": 19, "epoch_batch": 132, "epoch_batches": 326, "update": 6000}
+{"elapsed_minutes": 107.26323547458354, "epoch": 19, "epoch_batch": 232, "epoch_batches": 326, "update": 6100}
+{"current_best_epoch": 19, "current_best_icbhi_official_score": 0.555331687187884, "early_stopping_no_improvement_epochs": 0, "elapsed_minutes": 109.34562779281987, "epoch": 19, "epoch_complete": true, "icbhi_official_score": 0.555331687187884, "seed": 42, "update": 6194}
+{"elapsed_minutes": 109.43646353451769, "epoch": 20, "epoch_batch": 6, "epoch_batches": 326, "update": 6200}
+{"elapsed_minutes": 110.66699434460219, "epoch": 20, "epoch_batch": 106, "epoch_batches": 326, "update": 6300}
+{"elapsed_minutes": 111.8865684390689, "epoch": 20, "epoch_batch": 206, "epoch_batches": 326, "update": 6400}
+{"elapsed_minutes": 113.12228232500298, "epoch": 20, "epoch_batch": 306, "epoch_batches": 326, "update": 6500}
+{"current_best_epoch": 20, "current_best_icbhi_official_score": 0.5621108721467993, "early_stopping_no_improvement_epochs": 0, "elapsed_minutes": 114.29803552556938, "epoch": 20, "epoch_complete": true, "icbhi_official_score": 0.5621108721467993, "seed": 42, "update": 6520}
+{"elapsed_minutes": 115.30690663398322, "epoch": 21, "epoch_batch": 80, "epoch_batches": 326, "update": 6600}
+{"elapsed_minutes": 116.54660664618326, "epoch": 21, "epoch_batch": 180, "epoch_batches": 326, "update": 6700}
+{"elapsed_minutes": 117.77645417316816, "epoch": 21, "epoch_batch": 280, "epoch_batches": 326, "update": 6800}
+{"current_best_epoch": 20, "current_best_icbhi_official_score": 0.5621108721467993, "early_stopping_no_improvement_epochs": 1, "elapsed_minutes": 119.28116391576671, "epoch": 21, "epoch_complete": true, "icbhi_official_score": 0.5394822013437841, "seed": 42, "update": 6846}
+{"elapsed_minutes": 119.9443332832035, "epoch": 22, "epoch_batch": 54, "epoch_batches": 326, "update": 6900}
+{"elapsed_minutes": 121.1828486968026, "epoch": 22, "epoch_batch": 154, "epoch_batches": 326, "update": 7000}
+{"elapsed_minutes": 122.41243575752014, "epoch": 22, "epoch_batch": 254, "epoch_batches": 326, "update": 7100}
+{"current_best_epoch": 20, "current_best_icbhi_official_score": 0.5621108721467993, "early_stopping_no_improvement_epochs": 2, "elapsed_minutes": 124.2265129439688, "epoch": 22, "epoch_complete": true, "icbhi_official_score": 0.5381620386089084, "seed": 42, "update": 7172}
+{"elapsed_minutes": 124.58288258720034, "epoch": 23, "epoch_batch": 28, "epoch_batches": 326, "update": 7200}
+{"elapsed_minutes": 125.80752804125271, "epoch": 23, "epoch_batch": 128, "epoch_batches": 326, "update": 7300}
+{"elapsed_minutes": 127.03899981245243, "epoch": 23, "epoch_batch": 228, "epoch_batches": 326, "update": 7400}
+{"current_best_epoch": 20, "current_best_icbhi_official_score": 0.5621108721467993, "early_stopping_no_improvement_epochs": 3, "elapsed_minutes": 129.19772486852017, "epoch": 23, "epoch_complete": true, "icbhi_official_score": 0.5426108282938289, "seed": 42, "update": 7498}
+{"elapsed_minutes": 129.22977831188666, "epoch": 24, "epoch_batch": 2, "epoch_batches": 326, "update": 7500}
+{"elapsed_minutes": 130.46668826370345, "epoch": 24, "epoch_batch": 102, "epoch_batches": 326, "update": 7600}
+{"elapsed_minutes": 131.70052601123461, "epoch": 24, "epoch_batch": 202, "epoch_batches": 326, "update": 7700}
+{"elapsed_minutes": 132.93769653225317, "epoch": 24, "epoch_batch": 302, "epoch_batches": 326, "update": 7800}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_no_improvement_epochs": 0, "elapsed_minutes": 134.16853759726897, "epoch": 24, "epoch_complete": true, "icbhi_official_score": 0.5676323108685956, "seed": 42, "update": 7824}
+{"elapsed_minutes": 135.1339408103687, "epoch": 25, "epoch_batch": 76, "epoch_batches": 326, "update": 7900}
+{"elapsed_minutes": 136.37292097440223, "epoch": 25, "epoch_batch": 176, "epoch_batches": 326, "update": 8000}
+{"elapsed_minutes": 137.5998520204836, "epoch": 25, "epoch_batch": 276, "epoch_batches": 326, "update": 8100}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_no_improvement_epochs": 1, "elapsed_minutes": 139.15114570848334, "epoch": 25, "epoch_complete": true, "icbhi_official_score": 0.5459390804220432, "seed": 42, "update": 8150}
+{"elapsed_minutes": 139.76623310860015, "epoch": 26, "epoch_batch": 50, "epoch_batches": 326, "update": 8200}
+{"elapsed_minutes": 141.00522877731905, "epoch": 26, "epoch_batch": 150, "epoch_batches": 326, "update": 8300}
+{"elapsed_minutes": 142.26698459273516, "epoch": 26, "epoch_batch": 250, "epoch_batches": 326, "update": 8400}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_no_improvement_epochs": 2, "elapsed_minutes": 144.1325971632342, "epoch": 26, "epoch_complete": true, "icbhi_official_score": 0.5415293010482205, "seed": 42, "update": 8476}
+{"elapsed_minutes": 144.43509539485288, "epoch": 27, "epoch_batch": 24, "epoch_batches": 326, "update": 8500}
+{"elapsed_minutes": 145.662495779867, "epoch": 27, "epoch_batch": 124, "epoch_batches": 326, "update": 8600}
+{"elapsed_minutes": 146.88366522496798, "epoch": 27, "epoch_batch": 224, "epoch_batches": 326, "update": 8700}
+{"elapsed_minutes": 148.13088520141707, "epoch": 27, "epoch_batch": 324, "epoch_batches": 326, "update": 8800}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_no_improvement_epochs": 3, "elapsed_minutes": 149.0984329066666, "epoch": 27, "epoch_complete": true, "icbhi_official_score": 0.5542813681911538, "seed": 42, "update": 8802}
+{"elapsed_minutes": 150.31658823553394, "epoch": 28, "epoch_batch": 98, "epoch_batches": 326, "update": 8900}
+{"elapsed_minutes": 151.53623220918624, "epoch": 28, "epoch_batch": 198, "epoch_batches": 326, "update": 9000}
+{"elapsed_minutes": 152.76474754778513, "epoch": 28, "epoch_batch": 298, "epoch_batches": 326, "update": 9100}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_no_improvement_epochs": 4, "elapsed_minutes": 154.05640481338682, "epoch": 28, "epoch_complete": true, "icbhi_official_score": 0.5637175588907728, "seed": 42, "update": 9128}
+{"elapsed_minutes": 154.9544865185201, "epoch": 29, "epoch_batch": 72, "epoch_batches": 326, "update": 9200}
+{"elapsed_minutes": 156.20666108449998, "epoch": 29, "epoch_batch": 172, "epoch_batches": 326, "update": 9300}
+{"elapsed_minutes": 157.448300290651, "epoch": 29, "epoch_batch": 272, "epoch_batches": 326, "update": 9400}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_no_improvement_epochs": 5, "elapsed_minutes": 159.0609183003505, "epoch": 29, "epoch_complete": true, "icbhi_official_score": 0.5537015942572517, "seed": 42, "update": 9454}
+{"elapsed_minutes": 159.63999626186754, "epoch": 30, "epoch_batch": 46, "epoch_batches": 326, "update": 9500}
+{"elapsed_minutes": 160.8772351618507, "epoch": 30, "epoch_batch": 146, "epoch_batches": 326, "update": 9600}
+{"elapsed_minutes": 162.10577029853593, "epoch": 30, "epoch_batch": 246, "epoch_batches": 326, "update": 9700}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_no_improvement_epochs": 6, "elapsed_minutes": 164.0335011134351, "epoch": 30, "epoch_complete": true, "icbhi_official_score": 0.5441863067889241, "seed": 42, "update": 9780}
+{"elapsed_minutes": 164.29157573253616, "epoch": 31, "epoch_batch": 20, "epoch_batches": 326, "update": 9800}
+{"elapsed_minutes": 165.52248334071678, "epoch": 31, "epoch_batch": 120, "epoch_batches": 326, "update": 9900}
+{"elapsed_minutes": 166.76136313567017, "epoch": 31, "epoch_batch": 220, "epoch_batches": 326, "update": 10000}
+{"elapsed_minutes": 167.99030375185345, "epoch": 31, "epoch_batch": 320, "epoch_batches": 326, "update": 10100}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_no_improvement_epochs": 7, "elapsed_minutes": 168.9989904809355, "epoch": 31, "epoch_complete": true, "icbhi_official_score": 0.5567600026473204, "seed": 42, "update": 10106}
+{"elapsed_minutes": 170.17909595325278, "epoch": 32, "epoch_batch": 94, "epoch_batches": 326, "update": 10200}
+{"elapsed_minutes": 171.41272690210025, "epoch": 32, "epoch_batch": 194, "epoch_batches": 326, "update": 10300}
+{"elapsed_minutes": 172.64226304163458, "epoch": 32, "epoch_batch": 294, "epoch_batches": 326, "update": 10400}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_no_improvement_epochs": 8, "elapsed_minutes": 173.97902916948468, "epoch": 32, "epoch_complete": true, "icbhi_official_score": 0.5452288237234346, "seed": 42, "update": 10432}
+{"elapsed_minutes": 174.81899276973368, "epoch": 33, "epoch_batch": 68, "epoch_batches": 326, "update": 10500}
+{"elapsed_minutes": 176.06220126958408, "epoch": 33, "epoch_batch": 168, "epoch_batches": 326, "update": 10600}
+{"elapsed_minutes": 177.3034119402524, "epoch": 33, "epoch_batch": 268, "epoch_batches": 326, "update": 10700}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_no_improvement_epochs": 9, "elapsed_minutes": 178.9463360941348, "epoch": 33, "epoch_complete": true, "icbhi_official_score": 0.5351805746945224, "seed": 42, "update": 10758}
+{"elapsed_minutes": 179.4833495860842, "epoch": 34, "epoch_batch": 42, "epoch_batches": 326, "update": 10800}
+{"elapsed_minutes": 180.72431849006873, "epoch": 34, "epoch_batch": 142, "epoch_batches": 326, "update": 10900}
+{"elapsed_minutes": 181.96465565778394, "epoch": 34, "epoch_batch": 242, "epoch_batches": 326, "update": 11000}
+{"current_best_epoch": 24, "current_best_icbhi_official_score": 0.5676323108685956, "early_stopping_no_improvement_epochs": 10, "elapsed_minutes": 183.95017819866771, "epoch": 34, "epoch_complete": true, "icbhi_official_score": 0.5451050668744347, "seed": 42, "update": 11084}

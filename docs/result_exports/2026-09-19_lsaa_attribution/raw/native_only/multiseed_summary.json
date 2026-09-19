@@ -1,0 +1,442 @@
+{
+  "evidence_boundary": "test-selected three-seed attribution diagnostic",
+  "external": {
+    "reason": "C/W heads receive no supervision; no HF/readout is reported",
+    "status": "not_applicable"
+  },
+  "metrics": {
+    "icbhi_score": {
+      "mean": 0.6386941213165075,
+      "n": 3,
+      "sample_sd": 0.014270712837837483,
+      "values": [
+        0.6487342095676958,
+        0.6449900268121904,
+        0.6223581275696362
+      ]
+    },
+    "spr_official_score": {
+      "mean": 0.8892879782704822,
+      "n": 3,
+      "sample_sd": 0.03356062095556332,
+      "values": [
+        0.8909074283814599,
+        0.8549469497072779,
+        0.922009556722709
+      ]
+    }
+  },
+  "n": 3,
+  "per_seed": [
+    {
+      "completed_epochs": 33,
+      "elapsed_minutes": 125.45173411399979,
+      "seed": 0,
+      "selected_epoch": 23,
+      "selection_dataset": "icbhi",
+      "status": "complete_test_selected_benchmark_control",
+      "terminal": {
+        "attribute_metrics": {
+          "reason": "explicit C/W supervision is disabled",
+          "status": "not_applicable"
+        },
+        "evidence_boundary": "test-selected benchmark control; not clean causal evidence",
+        "hf": {
+          "reason": "no supervised cross-dataset attribute readout exists",
+          "status": "not_applicable"
+        },
+        "other_target_access": "after source-native checkpoint and thresholds were frozen",
+        "per_native_task": {
+          "icbhi": {
+            "average_score": 0.6487342095676958,
+            "confusion": [
+              [
+                1335,
+                122,
+                104,
+                18
+              ],
+              [
+                320,
+                301,
+                18,
+                10
+              ],
+              [
+                121,
+                27,
+                192,
+                45
+              ],
+              [
+                30,
+                17,
+                57,
+                39
+              ]
+            ],
+            "harmonic_score": 0.5890708129935309,
+            "icbhi_score": 0.6487342095676958,
+            "macro_f1": 0.5355048467823462,
+            "per_class": {
+              "both": {
+                "f1": 0.3058823529411765,
+                "precision": 0.3482142857142857,
+                "recall": 0.2727272727272727,
+                "support": 143
+              },
+              "crackle": {
+                "f1": 0.5394265232974911,
+                "precision": 0.6445396145610278,
+                "recall": 0.4637904468412943,
+                "support": 649
+              },
+              "normal": {
+                "f1": 0.7887740029542097,
+                "precision": 0.739202657807309,
+                "recall": 0.8454718176060798,
+                "support": 1579
+              },
+              "wheeze": {
+                "f1": 0.5079365079365079,
+                "precision": 0.5175202156334232,
+                "recall": 0.4987012987012987,
+                "support": 385
+              }
+            },
+            "rows": 2756,
+            "scale": "fraction_0_to_1",
+            "sensitivity": 0.4519966015293118,
+            "specificity": 0.8454718176060798,
+            "uar": 0.5201727089689864
+          },
+          "sprsound": {
+            "average_score": 0.8946818766066837,
+            "confusion": [
+              [
+                845,
+                195
+              ],
+              [
+                9,
+                380
+              ]
+            ],
+            "harmonic_score": 0.887132980156236,
+            "icbhi_score": 0.8946818766066837,
+            "macro_f1": 0.8403365947061479,
+            "official_score": 0.8909074283814599,
+            "per_class": {
+              "abnormal": {
+                "f1": 0.7883817427385892,
+                "precision": 0.6608695652173913,
+                "recall": 0.9768637532133676,
+                "support": 389
+              },
+              "normal": {
+                "f1": 0.8922914466737064,
+                "precision": 0.9894613583138173,
+                "recall": 0.8125,
+                "support": 1040
+              }
+            },
+            "rows": 1429,
+            "scale": "fraction_0_to_1",
+            "sensitivity": 0.9768637532133676,
+            "specificity": 0.8125,
+            "uar": 0.8946818766066837
+          }
+        },
+        "seed": 0,
+        "selected_epoch": 23,
+        "selection_dataset": "icbhi",
+        "selection_score": 0.6487342095676958,
+        "spr_cw": {
+          "reason": "C/W heads were retained for initialization parity but received no supervision",
+          "status": "not_applicable"
+        },
+        "status": "benchmark_control_terminal_complete",
+        "thresholds": {},
+        "variant": "native_only"
+      },
+      "updates": 10758,
+      "variant": "native_only"
+    },
+    {
+      "completed_epochs": 25,
+      "elapsed_minutes": 152.50480106381778,
+      "seed": 1,
+      "selected_epoch": 15,
+      "selection_dataset": "icbhi",
+      "status": "complete_test_selected_benchmark_control",
+      "terminal": {
+        "attribute_metrics": {
+          "reason": "explicit C/W supervision is disabled",
+          "status": "not_applicable"
+        },
+        "evidence_boundary": "test-selected benchmark control; not clean causal evidence",
+        "hf": {
+          "reason": "no supervised cross-dataset attribute readout exists",
+          "status": "not_applicable"
+        },
+        "other_target_access": "after source-native checkpoint and thresholds were frozen",
+        "per_native_task": {
+          "icbhi": {
+            "average_score": 0.6449900268121904,
+            "confusion": [
+              [
+                1240,
+                226,
+                98,
+                15
+              ],
+              [
+                217,
+                401,
+                18,
+                13
+              ],
+              [
+                129,
+                28,
+                171,
+                57
+              ],
+              [
+                28,
+                26,
+                67,
+                22
+              ]
+            ],
+            "harmonic_score": 0.6144641333174271,
+            "icbhi_score": 0.6449900268121904,
+            "macro_f1": 0.5046235246668638,
+            "per_class": {
+              "both": {
+                "f1": 0.176,
+                "precision": 0.205607476635514,
+                "recall": 0.15384615384615385,
+                "support": 143
+              },
+              "crackle": {
+                "f1": 0.6030075187969924,
+                "precision": 0.5888399412628488,
+                "recall": 0.6178736517719569,
+                "support": 649
+              },
+              "normal": {
+                "f1": 0.7766990291262136,
+                "precision": 0.7682775712515489,
+                "recall": 0.7853071564281191,
+                "support": 1579
+              },
+              "wheeze": {
+                "f1": 0.462787550744249,
+                "precision": 0.4830508474576271,
+                "recall": 0.44415584415584414,
+                "support": 385
+              }
+            },
+            "rows": 2756,
+            "scale": "fraction_0_to_1",
+            "sensitivity": 0.5046728971962616,
+            "specificity": 0.7853071564281191,
+            "uar": 0.5002957015505185
+          },
+          "sprsound": {
+            "average_score": 0.8647369982202887,
+            "confusion": [
+              [
+                764,
+                276
+              ],
+              [
+                2,
+                387
+              ]
+            ],
+            "harmonic_score": 0.8451569011942671,
+            "icbhi_score": 0.8647369982202887,
+            "macro_f1": 0.7909050524445342,
+            "official_score": 0.8549469497072779,
+            "per_class": {
+              "abnormal": {
+                "f1": 0.7357414448669202,
+                "precision": 0.583710407239819,
+                "recall": 0.9948586118251928,
+                "support": 389
+              },
+              "normal": {
+                "f1": 0.8460686600221484,
+                "precision": 0.9973890339425587,
+                "recall": 0.7346153846153847,
+                "support": 1040
+              }
+            },
+            "rows": 1429,
+            "scale": "fraction_0_to_1",
+            "sensitivity": 0.9948586118251928,
+            "specificity": 0.7346153846153847,
+            "uar": 0.8647369982202887
+          }
+        },
+        "seed": 1,
+        "selected_epoch": 15,
+        "selection_dataset": "icbhi",
+        "selection_score": 0.6449900268121904,
+        "spr_cw": {
+          "reason": "C/W heads were retained for initialization parity but received no supervision",
+          "status": "not_applicable"
+        },
+        "status": "benchmark_control_terminal_complete",
+        "thresholds": {},
+        "variant": "native_only"
+      },
+      "updates": 8150,
+      "variant": "native_only"
+    },
+    {
+      "completed_epochs": 26,
+      "elapsed_minutes": 150.02492715391563,
+      "seed": 42,
+      "selected_epoch": 16,
+      "selection_dataset": "icbhi",
+      "status": "complete_test_selected_benchmark_control",
+      "terminal": {
+        "attribute_metrics": {
+          "reason": "explicit C/W supervision is disabled",
+          "status": "not_applicable"
+        },
+        "evidence_boundary": "test-selected benchmark control; not clean causal evidence",
+        "hf": {
+          "reason": "no supervised cross-dataset attribute readout exists",
+          "status": "not_applicable"
+        },
+        "other_target_access": "after source-native checkpoint and thresholds were frozen",
+        "per_native_task": {
+          "icbhi": {
+            "average_score": 0.6223581275696362,
+            "confusion": [
+              [
+                1300,
+                179,
+                87,
+                13
+              ],
+              [
+                310,
+                318,
+                12,
+                9
+              ],
+              [
+                152,
+                47,
+                154,
+                32
+              ],
+              [
+                38,
+                16,
+                65,
+                24
+              ]
+            ],
+            "harmonic_score": 0.557475865479552,
+            "icbhi_score": 0.6223581275696362,
+            "macro_f1": 0.4877074783041063,
+            "per_class": {
+              "both": {
+                "f1": 0.2171945701357466,
+                "precision": 0.3076923076923077,
+                "recall": 0.16783216783216784,
+                "support": 143
+              },
+              "crackle": {
+                "f1": 0.5260545905707196,
+                "precision": 0.5678571428571428,
+                "recall": 0.4899845916795069,
+                "support": 649
+              },
+              "normal": {
+                "f1": 0.7694584196507842,
+                "precision": 0.7222222222222222,
+                "recall": 0.8233058898036733,
+                "support": 1579
+              },
+              "wheeze": {
+                "f1": 0.43812233285917496,
+                "precision": 0.48427672955974843,
+                "recall": 0.4,
+                "support": 385
+              }
+            },
+            "rows": 2756,
+            "scale": "fraction_0_to_1",
+            "sensitivity": 0.421410365335599,
+            "specificity": 0.8233058898036733,
+            "uar": 0.47028066232883703
+          },
+          "sprsound": {
+            "average_score": 0.9225368301364445,
+            "confusion": [
+              [
+                927,
+                113
+              ],
+              [
+                18,
+                371
+              ]
+            ],
+            "harmonic_score": 0.9214822833089735,
+            "icbhi_score": 0.9225368301364445,
+            "macro_f1": 0.8919738820073806,
+            "official_score": 0.922009556722709,
+            "per_class": {
+              "abnormal": {
+                "f1": 0.849942726231386,
+                "precision": 0.7665289256198347,
+                "recall": 0.9537275064267352,
+                "support": 389
+              },
+              "normal": {
+                "f1": 0.9340050377833753,
+                "precision": 0.9809523809523809,
+                "recall": 0.8913461538461539,
+                "support": 1040
+              }
+            },
+            "rows": 1429,
+            "scale": "fraction_0_to_1",
+            "sensitivity": 0.9537275064267352,
+            "specificity": 0.8913461538461539,
+            "uar": 0.9225368301364445
+          }
+        },
+        "seed": 42,
+        "selected_epoch": 16,
+        "selection_dataset": "icbhi",
+        "selection_score": 0.6223581275696362,
+        "spr_cw": {
+          "reason": "C/W heads were retained for initialization parity but received no supervision",
+          "status": "not_applicable"
+        },
+        "status": "benchmark_control_terminal_complete",
+        "thresholds": {},
+        "variant": "native_only"
+      },
+      "updates": 8476,
+      "variant": "native_only"
+    }
+  ],
+  "sample_sd_ddof": 1,
+  "seeds": [
+    0,
+    1,
+    42
+  ],
+  "status": "complete_native_only_three_seed_attribution",
+  "variant": "native_only"
+}

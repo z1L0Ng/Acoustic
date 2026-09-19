@@ -1,0 +1,50 @@
+{
+  "checkpoint_selection": false,
+  "checkpoint_source": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1/best_checkpoint.pt",
+  "claim_boundary": "post-hoc external transfer diagnostic; not HF/KAUH native reproduction, not JH2 reselection, and not a paper claim",
+  "evidence_label": "posthoc_fixed_JH2_main_selected_checkpoints_HF_KAUH_external_diagnostic",
+  "frozen_shared_thresholds": {
+    "crackle": 0.16013464331626892,
+    "wheeze": 0.8626990914344788
+  },
+  "hf_cas_auroc": 0.8704384225375148,
+  "hf_cas_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1/external_hf_kauh/hf_cas_metrics.json",
+  "hf_cas_support": {
+    "negative": 296,
+    "positive": 661,
+    "support": 957
+  },
+  "hf_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1/external_hf_kauh/hf_metrics.json",
+  "kauh_metrics_path": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1/external_hf_kauh/kauh_metrics.json",
+  "kauh_patient_ba": 0.7672268907563026,
+  "kauh_patient_confusion": [
+    [
+      29,
+      6
+    ],
+    [
+      15,
+      36
+    ]
+  ],
+  "kauh_patient_readout": "B/D/E probability mean then patient Level1 decision",
+  "kauh_patient_support": 86,
+  "outputs": {
+    "hf_cas_recording_predictions": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1/external_hf_kauh/hf_cas_recording_predictions.npz",
+    "hf_label_free": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1/external_hf_kauh/hf_predictions_label_free.npz",
+    "hf_scored": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1/external_hf_kauh/hf_predictions_scored.npz",
+    "kauh_label_free": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1/external_hf_kauh/kauh_predictions_label_free.npz",
+    "kauh_patient_scored": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1/external_hf_kauh/kauh_patient_predictions_scored.npz",
+    "kauh_scored": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1/external_hf_kauh/kauh_predictions_scored.npz"
+  },
+  "seed": 1,
+  "selected_epoch": 9,
+  "source_run": "/files1/Zilong/Acoustic/result/reproduce/pafa_joint_hierarchy/LSAA_ATTRIBUTION_20260918/lsaa_without_pafa/seed_1",
+  "status": "posthoc_external_evaluation_complete",
+  "test_accessed_datasets": [
+    "hf_lung_source_test",
+    "kauh_v3_all_filtered"
+  ],
+  "threshold_tuning": false,
+  "training": false
+}
