@@ -1,38 +1,42 @@
 \begingroup
 \setlength{\emergencystretch}{1.5em}
+\vspace{-3mm}
 \section{Evaluation}
+\vspace{-3mm}
 \label{sec:evaluation}
-In the tables, LSAA denotes the reference configuration with explicit attribute readouts; the other LSAA configurations are framework variants. Results are percentages, reported as three-seed means with subscripted sample standard deviations. Bold and underlining indicate the highest and second-highest means where used; --- denotes unavailable results.
+In the tables, LSAA denotes the reference configuration with explicit attribute readouts; the other LSAA configurations are framework variants. Results are percentages, reported as three-seed means with subscripted sample standard deviations. Bold and underlining indicate the highest and second-highest means where used.
 
-For ICBHI cycles, Score is $(Sp+Se)/2$, where specificity $Sp$ is Normal recall and sensitivity $Se$ is the fraction of all abnormal cycles assigned their correct Crackle, Wheeze, or Both class\cite{rocha2019icbhi}. For SPRSound events, Score is $(AS+HS)/2$, where average score $AS=(r_N+r_A)/2$ and harmonic score $HS=2r_Nr_A/(r_N+r_A)$ use Normal recall $r_N$ and Adventitious recall $r_A$; $HS=0$ when both recalls are zero\cite{zhang2022sprsound}. HF uses recording-level area under the receiver operating characteristic curve (AUROC): recordings with Wheeze, Rhonchi, or Stridor annotations are positive, and other eligible recordings form the Other class, which does not denote Normal. KAUH uses patient-level balanced accuracy (BA), the mean Normal/Abnormal recall after aggregating filter-version probabilities. Attribute discrimination is assessed by SPRSound C/W macro AUROC, the unweighted mean of the Crackle and Wheeze AUROCs.
-
+For ICBHI cycles, Score is $(Sp+Se)/2$, where specificity $Sp$ is Normal recall and sensitivity $Se$ is the fraction of all abnormal cycles assigned their correct Crackle, Wheeze, or Both class\cite{rocha2019icbhi}. For SPRSound events, Score is $(AS+HS)/2$, where average score $AS=(r_N+r_A)/2$ and harmonic score $HS=2r_Nr_A/(r_N+r_A)$ use Normal recall $r_N$ and Adventitious recall $r_A$; $HS=0$ when both recalls are zero\cite{zhang2022sprsound}. HF uses recording-level area under the receiver operating characteristic curve (AUROC): recordings with Wheeze, Rhonchi, or Stridor annotations are positive, and other eligible recordings form the Other class, which does not denote Normal. We evaluate 957 HF test recordings with adventitious-sound annotations (661 positive and 296 Other); phase-only and unannotated recordings are excluded. KAUH uses patient-level balanced accuracy (BA), the mean Normal/Abnormal recall after aggregating filter-version probabilities. Attribute discrimination is assessed by SPRSound C/W macro AUROC, the unweighted mean of the Crackle and Wheeze AUROCs.
+\vspace{-2mm}
 \subsection{Joint Learning and Transfer}
+\vspace{-2mm}
 \label{sec:protocol}
 \label{sec:native_results}
 One joint model supports both native tasks with competitive transfer performance (Table~\ref{tab:native_results}). LSAA exceeds every frozen-encoder reference in mean ICBHI Score, HF AUROC, and KAUH BA, while its SPRSound Score of 90.70\% is 0.85 percentage points (pp) below the strongest reference, BEATs. Encoder fine-tuning also differs from the frozen references~\cite{niizumi2025foundationeval}, so these gains reflect the complete system; the ablations examine shared supervision more directly.
 
 \LSAAMainResultsTable
 
-The multilabel adaptations show that advantages depend on the evaluation target (Table~\ref{tab:system_comparison}). LSAA leads on ICBHI and HF, whereas DCASE leads on SPRSound and KAUH. DCASE's dataset-specific class outputs and LSAA's shared attribute readouts impose different decision constraints that may favor different tasks. However, DCASE uses frozen BEATs with a trainable convolutional recurrent network, while LSAA fine-tunes the encoder, and checkpoint selection differs. PC-MCL trains only on ICBHI, making its SPRSound result a cross-source comparison. These system differences prevent attributing the rankings to label representation alone.
+The multilabel adaptations show that advantages depend on the evaluation target (Table~\ref{tab:system_comparison}). LSAA leads on ICBHI and HF, whereas DCASE leads on SPRSound and KAUH. DCASE's dataset-specific class outputs and LSAA's shared attribute readouts impose different decision constraints that may favor different tasks. However, DCASE uses frozen BEATs with a trainable convolutional recurrent network, while LSAA fine-tunes the encoder. PC-MCL trains only on ICBHI, making its SPRSound result a cross-source comparison. These system differences prevent attributing the rankings to label representation alone.
 
 \LSAASystemComparisonTable
-
+\vspace{-2mm}
 \subsection{Supervision and Readout Analysis}
+\vspace{-2mm}
 \label{sec:ablations}
 \label{sec:transfer}
-Joint training broadens the task coverage of the shared attribute model (Table~\ref{tab:ablations}). Compared with LSAA-I (ICBHI only) and LSAA-S (SPRSound only), LSAA gains 3.39 pp in ICBHI Score at a 2.13-pp SPRSound Score cost. Both single-source models perform substantially worse on the other native task, addressing the transfer question raised by Figure~\ref{fig:dataset_characteristics}(b,c). KAUH BA improves over both controls, but HF AUROC remains below LSAA-I: joint supervision does not uniformly improve transfer.
+Joint training broadens the task coverage of the shared attribute model (Table~\ref{tab:ablations}). Compared with LSAA-I (ICBHI only) and LSAA-S (SPRSound only), LSAA gains 3.39 pp in ICBHI Score at a 2.12 pp SPRSound Score cost. Both single-source models perform substantially worse on the other native task, addressing the transfer question raised by Figure~\ref{fig:dataset_characteristics}(b,c). KAUH BA improves over both controls, but HF AUROC remains below LSAA-I: joint supervision does not uniformly improve transfer.
 
 \LSAAAnalysisTable
 
 \label{sec:fine_supervision}
-Fine-grained supervision benefits the binary SPRSound task. LSAA w/o SPR C+W removes SPRSound's C/W supervision while retaining its audio and binary labels. Both native Scores fall, and SPRSound C/W macro AUROC drops from 97.32\% to 88.84\%. The SPRSound mean includes an all-Normal run. This variant also removes SPRSound from C/W threshold fitting and retains only its A loss at weight $1/3$, changing relative loss strength. The comparison therefore supports retaining fine-grained supervision under the evaluated recipe.
+Fine-grained supervision benefits the binary SPRSound task. LSAA w/o SPR C+W removes SPRSound's C/W supervision while retaining its audio and binary labels. Both native Scores fall, and SPRSound C/W macro AUROC drops from 97.32\% to 88.84\%. This variant also removes SPRSound from C/W threshold fitting and retains only its A loss at weight $1/3$, changing relative loss strength. This comparison supports retaining fine-grained supervision.
 
 \label{sec:readout_analysis}
-Shared C/W supervision also supports learned native task heads. LSAA-N uses native task heads without C/W supervision; LSAA-N w/C+W adds auxiliary C/W losses. Adding these losses improves mean SPRSound, HF, and KAUH performance, with a 0.20-pp ICBHI Score decrease. LSAA-N w/C+W also exceeds reference LSAA on all four mean task metrics, including a 2.50-pp ICBHI gain, while SPRSound C/W macro AUROC changes by only $-0.05$ pp. Thus, the value of shared supervision does not establish the explicit readout as optimal. Both encoder and heads are retrained, so the comparison concerns training and readout designs together. LSAA-N retains the native-loss weight of $1/3$. Both native-head variants use fixed ICBHI class probabilities externally: HF takes the maximum window-level $P(W)+P(Both)$, and KAUH thresholds the patient-averaged $1-P(N)$ above 0.5.
+Shared C/W supervision also supports learned native task heads. LSAA-N uses native task heads without C/W supervision; LSAA-N w/C+W adds auxiliary C/W losses. Adding the auxiliary C/W losses to LSAA-N improves mean SPRSound, HF, and KAUH performance, with a 0.20 pp ICBHI Score decrease. LSAA-N w/C+W also exceeds reference LSAA on all four mean task metrics, including a 2.50 pp ICBHI gain, while SPRSound C/W macro AUROC changes by only $-0.05$ pp. Thus, the value of shared supervision does not establish the explicit readout as optimal. Both encoder and heads are retrained, so the comparison concerns training and readout designs together. LSAA-N retains the native-loss weight of $1/3$. Both native-head variants use fixed ICBHI class probabilities externally: HF takes the maximum window-level $P(W)+P(Both)$, and KAUH thresholds the patient-averaged $1-P(N)$ above 0.5.
 
-Patient regularization has a different effect on native and transfer performance. LSAA w/o PAFA removes PCSL and GPAL from the reference model, lowering ICBHI Score by 2.56 pp but raising KAUH BA by 6.13 pp. LSAA-N and LSAA w/o PAFA use CUDA; earlier LSAA variants use MPS.
+Patient regularization has a different effect on native and transfer performance. LSAA w/o PAFA removes PCSL and GPAL from the reference model, lowering ICBHI Score by 2.57 pp but raising KAUH BA by 6.13 pp. 
 
 \label{sec:hf_supervision}
-Additional HF supervision likewise does not guarantee better HF evaluation. LSAA w/HF adds HF train C/W supervision to the reference model, raising mean SPRSound Score and KAUH BA but lowering ICBHI Score and HF AUROC. Its Wheeze supervision is narrower than the HF evaluation target: 256 of 661 positive recordings lack Wheeze annotations. This mismatch may contribute to poorer ranking, but does not establish its cause. Auxiliary supervision must therefore be assessed against the labels defining each evaluation target.
+Additional HF supervision likewise does not guarantee better HF evaluation. Compared to reference LSAA, LSAA w/HF raises mean SPRSound Score and KAUH BA but lowers ICBHI Score and HF AUROC. Its Wheeze supervision is narrower than the HF evaluation target: 256 of 661 positive recordings lack Wheeze annotations. This mismatch may contribute to poorer ranking, but does not establish its cause. Auxiliary supervision must be assessed against the labels defining each evaluation target.
 \par
 \endgroup

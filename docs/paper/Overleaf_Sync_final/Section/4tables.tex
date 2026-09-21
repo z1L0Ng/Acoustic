@@ -55,7 +55,7 @@ PC-MCL \cite{jeong2026pcmcl} & $59.81_{\pm0.80}$ & $48.91_{\pm2.59}$ & $78.64_{\
 \centering
 \small
 \setlength{\tabcolsep}{0pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.26\columnwidth}*{4}{>{\centering\arraybackslash}p{0.185\columnwidth}}@{}}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lcccc@{}}
 \toprule
 Model & \shortstack{ICBHI\\Score} & \shortstack{SPR\\Score}
 & \shortstack{HF\\AUROC} & \shortstack{KAUH\\BA}\\
@@ -64,11 +64,11 @@ Model & \shortstack{ICBHI\\Score} & \shortstack{SPR\\Score}
 LSAA-I & $57.78_{\pm1.47}$ & $49.53_{\pm6.40}$ & $87.05_{\pm0.86}$ & $70.44_{\pm1.52}$\\
 LSAA-S & $47.75_{\pm0.51}$ & $\mathbf{92.82}_{\pm0.65}$ & $79.25_{\pm1.08}$ & $67.25_{\pm4.29}$\\
 LSAA-N & $\mathbf{63.87}_{\pm1.43}$ & $88.93_{\pm3.36}$ & $81.62_{\pm3.69}$ & $75.59_{\pm5.62}$\\
-\mbox{N w/C+W} & $63.67_{\pm1.67}$ & $90.86_{\pm1.21}$ & $\mathbf{88.78}_{\pm1.29}$ & $77.91_{\pm3.02}$\\
-\mbox{w/o PAFA} & $58.60_{\pm1.60}$ & $91.04_{\pm0.51}$ & $86.66_{\pm1.83}$ & $\mathbf{78.30}_{\pm1.95}$\\
-\mbox{w/o S C+W} & $54.66_{\pm4.05}$ & $67.23_{\pm36.62}$ & --- & ---\\
-\mbox{w/HF} & $58.90_{\pm2.35}$ & $91.62_{\pm0.71}$ & $80.31_{\pm4.14}$ & $75.51_{\pm5.78}$\\
+\mbox{LSAA-N w/C+W} & $63.67_{\pm1.67}$ & $90.86_{\pm1.21}$ & $\mathbf{88.78}_{\pm1.29}$ & $77.91_{\pm3.02}$\\
+\mbox{LSAA w/o PAFA} & $58.60_{\pm1.60}$ & $91.04_{\pm0.51}$ & $86.66_{\pm1.83}$ & $\mathbf{78.30}_{\pm1.95}$\\
+\mbox{w/o SPR C+W} & $54.66_{\pm4.05}$ & $67.23_{\pm36.62}$ & $66.38_{\pm34.27}$ & $71.08_{\pm18.28}$\\
+\mbox{LSAA w/HF} & $58.90_{\pm2.35}$ & $91.62_{\pm0.71}$ & $80.31_{\pm4.14}$ & $75.51_{\pm5.78}$\\
 \bottomrule
-\end{tabular}
+\end{tabular*}
 \end{table}
 }

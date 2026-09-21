@@ -32,8 +32,11 @@
 
 \title{Learning Shared Acoustic Attributes Across Respiratory Sound Datasets with Heterogeneous Annotations}
 
-\name{Zilong Zeng, Wade Wu, Arian Azarang, Yinuo Qin, Stephen Xia, Jingping Nie}
-\address{{\small \texttt{zilongzeng2030@u.northwestern.edu},
+\name{Zilong Zeng$^{1}$, Wade Wu$^{2}$, Arian Azarang$^{2}$, Yinuo Qin$^{3}$, Stephen Xia$^{1}$, Jingping Nie$^{2}$}
+\address{$^{1}$Northwestern University\\
+$^{2}$University of North Carolina at Chapel Hill\\
+$^{3}$Duke University\\
+{\small \texttt{zilongzeng2030@u.northwestern.edu},
 \texttt{wadewu@unc.edu}}, \small\texttt{arian\_azarang@med.unc.edu}\\
 {\small \texttt{yinuo.qin@duke.edu},
 \texttt{stephen.xia@northwestern.edu}, \texttt{jingping@unc.edu}}
@@ -46,7 +49,7 @@
 \raggedbottom
 
 \begin{abstract}
-Public respiratory sound datasets carry different levels of annotation detail and are labeled for different classification or prediction tasks. We propose \textsc{LSAA} (\underline{L}earning \underline{S}hared \underline{A}coustic \underline{A}ttributes), a joint learning framework that shares acoustic supervision while preserving native tasks. The core \textsc{LSAA} model jointly learns abnormality, crackle, and wheeze from the International Conference on Biomedical and Health Informatics (ICBHI) dataset cycles and Open-Source SJTU Paediatric Respiratory Sound (SPRSound) dataset events, then uses task-specific readouts for four-class cycle and binary event prediction. This allows fine-grained sound-type annotations to supervise learning even when the output is binary. HF Lung (HF) train data are used only in the separate LSAA w/HF auxiliary condition. HF test and KAUH lung sound dataset are reserved for fixed-model external evaluation. Across three seeds with official-test-based checkpoint selection, \textsc{LSAA} improves ICBHI Score by 3.39 percentage points with a 2.13-point SPRSound decrease relative to the respective single-source models. Further comparisons support retaining fine-grained annotations under the evaluated training recipe and reveal task-dependent effects of readout design and additional supervision.
+Public respiratory sound datasets carry different levels of annotation detail and are labeled for different classification or prediction tasks. We propose \textsc{LSAA} (\underline{L}earning \underline{S}hared \underline{A}coustic \underline{A}ttributes), a joint learning framework that shares acoustic supervision while preserving native tasks. \textsc{LSAA} jointly learns abnormality, crackle, and wheeze from the International Conference on Biomedical and Health Informatics (ICBHI) dataset cycles and Open-Source SJTU Paediatric Respiratory Sound (SPRSound) dataset events, then uses task-specific readouts for each dataset. This allows fine-grained sound-type annotations to supervise learning even when the output is binary. We evaluate fixed-model transfer on HF Lung (HF) test recordings and KAUH. Across three seeds, \textsc{LSAA} improves ICBHI Score by 3.39 percentage points with a 2.12 pp SPRSound decrease relative to the respective single-source models. Further comparisons support retaining fine grained annotations under the evaluated training setups and reveal task-dependent effects of readout design and additional supervision.
 \end{abstract}
 
 \begin{keywords}
@@ -66,7 +69,7 @@ respiratory acoustics, shared supervision, heterogeneous annotations, cross-task
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{Figure/figure2_method.pdf}
-\caption{Overview of \textsc{LSAA}. Respiratory sounds pass through a shared encoder, attribute heads, and task-specific readouts to produce native predictions. See details Section~\ref{sec:method}.}
+\caption{Overview of \textsc{LSAA}. Respiratory sounds pass through a shared encoder, attribute heads, and task-specific readouts to produce native predictions. See details Section~\ref{sec:method}. METHOD}
 \label{fig:method_overview}
 \end{figure*}
 

@@ -1,16 +1,19 @@
+\vspace{-3mm}
 \section{Method}
 \label{sec:method}
-
+\vspace{-3mm}
 \subsection{Shared Attributes and Task-Specific Readouts}
+\vspace{-2mm}
 \label{sec:annotation_alignment}
 \label{sec:native_readouts}
-For an input $x_i$ prepared as in Section~\ref{sec:acoustic_characteristics}, the shared BEATs encoder (AudioSet-pretrained iter3+ AS2M)~\cite{chen2023beats,gemmeke2017audioset} produces tokens $H_i\in\mathbb{R}^{T_i\times D}$, where $T_i$ is the token count and $D=768$ (Figure~\ref{fig:method_overview}). Mean pooling and a linear $D\to d$ projection give $h_i\in\mathbb{R}^{d}$, with $d=256$. Parallel linear heads for abnormality (A), C, and W predict $p_{ik}=\phi_k(W_kh_i+b_k)$, $k\in\{a,c,w\}$. Here, $\phi_a$ extracts the Abnormal probability from a two-logit softmax, while $\phi_c$ and $\phi_w$ are sigmoids. Their outputs form $\boldsymbol{p_i}=(p_{ia},p_{ic},p_{iw})$.
+For an input $x_i$ prepared as in Section~\ref{sec:acoustic_characteristics}, the shared BEATs encoder~\cite{chen2023beats,gemmeke2017audioset} produces tokens $H_i\in\mathbb{R}^{T_i\times D}$, where $T_i$ is the token count and $D=768$ (Figure~\ref{fig:method_overview}). We average these tokens and apply a linear $D\to d$ projection to obtain $h_i\in\mathbb{R}^{d}$, with $d=256$. Three parallel linear heads predict abnormality (A), crackle (C), and wheeze (W) probabilities according to $p_{ik}=\phi_k(W_kh_i+b_k)$, $k\in\{a,c,w\}$. Here, $\phi_a$ returns the abnormal probability from a two logit softmax, while $\phi_c$ and $\phi_w$ return the corresponding sigmoid probabilities. The predicted probabilities form $\boldsymbol{p_i}=(p_{ia},p_{ic},p_{iw})$.
 
-The reference model converts these probabilities into native predictions with explicit readouts. Let $\hat a_i$ denote the Normal/Abnormal argmax, with ties selecting Normal, and let $\hat c_i=\mathbb{I}[p_{ic}\geq\tau_c]$ and $\hat w_i=\mathbb{I}[p_{iw}\geq\tau_w]$. SPRSound uses $\hat a_i$ directly. For ICBHI, $\hat a_i=0$ yields Normal; otherwise, two positive attributes yield Both and one yields its class. If neither is positive, the larger $p_{ik}-\tau_k$ selects C or W, with ties selecting C. Thresholds are fitted on the validation partitions defined in Section~\ref{sec:joint_supervision}. Native-head variants instead learn each dataset's class predictions directly from $h_i$ (Section~\ref{sec:readout_analysis}).
+The reference model converts these probabilities into native predictions with explicit readouts. We model abnormality independently because SPRSound’s abnormal class also includes Rhonchi and Stridor, whose labels do not specify C/W presence. Let $\hat a_i$ denote the Normal/Abnormal argmax, with ties selecting Normal, and let $\hat c_i=\mathbb{I}[p_{ic}\geq\tau_c]$ and $\hat w_i=\mathbb{I}[p_{iw}\geq\tau_w]$. SPRSound uses $\hat a_i$ directly. For ICBHI, $\hat a_i=0$ yields Normal; otherwise, two positive attributes yield Both and one yields its class. If neither is positive, the larger $p_{ik}-\tau_k$ selects C or W, with ties selecting C. Thresholds are fitted on the validation partitions defined in Section~\ref{sec:joint_supervision}. Native-head variants instead learn each dataset's class predictions directly from $h_i$.
 
-For the reference model, HF test uses the maximum $p_{iw}$ across three consecutive windows per recording to rank recordings with Wheeze, Rhonchi, or Stridor annotations against other eligible recordings. For KAUH, we average $p_{ia}$ across each patient's B/D/E versions and predict Abnormal above 0.5, with ties selecting Normal. These evaluations use fixed models and readouts.
-
+For the reference model, we use the maximum $p_{iw}$ across three consecutive windows per recording as a fixed proxy score for Wheeze/Rhonchi/Stridor versus Other. This evaluates transfer to a broader target than the Wheeze supervision used in training. For KAUH, we average $p_{ia}$ across each patient's recordings from different filter versions and predict Abnormal above 0.5, with ties selecting Normal.
+\vspace{-2mm}
 \subsection{Annotation-Aware Joint Training}
+\vspace{-2mm}
 \label{sec:joint_supervision}
 \label{sec:hf_method}
 Each annotation supplies attribute targets $y_{ik}$ and masks $m_{ik}$, where $m_{ik}=1$ only for supported attributes~\cite{shi2021marginal,zhou2022unknown}. ICBHI and SPRSound labels supervise A/C/W, except SPRSound's Rhonchi/Stridor labels, which supervise A only. Unknown attributes do not contribute to the loss. For a batch $B$, define $B_k=\{i\in B:m_{ik}=1\}$ and $K_B=\{k:|B_k|>0\}$. The classification loss averages over supported samples and active attributes:
@@ -23,7 +26,7 @@ where $\ell_a$ is cross-entropy on $(1-p_{ia},p_{ia})$ and $\ell_c,\ell_w$ are b
 
 Patient regularization uses a separate attention projection $Z_i=\mathcal G(H_i)\in\mathbb{R}^{D}$ and the losses from Patient-Aware Feature Alignment (PAFA)~\cite{jeong2025pafa}. Within each core-dataset batch, patient cohesion-separation loss (PCSL) promotes within-patient cohesion and between-patient separation; global patient alignment loss (GPAL) limits the dispersion of patient feature means. Both regularize the shared encoder.
 
-In LSAA w/HF, HF train windows overlapping Crackle/\allowbreak{}Wheeze/\allowbreak{}Rhonchi/\allowbreak{}Stridor annotations~\cite{hsu2021hflung} provide auxiliary C/W supervision. Within these eligible windows, missing C/W annotations are treated as negatives. HF contributes only masked binary cross-entropy $\mathcal L_{\rm HF}$, while core batches supply classification and PAFA terms:
+In LSAA w/HF, HF train windows overlapping Crackle/\allowbreak{}Wheeze/\allowbreak{}Rhonchi/\allowbreak{}Stridor annotations~\cite{hsu2021hflung} provide auxiliary C/W supervision. HF contributes only masked binary cross-entropy $\mathcal L_{\rm HF}$, while core batches supply classification and PAFA terms:
 \begin{equation}
 \mathcal L=
 \underbrace{\mathcal L_{\rm cls}
@@ -34,4 +37,4 @@ In LSAA w/HF, HF train windows overlapping Crackle/\allowbreak{}Wheeze/\allowbre
 \end{equation}
 with $\lambda_p=50$, $\lambda_g=5\times10^{-4}$, and $\lambda_{\rm HF}=0$ for core LSAA or $0.25$ for LSAA w/HF.
 
-We jointly fine-tune the encoder and heads. Each core epoch contains 326 single-dataset batches of 32 units, equally divided between ICBHI and SPRSound; samples are shuffled and repeated as needed, without class-balanced sampling. Training uses Adam (learning rate $5\times10^{-5}$, weight decay $10^{-6}$), cosine decay, and exponential moving average (EMA) parameter smoothing with coefficient 0.5, for at most 50 epochs, without SpecAugment or mixup. Validation holds out the first fold of a fivefold stratified patient-group split within each official training partition: ICBHI uses run seeds 0/1/42 and SPRSound uses split seed 20260722. ICBHI official-test Score governs checkpoint selection and patience-10 early stopping, retaining the earlier checkpoint on ties. LSAA w/HF adds one batch of 32 HF windows per core update.
+We jointly fine-tune the encoder and heads. Each core epoch contains 326 single-dataset batches of 32 units, equally divided between ICBHI and SPRSound; samples are shuffled and repeated as needed. Training uses Adam (learning rate $5\times10^{-5}$, weight decay $10^{-6}$), cosine decay, and exponential moving average (EMA) parameter smoothing with coefficient 0.5, for at most 50 epochs, without SpecAugment or mixup. Validation holds out the first fold of a fivefold stratified patient-group split within each official training partition: both datasets use seeds 0/1/42. For benchmarking, we follow the checkpoint-selection approach in prior released ICBHI implementations~\cite{bae2023patchmix,jeong2025pafa}, selecting checkpoints by official-test Score. Training stops after ten epochs without improvement in this selection Score; ties retain the earlier checkpoint.
