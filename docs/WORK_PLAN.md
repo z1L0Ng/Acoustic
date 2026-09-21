@@ -1,16 +1,23 @@
 # Acoustic Work Plan
 
-## 当前周期：2026-09-18–2026-09-19
+## 当前周期：2026-09-18–2026-09-20
 
-最新决定（9/19）：**实验阶段收口，转入paper work。** 用户要求将完成的结果暂存、提交并更新Git；除接收/核验Hanlin已安排的PAFA与五组frozen参考更新外，暂不补其他实验。项目侧不新增训练、模型推理、特征提取、选模/阈值搜索或自动补跑；不因GPU空闲、计划到期或Hanlin未反馈而自动重启队列。执行任务保持待命，实验监视保持暂停。
+9/20集中复核：用户与两项写作任务已完成一轮核对。管理检查当前源码、图件与已有结果后，原T01–T32及T18a共33项中已完成22项，本次新增勾选20项；11项仍有具体余项。页面保持In progress，原9/18–19时间窗口作为历史安排。
 
-按9/18组会及用户最新要求切换为两日修订周期。当前计划：[本地checkbox计划](work_plans/2026-09-18_to_2026-09-19_paper_revision_work_plan_zh.md)；[Notion工作计划](https://app.notion.com/p/3df309efda2981a68624c85b689f596b)。会议：[本地完整记录](meeting_records/2026-09-18_group_meeting_record_zh.md)；[Notion完整记录](https://app.notion.com/p/3df309efda29810c84bdc20f5462b88f)。原始用户意译稿已保存，Aaron/PFA/DCAS分别统一为Arian/PAFA/DCASE；口述简写与当前实现需核对的地方单列说明。
+当前计划：[本地checkbox计划](work_plans/2026-09-18_to_2026-09-19_paper_revision_work_plan_zh.md)；[Notion工作计划](https://app.notion.com/p/3df309efda2981a68624c85b689f596b)。会议依据：[9/18完整记录](meeting_records/2026-09-18_group_meeting_record_zh.md)；[Notion会议记录](https://app.notion.com/p/3df309efda29810c84bdc20f5462b88f)。
 
-详细时间、责任和验收沿用本期33项checkbox；当前优先级为修Figure1/2及Sections2/3、落实Arian C1/C4与指标说明、整合已有baseline/归因消融/独立外评、统一C2/C3与贡献表述，再收拢Abstract/Conclusion、全文和四页稿。允许对已有结果做必要统计与文字整理，不再等待服务器或用新增实验拖延写作。两条写作任务按既有章节所有权和先讨论后改稿的流程继续。
+- [x] 整体论点、章节角色、Figure 2符号/路径、Arian C1/C4及指标定义已核对；已有baseline和归因消融已入稿，全文及Abstract/Conclusion完成一轮核对。
+- [x] Hanlin五组frozen references汇总已收到并入Table 1，20个数值单元格与result(3).xlsx一致；完整实验材料验收仍未完成。
+- [x] 用户在写作任务另行批准的Native+C/W独立HF/KAUH三seed外评已完成、入Table 3并从保存预测复核：HF CAS 88.78±1.29%、KAUH patient BA 77.91±3.02%。新增材料尚未计入9/19旧Git归档包。
+- [ ] 下一步T33：9/20上午按已约定时间与合作者meet，展示当前paper/figures并取得修正反馈；会后整理“反馈—对应章节/图表—下一步修改”。
 
-项目侧结果已完成并验收：Native-only三seed、LSAA without PAFA三seed，以及Native-only独立HF/KAUH post-hoc三seed。完整本地资产694文件、约4.46GB、12个best/last checkpoint；结果汇总及本次Git轻量原始包见[结果归档](result_exports/2026-09-19_lsaa_attribution/README.md)。Git保存682个非权重原始文件、约58.03MB，checkpoint保留在本地/服务器。Native-only独立外评为HF CAS81.62±3.69%、KAUH75.59±5.62%；原ICBHI/SPR主汇总未改。先前末轮Score与selected-checkpoint分数的混淆已纠正，统一引用最终原始summary。
+剩余事项：Figure 1图内标签及最终集成；baseline输入/选模/固定外评差别说明；成功PC-MCL轻量原始包归档；统计附注与Arian最终逐点回应；Hanlin原始材料核验及PAFA；用户最新版Overleaf四页与最终图表/PDF验收；反馈后的最终编辑通知草稿。各项详细状态与负责人见checkbox计划。
 
-上一Notion Work Plan保持Done；本期已勾选实验验收、T18a独立post-hoc和T20结果核对，尚未实际入稿的T18/T19等仍未勾选。Hanlin的五组frozen参照及PAFA不设个人硬截止，回报先核验再入稿；未反馈只记录依赖，不再自动由项目补跑。独立reviewer仅由用户明确启动，不自动发送邮件。下方历史启动和等卡授权均已完成收口，不构成新的执行许可。
+表格按用户与写作任务的决定组织为Table 1 frozen references、Table 2方法系统比较、Table 3 ablations。唯一稿件为[Overleaf_Sync_final](paper/Overleaf_Sync_final/main.tex)，两项写作任务保持既有章节所有权。本轮只更新管理计划。
+
+9/19已保存的Native-only、without-PAFA及Native-only独立外评见[结果归档](result_exports/2026-09-19_lsaa_attribution/README.md)：旧包694个本地原始文件、12个best/last checkpoint，Git保存682个非权重文件。新稿与新增Native+C/W结果不能视为已提交Git。
+
+实验阶段保持收口，执行任务待命、监视暂停。Hanlin材料到达后核验，不设个人硬截止，不自动由项目补跑。独立reviewer由用户明确启动；本次未发送邮件或提交Git。下方历史启动授权不构成新的执行许可。
 
 ---
 

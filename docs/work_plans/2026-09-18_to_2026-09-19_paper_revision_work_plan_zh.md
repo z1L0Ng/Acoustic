@@ -1,8 +1,16 @@
-# 2026-09-18–09-19 Working Plan：组会后修稿、修图与结果整合
+# 2026-09-18–09-20 Working Plan：修稿核对与合作者反馈
 
 Notion：[当前工作计划](https://app.notion.com/p/3df309efda2981a68624c85b689f596b)。
 
-## 9/19最新决定：结果归档，转入paper work
+## 9/20集中复核与下一步
+用户与写作任务已完成一轮核对，本次逐项检查T01–T32及T18a：33项中22项已完成（本次新增勾选20项），11项仍有具体余项；不将“已入稿”视为完整外部实验验收。页面保持In progress，原9/18–19时间块作为历史安排，当前下一步为合作者反馈。
+- [ ] T33｜9/20上午：按已约定时间与合作者meet，展示当前paper和figures并取得修正反馈；会后按“反馈—对应章节/图表—下一步修改”整理下一轮todo。具体时刻与参会人按用户安排，不另行发送邀请。
+本轮已完成整体论点/数据角色、Figure 2符号及路径核对、Arian C1/C4与指标定义、现有结果/归因讨论、全文和Abstract/Conclusion核对。表格现组织为Table 1 frozen references、Table 2方法系统比较、Table 3 ablations。
+真实剩余项：Figure 1图内标签与最终集成（T03/T08，用户＋论文写作二/绘图）；baseline输入/选模/外评差别说明（T09，论文写作）；成功PC-MCL轻量归档（T12，管理）；统计附注与Arian最终逐点回应（T21/T22，管理＋论文写作）；Hanlin完整原始材料及PAFA（T23/T24，材料到达后核验）；最新版Overleaf四页与最终图表/PDF（T28/T29，用户＋写作）；反馈后最终编辑通知草稿（T31，管理）。
+核对依据：当前`docs/paper/Overleaf_Sync_final/`源码、两项写作任务本轮交接、现有Figure 2导出/预览、Hanlin `result(3).xlsx`及已保存的结果预测。Native+C/W三seedHF/KAUH从逐样本预测复核为88.78±1.29% / 77.91±3.02%；Table 1五组四列与表格材料20格一致。最新四页编译稿尚待用户确认。
+当前不启动新模型执行，不改paper、不编译、不提交Git、不发送邮件；先完成今早meeting，再由用户反馈决定下一轮修改。
+
+## 9/19阶段决定（历史背景）：结果归档，转入paper work
 
 用户已明确：先暂存并提交当前结果，随后集中修paper与figures；除等待和核验Hanlin已安排的更新外，暂不补其他实验。项目侧Native-only、without-PAFA及Native-only独立HF/KAUH post-hoc均已完成并完整回收到本地，服务器结果不再是写作依赖。
 
@@ -36,7 +44,8 @@ Notion：[当前工作计划](https://app.notion.com/p/3df309efda2981a68624c85b6
 - [x] Native-only与LSAA without PAFA两组三seed代码、必要检查与Git同步完成，GPU0/1正式队列已启动。
 - [x] Native-only三seed原生结果已完成、核验并拉回：ICBHI 63.87±1.43%、SPR 88.93±3.36%。
 - [x] LSAA without PAFA三seed及规定终点评测已完成、核验并拉回：ICBHI 58.60±1.60%、SPR 91.04±0.51%、HF CAS 86.66±1.83%、KAUH BA 78.30±1.95%。
-- [ ] 收到并核验Hanlin的五组frozen references更新：AST、BEATs、PANNs、OPERA-CT、HeAR。
+- [x] 已收到Hanlin五组frozen references汇总并完成Table 1数值抄录核对：AST、BEATs、PANNs、OPERA-CT、HeAR，共20格一致；完整实验材料验收仍见T23。
+- [x] 用户在写作任务另行批准的Native+C/W独立HF/KAUH三seed外评已完成并入稿：HF CAS 88.78±1.29%、KAUH patient BA 77.91±3.02%。已从保存预测复核指标、支持数和固定KAUH阈值；该新增结果尚未纳入9/19旧Git归档包。
 - [ ] 明确并核验Hanlin的PAFA recipe、三seed含义、四列评测与原始产物。
 
 ## 今天9/18：图件与不依赖新数字的修订
@@ -45,8 +54,8 @@ Notion：[当前工作计划](https://app.notion.com/p/3df309efda2981a68624c85b6
 
 负责人：用户、论文写作、论文写作二。集中确认后各任务按既有章节分工并行准备。
 
-- [ ] T01｜确定这轮overall论点与每章的作用：异构标注问题 → 共享声学监督 → 原生任务读出 → 联合训练与迁移证据 → 适用边界；贡献写研究价值与发现，不写成图表清单。
-- [ ] T02｜统一从第一页开始出现的数据角色：ICBHI＋SPR为核心训练；HF-train只在独立HF-on条件辅助；HF-test与KAUH用于固定模型外评。让Intro、Section 2与Figure 1第一次出现数据集时就交代清楚。
+- [x] T01｜确定这轮overall论点与每章的作用：异构标注问题 → 共享声学监督 → 原生任务读出 → 联合训练与迁移证据 → 适用边界；贡献写研究价值与发现，不写成图表清单。
+- [x] T02｜统一从第一页开始的数据角色：ICBHI＋SPR为核心训练，HF-train只在独立LSAA w/HF条件辅助；HF source-test/KAUH用于固定模型评测。Intro、Section 2及Figure 1 caption已明确；HF source-test对核心LSAA是外部数据，对w/HF是HF的held-out测试分区。图内标签余项见T03。
 
 验收：形成一个可供两条写作任务共同使用的简短论点段落与数据角色说明；不出现“四个dataset默认一起训练”的暗示。
 
@@ -54,11 +63,11 @@ Notion：[当前工作计划](https://app.notion.com/p/3df309efda2981a68624c85b6
 
 负责人：论文写作二统筹数据/方法图，论文绘图制作；论文写作并行准备Evaluation及表注。
 
-- [ ] T03｜修Figure 1：明确train / optional auxiliary / external evaluation，HF训练与测试角色分开；检查标签关系、图例、单位和caption，保留描述性声学分析的范围。
-- [ ] T04｜修Figure 2：按实现逐项核对encoder、pooling、projection、三个heads、PAFA分支与HF可选分支；统一D与768的写法，定义T_i、H_i及attention输入输出，避免abnormality A与attention记号混淆。
-- [ ] T05｜补Figure 2各箭头与loss含义：分类路径和患者正则路径清楚；HF只进入其批准的C/W辅助项；ICBHI异常门内C/W均未过阈值时的fallback与正文一致。
-- [ ] T06｜准备Arian C1/C4协议段：清楚区分source内部validation阈值拟合与ICBHI official-test checkpoint选择；列清数据混合/源比例、batch组成、是否类别均衡、batch size、优化器、LR/schedule、epoch、增强、早停和划分。先核对现有配置，不更换评测协议。
-- [ ] T07｜补dataset-specific指标定义和引用：ICBHI Score与SPR official Score分别说明；明确ICBHI异常子类召回与SPR二分类召回的区别，HF列写CAS AUROC、KAUH列写patient BA。所有比较在同一数据集列内解释。
+- [ ] T03｜完成Figure 1图内角色标签和最终图件验收。9/20核对：正文/caption已明确core train、optional auxiliary与fixed evaluation；图内仍是Train + Test等原标签，A/B方案尚待用户选择。随后核对图例、标签关系、单位并接入定稿；描述性声学分析的范围保持不变。
+- [x] T04｜修Figure 2：按实现逐项核对encoder、pooling、projection、三个heads、PAFA分支与HF可选分支；统一D与768的写法，定义T_i、H_i及attention输入输出，避免abnormality A与attention记号混淆。
+- [x] T05｜核对Figure 2分类、患者正则和HF辅助路径及loss：当前图的分类/PAFA分支与可选HF C/W项清楚，D/d、H_i、Z_i与正文一致；概览图未展开的ICBHI门内fallback由Section 3明确，未发现图文矛盾。已核对现有预览及对应PDF；论文尺寸下的最终版面验收仍见T28。
+- [x] T06｜准备Arian C1/C4协议段：清楚区分source内部validation阈值拟合与ICBHI official-test checkpoint选择；列清数据混合/源比例、batch组成、是否类别均衡、batch size、优化器、LR/schedule、epoch、增强、早停和划分。先核对现有配置，不更换评测协议。
+- [x] T07｜补dataset-specific指标定义和引用：ICBHI Score与SPR official Score分别说明；明确ICBHI异常子类召回与SPR二分类召回的区别，HF列写CAS AUROC、KAUH列写patient BA。所有比较在同一数据集列内解释。
 
 验收：图件符号/维度与代码、公式及caption一致；指标名和训练细节不再依赖读者猜测。图用可编辑源文件维护，导出后检查裁切、字距、箭头与实际论文尺寸下的可读性。
 
@@ -66,18 +75,18 @@ Notion：[当前工作计划](https://app.notion.com/p/3df309efda2981a68624c85b6
 
 负责人：用户、论文写作二、论文绘图；共享main.tex/caption由论文写作执行局部修改。
 
-- [ ] T08｜逐张核对Figure 1/2导出稿，把确认版本接入唯一Overleaf同步目录；同步Section 2/3解释和caption。完成不恢复DONE标记，不自动本地编译。
+- [ ] T08｜完成Figure 1/2最后导出稿核对与统一接入。9/20：Figure 2符号版PDF已接入唯一Overleaf目录，Section 3/caption已同步；Figure 1 caption已改，图内标签与最终导出仍依赖T03。本项保持未完成，不恢复DONE标记，不自动编译。
 
 18:45–19:30预留晚餐与修图缓冲；若图仍有内容错误，优先用此窗口修好。
 
 ### 19:30–21:00｜把已完成结果写成论文
 
-负责人：论文写作负责Section 4及Table 1/2；管理提供结果来源。
+负责人：论文写作负责Section 4及Tables 1–3；管理提供结果来源。
 
-- [ ] T09｜整合已完成PC-MCL与DCASE结果到Table 1的方法对比分块，更新caption和baseline说明；区分frozen references、fine-tuned方法和LSAA，注明训练来源、选模、输入及固定外评读出的差别。
-- [ ] T10｜整理Table 2现有三个block：单源/联合、细粒度监督/读出、HF-on；核对mean、sample SD与配对参照，保留Coarse SPR单seed崩塌与HF-on跨任务取舍，避免把口述简写直接当实验定义。
-- [ ] T11｜同步Section 1/4中的比较解释：承认DCASE能够做异构多源masked learning，且在SPR/KAUH均值更高；PC-MCL的KAUH也不应被省略。把“可能学到更广声学结构”保留为讨论假设。
-- [ ] T12｜整理PC-MCL成功结果的轻量本地归档需求与原始路径；只接收成功run的config/log/metrics/predictions及汇总，不拉回旧失败文件，不因此重跑模型。
+- [ ] T09｜将PC-MCL/DCASE及LSAA系统比较按用户确认的新组织放入Table 2；Table 1保留五组frozen references。9/20：数字、caption、训练来源和系统比较讨论已入稿；选模差别仅概述，baseline输入构造及固定外评读出差别尚未完整写清，作为剩余协议说明保留。
+- [x] T10｜按用户确认的新布局整理Table 3绝对值消融矩阵：单源/联合、Native-only/Native+C/W、without-PAFA、Coarse SPR与HF-on。三seed均值/sample SD已核对，正文保留Coarse的all-Normal run、阈值拟合/损失强度变化，以及HF-on跨任务取舍；旧Table 2三block/配对差值展示已由此布局替代。
+- [x] T11｜同步Section 1/4中的比较解释：承认DCASE能够做异构多源masked learning，且在SPR/KAUH均值更高；PC-MCL的KAUH也不应被省略。把“可能学到更广声学结构”保留为讨论假设。
+- [ ] T12｜PC-MCL成功结果的来源与轻量归档缺项已定位；成功三seed汇总已用于论文，但本地尚无PC_MCL_ICBHI5s_lr1e4_20260917原始结果目录。保留成功run的config/log/metrics/predictions与汇总归档待办；不接收旧失败文件，不重跑模型。
 
 验收：已完成的两组方法baseline有可追溯表格与连贯结果段；训练来源/微调/正则/读出差异不被写成单因素因果。
 
@@ -85,10 +94,10 @@ Notion：[当前工作计划](https://app.notion.com/p/3df309efda2981a68624c85b6
 
 负责人：论文写作牵头，论文写作二负责Sections 2/3具体段落。
 
-- [ ] T13｜把T06/T07准备好的C1/C4内容真正写入对应章节和表注；清单记录修改位置，做到“反馈 → 修改 → 可核对段落”。
-- [ ] T14｜用已返回结果回应C2：Table 1保持系统比较定位；Native-only/Native+C/W与without-PAFA/Full分别解释其匹配因素和实际取舍，不写成所有任务都获益，不新增实验追求某种结论。
-- [ ] T15｜回应C3：将共享属性监督的价值与特定层级读出的必要性分开；准确描述Native+C/W的训练方式与现有优势，不宣称临时接一个未训练native head即可恢复性能，不宣称未测得的外部迁移优势。
-- [ ] T16｜将零散chat/comments合并为连续、可直接编辑的段落，做一遍今天修改范围的衔接阅读，保存明确版本与未完成项。
+- [x] T13｜Arian C1/C4已落文：Section/3method.tex末段写明source比例、batch、优化器、增强、划分、阈值拟合与official-test选模；Section/4evaluation.tex开头定义各数据集Score、HF CAS AUROC与KAUH patient BA。具体修改位置已核对。
+- [x] T14｜用已有归因消融完成C2的有边界正文回应：Table 1是frozen-reference系统比较，Table 2是多标签系统比较；Native-only/Native+C/W与without-PAFA/Full分别解释匹配因素和实际取舍，注明后端等差别。已明确不能把系统差异归因为单一结构；统计与最终逐点回复仍见T21/T22。
+- [x] T15｜回应C3：已区分共享属性监督的价值与特定层级读出的必要性，说明Native+C/W需要共同重训encoder/native heads。新增固定native-head HF/KAUH三seed结果已入稿，承认其四列均值高于LSAA，不把它写成临时换头或纯readout因果。
+- [x] T16｜本轮chat/comments已整理成连续正文，完成修改范围的衔接阅读并保存到Overleaf_Sync_final本地源码；本次集中核对记录剩余项。最新编译PDF及交稿版本验收另见T28/T29，不将源码保存等同于Git提交或最终PDF。
 
 22:15–22:30预留收尾缓冲。今晚目标是图件正确、C1/C4落文、已有结果齐全、C2/C3解释形成工作稿；不以等待新结果为理由停住这些内容。
 
@@ -96,27 +105,27 @@ Notion：[当前工作计划](https://app.notion.com/p/3df309efda2981a68624c85b6
 
 ### 09:30–10:00｜接收信息，确定今日可用结果
 
-负责人：管理；服务器任务仍自行监视，本科生对接任务核对用户转交材料。
+负责人：管理；服务器任务保持待命、监视暂停，本科生对接任务核对用户实际转交材料。
 
-- [ ] T17｜服务器结果已齐，继续处理实际收到的Hanlin材料，明确完整/部分/未返回；不再等待服务器或追加SSH进度轮询。
+- [x] T17｜核对当前回报状态：项目侧原有实验/Native-only独立外评完整；Hanlin的result(3).xlsx五组四列汇总已收到并入Table 1，逐格抄录一致；完整原始材料未验收，PAFA仅有一列初步汇总且暂不入稿。不再等待服务器或轮询SSH。
 
 ### 10:00–11:30｜整合新增消融；未返回时推进已有正文
 
 负责人：论文写作、管理；必要的结果分析由原执行任务承担。
 
-- [ ] T18｜将已验收的Native-only原生三seed写入Table 2，与Native+C/W比较ICBHI/SPR；原主结果不变，未监督C/W不作为属性指标；独立HF/KAUH结果注明与主汇总的区别。
+- [x] T18｜Native-only三seedICBHI/SPR及独立HF/KAUH已写入Table 3并与Native+C/W比较。正文写明固定ICBHI原生头外评；保留独立post-hoc来源与原主汇总，未监督C/W头不作属性指标。
 - [x] T18a｜Native-only独立zero-target HF/KAUH post-hoc三seed完成并拉回：HF CAS AUROC 81.62±3.69%、KAUH patient BA 75.59±5.62%。固定ICBHI四分类头，HF三窗max[P(W)+P(Both)]，KAUH B/D/E平均[1−P(N)]且>0.5判异常；957条HF/86位KAUH患者，原生主汇总未改。
-- [ ] T19｜将已验收的LSAA without PAFA三seed及native、C/W、HF CAS、KAUH结果写入表格和讨论，与正式Full比较；据实际结果完成C2回应，不新增补跑。
+- [x] T19｜LSAA without PAFA三seed已按用户确认的四列布局写入Table 3及讨论，与Full比较ICBHI/SPR/HF CAS/KAUH。C/W原始统计保留为分析资料，本轮不要求在四列矩阵新增一列；正文说明PAFA的收益依赖任务及CUDA/MPS差别。
 - [x] T20｜已核对新旧参照的划分、loss/选模与CUDA/MPS后端差别，保存逐seed值及mean/sample SD；六个主run、三个post-hoc均完整。已纠正早前将末轮Score误报为selected-checkpoint Score的问题，后续以最终原始summary为准。
 
-项目侧结果已完整可用，T18/T19剩余工作是入稿而非等待实验；这两项在实际写回稿件并核对前保持未勾选。
+9/20复核：T18/T19已实际入稿并核对，现勾选完成；Native+C/W新增外评也已用于Table 3。原始结果与统计保持各自来源，不改写原生主汇总。
 
 ### 11:30–12:15｜完成Arian统计问题的回应
 
 负责人：管理与原结果分析任务核对，论文写作落文。
 
-- [ ] T21｜用原始逐seed配对值准备效应与不确定性说明，优先Native+C/W对Full及本次完整返回的新对照；确认比较清单和假设后计算必要的配对统计。明确只有三个seed的局限，不从四舍五入均值反推p值，不把不显著当等效，也不把同一患者的cycle/BDE视为独立患者。
-- [ ] T22｜更新Arian C1–C4及统计附注的逐点回应，给出最终修改位置，区分已完成回应与仍依赖结果的项。
+- [ ] T21｜统计附注仍未完成：用原始逐seed配对值准备效应和不确定性说明，先确认比较清单与假设再做必要配对统计。现稿有mean/sample SD但无配对检验结果；仅三个seed，不从四舍五入均值反推p值，不将不显著当等效，不将同患者cycle/BDE当独立患者。
+- [ ] T22｜最终Arian逐点回复尚未收口。9/20：C1/C4正文完成，C3主要问题已回应，C2已增加匹配对照及适用边界，但完整因果隔离不能据此宣称解决；统计附注及最终“意见—修改位置—回应”仍待整理。
 
 12:15–13:00预留午餐与分析缓冲。
 
@@ -124,40 +133,40 @@ Notion：[当前工作计划](https://app.notion.com/p/3df309efda2981a68624c85b6
 
 负责人：本科生单数据集实验对接、管理核验；论文写作更新Table 1。
 
-- [ ] T23｜收到五组frozen references后，核对5 s设置、真实seed、权重来源、split、checkpoint选择、逐样本/患者输出和四列指标，再回填Table 1及受影响比较文字。
-- [ ] T24｜收到PAFA后先核对是三个源模型seed还是固定encoder下游seed，并确认fine-tuned/frozen、目标监督与fixed-transfer角色；名称与表格定位随真实协议，不能混作原法三seed复现。
-- [ ] T25｜Hanlin未反馈时记录缺项与旧结果的证据范围，将处理窗口用于paper/figure修订；不设个人硬截止，也不因本周期结束自动由项目侧补跑。未来是否新增执行另由用户决定。
+- [ ] T23｜Hanlin五组frozen references数值更新已收到：result(3).xlsx的20个mean/SD单元格与Table 1一致。仍待核对真实seed、5 s配方、权重、split、checkpoint选择、逐样本/患者输出及原始日志；完成数值回填不等于完整实验验收。
+- [ ] T24｜Hanlin PAFA仍待完整核验。目前仅收到BEATs+PAFA (frozen)的ICBHI 50.83±1.33%，另外三列及recipe/seed含义/原始产物未齐；用户决定暂不入稿。收到后再确认frozen/fine-tuned、目标监督和fixed-transfer角色。
+- [x] T25｜本轮已按实际完整/部分回报推进paper，Hanlin材料核验保持独立依赖；不设个人硬截止，不因计划到期自动由项目补跑，是否新增执行另由用户决定。
 
 ### 14:30–16:00｜全文连贯性与Abstract/Conclusion
 
 负责人：论文写作牵头，论文写作二核对数据与方法接口。
 
-- [ ] T26｜完整通读Sections 1–5，检查问题、贡献、数据角色、符号、方法、结果与解释是否互相支撑；删除拼接痕迹和重复论点。
-- [ ] T27｜根据已落定的正文与实际可用结果更新Abstract/Conclusion；不把尚未完成实验写成发现，不声称所有数据集SOTA或某一readout必需。
+- [x] T26｜完整通读Sections 1–5，检查问题、贡献、数据角色、符号、方法、结果与解释是否互相支撑；删除拼接痕迹和重复论点。
+- [x] T27｜根据已落定的正文与实际可用结果更新Abstract/Conclusion；不把尚未完成实验写成发现，不声称所有数据集SOTA或某一readout必需。
 
 ### 16:00–17:00｜四页与最终图表检查
 
 负责人：用户在Overleaf编译，写作任务据用户提供的编译稿修订。
 
 - [ ] T28｜用户在Overleaf检查正文四页、图表可读性、caption/引用、浮动位置、符号、作者和内部注释；对篇幅问题优先删冗余文字，不以缩小图中文字掩盖问题。未经用户另行要求，不自动本地LaTeX编译。
-- [ ] T29｜检查Figure 1/2、Table 1/2与所有新增数字的最终版本一致；形成可交老师编辑的PDF/源码版本说明及剩余依赖清单。
+- [ ] T29｜源码中的Figure 1/2、Tables 1–3及新增数字已做一致性核对；最终交稿PDF/源码版本说明仍待Figure 1余项与用户最新版Overleaf编译稿。保留最新四页、浮动、caption/引用及版面检查，不以现有图件单页预览代替全文验收。
 
 ### 17:00–18:00｜缓冲、集中确认与交稿准备
 
 负责人：用户与管理，相关写作任务完成已确认修订。
 
-- [ ] T30｜处理最后一轮修改及晚到的完整结果；没有返回的结果保持未完成，并明确其对最终稿的影响，不因为周期结束虚构完成。
-- [ ] T31｜Paper和figures经用户确认后，准备给老师的“版本已整理好，请最终编辑”的简短通知草稿，附版本和主要修改说明，由用户确认/发送。本计划不自动发送邮件或联系合作者。
-- [ ] T32｜18:00完成内部收口：记录已完成checkbox、真实未完成项、由项目接手的外部缺项及下一步；独立reviewer仅在用户明确要求后启动，不因时间块自动激活。
+- [x] T30｜本轮用户与写作任务的最后修改、全文术语/数字复核及Native+C/W新外评回填已完成；未返回的Hanlin完整材料和最终版面继续单列。本项仅表示本轮修订处理完成，不代表最终投稿版本。
+- [ ] T31｜在Paper和figures最终确认后，准备给老师的简短最终编辑通知草稿，附版本与主要修改；目前尚无本轮草稿。下一步先进行9/20上午合作者meeting并收修正反馈，再确定交稿通知内容；不自动发送邮件。
+- [x] T32｜9/20完成本轮管理集中复核：根据用户与两项写作任务的核对、当前源码/图件及结果材料更新checkbox，记录真实剩余项和负责人，并加入今早合作者meeting。Hanlin缺项不自动转成项目补跑，独立reviewer保持用户控制。
 
 ## 章节所有权与依赖
 
-- 论文写作：Sections 1/4/5、Abstract、Table 1/2及main.tex/citation.bib等共享文件。
+- 论文写作：Sections 1/4/5、Abstract、Tables 1–3及main.tex/citation.bib等共享文件。
 - 论文写作二：Sections 2/3与对应图表，直接协调论文绘图；共享caption/宏/引用改动交论文写作局部整合。
 - 论文绘图：按章节负责人确认的brief修图，交付可编辑源和导出图。
 - Acoustic服务器：本轮训练和独立post-hoc已完成，保持待命与监视暂停；不启动新训练/推理、不等卡自动开跑、不自动接手Hanlin缺项。按用户需要提供已有结果。
 - 本科生单数据集实验对接：处理用户转交的Hanlin材料，核验协议与原始结果；不假设已经联系或已经收到新结果。
-- 管理：完成结果Git快照，维护paper优先级和完成状态，向既有写作任务同步已验证材料；不新增实验任务，不自动激活独立reviewer，遵守用户控制的写作同步规则。
+- 管理：维护paper优先级、checkbox与结果来源，按用户授权向既有写作任务同步；9/19旧结果Git快照已完成，新稿与Native+C/W新增结果仍需用户另行要求后提交。不新增实验，不自动激活独立reviewer。
 
 ## 本周期完成标准
 

@@ -1,8 +1,6 @@
 \newcommand{\LSAAMainResultsTable}{%
-\begin{table}[H]
-\caption{Performance of LSAA and frozen-encoder references across four respiratory sound datasets. Values are means (\%) over three seeds, with sample standard deviations shown as subscripts. Frozen-encoder references use separately trained ICBHI and SPRSound models; LSAA uses joint training. \textbf{Bold} and \underline{underlined} values mark the
-highest and second-highest means within each metric column.
-For LSAA, CAS AUROC uses maximum-window Wheeze-head scores with Wheeze/\allowbreak{}Rhonchi/\allowbreak{}Stridor positives.}
+\begin{table}[!htbp]
+\caption{Comparison of LSAA with frozen-encoder references.}
 \label{tab:native_results}
 \centering
 \small
@@ -14,14 +12,14 @@ For LSAA, CAS AUROC uses maximum-window Wheeze-head scores with Wheeze/\allowbre
 Model
 & \shortstack{ICBHI\\\cite{rocha2019icbhi}\\Score}
 & \shortstack{SPRSound\\\cite{zhang2022sprsound}\\Score}
-& \shortstack{HF\\\cite{hsu2021hflung}\\CAS AUROC}
+& \shortstack{HF\\\cite{hsu2021hflung}\\AUROC}
 & \shortstack{KAUH\\\cite{fraiwan2021kauh}\\BA}\\
 \midrule
-AST \cite{gong2021ast} & $51.40_{\pm0.48}$ & $90.20_{\pm0.18}$ & $\underline{77.01}_{\pm0.30}$ & $\underline{68.64}_{\pm0.41}$\\
-BEATs \cite{chen2023beats} & $51.68_{\pm1.19}$ & $\mathbf{92.37}_{\pm0.35}$ & $75.87_{\pm0.11}$ & $61.86_{\pm0.34}$\\
-PANNs \cite{kong2020panns} & $\underline{52.08}_{\pm0.16}$ & $\underline{91.23}_{\pm0.55}$ & $73.13_{\pm0.10}$ & $56.52_{\pm2.24}$\\
-OPERA-CT \cite{zhang2024opera} & $39.96_{\pm1.68}$ & $79.45_{\pm0.00}$ & $60.96_{\pm0.35}$ & $59.88_{\pm0.34}$\\
-HeAR \cite{baur2024hear} & $49.50_{\pm0.62}$ & $87.89_{\pm0.31}$ & $64.20_{\pm0.29}$ & $64.10_{\pm0.11}$\\
+AST \cite{gong2021ast} & $\underline{53.86}_{\pm0.24}$ & $\underline{90.72}_{\pm0.36}$ & $\underline{75.31}_{\pm0.54}$ & $\underline{64.62}_{\pm1.37}$\\
+BEATs \cite{chen2023beats} & $50.97_{\pm1.55}$ & $\mathbf{91.55}_{\pm0.46}$ & $68.20_{\pm0.43}$ & $59.03_{\pm1.99}$\\
+PANNs \cite{kong2020panns} & $52.55_{\pm1.63}$ & $90.45_{\pm0.32}$ & $70.10_{\pm0.98}$ & $59.95_{\pm1.09}$\\
+OPERA-CT \cite{zhang2024opera} & $41.05_{\pm0.95}$ & $81.18_{\pm0.14}$ & $60.11_{\pm1.21}$ & $55.99_{\pm4.00}$\\
+HeAR \cite{baur2024hear} & $49.24_{\pm0.38}$ & $82.31_{\pm0.41}$ & $59.21_{\pm1.04}$ & $57.71_{\pm6.86}$\\
 \midrule
 \textbf{LSAA} & $\mathbf{61.17}_{\pm0.31}$ & $90.70_{\pm0.34}$ & $\mathbf{86.44}_{\pm2.13}$ & $\mathbf{72.17}_{\pm1.64}$\\
 \bottomrule
@@ -30,56 +28,47 @@ HeAR \cite{baur2024hear} & $49.50_{\pm0.62}$ & $87.89_{\pm0.31}$ & $64.20_{\pm0.
 }
 
 
+\newcommand{\LSAASystemComparisonTable}{%
+\begin{table}[!htbp]
+\caption{LSAA versus DCASE and PC-MCL multilabel adaptations.}
+\label{tab:system_comparison}
+\centering
+\small
+\setlength{\tabcolsep}{0pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.26\columnwidth}*{4}{>{\centering\arraybackslash}p{0.185\columnwidth}}@{}}
+\toprule
+System & \shortstack{ICBHI\\Score} & \shortstack{SPR\\Score}
+& \shortstack{HF\\AUROC} & \shortstack{KAUH\\BA}\\
+\midrule
+\textbf{LSAA} & $\mathbf{61.17}_{\pm0.31}$ & $90.70_{\pm0.34}$ & $\mathbf{86.44}_{\pm2.13}$ & $72.17_{\pm1.64}$\\
+DCASE \cite{cornell2024dcase} & $54.42_{\pm1.25}$ & $\mathbf{91.42}_{\pm0.39}$ & $80.97_{\pm6.42}$ & $\mathbf{77.40}_{\pm4.38}$\\
+PC-MCL \cite{jeong2026pcmcl} & $59.81_{\pm0.80}$ & $48.91_{\pm2.59}$ & $78.64_{\pm7.00}$ & $75.39_{\pm4.55}$\\
+\bottomrule
+\end{tabular}
+\end{table}
+}
+
 \newcommand{\LSAAAnalysisTable}{%
-\begin{table}[t]
-\caption{Effects of training sources, supervision detail, and task-specific readouts. 
-(a) Absolute performance (\%) and paired changes (pp), with
-$\Delta_{\rm I}$ and $\Delta_{\rm S}$ denoting LSAA minus ICBHI-only and SPRSound-only, respectively. Bold marks the highest absolute mean per column in (a).
-(b) Variant minus LSAA; C/W is SPRSound C/W macro AUROC
-(LSAA: $97.32\pm0.15$\%). 
-(c) HF-on minus the corresponding same-seed
-HF-off run. Values are means with subscripted $\pm$ sample SD over
-three seeds. IC/SPR: native Scores; CAS: HF recording AUROC
-using Wheeze-head scores for CAS-union ranking;
-BA: KAUH patient balanced accuracy.}
+\begin{table}[!htbp]
+\caption{LSAA ablations: I/S=ICBHI/SPRSound; N=native task heads; C+W=C/W supervision; w/=with; w/o=without.}
 \label{tab:ablations}
 \centering
 \small
-\setlength{\tabcolsep}{0.5pt}
-\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lcccc@{}}
+\setlength{\tabcolsep}{0pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.26\columnwidth}*{4}{>{\centering\arraybackslash}p{0.185\columnwidth}}@{}}
 \toprule
-\multicolumn{5}{l}{\textit{(a) Single-source and joint training}}\\
-Model & IC & SPR & CAS & BA\\
+Model & \shortstack{ICBHI\\Score} & \shortstack{SPR\\Score}
+& \shortstack{HF\\AUROC} & \shortstack{KAUH\\BA}\\
 \midrule
-ICBHI-only & $57.78_{\pm1.47}$ & $49.53_{\pm6.40}$ & $\mathbf{87.05}_{\pm0.86}$ & $70.44_{\pm1.52}$\\
-SPRSound-only & $47.75_{\pm0.51}$ & $\mathbf{92.82}_{\pm0.65}$ & $79.25_{\pm1.08}$ & $67.25_{\pm4.29}$\\
-\textbf{LSAA} & $\mathbf{61.17}_{\pm0.31}$ & $90.70_{\pm0.34}$ & $86.44_{\pm2.13}$ & $\mathbf{72.17}_{\pm1.64}$\\
-\midrule
-$\Delta_{\rm I}$ & $+3.39_{\pm1.59}$ & $+41.17_{\pm6.70}$ & $-0.61_{\pm1.32}$ & $+1.73_{\pm0.81}$\\
-$\Delta_{\rm S}$ & $+13.42_{\pm0.82}$ & $-2.13_{\pm0.33}$ & $+7.19_{\pm1.05}$ & $+4.91_{\pm4.69}$\\
+\textbf{LSAA} & $61.17_{\pm0.31}$ & $90.70_{\pm0.34}$ & $86.44_{\pm2.13}$ & $72.17_{\pm1.64}$\\
+LSAA-I & $57.78_{\pm1.47}$ & $49.53_{\pm6.40}$ & $87.05_{\pm0.86}$ & $70.44_{\pm1.52}$\\
+LSAA-S & $47.75_{\pm0.51}$ & $\mathbf{92.82}_{\pm0.65}$ & $79.25_{\pm1.08}$ & $67.25_{\pm4.29}$\\
+LSAA-N & $\mathbf{63.87}_{\pm1.43}$ & $88.93_{\pm3.36}$ & $81.62_{\pm3.69}$ & $75.59_{\pm5.62}$\\
+\mbox{N w/C+W} & $63.67_{\pm1.67}$ & $90.86_{\pm1.21}$ & $\mathbf{88.78}_{\pm1.29}$ & $77.91_{\pm3.02}$\\
+\mbox{w/o PAFA} & $58.60_{\pm1.60}$ & $91.04_{\pm0.51}$ & $86.66_{\pm1.83}$ & $\mathbf{78.30}_{\pm1.95}$\\
+\mbox{w/o S C+W} & $54.66_{\pm4.05}$ & $67.23_{\pm36.62}$ & --- & ---\\
+\mbox{w/HF} & $58.90_{\pm2.35}$ & $91.62_{\pm0.71}$ & $80.31_{\pm4.14}$ & $75.51_{\pm5.78}$\\
 \bottomrule
-\end{tabular*}
-\par\smallskip
-\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lccc@{}}
-\toprule
-\multicolumn{4}{l}{\textit{(b) Fine-grained supervision and readout}}\\
-Variant & $\Delta$ IC & $\Delta$ SPR & $\Delta$ C/W\\
-\midrule
-Coarse SPR & $-6.51_{\pm4.33}$ & $-23.46_{\pm36.62}$ & $-8.48_{\pm8.58}$\\
-Native + C/W & $+2.50_{\pm1.90}$ & $+0.16_{\pm1.55}$ & $-0.05_{\pm0.25}$\\
-\bottomrule
-\end{tabular*}
-\par\smallskip
-\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lcccc@{}}
-\toprule
-\multicolumn{5}{l}{\textit{(c) HF supervision and transfer}}\\
-& \multicolumn{2}{c}{Native $\Delta$ Score}
-& HF & KAUH\\
-\cmidrule(lr){2-3}
-Variant & IC & SPR & $\Delta$ CAS & $\Delta$ BA\\
-\midrule
-HF-on & $-1.90_{\pm2.89}$ & $+1.31_{\pm1.43}$ & $-7.41_{\pm2.73}$ & $+1.91_{\pm7.03}$\\
-\bottomrule
-\end{tabular*}
+\end{tabular}
 \end{table}
 }
