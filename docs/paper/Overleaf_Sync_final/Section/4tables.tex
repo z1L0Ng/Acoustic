@@ -15,13 +15,13 @@ Model
 & \shortstack{HF\\\cite{hsu2021hflung}\\AUROC}
 & \shortstack{KAUH\\\cite{fraiwan2021kauh}\\BA}\\
 \midrule
-AST \cite{gong2021ast} & $\underline{53.86}_{\pm0.24}$ & $\underline{90.72}_{\pm0.36}$ & $\underline{75.31}_{\pm0.54}$ & $\underline{64.62}_{\pm1.37}$\\
+AST \cite{gong2021ast} & $\underline{53.86}_{\pm0.24}$ & $90.72_{\pm0.36}$ & $\underline{75.31}_{\pm0.54}$ & $\underline{64.62}_{\pm1.37}$\\
 BEATs \cite{chen2023beats} & $50.97_{\pm1.55}$ & $\mathbf{91.55}_{\pm0.46}$ & $68.20_{\pm0.43}$ & $59.03_{\pm1.99}$\\
 PANNs \cite{kong2020panns} & $52.55_{\pm1.63}$ & $90.45_{\pm0.32}$ & $70.10_{\pm0.98}$ & $59.95_{\pm1.09}$\\
 OPERA-CT \cite{zhang2024opera} & $41.05_{\pm0.95}$ & $81.18_{\pm0.14}$ & $60.11_{\pm1.21}$ & $55.99_{\pm4.00}$\\
 HeAR \cite{baur2024hear} & $49.24_{\pm0.38}$ & $82.31_{\pm0.41}$ & $59.21_{\pm1.04}$ & $57.71_{\pm6.86}$\\
 \midrule
-\textbf{LSAA} & $\mathbf{61.17}_{\pm0.31}$ & $90.70_{\pm0.34}$ & $\mathbf{86.44}_{\pm2.13}$ & $\mathbf{72.17}_{\pm1.64}$\\
+\textbf{LSAA} & $\mathbf{63.67}_{\pm1.67}$ & $\underline{90.86}_{\pm1.21}$ & $\mathbf{88.78}_{\pm1.29}$ & $\mathbf{77.91}_{\pm3.02}$\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -40,9 +40,9 @@ HeAR \cite{baur2024hear} & $49.24_{\pm0.38}$ & $82.31_{\pm0.41}$ & $59.21_{\pm1.
 System & \shortstack{ICBHI\\Score} & \shortstack{SPR\\Score}
 & \shortstack{HF\\AUROC} & \shortstack{KAUH\\BA}\\
 \midrule
-\textbf{LSAA} & $\mathbf{61.17}_{\pm0.31}$ & $90.70_{\pm0.34}$ & $\mathbf{86.44}_{\pm2.13}$ & $72.17_{\pm1.64}$\\
-DCASE \cite{cornell2024dcase} & $54.42_{\pm1.25}$ & $\mathbf{91.42}_{\pm0.39}$ & $80.97_{\pm6.42}$ & $\mathbf{77.40}_{\pm4.38}$\\
-PC-MCL \cite{jeong2026pcmcl} & $59.81_{\pm0.80}$ & $48.91_{\pm2.59}$ & $78.64_{\pm7.00}$ & $75.39_{\pm4.55}$\\
+\textbf{LSAA} & $\mathbf{63.67}_{\pm1.67}$ & $\underline{90.86}_{\pm1.21}$ & $\mathbf{88.78}_{\pm1.29}$ & $\mathbf{77.91}_{\pm3.02}$\\
+DCASE \cite{cornell2024dcase} & $54.42_{\pm1.25}$ & $\mathbf{91.42}_{\pm0.39}$ & $\underline{80.97}_{\pm6.42}$ & $\underline{77.40}_{\pm4.38}$\\
+PC-MCL \cite{jeong2026pcmcl} & $\underline{59.81}_{\pm0.80}$ & $48.91_{\pm2.59}$ & $78.64_{\pm7.00}$ & $75.39_{\pm4.55}$\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -50,7 +50,7 @@ PC-MCL \cite{jeong2026pcmcl} & $59.81_{\pm0.80}$ & $48.91_{\pm2.59}$ & $78.64_{\
 
 \newcommand{\LSAAAnalysisTable}{%
 \begin{table}[!htbp]
-\caption{LSAA ablations: I/S=ICBHI/SPRSound; N=native task heads; C+W=C/W supervision; w/=with; w/o=without.}
+\caption{LSAA variants: I/S=ICBHI/SPRSound only; C+W=C/W supervision; w/=with; w/o=without.}
 \label{tab:ablations}
 \centering
 \small
@@ -60,13 +60,11 @@ PC-MCL \cite{jeong2026pcmcl} & $59.81_{\pm0.80}$ & $48.91_{\pm2.59}$ & $78.64_{\
 Model & \shortstack{ICBHI\\Score} & \shortstack{SPR\\Score}
 & \shortstack{HF\\AUROC} & \shortstack{KAUH\\BA}\\
 \midrule
-\textbf{LSAA} & $61.17_{\pm0.31}$ & $90.70_{\pm0.34}$ & $86.44_{\pm2.13}$ & $72.17_{\pm1.64}$\\
+\textbf{LSAA} & $63.67_{\pm1.67}$ & $90.86_{\pm1.21}$ & $\mathbf{88.78}_{\pm1.29}$ & $77.91_{\pm3.02}$\\
 LSAA-I & $57.78_{\pm1.47}$ & $49.53_{\pm6.40}$ & $87.05_{\pm0.86}$ & $70.44_{\pm1.52}$\\
 LSAA-S & $47.75_{\pm0.51}$ & $\mathbf{92.82}_{\pm0.65}$ & $79.25_{\pm1.08}$ & $67.25_{\pm4.29}$\\
-LSAA-N & $\mathbf{63.87}_{\pm1.43}$ & $88.93_{\pm3.36}$ & $81.62_{\pm3.69}$ & $75.59_{\pm5.62}$\\
-\mbox{LSAA-N w/C+W} & $63.67_{\pm1.67}$ & $90.86_{\pm1.21}$ & $\mathbf{88.78}_{\pm1.29}$ & $77.91_{\pm3.02}$\\
+\mbox{LSAA w/o C+W} & $\mathbf{63.87}_{\pm1.43}$ & $88.93_{\pm3.36}$ & $81.62_{\pm3.69}$ & $75.59_{\pm5.62}$\\
 \mbox{LSAA w/o PAFA} & $58.60_{\pm1.60}$ & $91.04_{\pm0.51}$ & $86.66_{\pm1.83}$ & $\mathbf{78.30}_{\pm1.95}$\\
-\mbox{w/o SPR C+W} & $54.66_{\pm4.05}$ & $67.23_{\pm36.62}$ & $66.38_{\pm34.27}$ & $71.08_{\pm18.28}$\\
 \mbox{LSAA w/HF} & $58.90_{\pm2.35}$ & $91.62_{\pm0.71}$ & $80.31_{\pm4.14}$ & $75.51_{\pm5.78}$\\
 \bottomrule
 \end{tabular*}

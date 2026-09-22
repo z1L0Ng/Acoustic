@@ -6,35 +6,33 @@
 \vspace{-2mm}
 \label{sec:annotation_alignment}
 \label{sec:native_readouts}
-For an input $x_i$ prepared as in Section~\ref{sec:acoustic_characteristics}, the shared BEATs encoder~\cite{chen2023beats,gemmeke2017audioset} produces tokens $H_i\in\mathbb{R}^{T_i\times D}$, where $T_i$ is the token count and $D=768$ (Figure~\ref{fig:method_overview}). We average these tokens and apply a linear $D\to d$ projection to obtain $h_i\in\mathbb{R}^{d}$, with $d=256$. Three parallel linear heads predict abnormality (A), crackle (C), and wheeze (W) probabilities according to $p_{ik}=\phi_k(W_kh_i+b_k)$, $k\in\{a,c,w\}$. Here, $\phi_a$ returns the abnormal probability from a two logit softmax, while $\phi_c$ and $\phi_w$ return the corresponding sigmoid probabilities. The predicted probabilities form $\boldsymbol{p_i}=(p_{ia},p_{ic},p_{iw})$.
+For an input $x_i$ prepared as in Section~\ref{sec:acoustic_characteristics}, the shared BEATs encoder~\cite{chen2023beats,gemmeke2017audioset} produces tokens $H_i\in\mathbb{R}^{T_i\times D}$, where $T_i$ is the token count and $D=768$ (Fig.~\ref{fig:method_overview}). We average these tokens and apply a linear $D\to d$ projection to obtain $h_i\in\mathbb{R}^{d}$, with $d=256$. Dataset-specific linear heads predict $\boldsymbol q_i^{(s)}=\mathrm{softmax}(U_sh_i+v_s)$, where $s\in\{I,S\}$ denotes ICBHI or SPRSound. Two shared linear heads predict crackle (C) and wheeze (W) probabilities $p_{ik}=\sigma(W_kh_i+b_k)$, $k\in\{c,w\}$, where $\sigma$ is the sigmoid function.
 
-The reference model converts these probabilities into native predictions with explicit readouts. We model abnormality independently because SPRSound’s abnormal class also includes Rhonchi and Stridor, whose labels do not specify C/W presence. Let $\hat a_i$ denote the Normal/Abnormal argmax, with ties selecting Normal, and let $\hat c_i=\mathbb{I}[p_{ic}\geq\tau_c]$ and $\hat w_i=\mathbb{I}[p_{iw}\geq\tau_w]$. SPRSound uses $\hat a_i$ directly. For ICBHI, $\hat a_i=0$ yields Normal; otherwise, two positive attributes yield Both and one yields its class. If neither is positive, the larger $p_{ik}-\tau_k$ selects C or W, with ties selecting C. Thresholds are fitted on the validation partitions defined in Section~\ref{sec:joint_supervision}. Native-head variants instead learn each dataset's class predictions directly from $h_i$.
+The ICBHI and SPRSound heads have four and two outputs, respectively, and predict the highest-probability native class. Shared C/W supervision guides the representation used by both heads without requiring the native labels to share an output space. SPRSound's Rhonchi/Stridor (R/S) labels supervise its native abnormal class but do not specify C/W presence.
 
-For the reference model, we use the maximum $p_{iw}$ across three consecutive windows per recording as a fixed proxy score for Wheeze/Rhonchi/Stridor versus Other. This evaluates transfer to a broader target than the Wheeze supervision used in training. For KAUH, we average $p_{ia}$ across each patient's recordings from different filter versions and predict Abnormal above 0.5, with ties selecting Normal.
+For external evaluation, we use the fixed ICBHI native head. HF test uses the maximum $P(W)+P(Both)$ across three consecutive windows per recording as a proxy score for Wheeze/Rhonchi/Stridor versus Other. This evaluates transfer to a broader target than Wheeze presence alone. For KAUH, we average $1-P(N)$ across each patient's recordings from different filter versions and predict Abnormal above 0.5, with ties selecting Normal.
 \vspace{-2mm}
 \subsection{Annotation-Aware Joint Training}
 \vspace{-2mm}
 \label{sec:joint_supervision}
 \label{sec:hf_method}
-Each annotation supplies attribute targets $y_{ik}$ and masks $m_{ik}$, where $m_{ik}=1$ only for supported attributes~\cite{shi2021marginal,zhou2022unknown}. ICBHI and SPRSound labels supervise A/C/W, except SPRSound's Rhonchi/Stridor labels, which supervise A only. Unknown attributes do not contribute to the loss. For a batch $B$, define $B_k=\{i\in B:m_{ik}=1\}$ and $K_B=\{k:|B_k|>0\}$. The classification loss averages over supported samples and active attributes:
+Each annotation supplies a native target $t_i$ and attribute targets $y_{ik}$ with masks $m_{ik}$, where $m_{ik}=1$ only for supported attributes~\cite{shi2021marginal,zhou2022unknown}. ICBHI and SPRSound provide C/W supervision where their labels support it; SPRSound's Rhonchi/Stridor events contribute only to the native loss. For a single-dataset batch $B$, let $B_k=\{i\in B:m_{ik}=1\}$, $k\in\{c,w\}$. We combine native classification and shared attribute supervision:
 \begin{equation}
-\mathcal L_{\rm cls}(B)=\frac{1}{|K_B|}\sum_{k\in K_B}
-\frac{1}{|B_k|}\sum_{i\in B_k}\ell_k(p_{ik},y_{ik}),
+\mathcal L_{\rm cls}(B)=\frac{1}{3}\bigl(
+\mathcal L_{\rm native}(B)+\mathcal L_c(B)+\mathcal L_w(B)\bigr),
 \label{eq:classification_loss}
 \end{equation}
-where $\ell_a$ is cross-entropy on $(1-p_{ia},p_{ia})$ and $\ell_c,\ell_w$ are binary cross-entropy.
+where $\mathcal L_{\rm native}$ is mean cross-entropy between $\boldsymbol q_i^{(s)}$ and $t_i$, and $\mathcal L_k=|B_k|^{-1}\sum_{i\in B_k}\mathrm{BCE}(p_{ik},y_{ik})$ is mean binary cross-entropy over supported labels, set to zero when $B_k$ is empty. LSAA w/o C+W removes $\mathcal L_c$ and $\mathcal L_w$ while retaining the $1/3$ native-loss weight.
 
 Patient regularization uses a separate attention projection $Z_i=\mathcal G(H_i)\in\mathbb{R}^{D}$ and the losses from Patient-Aware Feature Alignment (PAFA)~\cite{jeong2025pafa}. Within each core-dataset batch, patient cohesion-separation loss (PCSL) promotes within-patient cohesion and between-patient separation; global patient alignment loss (GPAL) limits the dispersion of patient feature means. Both regularize the shared encoder.
 
-In LSAA w/HF, HF train windows overlapping Crackle/\allowbreak{}Wheeze/\allowbreak{}Rhonchi/\allowbreak{}Stridor annotations~\cite{hsu2021hflung} provide auxiliary C/W supervision. HF contributes only masked binary cross-entropy $\mathcal L_{\rm HF}$, while core batches supply classification and PAFA terms:
+The training objective combines native and attribute supervision, patient regularization, and optional HF supervision:
 \begin{equation}
-\mathcal L=
-\underbrace{\mathcal L_{\rm cls}
+\mathcal L=\mathcal L_{\rm cls}
  +\lambda_p\mathcal L_{\rm PCSL}
- +\lambda_g\mathcal L_{\rm GPAL}}_{\mathcal L_{\rm core}}
- +\lambda_{\rm HF}\mathcal L_{\rm HF},
+ +\lambda_g\mathcal L_{\rm GPAL}+\lambda_{\rm HF}\mathcal L_{\rm HF},
 \label{eq:total_objective}
 \end{equation}
-with $\lambda_p=50$, $\lambda_g=5\times10^{-4}$, and $\lambda_{\rm HF}=0$ for core LSAA or $0.25$ for LSAA w/HF.
+with $\lambda_p=50$, $\lambda_g=5\times10^{-4}$, and $\lambda_{\rm HF}=0$ for LSAA or $0.25$ for LSAA w/HF. HF's D labels denote crackles~\cite{hsu2021hflung}. HF train windows are eligible when they overlap D, Wheeze, Rhonchi, or Stridor annotations. Their C/W targets indicate D/Wheeze overlap, respectively; missing D/Wheeze annotations within eligible windows are treated as negatives. Thus, R/S-only windows have $(C,W)=(0,0)$, whereas SPRSound R/S events leave C/W masked. Phase-only and unannotated HF windows are excluded. $\mathcal L_{\rm HF}$ averages the C/W binary cross-entropies over eligible windows.
 
-We jointly fine-tune the encoder and heads. Each core epoch contains 326 single-dataset batches of 32 units, equally divided between ICBHI and SPRSound; samples are shuffled and repeated as needed. Training uses Adam (learning rate $5\times10^{-5}$, weight decay $10^{-6}$), cosine decay, and exponential moving average (EMA) parameter smoothing with coefficient 0.5, for at most 50 epochs, without SpecAugment or mixup. Validation holds out the first fold of a fivefold stratified patient-group split within each official training partition: both datasets use seeds 0/1/42. For benchmarking, we follow the checkpoint-selection approach in prior released ICBHI implementations~\cite{bae2023patchmix,jeong2025pafa}, selecting checkpoints by official-test Score. Training stops after ten epochs without improvement in this selection Score; ties retain the earlier checkpoint.
+We jointly fine-tune the encoder and heads. Each core epoch contains 326 single-dataset batches of 32 units, equally divided between ICBHI and SPRSound; samples are shuffled and repeated as needed. Training uses Adam (learning rate $5\times10^{-5}$, weight decay $10^{-6}$), cosine decay, and exponential moving average (EMA) parameter smoothing with coefficient 0.5, for at most 50 epochs, without SpecAugment or mixup. We retain the subtraining partitions from fivefold stratified patient-group splits within the official training sets and use run seeds 0/1/42. For benchmarking, we follow the checkpoint-selection approach in prior released ICBHI implementations~\cite{bae2023patchmix,jeong2025pafa}, selecting checkpoints by official-test Score. Training stops after ten epochs without improvement in this selection Score; ties retain the earlier checkpoint.

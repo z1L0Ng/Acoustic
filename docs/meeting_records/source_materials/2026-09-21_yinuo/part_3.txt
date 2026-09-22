@@ -1,0 +1,93 @@
+Table 3，以及 Method 和 Results 中所有与旧主方法相关的方法名称、结构描述和结果数字。修改时要确保 Figure、Method 和 Evaluation 三部分使用完全一致的方法定义。
+
+在更新实验结果后，我需要重新计算各组实验的 standard deviation，同时基于现有多次运行结果进行 statistical significance test。之后再决定最终论文是采用 mean ± SD，还是继续采用 mean ± SEM 并额外标记 significance。按照 Yinuo 的个人倾向，目前更推荐后者，但最终仍然根据实际计算结果决定。
+
+如果保留 SEM，则 Results 中所有“higher”“better”“improved”等表述都需要重新检查。均值更高不等于 statistically significantly better。对于差异不显著的结果，应明确说明 difference is not significant；对于显著结果，可以考虑在表格中用星号等方式标记。Bold 仍然可以用于表示 numerical best，但不能让 bold 本身暗示 statistical significance。
+
+对于 Table 3 中 patient-related component 的 ablation，需要重新检查当前文字，避免把 external binary task 上很小的 numerical increase 描述成明确 improvement。如果 difference not significant，更合理的讨论重点可能是 variation / stability，而不是 mean performance。
+
+对于 SPRSound supervision ablation，需要继续保留并强调其核心作用：移除 SPRSound 对两个 auxiliary supervision heads 的监督后，整体 performance 明显下降，因此这一实验支持不同 training datasets 共享 supervision structure 的设计。
+
+对于 HF-related variant，最终决定保留。它的意义不是证明 HF 加入训练后能够提高 performance，而是测试我们提出的 shared supervision 能否进一步扩展到 annotation structure 明显不同的第三个 dataset。结果没有明显改善本身也是一个有意义的观察，并说明当前 framework 面对 annotation philosophy 和 sample distribution 差异更大的 dataset 时可能需要额外 adaptation。
+
+Dataset Section 中需要统一 HF 和 KAUH 的 subset rationale。HF 为什么只使用 subset、为什么不作为主要 training dataset，以及 KAUH 为什么主要作为 external evaluation，都应该在数据介绍阶段尽量讲清楚，而不是等到 Results 才第一次解释。
+
+Figure 1C 需要补充纵轴标签 Frequency (Hz)。
+
+Method 中关于 abnormal broad class、不同 label structures 之间关系，以及 optional supervision 的几段文字，需要由 Yinuo 会后重点检查。她会根据情况直接修改或者留下 comments。
+
+最重要的方法学待办事项仍然是 ICBHI checkpoint selection。我需要把一到两篇最有代表性的相关工作以及必要时对应的 GitHub implementation 发给 Yinuo。重点不是单纯证明“别人也这么做”，而是确认 prior work 到底有没有明确说明使用 official test set 进行 checkpoint selection，以及这种做法在该 benchmark 中究竟是公开的 evaluation convention，还是只存在于 implementation 中。
+
+Yinuo会检查这些论文，然后再判断我们的 manuscript 应该如何处理。如果 prior work 对 protocol 说明得很清楚，那么当前实验大概率只需要重新措辞并透明说明；如果 prior work 本身也存在不清楚甚至明显不规范的地方，则需要重新考虑是否应该从 official training set 中建立独立 validation split，并视情况重新运行相关实验。
+
+最后，Abstract 和 Conclusion 暂时不优先修改。应该等 Method、主方法定义、Tables、statistical analysis 和 Results narrative 全部稳定之后，再回头统一调整 Abstract 和 Conclusion。
+
+二十三、最终确定的修改优先级
+
+综合最后的讨论，目前最合理的工作顺序可以概括为：
+
+第一，先确定新的 main method，把表现更好且包含完整 supervision design 的 configuration 提升为最终方法，同时删除与之重复的 ablation configuration。
+
+第二，更新所有受主方法变化影响的实验结果和展示内容，尤其是 Figure 2、Table 1、Table 2 和 Table 3。这里要先把“最终数字”确定下来，不要急着先重写 Results。
+
+第三，重新计算 SD，并对多次运行结果进行 significance analysis。比较 SD 和 SEM 两种 reporting 方式，再决定最终 Table 的呈现方式。如果继续使用 SEM，则同时设计 significance notation，并相应调整正文。
+
+第四，根据最终 Tables 重写 Section 4.1 和 4.2，尤其注意 numerical improvement 与 statistically significant improvement 的区别，同时重新组织对 cross-dataset stability 的描述。
+
+第五，统一 Section 2 中 HF 和 KAUH subset selection 的解释，补 Figure 1C 的 Frequency (Hz)，并完善 dataset roles 的 rationale。
+
+第六，由 Yinuo检查 Method 中目前标出的 unclear paragraphs，包括 abnormal label、label mapping、optional supervision 等表达问题。
+
+第七，我把 ICBHI 相关 representative papers / repositories 发给 Yinuo，由她检查 test-set checkpoint selection 的实际做法和论文表述，然后共同决定当前 Method 只需要 rephrase，还是必须修改实验 protocol。
+
+第八，在上述内容稳定后，最后统一修改 Abstract、Introduction 中受影响的少量表述，以及 Conclusion，确保全文从 research question、method、results 到 conclusion 使用同一套最终 story。
+
+二十四、整场讨论形成的论文主线
+
+经过这次讨论，我们对论文应该如何讲故事也进一步形成了比较明确的共识。
+
+论文不应该被写成一个单纯追求 ICBHI benchmark accuracy 的 machine-learning model improvement work，也不应该把主要贡献包装成“在一个 base model 上加入几个 regularization 后性能有所提升”。
+
+论文真正关注的是 heterogeneous respiratory acoustic datasets 之间存在不同的 native tasks、annotation structures、label spaces 和 dataset characteristics。在这种情况下，单一 dataset 上优化得到的模型即使 native performance 较好，也未必能够迁移到其他 respiratory datasets。
+
+因此，我们的方法应该作为一个完整 framework 出现：保留适合 native tasks 的 prediction structure，同时利用跨数据集共享的 supervision，使多个具有不同 annotation structures 的 datasets 能够参与统一学习，并进一步在未直接参与主要训练的 external datasets 上评价这种设计的泛化能力。
+
+从这个角度看，Table 1、Table 2 和 Table 3 各自承担不同的证据角色。
+
+Table 1 说明相比简单 frozen encoder / native baseline，完整训练 framework 能够获得更好的整体表现。
+
+Table 2 说明我们的重点不仅是 native benchmark performance，还包括与其他 multi-dataset / label-handling strategies 相比时的 cross-dataset behavior。DCASE-derived method 和 PC-MCL 虽然性质不同，但分别提供了 multi-dataset strategy 和 ICBHI-specific strategy 两种参照。
+
+Table 3 则通过 ablation 回答完整 framework 中不同设计为什么存在。Single-dataset variants 展示只在一个 dataset 上训练的跨数据集局限；shared supervision ablation 展示多个 datasets 共同参与 supervision 的必要性；patient-related component 展示已有设计在不同 datasets 上的作用并不完全一致；HF experiment 则展示当前 supervision framework 向 annotation structure 差异更大的 dataset 扩展时存在的边界。
+
+因此，最终主方法应该直接代表这套完整设计，而不是一个人为定义的较弱中间版本。
+
+二十五、统计结果在最终论文中的表达原则
+
+Yinuo在这次讨论中反复强调的另一个核心问题，是不要把 numerical difference 自动写成 scientific conclusion。
+
+尤其如果继续报告 SEM，那么像 91.55 和 90.72 这样的结果，即使前者 numerical value 更高，也必须结合 uncertainty 和 statistical test 判断两者是否真的存在显著差异。
+
+因此最终写作中应该区分三种情况：
+
+如果某个方法 mean 更高且 difference statistically significant，可以明确讨论其 improvement，并在表格中使用 significance notation。
+
+如果 mean 更高但 difference not significant，可以报告 numerical difference，但不能把它写成明确的性能优势。
+
+如果 mean 基本没有显著变化，但 uncertainty / variation 更小，则可以讨论 model stability，但同样要准确说明证据实际支持的是什么。
+
+这对于我们的论文尤其重要，因为真正的 contribution 并不是在每一个 dataset 上都必须取得最高的单点数字，而是希望说明一个完整方法在 heterogeneous respiratory datasets 下能够提供更稳定、更具有 cross-dataset applicability 的表现。
+
+不过，“stable”“better generalization”或者类似表述最终仍然必须由对应实验和 statistical analysis 支撑，而不能只根据某一个 mean 值推导。
+
+二十六、会议结束
+
+最后我确认会先按照上述顺序修改论文，并把 ICBHI 相关论文发给 Yinuo。
+
+Yinuo会在会后继续检查 Dataset 和 Method 的 writing / logic，并重点阅读我提供的 prior work，判断 ICBHI checkpoint-selection protocol 应该如何处理。
+
+由于投稿 deadline 已经非常接近，目前目标是优先解决会直接影响科学正确性和全文一致性的问题：主方法定义、Results 数字、statistical reporting，以及 ICBHI evaluation protocol。语言层面的细节修改则在这些内容确定之后继续完成。
+
+如果后续修改过程中还有问题，我会直接通过微信和 Yinuo 沟通。
+
+至此，本次关于论文最终修改、Method、Evaluation、ablation 和 statistical reporting 的讨论结束。

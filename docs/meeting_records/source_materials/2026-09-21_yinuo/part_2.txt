@@ -1,0 +1,311 @@
+相应地，Figure 2、Method Section、Table 1、Table 2、Table 3，以及 Results 中所有涉及主方法名称、结构和数字的地方都需要同步更新。这个修改本身不会要求我们重新设计一套实验，但必须保证全文的方法定义保持一致，不能出现 Method 中描述的是旧主方法，而 Results 中已经使用新主方法的情况。
+
+九、为什么更换主方法不会改变论文的核心贡献
+
+我们随后进一步讨论了：如果把这个 variant 提升为主方法，并删除原来的一部分 readout design，会不会影响论文原本的 contribution。
+
+Yinuo认为不会，而且这样反而能让论文的 story 更清楚。
+
+她强调，我们最终想说的并不是“我们有一个基础模型，然后在基础模型上不断增加 regularization，最后发现性能有所提升”。如果按照这种方式组织，reader 很容易把论文理解成一个 incremental model improvement。
+
+真正应该强调的是，我们设计了一个完整的 model，这个 model 本身就包含解决当前 heterogeneous respiratory datasets 问题所需要的 supervision 和 feature。然后我们展示完整模型在 native datasets 和 external datasets 上的 performance，再通过 ablation study 分析其中不同 components 的作用。
+
+因此，最终定义的 base/main model 就应该是包含完整设计、整体表现最合理的版本。
+
+换句话说，原来那个较弱的 model 没有必要因为历史上最先被我们定义为“base model”，就一直保留为论文主方法。如果后续实验已经证明另一个配置更加符合方法设计，也有更好的 performance，那么直接把后者作为完整模型更合理。
+
+我确认理解这个逻辑，并决定按照这个方向修改：删除与新主方法重复的配置，把新的完整 configuration 提升成主方法，然后同步修改 Method、Figure 和 Results。
+
+十、结果应该报告 SEM 还是 Standard Deviation
+
+在讨论 Table 3 时，Yinuo又注意到一个重要问题：每张表里均值后面的 “±” 到底表示 standard deviation 还是 standard error of the mean。
+
+我说明目前报告的是 standard error of the mean，SEM。
+
+Yinuo指出，如果这些数字是 SEM，那么目前很多看起来有数值差异的结果实际上未必具有 statistical significance。
+
+例如，一个结果是 91.55，另一个是 90.72。如果后面的 uncertainty 是 SEM，而且两个结果的 uncertainty intervals 有明显 overlap，那么仅仅因为 91.55 数值更高，并不能直接声称它 statistically significantly better。
+
+这使得当前 Results 中一些“higher performance”之类的描述需要更加谨慎。
+
+我最初提出，那是否应该直接把所有 SEM 换成 standard deviation。
+
+Yinuo认为两种方式其实都可以，但选择取决于论文想面对的 target audience。
+
+如果 target audience 更偏 machine learning community，那么报告 mean ± standard deviation 会更加符合很多 ML papers 的常见写法。
+
+但如果主要 target audience 是 respiratory acoustics / signal processing / biomedical acoustic analysis，那么保留 SEM 也有意义，因为这类读者可能更关心不同模型 performance estimate 的 uncertainty 以及 differences 是否 statistically significant。
+
+如果继续使用 SEM，那么 Results 和 Discussion 中就不能只看 mean 的大小来判断方法优劣，而应该明确区分：
+
+某个方法的 mean 更高；
+
+以及这个 improvement 是否 statistically significant。
+
+如果一个方法 mean 更高，但是 difference not significant，那么正文应该直接说明这一点。
+
+如果某个 improvement 确实达到 significance，则可以考虑在 Table 中通过星号等方式标记。
+
+例如，最高 mean 仍然可以 bold，但是如果和 comparison method 的差异不显著，就不要额外标 significance star；只有统计检验确认 significant 的结果才增加对应标记。
+
+十一、需要进行 statistical significance test
+
+在这个基础上，Yinuo建议进一步做 statistical significance testing，而不是只通过均值和 SEM 肉眼判断。
+
+她提到了 ANOVA 一类的 statistical test，并询问我是否知道怎么做。我确认自己可以处理，因此不需要她额外演示。
+
+她举例说，有些结果例如 91.55 和 90.72，即使 mean 有差异，根据当前 SEM 来看，很可能并不 significant。
+
+相反，如果一个方法是 61.7 ± 0.31，而其他方法明显低很多，那么这种差距很可能在统计检验中会达到较高的 significance level。
+
+因此，一个比较合理的做法是把当前多次运行的 raw results 拿出来，进行正式的 significance analysis，再根据结果决定 Table 中哪些 improvement 可以明确强调。
+
+我表示可以同时做两件事：
+
+一方面重新计算 standard deviation；
+
+另一方面也进行 statistical significance test。
+
+两套数字都准备好之后，再决定最终 manuscript 中使用 SD 还是 SEM，以及 Results 中如何描述。
+
+Yinuo同意这种做法。
+
+十二、为什么 Yinuo 更倾向于保留 SEM + significance
+
+虽然两种 reporting strategy 都可以，但 Yinuo个人更倾向于保留 SEM，同时加入 significance information。
+
+她的理由主要来自这篇论文真正的 audience 和 story。
+
+如果这篇工作是纯 machine-learning paper，那么模型 performance 的小幅提升以及 standard deviation 可能更加符合 community convention。
+
+但我们的工作本身并不是要证明“我们发明了一个全新的 machine-learning algorithm，在同一个 benchmark 上比所有模型准确率更高”。
+
+实际上，已经有很多团队在 ICBHI 等数据集上尝试不同 ML methods，我们也不是第一个做 respiratory sound classification 的团队。
+
+因此，论文真正应该面对的 audience 更可能是关心：
+
+如何从 respiratory sounds 中识别 abnormal conditions；
+
+不同 respiratory datasets 之间为什么不能直接互换；
+
+不同 annotation structures 如何影响 model training；
+
+以及如何建立一种能够联合不同 datasets 的 evaluation / learning framework。
+
+Yinuo查看了一下 ICASSP 的定位，也认为这个 venue 的读者本身应该更关心 acoustic / speech / signal processing，而不是只关心 machine-learning benchmark leaderboard。
+
+因此在这个 context 下，machine learning 更像是我们解决 respiratory acoustic dataset integration 问题的工具。
+
+模型设计当然仍然是 contribution，但更重要的 contribution 是：这个方法能够把不同 datasets、不同 annotation structures 和不同 supervision 结合起来。
+
+从这个角度看，保留 SEM，并明确告诉读者哪些 improvement significant、哪些只是 mean 上更高，反而可能更符合论文的科学叙事。
+
+我表示会先把 SD 也计算出来，然后结合 significance results 再最终决定。
+
+十三、Table 3 中 patient-related component 的 ablation
+
+之后我们继续讨论 Table 3 剩余的 ablation。
+
+其中一个 variant 是把之前参考已有工作的 patient-related component 去掉，但仍然保留我们主方法的其他结构。
+
+这个组件本身来自 prior work，而且 prior work 主要针对 ICBHI。因此从实验结果来看，移除这个 component 后，在 ICBHI 上 performance 会下降，这和它原本针对 ICBHI 优化的设计是吻合的。
+
+但在其他 datasets 上，移除这个 component 并没有造成特别明显的 performance degradation。
+
+甚至在某个较简单的 binary external task 上，去掉该 component 后 mean score 还稍微更高。
+
+我解释，对于 KAUH 之类的数据集，这个现象并不是完全无法解释，因为该 dataset 本身已经进行了比较严格的 patient-level organization / grouping，而这个 component 原本也是针对 patient-related variation 进行处理的。
+
+不过 Yinuo再次提醒：不能因为某个 mean 数字稍微更高，就直接说这个 variant better。
+
+从 SEM 来看，这个 improvement 仍然可能 not significant。
+
+真正可以比较明确地讨论的是 variance。
+
+如果去掉某个组件之后 mean 没有显著变化，但是 SEM 更小，那么至少说明不同 runs 之间的 variation 更小，model 的结果更加稳定。
+
+尤其对于一个比较简单的 binary task，这种 variance reduction 可能比非常小的 mean improvement 更值得讨论。
+
+因此这一部分 Results 也需要在 statistical test 之后重新组织语言，避免把 numerical difference 直接解释成 performance improvement。
+
+十四、针对 SPRSound supervision 的 ablation
+
+接下来一个 variant 是专门针对 SPRSound 做的。
+
+这个 variant 保留整体 architecture，但对于 SPRSound training data，移除了 SPRSound 对我们提出的两个 auxiliary supervision heads 的监督。
+
+实验结果显示，移除这些 supervision 后，整体 performance 会明显下降。
+
+我认为这一结果比较直接地支持了我们设计共享 supervision 的必要性：如果不同 datasets 只是被放在一起训练，却不能共同参与这些 supervision signals，那么整个 multi-dataset learning framework 的效果会明显变差。
+
+换句话说，这个 ablation 支撑的是为什么我们需要让多个 datasets 共享同一套 supervision structure，而不是仅仅把不同 datasets 拼接起来训练。
+
+对于这一条结果，Yinuo没有提出明显异议，认为它和当前论文 story 是一致的。
+
+十五、将 HF 加入 shared supervision 的最后一个 variant
+
+Table 3 最后一个 variant 是把 HF dataset 也进一步加入 shared supervision。
+
+也就是说，我们尝试让 HF 不只是 external evaluation dataset，而是让其中兼容的部分数据也参与我们提出的 supervision framework。
+
+但是结果显示，这样做并没有很好地改善 performance。
+
+我解释，这和 HF 本身的数据结构有很大关系。
+
+首先，HF 的数据量相对于其他 datasets 非常大。如果直接把它完整加入 training，它的数据量可能会 dominate 整个 learning process，使模型训练被 HF 主导。
+
+其次，HF 的 annotation philosophy 和我们当前主要使用的两个 training datasets 差异很大。
+
+HF 并不是像当前主要 datasets 那样，对完整 respiratory cycle 或完整 event 进行统一 annotation。它更多只标注某个 acoustic event 出现的时间，而且缺少和我们当前 supervision framework 完全对应的 negative samples / complementary labels。
+
+因此，它并不适合作为一个能够直接加入当前 joint training framework 的完整 training dataset。
+
+我们只能从中提取一部分与当前 label system 兼容的 subset。
+
+这也是为什么即使尝试把 HF 的部分信息加入 shared supervision，也没有带来特别明显的 improvement。如果未来真的希望充分利用 HF，可能需要进一步进行 dataset-specific adaptation，而不是直接套用当前 supervision strategy。
+
+十六、为什么 HF 和 KAUH 主要作为 external evaluation datasets
+
+Yinuo随后进一步问：为什么这里特别是 HF 会有这种处理方式，以及这些原因是否已经在 Discussion 中解释。
+
+我说明目前已经提到 HF 缺少对应 negative samples，以及为什么我们只能使用它的 subset，但后续还可以把理由写得更清楚。
+
+HF 不适合作为主要 training dataset，核心有两个原因：
+
+第一，数据量异常大，直接加入 joint training 后容易 dominate optimization；
+
+第二，它的 annotation unit 和 annotation philosophy 与当前主要 training datasets 差异过大，无法直接共享完全相同的 supervision。
+
+对于 KAUH，原因又不同。
+
+KAUH 的数据量太少，总共只有大约 336 个 recordings，而且这些 recordings 实际来自大约 112 个 patients，每个 patient 对应三种不同 filtering conditions。
+
+因此，它看起来有 336 recordings，但独立 patient 数量实际上非常有限。
+
+如果再把这个数据集拆成 training / validation / test，数据会变得非常碎，很难形成稳定的 training set。
+
+与此同时，KAUH 中部分 annotations 也和我们当前 target labels 不完全一致，因此甚至不能直接使用全部 recordings，只能使用兼容的 subset。
+
+因此我们最终没有把 KAUH 纳入主要 training datasets，而是把它作为 external evaluation site。
+
+这样，四个 datasets 在论文中的角色就有比较明确的 rationale：
+
+ICBHI 和 SPRSound 是主要 joint-training datasets；
+
+HF 和 KAUH 则因为数据规模、annotation structure、label compatibility 等不同原因，更适合作为 external evaluation datasets。
+
+这些 rationale 需要在 Dataset / Discussion 中明确写出来。
+
+十七、最后一个 HF variant 是否应该保留
+
+在理解了 HF 的逻辑后，Yinuo一开始对 Table 3 最后这个 HF-related variant 是否有必要保留表示不确定，并建议我也可以问 Jingping。
+
+我解释，这个 experiment 的意义并不是为了证明 HF 能提升性能，而是回答另一个问题：
+
+我们提出的 shared supervision 是否只能在当前两个主要 training datasets 上工作，还是其他 respiratory dataset 也有可能利用这套 supervision？
+
+也就是说，这个 variant 实际上是在测试我们方法向第三个 heterogeneous dataset 扩展时会发生什么。
+
+即使结果没有明显提升，它仍然提供了有价值的信息：当前 supervision framework 并不能直接无条件扩展到所有 datasets，尤其当 annotation structure 和 sample distribution 差异过大时，需要额外 adaptation。
+
+听完这个解释后，Yinuo认为这个 point 是成立的，因此改变了最初的看法，同意保留这个 variant。
+
+十八、Conclusion 和 Abstract 暂时最后再改
+
+Table 3 讨论结束后，我们简单谈到了 Conclusion。
+
+我的想法是，Conclusion 和 Abstract 目前不需要马上重新改，因为接下来主方法、Table 结果、significance reporting 和部分 Method wording 还会发生变化。
+
+因此更合理的顺序是先把 Method 和 Results 稳定下来，最后再回头调整 Abstract 和 Conclusion，使它们准确对应最终版本。
+
+Yinuo同意这个顺序。
+
+十九、会议结束前对当前问题的总结
+
+我最后重新总结了一遍目前论文各部分的状态。
+
+Introduction 基本没有大的问题。
+
+Dataset Section 需要 Yinuo 会后快速完整检查一次，尤其是语言、Figure 1C 的 Frequency (Hz) 标注，以及 HF / KAUH subset rationale 的位置是否统一。
+
+Method 中最大的问题是 ICBHI checkpoint selection protocol。尤其需要确认 prior work 是否真的使用 official test set 进行 checkpoint selection，以及他们在论文中是如何描述这一点的。
+
+我会把相关论文和必要的 repo 发给 Yinuo。
+
+Evaluation Setup 本身基本没有大问题，主要需要统一 HF 和 KAUH subset information。
+
+Results 最大的修改则是把新的 configuration 提升为主方法，并同步修改所有 Tables、Figures 和对应文字。
+
+另外需要重新处理 SEM / SD / statistical significance 的问题。
+
+二十、Yinuo 建议的具体修改顺序
+
+Yinuo随后给出了一个比较明确的修改顺序。
+
+第一步，不要先大规模修改正文，而是先把和新主方法直接相关的 Figures 和 Tables 更新掉。
+
+尤其需要先更新 Table 1、Table 2 以及相关 method configuration，因为这些结果会直接决定 Section 4.1 和 4.2 应该如何重新写。
+
+也就是说，先确定最终主方法到底是什么、它在主要实验中的数字是多少，然后再根据这些最终结果修改 Results narrative。
+
+第二步，在结果数字稳定之后处理统计报告问题。
+
+这里可以有两条路线：
+
+一种是把目前的 SEM 改成 standard deviation；
+
+另一种是保留 SEM，同时做 formal statistical significance test。
+
+如果选择后者，那么 Section 4.1 和 4.2 中可能需要分别增加两三句话，解释哪些 numerical improvements statistically significant，哪些虽然 mean 更高但 difference not significant。
+
+Yinuo举例说明，如果我们的模型在某一个 setting 下不是绝对最高，但是它与最高方法之间没有 significant difference，而在其他 datasets / conditions 下又明显优于其他方法，那么可以从整体上讨论模型的跨数据集稳定性。
+
+不过这里的文字必须建立在真正的 significance test 结果上，不能只凭均值做判断。
+
+我表示 SD 和 significance test 可以两个都做，因为计算成本都很低。等结果出来后再决定 manuscript 最终采用哪一种 reporting style。
+
+Yinuo同意。
+
+第三步，在 Figures、Tables 和 statistical reporting 都确定之后，再修改 Section 4.1、4.2 的具体 narrative。
+
+这样可以避免先写一版 Results，之后数字变化又重新改一遍。
+
+第四步，Yinuo会去检查前面的 writing 和 logic，尤其是 Method 中我标记出来的那些可能 confusing 的段落。
+
+与此同时，她会阅读我发给她的 ICBHI prior work，重点确认 test-set-based checkpoint selection 到底是如何处理和描述的。
+
+二十一、关于 ICBHI protocol 的最终补充讨论
+
+在会议快结束时，我们又回到了 ICBHI checkpoint selection。
+
+Yinuo再次表示，这件事情从标准 evaluation methodology 来看确实很奇怪。
+
+理论上 test set 不应该参与 model selection。如果根据 test score 选择 checkpoint，本质上相当于通过考试结果不断决定自己应该采用哪种学习方法，这会破坏 test set 作为 independent evaluation 的作用。
+
+我说明，我第一次实现时其实采用的是正常 validation 思路，也就是从 training data 中进一步拆 validation。
+
+但是这样做之后有两个现实问题。
+
+第一，原本 training data 就不算很多，再拆 validation 后真正用于 training 的数据进一步减少。
+
+第二，也是更关键的问题，最终 score 无法与大量 existing work 公平比较，因为很多 state-of-the-art work 实际上直接使用 official test score 选择 checkpoint。
+
+因此，如果我们单独使用更严格 protocol，最终数字可能明显低于 prior work，但这种差距并不完全来自模型能力，而是来自 evaluation protocol 不一致。
+
+Yinuo理解这个问题。
+
+她因此没有要求我们立刻改变 protocol，而是让我挑一两篇在这个领域比较 high-impact、最有代表性的工作发给她。
+
+如果这些论文能够非常明确地解释这种做法，并且它已经成为该 benchmark 的公开 evaluation convention，那么我们可以为了 fair comparison 使用相同方式，同时准确披露。
+
+但如果论文自己没有说清楚，只是在代码里偷偷把 test loader 当 validation loader，那么这个问题就需要更加谨慎。
+
+我提到这些工作很多本身也是发表在 ICASSP、Interspeech 等 venue，因此至少从历史实践来看，这种 protocol 在相关 community 中并不是完全罕见。
+
+Yinuo最终表示先看这些论文具体怎么写，再决定我们的文字是否只需要 rephrase，还是需要更大的 protocol adjustment。
+
+二十二、本次会议最终确定的待办事项
+
+本次会议结束后，我需要首先确定新的主方法，并把当前表现更好、结构上也更符合论文 contribution 的 configuration 提升为 main method。与新主方法重复的旧 variant 应从 Table 3 中删除。
+
+随后需要同步更新 Figure 2、Table 1、Table 2、

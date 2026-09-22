@@ -1,23 +1,28 @@
 # Acoustic Work Plan
 
-## 当前周期：2026-09-18–2026-09-20
+## 当前周期：2026-09-21｜Yinuo会后修订
 
-9/20集中复核：用户与两项写作任务已完成一轮核对。管理检查当前源码、图件与已有结果后，原T01–T32及T18a共33项中已完成22项，本次新增勾选20项；11项仍有具体余项。页面保持In progress，原9/18–19时间窗口作为历史安排。
+会议：[完整中文记录](https://app.notion.com/p/3e2309efda2981f2b46fc0ea762b320e)；[本地纪要](meeting_records/2026-09-21_yinuo_paper_revision_meeting_record_zh.md)。当前计划：[Notion Work Plan](https://app.notion.com/p/3e2309efda2981d4927cf7476ef18691)；[本地checkbox计划](work_plans/2026-09-21_yinuo_paper_revision_work_plan_zh.md)。三份会议附件已接回两处截断，保留完整26节及原始文本。
 
-当前计划：[本地checkbox计划](work_plans/2026-09-18_to_2026-09-19_paper_revision_work_plan_zh.md)；[Notion工作计划](https://app.notion.com/p/3df309efda2981a68624c85b689f596b)。会议依据：[9/18完整记录](meeting_records/2026-09-18_group_meeting_record_zh.md)；[Notion会议记录](https://app.notion.com/p/3df309efda29810c84bdc20f5462b88f)。
+今天按“主方法/比较对象 → 数字与Tables/Figure → SD/SEM及统计分析 → Results → Abstract/Conclusion与四页检查”推进。建议窗口17:45–23:30 CDT；时间段是内部安排，不是合作者或学生的硬截止。当前计划共有21项主体todo和3项独立依赖，另列3项已具备基础；本轮建计划不意味着正文修订已经完成或开始。
 
-- [x] 整体论点、章节角色、Figure 2符号/路径、Arian C1/C4及指标定义已核对；已有baseline和归因消融已入稿，全文及Abstract/Conclusion完成一轮核对。
-- [x] Hanlin五组frozen references汇总已收到并入Table 1，20个数值单元格与result(3).xlsx一致；完整实验材料验收仍未完成。
-- [x] 用户在写作任务另行批准的Native+C/W独立HF/KAUH三seed外评已完成、入Table 3并从保存预测复核：HF CAS 88.78±1.29%、KAUH patient BA 77.91±3.02%。新增材料尚未计入9/19旧Git归档包。
-- [ ] 下一步T33：9/20上午按已约定时间与合作者meet，展示当前paper/figures并取得修正反馈；会后整理“反馈—对应章节/图表—下一步修改”。
+会议方向是将Native+C/W作为完整主方法。先确认最终命名及Jingping的意见，再同步Figure 2、Method与Tables 1–3。旧single-source、Coarse SPR、without-PAFA和HF-on主要属于explicit-readout分支；不能只换名称就把它们当作新native-head main的单因素消融。删除重复展示行，保留原实验与正确参照。
 
-剩余事项：Figure 1图内标签及最终集成；baseline输入/选模/固定外评差别说明；成功PC-MCL轻量原始包归档；统计附注与Arian最终逐点回应；Hanlin原始材料核验及PAFA；用户最新版Overleaf四页与最终图表/PDF验收；反馈后的最终编辑通知草稿。各项详细状态与负责人见checkbox计划。
+统计先核口径：会议口述SEM，但当前稿与本地汇总主要记录sample SD。先复算逐seed mean/SD/SEM和n，再决定表格口径及检验；不可只凭均值或误差条重叠判断显著性，不显著也不代表等效。
 
-表格按用户与写作任务的决定组织为Table 1 frozen references、Table 2方法系统比较、Table 3 ablations。唯一稿件为[Overleaf_Sync_final](paper/Overleaf_Sync_final/main.tex)，两项写作任务保持既有章节所有权。本轮只更新管理计划。
+ICBHI选模仍是会后待决问题。现有[原文定位与PDF](literature/2026-09-21_icbhi_checkpoint_selection/README.md)已准备，四篇论文没有明确写test-score选模，证据来自released implementations。用户向Yinuo转交后共同决定是否透明重述或调整协议；尚未发送，不因建计划自动重跑实验。
 
-9/19已保存的Native-only、without-PAFA及Native-only独立外评见[结果归档](result_exports/2026-09-19_lsaa_attribution/README.md)：旧包694个本地原始文件、12个best/last checkpoint，Git保存682个非权重文件。新稿与新增Native+C/W结果不能视为已提交Git。
+HF-on按会议决定保留为第三来源扩展的边界分析。Section 2统一HF/KAUH subset与角色，Figure 1C补Frequency (Hz)；Yinuo的实际comments按收到的内容处理。首尾段落等Method/Tables/Results稳定后再对齐。
 
-实验阶段保持收口，执行任务待命、监视暂停。Hanlin材料到达后核验，不设个人硬截止，不自动由项目补跑。独立reviewer由用户明确启动；本次未发送邮件或提交Git。下方历史启动授权不构成新的执行许可。
+章节所有权延续：论文写作负责Sections 1/4/5、Abstract、Tables 1–3及main.tex/citation.bib；论文写作二负责Sections 2/3和对应图件，与论文绘图协作。唯一稿件仍为docs/paper/Overleaf_Sync_final/；先讨论后改稿，用户在Overleaf编译，不恢复DONE，不自动激活独立reviewer。
+
+SPR4/HF-DAS独立探索脚本已准备但尚未启动，正式执行因自动审批仍按旧只读阶段拒绝而等待用户在拒绝后确认。本次会议存档/规划不替代该确认；这条支线不阻塞写作。Hanlin的PAFA与五组参考仅按实际材料核验，不设个人硬截止、不自动补跑。
+
+## 已归档周期：2026-09-18–2026-09-20
+
+[旧Notion计划](https://app.notion.com/p/3df309efda2981a68624c85b689f596b)已标归档/Done，含义是旧计划被本次会议计划取代，不是全部任务完成。[旧本地计划](work_plans/2026-09-18_to_2026-09-19_paper_revision_work_plan_zh.md)保留原状态及迁移说明；[归档前完整快照](work_plans/snapshots/2026-09-21_previous_work_plan_snapshot_zh.md)保留本次操作前内容。合作者反馈任务T33由9/21实际会议承接；原11项余项已映射到新计划，未直接全部勾选。
+
+下方更早计划与启动决定均为历史，不构成新一轮实验或自动联系的许可。
 
 ---
 

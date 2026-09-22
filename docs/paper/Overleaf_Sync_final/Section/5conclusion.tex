@@ -2,4 +2,4 @@
 \section{Conclusion}
 \vspace{-3mm}
 \label{sec:conclusion}
-We presented LSAA, which shares acoustic attribute supervision across heterogeneous respiratory sound datasets while preserving distinct native tasks. We find that retaining fine-grained annotations benefits both native tasks despite SPRSound's binary output. Native heads with C/W supervision achieve higher mean task and transfer performance than explicit attribute readouts, with similar SPRSound C/W discrimination. Evaluation on HF and KAUH further shows that additional supervision need not improve transfer. 
+We presented LSAA, which combines shared acoustic attribute supervision with dataset-specific native heads to learn from heterogeneous respiratory sound annotations. Shared C/W supervision improves mean SPRSound performance and transfer to HF and KAUH, with a small ICBHI performance decrease relative to native-task training alone. These results show that fine-grained annotations can support learning beyond the labels required by a native task. Additional HF supervision does not uniformly improve performance, emphasizing the need to assess shared supervision against each prediction target.
