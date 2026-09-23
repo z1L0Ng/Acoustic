@@ -58,6 +58,8 @@ Figure 2的信息层次与执行路径是重点：老师要求把实际组合画
 ## 全文格式与提交要求
 负责人：用户＋论文写作（任务1）；任务2核对Section 2/3及对应图件。
 - [ ] F-01｜统一全文的dataset/label/method名称、简称首次定义、native/auxiliary/harmonized指代、capitalization、括号空格、hyphen/dash；同步修正受影响的术语索引位置。
+	- [x] F-01a｜2026-09-23 数值核对：当前Abstract/Results的11组唯一差值（15处表述）均与已有三seed均值的绝对差一致。
+	- [ ] F-01b｜2026-09-23 百分比表述统一：Section 4仍有1.93 pp、7.16 pp；0.39与%之间的空格需统一。已替换成%的变化量仍是绝对差值，需明确absolute含义或改为from X% to Y%，确认后才能勾选。
 - [ ] F-02｜根据用户Overleaf编译稿处理orphan/widow、单词或短行独占、不自然换行、段间距及图表位置；通过必要的句长或布局微调使四页正文整洁。
 - [ ] F-03｜核对实际投稿会议的官方template、citation/reference style与页数要求，统一现有引用格式和reference排版。
 - [ ] F-04｜核对官方blind policy与作者信息/ID要求；Wade已提供的ID直接核对，其他公开信息先查询。按相关性检查参考文献及页面利用，不机械增加数量。
@@ -65,6 +67,7 @@ Figure 2的信息层次与执行路径是重点：老师要求把实际组合画
 验收：老师无需继续指出显而易见的基础格式和呈现问题。
 
 ## 协作与保留事项
+2026-09-23：用户已将canonical main工作区同步为Overleaf最新版；论文写作、论文写作二、论文绘图均已收到基准更新通知。后续以当前工作区（包括未提交修改）为准，等待用户各自下达具体指示，不自动开工。此次只检查百分比数值/表述，没有修改LaTeX或编译。
 - 仍使用main下`docs/paper/Overleaf_Sync_final/`。任务1负责Sections 1/4/5、Abstract、结果表和main.tex/citation.bib/共享caption；任务2负责Sections 2/3及相应图件，统一对接论文绘图。
 - 各章先讨论具体呈现修改再落实；用户在Overleaf编译，完成并核对后再勾选。保持用户控制的管理同步方式，不恢复DONE标记。
 - 已有实验、逐seed统计及分析资产继续使用。结果图源在`result/analysis/2026-09-22_unified_seed_figure/`；论文中的最终资产需与确认稿对齐。

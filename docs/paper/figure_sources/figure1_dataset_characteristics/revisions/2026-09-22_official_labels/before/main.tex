@@ -49,7 +49,7 @@ $^{3}$Duke University\\
 \raggedbottom
 
 \begin{abstract}
-Public respiratory sound datasets carry different levels of annotation detail and are labeled for different classification or prediction tasks. We propose \textsc{LSAA} (\underline{L}earning \underline{S}hared \underline{A}coustic \underline{A}ttributes), a joint learning framework that shares acoustic supervision while preserving native tasks. \textsc{LSAA} learns a shared representation from ICBHI cycles and SPRSound events using native task losses and auxiliary crackle (C) and wheeze (W) supervision. Dataset-specific heads produce native predictions, allowing fine-grained sound-type annotations to guide learning even when the output is binary. We evaluate fixed-model transfer on HF Lung (HF) test recordings and KAUH. Across three seeds, adding C/W supervision improves SPRSound Score by 1.93\%, HF AUROC by 7.16\%, and KAUH balanced accuracy by 2.32\%, with a 0.20\% ICBHI Score decrease. These results support shared fine-grained supervision for native prediction and transfer.
+Public respiratory sound datasets carry different levels of annotation detail and are labeled for different classification or prediction tasks. We propose \textsc{LSAA} (\underline{L}earning \underline{S}hared \underline{A}coustic \underline{A}ttributes), a joint learning framework that shares acoustic supervision while preserving native tasks. \textsc{LSAA} learns a shared representation from International Conference on Biomedical and Health Informatics (ICBHI) dataset cycles and Open-Source SJTU Paediatric Respiratory Sound (SPRSound) dataset events using native task losses and auxiliary crackle (C) and wheeze (W) supervision. Dataset-specific heads produce native predictions, allowing fine-grained sound-type annotations to guide learning even when the output is binary. We evaluate fixed-model transfer on HF Lung (HF) test recordings and KAUH. Across three seeds, adding C/W supervision improves SPRSound Score by 1.93 percentage points (pp), HF AUROC by 7.16 pp, and KAUH balanced accuracy by 2.32 pp, with a 0.20 pp ICBHI Score decrease. These results support shared fine-grained supervision for native prediction and transfer.
 \end{abstract}
 
 \begin{keywords}
@@ -61,8 +61,8 @@ respiratory acoustics, shared supervision, heterogeneous annotations, cross-task
 \includegraphics[width=\textwidth]{Figure/figure1_dataset_characteristics.pdf}
 \caption{Data roles: ICBHI/SPRSound for core training; HF train for LSAA w/HF only; HF test/KAUH for fixed-model evaluation.
 (a) Original label counts and annotation units.
-(b) Median spectral centroids by sound label.
-(c) PCA of spectral descriptors across datasets.}
+(b) PCA of spectral descriptors across datasets.
+(c) Median spectral centroids by sound label.}
 \label{fig:dataset_characteristics}
 \end{figure*}
 

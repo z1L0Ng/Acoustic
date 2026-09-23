@@ -2,6 +2,8 @@
 
 ## 当前周期：2026-09-22 晚间｜图表格式与全文一致性
 
+9/23核对更新：用户已同步Overleaf最新稿，三个写作/绘图任务已通知以main当前工作区为准并等待后续指示。11组绝对差值数值核对通过，F-01a已勾选；仍有两处pp残留及%绝对/相对含义待修正，F-01b未勾选。详见[百分比表述核对](paper/revision_notes/2026-09-23_percentage_notation_audit_zh.md)。
+
 会议：[9/22完整记录](https://app.notion.com/p/3e4309efda298119b493c71b5617914e)；[本地纪要](meeting_records/2026-09-22_paper_revision_meeting_record_zh.md)。计划：[Notion今晚Work Plan](https://app.notion.com/p/3e4309efda298130b73ac43649349b54)；[本地24项checkbox](work_plans/2026-09-22_evening_chapter_revision_work_plan_zh.md)。
 
 用户已明确今晚重点是格式和呈现。依据会议第22节，Figures/Tables优先；具体处理标签全称/marker、图中模块分组、激活路径、箭头与orientation、组件对齐与留白、表格分组、标题/caption、术语与版面一致性。文字只做配合这些问题的必要局部调整。
