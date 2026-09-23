@@ -1,15 +1,13 @@
 \begingroup
 \setlength{\emergencystretch}{1.5em}
-\vspace{-3mm}
 \section{Evaluation}
-\vspace{-3mm}
 \label{sec:evaluation}
-In the tables, LSAA denotes the reference configuration with native task heads and shared C/W supervision. Results are percentages, reported as three-seed means with subscripted sample standard deviations. Bold and underlining indicate the highest and second-highest means where used.
+
+In the tables, LSAA denotes the reference configuration with native task heads and shared C/W supervision. Results are percentages, reported as three-seed means with subscripted sample standard deviations. Bold and underlining indicate the highest and second-highest means where used. 
 
 For ICBHI cycles, Score is $(Sp+Se)/2$, where specificity $Sp$ is Normal recall and sensitivity $Se$ is the fraction of all abnormal cycles assigned their correct Crackle, Wheeze, or Both class\cite{rocha2019icbhi}. For SPRSound events, Score is $(AS+HS)/2$, where average score $AS=(r_N+r_A)/2$ and harmonic score $HS=2r_Nr_A/(r_N+r_A)$ use Normal recall $r_N$ and Adventitious recall $r_A$; $HS=0$ when both recalls are zero\cite{zhang2022sprsound}. HF uses recording-level area under the receiver operating characteristic curve (AUROC): recordings with Wheeze, Rhonchi, or Stridor annotations are positive, and other eligible recordings form the Other class, which does not denote Normal. We evaluate 957 HF test recordings with adventitious-sound annotations (661 positive and 296 Other); phase-only and unannotated recordings are excluded. KAUH uses patient-level balanced accuracy (BA), the mean Normal/Abnormal recall after aggregating filter-version probabilities.
-\vspace{-2mm}
+
 \subsection{Joint Learning and Transfer}
-\vspace{-2mm}
 \label{sec:protocol}
 \label{sec:native_results}
 One joint model supports both native tasks with competitive transfer performance (Table~\ref{tab:native_results}). LSAA exceeds every frozen-encoder reference in mean ICBHI Score, HF AUROC, and KAUH BA, while its SPRSound Score of 90.86\% is 0.69 percentage points (pp) below the strongest reference, BEATs. Encoder fine-tuning also differs from the frozen references~\cite{niizumi2025foundationeval}, so these gains reflect the complete system; the ablations examine shared supervision more directly.
@@ -19,22 +17,28 @@ One joint model supports both native tasks with competitive transfer performance
 The multilabel adaptations show that advantages depend on the evaluation target (Table~\ref{tab:system_comparison}). LSAA has the highest mean ICBHI Score, HF AUROC, and KAUH BA, whereas DCASE leads on SPRSound. DCASE shares a union of native classes, while LSAA combines shared C/W supervision with separate native task heads. However, DCASE uses frozen BEATs with a trainable convolutional recurrent network, while LSAA fine-tunes the encoder. PC-MCL trains only on ICBHI, making its SPRSound result a cross-source comparison. These system differences prevent attributing the rankings to label representation alone.
 
 \LSAASystemComparisonTable
-\vspace{-2mm}
 \subsection{Supervision and Transfer Analysis}
-\vspace{-2mm}
 \label{sec:ablations}
 \label{sec:transfer}
-The single-source models have limited cross-dataset task coverage (Table~\ref{tab:ablations}). LSAA-I (ICBHI only) achieves a SPRSound Score of 49.53\%, while LSAA-S (SPRSound only) achieves an ICBHI Score of 47.75\%. Their limited cross-source performance motivates sharing supervision across datasets, addressing the transfer question raised by Figure~\ref{fig:dataset_characteristics}(b,c).
+
+% \begin{figure}[!htbp]
+% \centering
+% \includegraphics[width=\columnwidth]{Figure/figure3_unified_seed_performance.pdf}
+% \caption{Performance of LSAA, comparison systems, and ablation variants across four datasets.}
+% \label{fig:performance_comparison}
+% \end{figure}
+
+The single source models have limited cross-dataset task coverage (Table~\ref{tab:ablations}). LSAA-I achieves SPRSound Score of 49.53\%, while LSAA-S achieves an ICBHI Score of 47.75\%. Their limited cross source performance motivates sharing supervision across datasets, addressing the transfer question raised by Figure~\ref{fig:dataset_characteristics}(b,c).
 
 \LSAAAnalysisTable
 
 \label{sec:fine_supervision}
 \label{sec:readout_analysis}
-Shared C/W supervision supports native prediction and external transfer. LSAA w/o C+W retains the native task heads but removes the auxiliary C/W losses. Compared with this variant, LSAA improves mean SPRSound Score by 1.93 pp, HF AUROC by 7.16 pp, and KAUH BA by 2.32 pp, with a 0.20 pp ICBHI Score decrease. Fine-grained labels can therefore support a binary native task and external transfer while largely preserving ICBHI performance.
+Shared C/W supervision supports native prediction and external transfer. LSAA w/o C+W retains the native task heads but removes the auxiliary C/W losses. Compared with this variant, LSAA improves mean SPRSound Score by 1.93 pp, HF AUROC by 7.16 pp, and KAUH BA by 2.32 pp, with a 0.20 pp ICBHI Score decrease. Fine-grained labels can therefore support a binary native task and external transfer while largely preserving ICBHI performance. the HF improvement occurs in all three seeds, while SPRSound and KAUH improve in two. Both models use fixed readout rules over their ICBHI native heads for external evaluation; auxiliary C/W probabilities do not enter these predictions. The gains therefore show that shared attribute supervision can benefit predictions produced through a native task head which supports using annotation detail to guide shared representation learning while allowing each task to retain its own prediction interface.
 
 Native and transfer performance show different rankings in the PAFA comparison. LSAA has a 5.07 pp higher ICBHI Score than LSAA w/o PAFA, while its KAUH BA is 0.39 pp lower. Higher native-task performance does not necessarily coincide with stronger external transfer.
 
 \label{sec:hf_supervision}
-Additional HF supervision does not yield uniformly stronger performance. Relative to LSAA, LSAA w/HF has a 0.76 pp higher mean SPRSound Score, but lower ICBHI Score, HF AUROC, and KAUH BA by 4.78, 8.47, and 2.40 pp, respectively. Its Wheeze supervision is narrower than the HF evaluation target: 256 of 661 positive recordings lack Wheeze annotations. Supervision and evaluation from the same dataset can therefore target different sound categories; additional labels must be assessed against the prediction target.
+Additional HF supervision does not yield uniformly stronger performance. Relative to LSAA, LSAA w/HF has a 0.76 pp higher mean SPRSound Score, but lower ICBHI Score, HF AUROC, and KAUH BA by 4.78, 8.47, and 2.40 pp, respectively. Its Wheeze supervision is narrower than the HF evaluation target: 256 of 661 positive recordings lack Wheeze annotations. Supervision and evaluation from the same dataset can therefore target different sound categories.
 \par
 \endgroup

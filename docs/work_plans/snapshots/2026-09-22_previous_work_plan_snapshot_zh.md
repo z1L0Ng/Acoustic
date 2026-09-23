@@ -1,26 +1,6 @@
 # Acoustic Work Plan
 
-## 当前周期：2026-09-22 晚间｜图表格式与全文一致性
-
-会议：[9/22完整记录](https://app.notion.com/p/3e4309efda298119b493c71b5617914e)；[本地纪要](meeting_records/2026-09-22_paper_revision_meeting_record_zh.md)。计划：[Notion今晚Work Plan](https://app.notion.com/p/3e4309efda298130b73ac43649349b54)；[本地24项checkbox](work_plans/2026-09-22_evening_chapter_revision_work_plan_zh.md)。
-
-用户已明确今晚重点是格式和呈现。依据会议第22节，Figures/Tables优先；具体处理标签全称/marker、图中模块分组、激活路径、箭头与orientation、组件对齐与留白、表格分组、标题/caption、术语与版面一致性。文字只做配合这些问题的必要局部调整。
-
-按相关章节逐项讨论：Section 2/Figure 1 → Section 3/Figure 2 → Section 4/Tables与结果图 → Introduction/Abstract的局部呈现 → 全文格式检查。今晚不安排具体时间段。原先“从Intro重梳论点、广泛重写Results”的安排已从本轮主线移除，Conclusion仅核对一致性。
-
-必要文字工作限定为：把annotation/mapping移出acoustic characteristics并在Dataset集中定义；让现有contribution显眼、Evaluation标题能对应证据；摘要补回现有贡献；必要时用短句解释图中的共享监督与native heads。已有方法和结果作为基础，不重新启动研究设计。
-
-分工不变：任务1负责Sections 1/4/5、Abstract、结果表及共享文件；任务2负责Sections 2/3与对应图件，协调论文绘图。唯一稿件为main下docs/paper/Overleaf_Sync_final/。先讨论具体呈现修改再落实，用户在Overleaf编译，修改核对后勾选；本次只更正计划，未直接改稿或派发执行。
-
-已有统计与结果图继续作为现成资产。Hanlin后续材料按收到的内容更新；ICBHI协议及未关闭的合作者意见保留在已有记录，不默认扩成今晚的新分析或整篇重写任务。实验支线保持原状态。
-
-9/21会议与计划已标记归档并保留原文和原checkbox。归档前的[本地Work Plan快照](work_plans/snapshots/2026-09-22_previous_work_plan_snapshot_zh.md)、[Notion计划快照](work_plans/snapshots/2026-09-22_previous_notion_work_plan_snapshot_zh.md)与[Notion会议快照](meeting_records/snapshots/2026-09-22_previous_notion_meeting_record_snapshot_zh.md)均保留；9/22完整会议记录没有因本次更正而改写。
-
-下方均为历史周期，不作为今晚执行安排或旧实验启动许可。
-
----
-
-## 已归档周期：2026-09-21｜Yinuo会后修订
+## 当前周期：2026-09-21｜Yinuo会后修订
 
 会议：[完整中文记录](https://app.notion.com/p/3e2309efda2981f2b46fc0ea762b320e)；[本地纪要](meeting_records/2026-09-21_yinuo_paper_revision_meeting_record_zh.md)。当前计划：[Notion Work Plan](https://app.notion.com/p/3e2309efda2981d4927cf7476ef18691)；[本地checkbox计划](work_plans/2026-09-21_yinuo_paper_revision_work_plan_zh.md)。三份会议附件已接回两处截断，保留完整26节及原始文本。
 
