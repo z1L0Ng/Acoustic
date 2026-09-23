@@ -1,9 +1,9 @@
 \section{Introduction}
 \label{sec:introduction}
 % Automated classifications of crackles and wheezes in respiratory sound analysis can reduce the annotation effort required of respiratory clinicians\cite{hsu2021hflung,bae2023patchmix,kim2024sgscl}. 
-Automated respiratory sound analysis can support scalable assessment of respiratory conditions by reducing the burden of manually interpreting and annotating auscultation recordings~\cite{hsu2021hflung,bae2023patchmix,kim2024sgscl}.
+Automated respiratory sound analysis can support scalable assessment of respiratory conditions by reducing the burden of manually interpreting and annotating auscultation recordings~\cite{hsu2021hflung,bae2023patchmix,kim2024sgscl,hou2023arsteth}.
 % However, training these classifiers requires labels that only clinicians can provide, which limits how much data is available~\cite{zhang2024opera}. 
-However, developing reliable models still depends heavily on expert annotations that are costly to obtain, limiting the amount and diversity of labeled training data~\cite{zhang2024opera}.
+However, developing reliable models still depends heavily on expert annotations that are costly to obtain, limiting the amount and diversity of labeled training data~\cite{zhang2024opera,gairola2021respirenet}.
 Existing public respiratory datasets, such as ICBHI~\cite{rocha2019icbhi}
 and SPRSound~\cite{zhang2022sprsound}, offer an opportunity to expand supervision by reusing labeled recordings. Their annotations describe related acoustic attributes, including crackles, wheezes, and other abnormalities, but differ in granularity and prediction targets, making their task labels not directly interchangeable.
 
@@ -22,9 +22,9 @@ Prior work reuses annotations across datasets by mapping their labels to a share
 %In this work, we propose LSAA, a shared representation-learning framework that learns from abnormality, crackle, and wheeze supervision across ICBHI and SPRSound.
 % a shared encoder that learns acoustic representations through abnormality, crackle, and wheeze supervision from ICBHI and SPRSound datasets. 
 
-In this work, \emph{(i) we propose LSAA, a joint learning framework that combines shared crackle and wheeze supervision with native task losses to learn acoustic representations across ICBHI and SPRSound.} Each dataset's annotations supervise the acoustic attributes they support. Dataset-specific native heads predict directly from the shared representation, allowing fine-grained supervision to guide learning while preserving different native tasks.
+In this work, \emph{(i) we propose LSAA, a joint learning framework that combines shared crackle (\texttt{C}) and wheeze (\texttt{W}) supervision with native task losses to learn acoustic representations across ICBHI and SPRSound.} Each dataset's annotations supervise the acoustic attributes they support. Dataset-specific native heads predict directly from the shared representation, allowing fine-grained supervision to guide learning while preserving different native tasks.
 We use HF Lung training set~\cite{hsu2021hflung} for optional auxiliary supervision (LSAA w/HF), while reserving HF testing set and KAUH~\cite{fraiwan2021kauh} for external evaluation. 
-\emph{(ii) Our experiments support retaining fine-grained supervision: adding shared C/W losses improves mean SPRSound performance despite its binary target, with a small ICBHI decrease.} The same supervision also improves mean HF and KAUH performance over native-task training alone. These findings support sharing annotation detail across tasks while assessing native prediction and external transfer separately.
+\emph{(ii) Our experiments support retaining fine-grained supervision: adding shared \texttt{C-W} losses improves mean SPRSound performance despite its binary target, with a small ICBHI decrease.} The same supervision also improves mean HF and KAUH performance over native-task training alone. These findings support sharing annotation detail across tasks while assessing native prediction and external transfer separately.
 
 %This work makes the following contributions:
 
