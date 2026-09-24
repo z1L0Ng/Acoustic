@@ -1,6 +1,7 @@
 \newcommand{\LSAAMainResultsTable}{%
 \begin{table}[!htbp]
 \caption{Comparison of LSAA with frozen-encoder references.}
+\vspace{4mm}
 \label{tab:native_results}
 \centering
 \small
@@ -31,6 +32,7 @@ HeAR \cite{baur2024hear} & $49.24_{\pm0.38}$ & $82.31_{\pm0.41}$ & $59.21_{\pm1.
 \newcommand{\LSAASystemComparisonTable}{%
 \begin{table}[!htbp]
 \caption{LSAA versus DCASE and PC-MCL multilabel adaptations.}
+\vspace{4mm}
 \label{tab:system_comparison}
 \centering
 \small
@@ -51,8 +53,12 @@ PC-MCL \cite{jeong2026pcmcl} & $\underline{59.81}_{\pm0.80}$ & $48.91_{\pm2.59}$
 
 \newcommand{\LSAAAnalysisTable}{%
 \begin{table}[!htbp]
-\caption{LSAA variants: I/S=ICBHI/SPRSound only; \texttt{C-W}=supervision with \texttt{C-W} head; w/=with; w/o=without.}
+\begingroup
+\raggedright
+\caption{LSAA variants: I/S, ICBHI/SPRSound only; \texttt{C-W}, crackle and wheeze supervision; w/, with; w/o, without.}
+\vspace{4mm}
 \label{tab:ablations}
+\endgroup
 \centering
 \small
 \setlength{\tabcolsep}{0pt}
@@ -63,7 +69,7 @@ Model & \shortstack{ICBHI\\Score} & \shortstack{SPR\\Score}
 \midrule
 LSAA-I & $57.78_{\pm1.47}$ & $49.53_{\pm6.40}$ & $87.05_{\pm0.86}$ & $70.44_{\pm1.52}$\\
 LSAA-S & $47.75_{\pm0.51}$ & $\mathbf{92.82}_{\pm0.65}$ & $79.25_{\pm1.08}$ & $67.25_{\pm4.29}$\\
-\mbox{LSAA w/o C+W} & $\mathbf{63.87}_{\pm1.43}$ & $88.93_{\pm3.36}$ & $81.62_{\pm3.69}$ & $75.59_{\pm5.62}$\\
+\mbox{LSAA w/o \texttt{C-W}} & $\mathbf{63.87}_{\pm1.43}$ & $88.93_{\pm3.36}$ & $81.62_{\pm3.69}$ & $75.59_{\pm5.62}$\\
 \mbox{LSAA w/o PAFA} & $58.60_{\pm1.60}$ & $91.04_{\pm0.51}$ & $86.66_{\pm1.83}$ & $\mathbf{78.30}_{\pm1.95}$\\
 \mbox{LSAA w/HF} & $58.90_{\pm2.35}$ & $91.62_{\pm0.71}$ & $80.31_{\pm4.14}$ & $75.51_{\pm5.78}$\\
 \midrule
